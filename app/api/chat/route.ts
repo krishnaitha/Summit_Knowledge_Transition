@@ -6,9 +6,15 @@ import { buildKtPrompt, createGroqChatCompletion } from '@/lib/groq/chat';
 import { streamGroqText } from '@/lib/groq/streaming';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
+import { validateOrigin } from '@/lib/security';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 const answerCache = new Map<string, string>();
+
+const NO_MATCH_THRESHOLD = 0.20;
+const NOT_FOUND_MSG =
+  'I could not find enough information in the KT documents to answer this question. ' +
+  'This may indicate a gap in the knowledge base — consider asking your admin to add relevant documentation.';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -42,11 +48,27 @@ export async function GET(request: Request) {
     .eq('session_id', sessionId)
     .order('created_at', { ascending: true });
 
-  return NextResponse.json({ messages: messages ?? [] });
+  const messageIds = (messages ?? []).map((m) => m.id);
+  const { data: bookmarks } = messageIds.length
+    ? await supabase
+        .from('chat_bookmarks')
+        .select('message_id')
+        .eq('user_id', user.id)
+        .in('message_id', messageIds)
+    : { data: [] };
+
+  return NextResponse.json({
+    messages: messages ?? [],
+    bookmarkedMessageIds: (bookmarks ?? []).map((b) => b.message_id),
+  });
 }
 
 export async function POST(request: Request) {
   try {
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = (await request.json()) as {
       projectId: string;
       projectName?: string;
@@ -77,8 +99,59 @@ export async function POST(request: Request) {
 
     const project = await getProjectById(body.projectId);
     const chunks = await retrieveRelevantChunks(body.projectId, body.message);
+
+    // Confidence gate — if no chunk clears the minimum threshold, return a hard
+    // "not found" response without calling the LLM, and log a knowledge gap.
+    const maxSimilarity = chunks.length > 0 ? Math.max(...chunks.map((c) => c.similarity)) : 0;
+
+    if (chunks.length === 0 || maxSimilarity < NO_MATCH_THRESHOLD) {
+      let gapSessionId = body.sessionId ?? null;
+
+      if (!gapSessionId) {
+        const { data: newSession } = await supabase
+          .from('chat_sessions')
+          .insert({ user_id: user.id, project_id: body.projectId, message_count: 0 })
+          .select('id')
+          .single();
+        gapSessionId = newSession?.id ?? null;
+      }
+
+      if (gapSessionId) {
+        await supabase.from('chat_messages').insert([
+          { session_id: gapSessionId, role: 'user',      content: body.message,  sources: null },
+          { session_id: gapSessionId, role: 'assistant', content: NOT_FOUND_MSG, sources: [] },
+        ]);
+        await supabase
+          .from('chat_sessions')
+          .update({ message_count: 2, last_message_at: new Date().toISOString() })
+          .eq('id', gapSessionId);
+      }
+
+      await logActivity({
+        userId: user.id,
+        projectId: body.projectId,
+        action: 'knowledge_gap',
+        metadata: { query: body.message, maxSimilarity },
+      });
+
+      return new NextResponse(NOT_FOUND_MSG, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'x-session-id': gapSessionId ?? '',
+          'x-sources': JSON.stringify([]),
+        },
+      });
+    }
+
+    // Sources now carry the similarity score for confidence display in the UI
+    const sources = chunks.map((chunk) => ({
+      documentName: chunk.document_name,
+      documentId: chunk.document_id,
+      chunkId: chunk.id,
+      similarity: chunk.similarity,
+    }));
+
     const context = chunks.map((chunk) => `[${chunk.document_name}] ${chunk.content}`).join('\n\n');
-    const sources = chunks.map((chunk) => ({ documentName: chunk.document_name, documentId: chunk.document_id, chunkId: chunk.id }));
     const cacheKey = `${body.projectId}:${body.message.trim().toLowerCase()}`;
 
     let sessionId = body.sessionId ?? null;

@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import { BookOpen, ChevronRight } from 'lucide-react';
 
-import { createQuizQuestionAction, createQuizSetAction, deleteQuizSetAction, importQuizCsvAction } from '@/app/actions/admin';
+import { createQuizQuestionAction, createQuizSetAction, deleteQuizQuestionAction, deleteQuizSetAction, importQuizCsvAction, toggleQuizSetActiveAction, updateQuizQuestionAction } from '@/app/actions/admin';
 import { QuizGenerator } from '@/components/admin/quiz-generator';
 import { QuizSetsPanel } from '@/components/admin/quiz-sets-panel';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { getProjectById, getProjectQuizSets } from '@/lib/data';
 
 export default async function ProjectQuizAdminPage({ params }: { params: { id: string } }) {
@@ -40,18 +39,21 @@ export default async function ProjectQuizAdminPage({ params }: { params: { id: s
             </p>
           </div>
           {sets.length > 0 && (() => {
-            const fCount = sets.filter((s) => s.set_name.toLowerCase().includes('functional')).length;
-            const tCount = sets.filter((s) => s.set_name.toLowerCase().includes('technical')).length;
-            const missing = fCount === 0 ? 'functional' : tCount === 0 ? 'technical' : null;
+            const categoryCounts: Record<string, number> = {};
+            for (const s of sets) {
+              const cat = s.category ?? 'general';
+              categoryCounts[cat] = (categoryCounts[cat] ?? 0) + 1;
+            }
+            const activeSets = sets.filter((s) => s.is_active).length;
             return (
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-center gap-2 rounded-xl bg-brand-50 px-4 py-2 text-sm font-medium text-brand-700">
                   <BookOpen className="h-4 w-4" />
-                  {fCount} functional · {tCount} technical
+                  {Object.entries(categoryCounts).map(([cat, n]) => `${n} ${cat}`).join(' · ')}
                 </div>
-                {missing && (
+                {activeSets === 0 && (
                   <p className="text-xs font-medium text-amber-600">
-                    ⚠ No {missing} sets — members will only receive {missing === 'functional' ? 'technical' : 'functional'} questions. Generate {missing} sets below.
+                    ⚠ No active sets — activate at least one set so members can take the quiz.
                   </p>
                 )}
               </div>
@@ -65,6 +67,9 @@ export default async function ProjectQuizAdminPage({ params }: { params: { id: s
             sets={sets}
             deleteAction={deleteQuizSetAction}
             addQuestionAction={createQuizQuestionAction}
+            updateQuestionAction={updateQuizQuestionAction}
+            deleteQuestionAction={deleteQuizQuestionAction}
+            toggleSetActiveAction={toggleQuizSetActiveAction}
             importCsvAction={importQuizCsvAction}
           />
         ) : (
@@ -85,11 +90,12 @@ export default async function ProjectQuizAdminPage({ params }: { params: { id: s
           <CardTitle>Create quiz set manually</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={createQuizSetAction} className="grid gap-4 md:grid-cols-3">
+          <form action={createQuizSetAction} className="grid gap-4 md:grid-cols-4">
             <input name="project_id" type="hidden" value={params.id} />
             <Input name="set_name" placeholder="Set name" required />
+            <Input name="category" placeholder="Category (e.g. functional)" required />
             <Input name="set_number" placeholder="Set number" required type="number" />
-            <Button className="md:w-fit" type="submit">Create set</Button>
+            <SubmitButton className="md:w-fit" loadingText="Creating…">Create set</SubmitButton>
           </form>
         </CardContent>
       </Card>

@@ -5,6 +5,7 @@ export const appEnv = {
   supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
   groqApiKey: process.env.GROQ_API_KEY,
+  groqQuizApiKey: process.env.GROQ_API_KEY_QUIZ,
 };
 
 export function isSupabaseConfigured() {

@@ -50,6 +50,9 @@ export default async function ProjectOverviewPage({ params }: { params: { id: st
           <Link href={`/projects/${params.id}/quiz`}>
             <Button variant="secondary">Take the Quiz</Button>
           </Link>
+          <Link href={`/projects/${params.id}/bookmarks`}>
+            <Button variant="secondary">Bookmarks</Button>
+          </Link>
         </CardContent>
       </Card>
 

@@ -14,6 +14,7 @@ interface ChatInterfaceProps {
   initialSessionId?: string | null;
   initialSessions: Array<{ id: string; label: string }>;
   initialMessages: ChatBubbleMessage[];
+  initialBookmarkedIds?: string[];
 }
 
 export function ChatInterface({
@@ -22,10 +23,12 @@ export function ChatInterface({
   initialSessionId,
   initialSessions,
   initialMessages,
+  initialBookmarkedIds = [],
 }: ChatInterfaceProps) {
   const [sessionId, setSessionId] = useState<string | null>(initialSessionId ?? null);
   const [sessions, setSessions] = useState(initialSessions);
   const [messages, setMessages] = useState(initialMessages);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(() => new Set(initialBookmarkedIds));
   const [draft, setDraft] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -35,6 +38,7 @@ export function ChatInterface({
   const createNewChat = () => {
     setSessionId(null);
     setMessages([]);
+    setBookmarkedIds(new Set());
     setStatus(null);
   };
 
@@ -42,6 +46,7 @@ export function ChatInterface({
     if (id === sessionId) return;
     setSessionId(id);
     setMessages([]);
+    setBookmarkedIds(new Set());
     setStatus('Loading chat history…');
 
     startTransition(async () => {
@@ -49,7 +54,8 @@ export function ChatInterface({
 
       if (response.ok) {
         const data = (await response.json()) as {
-          messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; sources: Array<{ documentName: string }> | null }>;
+          messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; sources: Array<{ documentName: string; similarity?: number }> | null }>;
+          bookmarkedMessageIds: string[];
         };
         setMessages(
           data.messages.map((message) => ({
@@ -59,6 +65,7 @@ export function ChatInterface({
             sources: message.sources ?? [],
           })),
         );
+        setBookmarkedIds(new Set(data.bookmarkedMessageIds ?? []));
       }
 
       setStatus(null);
@@ -77,7 +84,11 @@ export function ChatInterface({
     };
 
     const assistantId = crypto.randomUUID();
-    const nextMessages = [...messages, userMessage, { id: assistantId, role: 'assistant' as const, content: '', sources: [] }];
+    const nextMessages = [
+      ...messages,
+      userMessage,
+      { id: assistantId, role: 'assistant' as const, content: '', sources: [], isStreamed: true },
+    ];
     setMessages(nextMessages);
     setDraft('');
     setStatus('Searching documents...');
@@ -103,7 +114,7 @@ export function ChatInterface({
 
       const createdSessionId = response.headers.get('x-session-id');
       const sourcesHeader = response.headers.get('x-sources');
-      const sources = sourcesHeader ? (JSON.parse(sourcesHeader) as Array<{ documentName: string }>) : [];
+      const sources = sourcesHeader ? (JSON.parse(sourcesHeader) as Array<{ documentName: string; similarity?: number }>) : [];
 
       if (createdSessionId && !sessions.some((item) => item.id === createdSessionId)) {
         setSessions((current) => [{ id: createdSessionId, label: 'New chat' }, ...current]);
@@ -173,11 +184,18 @@ export function ChatInterface({
       <Card className="flex min-h-[70vh] flex-col overflow-hidden border border-white/40">
         <div className="border-b border-slate-100 px-6 py-5">
           <p className="text-lg font-semibold text-slate-950">Ask Summit AI</p>
-          <p className="text-sm text-slate-500">Answers stay grounded in this project’s KT documents.</p>
+          <p className="text-sm text-slate-500">Answers stay grounded in this project's KT documents.</p>
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">
           {messages.length ? (
-            messages.map((message) => <MessageBubble key={message.id} message={message} />)
+            messages.map((message) => (
+              <MessageBubble
+                key={message.id}
+                message={message}
+                projectId={projectId}
+                isBookmarked={bookmarkedIds.has(message.id)}
+              />
+            ))
           ) : (
             <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center">
               <Search className="mx-auto h-8 w-8 text-slate-400" />
@@ -197,7 +215,7 @@ export function ChatInterface({
                   handleSend();
                 }
               }}
-              placeholder="Ask a question about this project’s KT docs"
+              placeholder="Ask a question about this project's KT docs"
             />
             <Button disabled={!canSubmit} onClick={handleSend} type="button">
               Send

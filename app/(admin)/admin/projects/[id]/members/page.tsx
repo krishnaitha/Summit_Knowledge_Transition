@@ -5,6 +5,7 @@ import { inviteProjectMemberAction, removeProjectMemberAction } from '@/app/acti
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { getProjectById, getProjectMembers } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
@@ -32,7 +33,7 @@ export default async function ProjectMembersPage({ params }: { params: { id: str
             <input name="project_id" type="hidden" value={params.id} />
             <Input name="full_name" placeholder="Full name" />
             <Input name="email" placeholder="name@company.com" required type="email" />
-            <Button className="lg:w-fit" type="submit">Invite with magic link</Button>
+            <SubmitButton className="lg:w-fit" loadingText="Inviting…">Invite with magic link</SubmitButton>
           </form>
         </CardContent>
       </Card>
@@ -52,7 +53,7 @@ export default async function ProjectMembersPage({ params }: { params: { id: str
                 <form action={removeProjectMemberAction}>
                   <input name="project_id" type="hidden" value={params.id} />
                   <input name="user_id" type="hidden" value={member.id} />
-                  <Button type="submit" variant="danger">Remove</Button>
+                  <SubmitButton variant="danger" loadingText="Removing…">Remove</SubmitButton>
                 </form>
               </div>
             ))

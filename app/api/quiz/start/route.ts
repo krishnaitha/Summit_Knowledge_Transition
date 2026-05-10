@@ -4,11 +4,13 @@ import { getCurrentUserContext } from '@/lib/auth';
 import { getProfileById, getProjectById, getProjectMembers, logActivity, userHasProjectAccess } from '@/lib/data';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { createSectionedQuestions } from '@/lib/quiz/assignment';
+import { validateOrigin } from '@/lib/security';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import type { AssignedQuestion, QuizQuestionRecord, QuizSetRecord } from '@/lib/types/database';
 
 const QUESTIONS_PER_SECTION = 20;
-const SECTION_DURATION_SECONDS = 900; // 15 min
+const SECTION_DURATION_SECONDS = 900;  // 15 min per section
+const ATTEMPT_TIMEOUT_SECONDS  = 3600; // 1 hour — 2× the total intended quiz duration
 
 function toClientQuestions(questions: AssignedQuestion[]) {
   return questions.map((q) => ({
@@ -18,8 +20,17 @@ function toClientQuestions(questions: AssignedQuestion[]) {
   }));
 }
 
+/** Capitalise first letter of a category slug for display. */
+function displayName(category: string) {
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
 export async function POST(request: Request) {
   try {
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { user } = await getCurrentUserContext();
     const supabase = createServiceRoleSupabaseClient();
 
@@ -69,22 +80,90 @@ export async function POST(request: Request) {
 
     if (inProgressAttempt) {
       const saved = inProgressAttempt.assigned_questions as AssignedQuestion[];
+      const carried = inProgressAttempt.carried_sections as Record<string, { score: number; total: number }> | null;
 
       if (saved?.length && saved[0]?.section) {
-        // New sectioned format — resume
-        const functional = saved.filter((q) => q.section === 'functional');
-        const technical = saved.filter((q) => q.section === 'technical');
-        return NextResponse.json({
-          attemptId: inProgressAttempt.id,
-          sections: [
-            { name: 'Functional', durationSeconds: SECTION_DURATION_SECONDS, questions: toClientQuestions(functional) },
-            { name: 'Technical',  durationSeconds: SECTION_DURATION_SECONDS, questions: toClientQuestions(technical) },
-          ],
-        });
-      }
+        // Normal resume: questions already assigned — check timeout before resuming
+        const elapsedSeconds = (Date.now() - new Date(inProgressAttempt.started_at).getTime()) / 1000;
 
-      // Old format or empty — delete and start fresh
-      await supabase.from('quiz_attempts').delete().eq('id', inProgressAttempt.id);
+        if (elapsedSeconds <= ATTEMPT_TIMEOUT_SECONDS) {
+          const sectionNames = [...new Set(saved.map((q) => q.section))];
+          const sections = sectionNames.map((sec) => ({
+            name: displayName(sec),
+            durationSeconds: SECTION_DURATION_SECONDS,
+            questions: toClientQuestions(saved.filter((q) => q.section === sec)),
+          }));
+          return NextResponse.json({ attemptId: inProgressAttempt.id, sections });
+        }
+
+        await supabase.from('quiz_attempts').delete().eq('id', inProgressAttempt.id);
+      } else if (carried && Object.keys(carried).length > 0) {
+        // Partial retake: carried_sections set but questions not yet assigned.
+        // Fall through to question assignment below, but remember the attempt ID to update.
+        // We'll assign questions for non-carried categories only and update this attempt.
+        const carriedCategories = new Set(Object.keys(carried));
+
+        // Load sets, filter out carried categories
+        const { data: sets } = await supabase
+          .from('quiz_sets')
+          .select('*')
+          .eq('project_id', projectId)
+          .eq('is_active', true)
+          .order('set_number', { ascending: true });
+
+        const typedSets = (sets ?? []) as QuizSetRecord[];
+        const retakeSets = typedSets.filter((s) => !carriedCategories.has(s.category ?? 'general'));
+
+        if (!retakeSets.length) {
+          return NextResponse.json({ error: 'No sections left to retake.' }, { status: 400 });
+        }
+
+        const retakeCategoryMap = new Map<string, typeof typedSets>();
+        for (const s of retakeSets) {
+          const cat = s.category ?? 'general';
+          if (!retakeCategoryMap.has(cat)) retakeCategoryMap.set(cat, []);
+          retakeCategoryMap.get(cat)!.push(s);
+        }
+
+        const allSetIds = retakeSets.map((s) => s.id);
+        const { data: allQs } = await supabase.from('quiz_questions').select('*').in('quiz_set_id', allSetIds);
+        const questionsBySetId = new Map<string, QuizQuestionRecord[]>();
+        for (const q of (allQs ?? []) as QuizQuestionRecord[]) {
+          if (!questionsBySetId.has(q.quiz_set_id)) questionsBySetId.set(q.quiz_set_id, []);
+          questionsBySetId.get(q.quiz_set_id)!.push(q);
+        }
+
+        const retakeAssigned: AssignedQuestion[] = [];
+        const retakeSectionOrder: string[] = [];
+        for (const [category, catSets] of retakeCategoryMap) {
+          const catQs: QuizQuestionRecord[] = [];
+          for (const s of catSets) catQs.push(...(questionsBySetId.get(s.id) ?? []));
+          if (!catQs.length) continue;
+          retakeAssigned.push(...createSectionedQuestions(catQs, category, QUESTIONS_PER_SECTION));
+          retakeSectionOrder.push(category);
+        }
+
+        if (!retakeAssigned.length) {
+          return NextResponse.json({ error: 'No questions available for the retake sections.' }, { status: 400 });
+        }
+
+        // Update the existing in_progress attempt with the assigned questions
+        await supabase
+          .from('quiz_attempts')
+          .update({ assigned_questions: retakeAssigned })
+          .eq('id', inProgressAttempt.id);
+
+        const sections = retakeSectionOrder.map((cat) => ({
+          name: displayName(cat),
+          durationSeconds: SECTION_DURATION_SECONDS,
+          questions: toClientQuestions(retakeAssigned.filter((q) => q.section === cat)),
+        }));
+
+        return NextResponse.json({ attemptId: inProgressAttempt.id, sections });
+      } else {
+        // Old format or completely empty — delete and start fresh
+        await supabase.from('quiz_attempts').delete().eq('id', inProgressAttempt.id);
+      }
     }
 
     // Check quiz window
@@ -121,57 +200,69 @@ export async function POST(request: Request) {
     }
 
     const typedSets = sets as QuizSetRecord[];
-    const functionalSets = typedSets.filter((s) => s.set_name.toLowerCase().includes('functional'));
-    const technicalSets  = typedSets.filter((s) => s.set_name.toLowerCase().includes('technical'));
 
-    if (!functionalSets.length || !technicalSets.length) {
-      const missing = !functionalSets.length ? 'Functional' : 'Technical';
-      return NextResponse.json(
-        { error: `No ${missing} quiz sets found. Ask your admin to generate ${missing} questions first.` },
-        { status: 400 },
-      );
+    // Group sets by category
+    const categoryMap = new Map<string, QuizSetRecord[]>();
+    for (const s of typedSets) {
+      const cat = s.category ?? 'general';
+      if (!categoryMap.has(cat)) categoryMap.set(cat, []);
+      categoryMap.get(cat)!.push(s);
     }
 
-    // Fetch ALL questions from ALL sets in each category
-    const [{ data: rawFunctional }, { data: rawTechnical }] = await Promise.all([
-      supabase.from('quiz_questions').select('*').in('quiz_set_id', functionalSets.map((s) => s.id)),
-      supabase.from('quiz_questions').select('*').in('quiz_set_id', technicalSets.map((s) => s.id)),
-    ]);
-
-    if (!rawFunctional?.length) {
-      return NextResponse.json(
-        { error: 'Functional sets have no questions yet. Ask your admin to add questions.' },
-        { status: 400 },
-      );
-    }
-    if (!rawTechnical?.length) {
-      return NextResponse.json(
-        { error: 'Technical sets have no questions yet. Ask your admin to add questions.' },
-        { status: 400 },
-      );
+    if (categoryMap.size === 0) {
+      return NextResponse.json({ error: 'No quiz sets have been created for this project yet.' }, { status: 400 });
     }
 
-    // Create sectioned, shuffled, limited question sets
-    const functionalAssigned = createSectionedQuestions(
-      rawFunctional as QuizQuestionRecord[], 'functional', QUESTIONS_PER_SECTION,
-    );
-    const technicalAssigned = createSectionedQuestions(
-      rawTechnical as QuizQuestionRecord[], 'technical', QUESTIONS_PER_SECTION,
-    );
+    // Fetch questions for all sets in all categories in parallel
+    const allSetIds = typedSets.map((s) => s.id);
+    const { data: allQuestions } = await supabase
+      .from('quiz_questions')
+      .select('*')
+      .in('quiz_set_id', allSetIds);
 
-    const allAssigned = [...functionalAssigned, ...technicalAssigned];
+    const questionsBySetId = new Map<string, QuizQuestionRecord[]>();
+    for (const q of (allQuestions ?? []) as QuizQuestionRecord[]) {
+      if (!questionsBySetId.has(q.quiz_set_id)) questionsBySetId.set(q.quiz_set_id, []);
+      questionsBySetId.get(q.quiz_set_id)!.push(q);
+    }
+
+    // Build one section per category
+    const allAssigned: AssignedQuestion[] = [];
+    const sectionOrder: string[] = [];
+
+    for (const [category, catSets] of categoryMap) {
+      // Gather all questions across all sets in this category
+      const catQuestions: QuizQuestionRecord[] = [];
+      for (const s of catSets) {
+        catQuestions.push(...(questionsBySetId.get(s.id) ?? []));
+      }
+
+      if (!catQuestions.length) {
+        return NextResponse.json(
+          { error: `No questions found for category "${category}". Ask your admin to add questions.` },
+          { status: 400 },
+        );
+      }
+
+      const assigned = createSectionedQuestions(catQuestions, category, QUESTIONS_PER_SECTION);
+      allAssigned.push(...assigned);
+      sectionOrder.push(category);
+    }
 
     const [members, project] = await Promise.all([
       getProjectMembers(projectId),
       getProjectById(projectId),
     ]);
 
+    // Use the first set's id as the representative quiz_set_id
+    const representativeSetId = typedSets[0].id;
+
     const { data: attempt, error } = await supabase
       .from('quiz_attempts')
       .insert({
         user_id: user.id,
         project_id: projectId,
-        quiz_set_id: functionalSets[0].id,
+        quiz_set_id: representativeSetId,
         assigned_questions: allAssigned,
         answers_given: {},
         status: 'in_progress',
@@ -186,20 +277,19 @@ export async function POST(request: Request) {
       projectId,
       action: 'quiz_started',
       metadata: {
-        functionalSet: functionalSets[0].set_name,
-        technicalSet: technicalSets[0].set_name,
+        categories: sectionOrder,
         threshold: project?.pass_threshold ?? 60,
         totalMembers: members.length,
       },
     });
 
-    return NextResponse.json({
-      attemptId: attempt.id,
-      sections: [
-        { name: 'Functional', durationSeconds: SECTION_DURATION_SECONDS, questions: toClientQuestions(functionalAssigned) },
-        { name: 'Technical',  durationSeconds: SECTION_DURATION_SECONDS, questions: toClientQuestions(technicalAssigned) },
-      ],
-    });
+    const sections = sectionOrder.map((cat) => ({
+      name: displayName(cat),
+      durationSeconds: SECTION_DURATION_SECONDS,
+      questions: toClientQuestions(allAssigned.filter((q) => q.section === cat)),
+    }));
+
+    return NextResponse.json({ attemptId: attempt.id, sections });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Quiz start failed' },

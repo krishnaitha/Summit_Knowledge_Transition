@@ -2,10 +2,15 @@ import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
 import { getProfileById } from '@/lib/data';
+import { validateOrigin } from '@/lib/security';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { user } = await getCurrentUserContext();
     const supabase = createServiceRoleSupabaseClient();
 

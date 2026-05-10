@@ -1,11 +1,11 @@
 import { KeyRound, UserRound } from 'lucide-react';
 
-import { createDemoUserAction, toggleUserActiveAction, updateUserRoleAction } from '@/app/actions/admin';
-import { Badge } from '@/components/ui/badge';
+import { createDemoUserAction } from '@/app/actions/admin';
+import { UsersTable } from '@/components/admin/users-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { getAllProjects, getAllUsers } from '@/lib/data';
-import { formatDate } from '@/lib/utils';
 
 export default async function AdminUsersPage() {
   const [users, projects] = await Promise.all([getAllUsers(), getAllProjects()]);
@@ -66,9 +66,9 @@ export default async function AdminUsersPage() {
                 ))}
               </select>
             </div>
-            <Button type="submit">
+            <SubmitButton loadingText="Creating…">
               Create / reset demo user
-            </Button>
+            </SubmitButton>
           </form>
           <p className="text-xs text-slate-400">
             If the demo user already exists, clicking the button again just re-assigns them to the selected project.
@@ -81,44 +81,8 @@ export default async function AdminUsersPage() {
         <CardHeader>
           <CardTitle>Users</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {users.length ? (
-            users.map((user) => (
-              <div key={user.id} className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 xl:flex-row xl:items-center xl:justify-between">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <p className="font-semibold text-slate-900">{user.full_name ?? user.email}</p>
-                    <Badge variant={user.role === 'admin' ? 'info' : 'neutral'}>{user.role}</Badge>
-                    <Badge variant={user.is_active === false ? 'warning' : 'success'}>
-                      {user.is_active === false ? 'Inactive' : 'Active'}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-sm text-slate-500">{user.email}</p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    Created {formatDate(user.created_at, true)} • Last login {formatDate(user.last_login_at, true)}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <form action={updateUserRoleAction}>
-                    <input name="user_id" type="hidden" value={user.id} />
-                    <input name="role" type="hidden" value={user.role === 'admin' ? 'member' : 'admin'} />
-                    <Button type="submit" variant="secondary">
-                      {user.role === 'admin' ? 'Demote to member' : 'Promote to admin'}
-                    </Button>
-                  </form>
-                  <form action={toggleUserActiveAction}>
-                    <input name="user_id" type="hidden" value={user.id} />
-                    <input name="next_state" type="hidden" value={String(user.is_active === false)} />
-                    <Button type="submit" variant={user.is_active === false ? 'primary' : 'danger'}>
-                      {user.is_active === false ? 'Reactivate' : 'Deactivate'}
-                    </Button>
-                  </form>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-slate-500">No users found.</p>
-          )}
+        <CardContent>
+          <UsersTable users={users} />
         </CardContent>
       </Card>
 

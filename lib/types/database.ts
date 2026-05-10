@@ -43,6 +43,9 @@ export interface DocumentRecord {
   uploaded_by: string | null;
   uploaded_at: string;
   chunk_count: number;
+  pii_detections: number;
+  classification: 'confidential' | 'internal' | 'public';
+  scan_flags: string[];
 }
 
 export interface ChatSessionRecord {
@@ -59,7 +62,7 @@ export interface ChatMessageRecord {
   session_id: string;
   role: MessageRole;
   content: string;
-  sources: Array<{ documentId?: string; documentName: string; chunkId?: string }> | null;
+  sources: Array<{ documentId?: string; documentName: string; chunkId?: string; similarity?: number }> | null;
   created_at: string;
 }
 
@@ -70,7 +73,10 @@ export interface QuizSetRecord {
   set_number: number;
   is_active: boolean;
   created_at: string;
+  category: string;
 }
+
+export type QuizQuestionType = 'mcq' | 'true_false';
 
 export interface QuizQuestionRecord {
   id: string;
@@ -83,6 +89,7 @@ export interface QuizQuestionRecord {
   correct_option: QuizOptionKey;
   explanation: string | null;
   marks: number;
+  question_type: QuizQuestionType;
 }
 
 export interface QuizAttemptRecord {
@@ -99,6 +106,7 @@ export interface QuizAttemptRecord {
   started_at: string;
   submitted_at: string | null;
   status: QuizAttemptStatus;
+  carried_sections: Record<string, { score: number; total: number }> | null;
 }
 
 export interface AssignedQuestionOption {
@@ -109,17 +117,41 @@ export interface AssignedQuestionOption {
 
 export interface AssignedQuestion {
   questionId: string;
-  section: 'functional' | 'technical';
+  section: string;
   questionText: string;
   options: AssignedQuestionOption[];
   correctKey: QuizOptionKey;
   explanation: string | null;
   marks: number;
+  questionType: QuizQuestionType;
 }
 
 export interface QuizReviewQuestion extends AssignedQuestion {
   selectedKey: QuizOptionKey | null;
   isCorrect: boolean;
+}
+
+export interface ChatBookmarkRecord {
+  id: string;
+  user_id: string;
+  project_id: string;
+  message_id: string;
+  created_at: string;
+}
+
+export type ProcessingJobType = 'document_process' | 'quiz_generate';
+export type ProcessingJobStatus = 'pending' | 'running' | 'done' | 'failed';
+
+export interface ProcessingJobRecord {
+  id: string;
+  type: ProcessingJobType;
+  status: ProcessingJobStatus;
+  payload: Record<string, unknown>;
+  result: Record<string, unknown> | null;
+  error: string | null;
+  created_at: string;
+  started_at: string | null;
+  completed_at: string | null;
 }
 
 export interface ActivityRecord {

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
 import { requireAdmin } from '@/lib/auth';
 import { getAllProjects } from '@/lib/data';
@@ -32,9 +33,9 @@ export default async function AdminProjectsPage() {
             <div className="lg:col-span-2">
               <Textarea name="description" placeholder="Project description" />
             </div>
-            <Button className="lg:w-fit" type="submit">
+            <SubmitButton className="lg:w-fit" loadingText="Creating…">
               Create project
-            </Button>
+            </SubmitButton>
           </form>
         </CardContent>
       </Card>
@@ -57,9 +58,9 @@ export default async function AdminProjectsPage() {
                 <form action={toggleProjectStatusAction}>
                   <input name="project_id" type="hidden" value={project.id} />
                   <input name="next_state" type="hidden" value={String(!project.is_active)} />
-                  <Button type="submit" variant={project.is_active ? 'danger' : 'primary'}>
+                  <SubmitButton variant={project.is_active ? 'danger' : 'primary'} loadingText="Updating…">
                     {project.is_active ? 'Deactivate' : 'Activate'}
-                  </Button>
+                  </SubmitButton>
                 </form>
               </div>
             </CardContent>

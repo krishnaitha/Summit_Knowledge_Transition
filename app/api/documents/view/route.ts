@@ -40,7 +40,7 @@ export async function GET(request: Request) {
 
     const { data: signed } = await supabase.storage
       .from('documents')
-      .createSignedUrl(document.file_url, 300);
+      .createSignedUrl(document.file_url, 300, { download: false });
 
     if (!signed?.signedUrl) {
       return NextResponse.json({ error: 'Could not generate download link' }, { status: 500 });
@@ -52,6 +52,14 @@ export async function GET(request: Request) {
       action: 'document_viewed',
       metadata: { documentId: document.id, fileName: document.file_name },
     });
+
+    const fileExt = document.file_name.split('.').pop()?.toLowerCase() ?? '';
+    const officeTypes = ['docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt'];
+
+    if (officeTypes.includes(fileExt)) {
+      const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(signed.signedUrl)}`;
+      return NextResponse.redirect(viewerUrl);
+    }
 
     return NextResponse.redirect(signed.signedUrl);
   } catch (error) {

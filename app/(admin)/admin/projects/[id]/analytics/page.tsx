@@ -38,6 +38,7 @@ export default async function ProjectAnalyticsPage({ params }: { params: { id: s
       />
       <AnalyticsTable rows={analytics.chatbotUsage} title="Chatbot usage" />
       <AnalyticsTable rows={analytics.loginActivity} title="Login activity" />
+      <AnalyticsTable rows={analytics.knowledgeGaps} title="Knowledge gaps — unanswered queries" />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { BookmarkButton } from '@/components/chat/bookmark-button';
 import { SourceTag } from '@/components/chat/source-tag';
 import { cn } from '@/lib/utils';
 
@@ -5,11 +6,22 @@ export interface ChatBubbleMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  sources?: Array<{ documentName: string }> | null;
+  sources?: Array<{ documentName: string; similarity?: number }> | null;
+  /** True for messages that were just streamed and have not yet been persisted with a stable DB id. */
+  isStreamed?: boolean;
 }
 
-export function MessageBubble({ message }: { message: ChatBubbleMessage }) {
+export function MessageBubble({
+  message,
+  projectId,
+  isBookmarked,
+}: {
+  message: ChatBubbleMessage;
+  projectId?: string;
+  isBookmarked?: boolean;
+}) {
   const isUser = message.role === 'user';
+  const showBookmark = !isUser && !message.isStreamed && !!projectId;
 
   return (
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
@@ -18,10 +30,19 @@ export function MessageBubble({ message }: { message: ChatBubbleMessage }) {
         {!isUser && message.sources?.length ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {message.sources.map((source, index) => (
-              <SourceTag key={`${source.documentName}-${index}`} documentName={source.documentName} />
+              <SourceTag key={`${source.documentName}-${index}`} documentName={source.documentName} similarity={source.similarity} />
             ))}
           </div>
         ) : null}
+        {showBookmark && (
+          <div className="mt-2 flex justify-end">
+            <BookmarkButton
+              messageId={message.id}
+              projectId={projectId}
+              initialIsBookmarked={isBookmarked ?? false}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

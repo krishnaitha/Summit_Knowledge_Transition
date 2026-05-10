@@ -2,17 +2,21 @@ import 'server-only';
 
 import type {
   ActivityRecord,
+  AssignedQuestion,
+  ChatBookmarkRecord,
   ChatMessageRecord,
   ChatSessionRecord,
   DocumentRecord,
   ProjectDashboardCard,
   ProjectRecord,
   QuizAttemptRecord,
+  QuizOptionKey,
   QuizQuestionRecord,
   QuizSetRecord,
   UserProfile,
 } from '@/lib/types/database';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { computeSectionScores } from '@/lib/quiz/scoring';
 import { formatDate } from '@/lib/utils';
 
 export async function getProfileById(userId: string) {
@@ -285,7 +289,7 @@ export async function getProjectAnalytics(projectId: string) {
   const supabase = createServiceRoleSupabaseClient();
 
   if (!supabase) {
-    return { chatbotUsage: [], quizResults: [], loginActivity: [] };
+    return { chatbotUsage: [], quizResults: [], loginActivity: [], knowledgeGaps: [] };
   }
 
   // Fetch project members first — needed for login activity
@@ -299,12 +303,19 @@ export async function getProjectAnalytics(projectId: string) {
     (memberRows ?? []).map((m: { user_id: string; assigned_at: string }) => [m.user_id, m.assigned_at]),
   );
 
-  const [{ data: sessions }, { data: attempts }, { data: users }, { data: quizSets }, { data: resets }] = await Promise.all([
+  const [{ data: sessions }, { data: attempts }, { data: users }, { data: quizSets }, { data: resets }, { data: gapLogs }] = await Promise.all([
     supabase.from('chat_sessions').select('*').eq('project_id', projectId),
     supabase.from('quiz_attempts').select('*').eq('project_id', projectId).eq('status', 'submitted'),
     supabase.from('users').select('*'),
     supabase.from('quiz_sets').select('id,set_name').eq('project_id', projectId),
     supabase.from('quiz_resets').select('user_id').eq('project_id', projectId),
+    supabase
+      .from('activity_log')
+      .select('metadata, created_at, user_id')
+      .eq('project_id', projectId)
+      .eq('action', 'knowledge_gap')
+      .order('created_at', { ascending: false })
+      .limit(50),
   ]);
 
   const resetCounts = new Map<string, number>();
@@ -336,9 +347,24 @@ export async function getProjectAnalytics(projectId: string) {
     // Determine which sections were included by reading assigned_questions directly
     const assignedQs = (attempt.assigned_questions ?? []) as Array<{ section?: string }>;
     const sectionSet = [...new Set(assignedQs.map((q) => q.section).filter(Boolean))];
-    const sectionLabel = sectionSet.length > 0
-      ? sectionSet.map((s) => s!.charAt(0).toUpperCase() + s!.slice(1)).join(' + ')
+
+    // Merge with carried sections for display
+    const carriedKeys = Object.keys(attempt.carried_sections ?? {});
+    const allSections = [...new Set([...sectionSet, ...carriedKeys])];
+
+    const sectionLabel = allSections.length > 0
+      ? allSections.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' + ')
       : (setIndex.get(attempt.quiz_set_id) ?? 'Unknown');
+
+    // Compute per-section scores (retaken sections from JSONB, carried from carried_sections)
+    const retakenScores = computeSectionScores(
+      attempt.assigned_questions as AssignedQuestion[],
+      (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>,
+    );
+    const sectionScores: Record<string, { score: number; total: number }> = {
+      ...retakenScores,
+      ...(attempt.carried_sections ?? {}),
+    };
 
     return {
       attemptId: attempt.id,
@@ -350,6 +376,7 @@ export async function getProjectAnalytics(projectId: string) {
       setTaken: sectionLabel,
       submittedAt: formatDate(attempt.submitted_at, true),
       resetCount: resetCounts.get(attempt.user_id) ?? 0,
+      sectionScores,
     };
   });
 
@@ -364,7 +391,58 @@ export async function getProjectAnalytics(projectId: string) {
     };
   });
 
-  return { chatbotUsage, quizResults, loginActivity };
+  const knowledgeGaps = (gapLogs ?? []).map((log) => {
+    const meta = (log.metadata ?? {}) as Record<string, unknown>;
+    return {
+      query:      (meta.query as string) ?? '—',
+      confidence: `${(((meta.maxSimilarity as number) ?? 0) * 100).toFixed(0)}%`,
+      askedBy:    resolveDisplayName(log.user_id ?? ''),
+      askedAt:    formatDate(log.created_at, true),
+    };
+  });
+
+  return { chatbotUsage, quizResults, loginActivity, knowledgeGaps };
+}
+
+export async function getBookmarkedMessageIds(userId: string, sessionId: string): Promise<string[]> {
+  const supabase = createServiceRoleSupabaseClient();
+  if (!supabase) return [];
+
+  // Get message IDs for the session first
+  const { data: messages } = await supabase
+    .from('chat_messages')
+    .select('id')
+    .eq('session_id', sessionId);
+
+  const messageIds = (messages ?? []).map((m) => m.id);
+  if (!messageIds.length) return [];
+
+  const { data: bookmarks } = await supabase
+    .from('chat_bookmarks')
+    .select('message_id')
+    .eq('user_id', userId)
+    .in('message_id', messageIds);
+
+  return (bookmarks ?? []).map((b) => b.message_id);
+}
+
+export async function getProjectBookmarks(
+  userId: string,
+  projectId: string,
+): Promise<Array<ChatBookmarkRecord & { message: ChatMessageRecord }>> {
+  const supabase = createServiceRoleSupabaseClient();
+  if (!supabase) return [];
+
+  const { data: bookmarks } = await supabase
+    .from('chat_bookmarks')
+    .select('*, message:chat_messages(*)')
+    .eq('user_id', userId)
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false });
+
+  return ((bookmarks ?? []) as Array<ChatBookmarkRecord & { message: ChatMessageRecord }>).filter(
+    (b) => b.message != null,
+  );
 }
 
 export async function logActivity({
@@ -373,7 +451,7 @@ export async function logActivity({
   action,
   metadata,
 }: {
-  userId: string;
+  userId: string | null;
   projectId?: string | null;
   action: string;
   metadata?: Record<string, unknown> | null;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, FileText, Loader2, Upload, X, AlertCircle } from 'lucide-react';
 
@@ -16,6 +16,7 @@ interface QueueItem {
   status: FileStatus;
   step: string | null;
   error: string | null;
+  jobId: string | null;
 }
 
 function formatBytes(b: number) {
@@ -24,14 +25,33 @@ function formatBytes(b: number) {
   return `${(b / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-const ACCEPTED = /\.(pdf|docx|txt)$/i;
+const ACCEPTED = /\.(pdf|docx|xlsx|txt|csv)$/i;
+const POLL_INTERVAL_MS = 3000;
 
 export function DocumentUploadPanel({ projectId }: { projectId: string }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [dragging, setDragging] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isUploading, setIsUploading] = useState(false);
+  // Map from item id → polling interval handle
+  const pollRefs = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
+
+  // Clear all polling intervals on unmount
+  useEffect(() => {
+    const refs = pollRefs.current;
+    return () => {
+      for (const timer of refs.values()) clearInterval(timer);
+    };
+  }, []);
+
+  const stopPolling = (itemId: string) => {
+    const timer = pollRefs.current.get(itemId);
+    if (timer !== undefined) {
+      clearInterval(timer);
+      pollRefs.current.delete(itemId);
+    }
+  };
 
   const addFiles = (incoming: FileList | File[]) => {
     const valid = Array.from(incoming).filter((f) => ACCEPTED.test(f.name));
@@ -44,15 +64,47 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
         status: 'pending' as FileStatus,
         step: null,
         error: null,
+        jobId: null,
       })),
     ]);
   };
 
-  const removeItem = (id: string) =>
+  const removeItem = (id: string) => {
+    stopPolling(id);
     setQueue((prev) => prev.filter((item) => item.id !== id));
+  };
 
   const updateItem = (id: string, patch: Partial<QueueItem>) =>
     setQueue((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+
+  const startPolling = (itemId: string, jobId: string) => {
+    const timer = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/jobs/${jobId}`);
+        if (!res.ok) return;
+        const job = await res.json();
+
+        if (job.status === 'running') {
+          updateItem(itemId, { step: 'Embedding chunks…' });
+        } else if (job.status === 'done') {
+          stopPolling(itemId);
+          updateItem(itemId, { status: 'done', step: null });
+          router.refresh();
+        } else if (job.status === 'failed') {
+          stopPolling(itemId);
+          updateItem(itemId, {
+            status: 'error',
+            step: null,
+            error: job.error ?? 'Processing failed',
+          });
+        }
+      } catch {
+        // network hiccup — keep polling
+      }
+    }, POLL_INTERVAL_MS);
+
+    pollRefs.current.set(itemId, timer);
+  };
 
   const onDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); setDragging(true); }, []);
   const onDragLeave = useCallback(() => setDragging(false), []);
@@ -62,11 +114,12 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
     addFiles(e.dataTransfer.files);
   }, []);
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     const pending = queue.filter((i) => i.status === 'pending');
     if (!pending.length) return;
 
-    startTransition(async () => {
+    setIsUploading(true);
+    try {
       for (const item of pending) {
         updateItem(item.id, { status: 'uploading', step: 'Uploading…', error: null });
 
@@ -82,7 +135,7 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
           continue;
         }
 
-        updateItem(item.id, { status: 'processing', step: 'Extracting & embedding…' });
+        updateItem(item.id, { status: 'processing', step: 'Queued — processing in background…' });
 
         const processRes = await fetch('/api/documents/process', {
           method: 'POST',
@@ -96,11 +149,13 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
           continue;
         }
 
-        updateItem(item.id, { status: 'done', step: null });
+        // Store jobId and start polling for completion
+        updateItem(item.id, { jobId: processData.jobId, step: 'Processing…' });
+        startPolling(item.id, processData.jobId);
       }
-
-      router.refresh();
-    });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const pendingCount = queue.filter((i) => i.status === 'pending').length;
@@ -137,10 +192,10 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
           <p className="mt-3 text-sm font-medium text-slate-700">
             Drop files here or click to browse
           </p>
-          <p className="mt-1 text-xs text-slate-400">PDF · DOCX · TXT · Multiple files supported</p>
+          <p className="mt-1 text-xs text-slate-400">PDF · DOCX · XLSX · TXT · CSV · Multiple files supported</p>
           <input
             ref={inputRef}
-            accept=".pdf,.docx,.txt"
+            accept=".pdf,.docx,.xlsx,.txt,.csv"
             className="hidden"
             type="file"
             multiple
@@ -195,7 +250,7 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
                 </div>
 
                 {/* Remove (only when not active) */}
-                {item.status === 'pending' && !isPending && (
+                {item.status === 'pending' && !isUploading && (
                   <button
                     onClick={() => removeItem(item.id)}
                     className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
@@ -211,9 +266,9 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
         {/* Actions */}
         <div className="flex items-center gap-3">
           {pendingCount > 0 && (
-            <Button disabled={isPending} onClick={handleUpload} type="button">
-              {isPending
-                ? 'Processing…'
+            <Button disabled={isUploading} onClick={handleUpload} type="button">
+              {isUploading
+                ? 'Uploading…'
                 : `Upload ${pendingCount} file${pendingCount > 1 ? 's' : ''}`}
             </Button>
           )}

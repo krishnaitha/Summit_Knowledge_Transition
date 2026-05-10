@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { ChatInterface } from '@/components/chat/chat-interface';
 import { requireMember } from '@/lib/auth';
-import { getChatMessages, getProjectById, getProjectChatSessions, userHasProjectAccess } from '@/lib/data';
+import { getChatMessages, getBookmarkedMessageIds, getProjectById, getProjectChatSessions, userHasProjectAccess } from '@/lib/data';
 
 export default async function ProjectChatPage({ params }: { params: { id: string } }) {
   const { profile } = await requireMember();
@@ -17,7 +17,10 @@ export default async function ProjectChatPage({ params }: { params: { id: string
   const project = await getProjectById(params.id);
   const sessions = await getProjectChatSessions(profile!.id, params.id);
   const initialSession = sessions[0] ?? null;
-  const messages = initialSession ? await getChatMessages(initialSession.id) : [];
+  const [messages, initialBookmarkedIds] = await Promise.all([
+    initialSession ? getChatMessages(initialSession.id) : Promise.resolve([]),
+    initialSession ? getBookmarkedMessageIds(profile!.id, initialSession.id) : Promise.resolve([]),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -43,6 +46,7 @@ export default async function ProjectChatPage({ params }: { params: { id: string
         }))}
         projectId={params.id}
         projectName={project?.name ?? 'Project'}
+        initialBookmarkedIds={initialBookmarkedIds}
       />
     </div>
   );

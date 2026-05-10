@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsUpDown, RotateCcw, Search, X } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsUpDown, Download, RotateCcw, Search, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +22,7 @@ export interface QuizResultRow {
   setTaken: string;
   submittedAt: string;
   resetCount: number;
+  sectionScores?: Record<string, { score: number; total: number }>;
 }
 
 interface QuizResultsCardProps {
@@ -29,6 +30,50 @@ interface QuizResultsCardProps {
   adminId?: string;
   rows: QuizResultRow[];
   resetAction: (formData: FormData) => Promise<void>;
+}
+
+function exportToCsv(rows: QuizResultRow[]) {
+  const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+
+  // Collect all unique section names across all rows
+  const sectionNames: string[] = [];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    for (const sec of Object.keys(row.sectionScores ?? {})) {
+      if (!seen.has(sec)) { seen.add(sec); sectionNames.push(sec); }
+    }
+  }
+
+  const headers = ['Member', 'Email', 'Score', 'Percentage', 'Set Taken', 'Submitted At', 'Reset Count',
+    ...sectionNames.map((s) => `${s.charAt(0).toUpperCase() + s.slice(1)} Score`)];
+
+  const csvRows = rows.map((row) => {
+    const base = [
+      esc(row.member),
+      esc(row.email),
+      esc(row.score),
+      esc(row.percentage),
+      esc(row.setTaken),
+      esc(row.submittedAt),
+      String(row.resetCount),
+    ];
+    for (const sec of sectionNames) {
+      const s = row.sectionScores?.[sec];
+      base.push(s ? esc(`${s.score}/${s.total}`) : '""');
+    }
+    return base.join(',');
+  });
+
+  const csv = [headers.map(esc).join(','), ...csvRows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `quiz-results-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
@@ -45,6 +90,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
   const [page, setPage] = useState(1);
   const [pendingReset, setPendingReset] = useState<QuizResultRow | null>(null);
   const [reason, setReason] = useState('');
+  const [sectionsToReset, setSectionsToReset] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
 
   function toggleSort(col: SortKey) {
@@ -81,18 +127,42 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
 
   function openResetModal(row: QuizResultRow) {
     setReason('');
+    // Pre-select all sections for reset by default
+    const allSections = Object.keys(row.sectionScores ?? {});
+    setSectionsToReset(new Set(allSections));
     setPendingReset(row);
   }
 
   function closeModal() {
     setPendingReset(null);
     setReason('');
+    setSectionsToReset(new Set());
+  }
+
+  function toggleSection(section: string) {
+    setSectionsToReset((prev) => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
   }
 
   function handleResetSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!pendingReset) return;
     const fd = new FormData(e.currentTarget);
+
+    // Only send sections_to_reset for partial resets (some but not all sections selected)
+    const allSections = Object.keys(pendingReset.sectionScores ?? {});
+    const isPartial = allSections.length > 1 && sectionsToReset.size < allSections.length;
+    if (isPartial) {
+      fd.set('sections_to_reset', JSON.stringify([...sectionsToReset]));
+    }
+
     startTransition(async () => {
       await resetAction(fd);
       closeModal();
@@ -115,14 +185,26 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
             )}
           </div>
           {rows.length > 0 && (
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-              <input
-                className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-8 pr-4 text-sm"
-                onChange={(e) => { setFilter(e.target.value); setPage(1); }}
-                placeholder="Filter by name or set…"
-                value={filter}
-              />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Button
+                size="sm"
+                type="button"
+                variant="secondary"
+                onClick={() => exportToCsv(rows)}
+                className="flex items-center gap-1.5"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Export CSV
+              </Button>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                <input
+                  className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-8 pr-4 text-sm"
+                  onChange={(e) => { setFilter(e.target.value); setPage(1); }}
+                  placeholder="Filter by name or set…"
+                  value={filter}
+                />
+              </div>
             </div>
           )}
         </CardHeader>
@@ -167,7 +249,16 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                             <p className="text-xs text-slate-400">{row.email}</p>
                           </td>
                           <td className="py-3 pr-6">
-                            <span className="font-semibold text-slate-900">{row.score}</span>
+                            <p className="font-semibold text-slate-900">{row.score}</p>
+                            {row.sectionScores && Object.keys(row.sectionScores).length > 1 && (
+                              <div className="mt-0.5 space-y-0.5">
+                                {Object.entries(row.sectionScores).map(([sec, s]) => (
+                                  <p key={sec} className="text-xs text-slate-400">
+                                    {sec.charAt(0).toUpperCase() + sec.slice(1)}: {s.score}/{s.total}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
                           </td>
                           <td className="py-3 pr-6">
                             <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
@@ -260,6 +351,36 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
               <input type="hidden" name="project_id" value={projectId} />
               <input type="hidden" name="user_id" value={pendingReset.userId} />
               {adminId && <input type="hidden" name="reset_by" value={adminId} />}
+
+              {/* Section selection for partial retake — only shown when there are multiple sections */}
+              {pendingReset.sectionScores && Object.keys(pendingReset.sectionScores).length > 1 && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Sections to reset
+                    <span className="ml-1 text-xs font-normal text-slate-400">(uncheck to carry score forward)</span>
+                  </label>
+                  <div className="space-y-2">
+                    {Object.entries(pendingReset.sectionScores).map(([sec, s]) => (
+                      <label key={sec} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="rounded border-slate-300"
+                          checked={sectionsToReset.has(sec)}
+                          onChange={() => toggleSection(sec)}
+                        />
+                        <span className="text-sm text-slate-700">
+                          {sec.charAt(0).toUpperCase() + sec.slice(1)}
+                          <span className="ml-1 text-slate-400 text-xs">({s.score}/{s.total})</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                  {sectionsToReset.size === 0 && (
+                    <p className="mt-2 text-xs text-amber-600">Select at least one section to reset.</p>
+                  )}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Reason for reset <span className="text-rose-500">*</span>
@@ -278,7 +399,10 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                 <Button type="button" variant="secondary" onClick={closeModal} disabled={isPending}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isPending || !reason.trim()}>
+                <Button
+                  type="submit"
+                  disabled={isPending || !reason.trim() || sectionsToReset.size === 0}
+                >
                   {isPending ? 'Resetting…' : 'Confirm reset'}
                 </Button>
               </div>

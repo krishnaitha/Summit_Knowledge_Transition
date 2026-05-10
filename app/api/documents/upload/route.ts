@@ -4,10 +4,15 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserContext } from '@/lib/auth';
 import { getProfileById, userHasProjectAccess } from '@/lib/data';
 import { uploadDocumentToStorage } from '@/lib/documents/upload';
+import { validateOrigin, validateUploadedFile } from '@/lib/security';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { user } = await getCurrentUserContext();
     const supabase = createServiceRoleSupabaseClient();
 
@@ -27,6 +32,11 @@ export async function POST(request: Request) {
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: 'No file received' }, { status: 400 });
+    }
+
+    const fileError = await validateUploadedFile(file);
+    if (fileError) {
+      return NextResponse.json({ error: fileError }, { status: 400 });
     }
 
     const canAccess = await userHasProjectAccess(user.id, profile?.role, projectId);

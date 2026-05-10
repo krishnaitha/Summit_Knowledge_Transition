@@ -48,5 +48,9 @@ export function createServiceRoleSupabaseClient() {
       set(_name: string, _value: string, _options: CookieOptions) {},
       remove(_name: string, _options: CookieOptions) {},
     },
+    global: {
+      fetch: (url: RequestInfo | URL, init?: RequestInit) =>
+        fetch(url, { ...init, cache: 'no-store' }),
+    },
   });
 }

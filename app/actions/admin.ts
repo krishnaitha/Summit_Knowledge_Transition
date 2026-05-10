@@ -3,7 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { parse } from 'csv-parse/sync';
 
+import { computeSectionScores } from '@/lib/quiz/scoring';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import type { AssignedQuestion, QuizOptionKey } from '@/lib/types/database';
 
 function getAdminSupabase() {
   const supabase = createServiceRoleSupabaseClient();
@@ -113,6 +115,7 @@ export async function resetQuizAttemptAction(formData: FormData) {
   const userId = String(formData.get('user_id') ?? '');
   const reason = String(formData.get('reason') ?? '').trim() || 'Reset by admin';
   const resetBy = String(formData.get('reset_by') ?? '');
+  const sectionsJson = String(formData.get('sections_to_reset') ?? '');
 
   // Enforce max reset limit
   const { count } = await supabase
@@ -125,7 +128,50 @@ export async function resetQuizAttemptAction(formData: FormData) {
     return;
   }
 
-  await supabase.from('quiz_attempts').delete().eq('id', attemptId);
+  // Determine if this is a partial reset (specific sections) or full reset (all sections)
+  const sectionsToReset: string[] | null = sectionsJson ? (JSON.parse(sectionsJson) as string[]) : null;
+
+  if (sectionsToReset && sectionsToReset.length > 0) {
+    // Partial reset: fetch the attempt, compute section scores, carry non-reset sections
+    const { data: attempt } = await supabase
+      .from('quiz_attempts')
+      .select('assigned_questions, answers_given, quiz_set_id')
+      .eq('id', attemptId)
+      .maybeSingle();
+
+    if (attempt) {
+      const assignedQs = (attempt.assigned_questions ?? []) as AssignedQuestion[];
+      const answersGiven = (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>;
+      const allSectionScores = computeSectionScores(assignedQs, answersGiven);
+
+      // Sections NOT being reset are carried forward
+      const carriedSections: Record<string, { score: number; total: number }> = {};
+      for (const [sec, scores] of Object.entries(allSectionScores)) {
+        if (!sectionsToReset.includes(sec)) {
+          carriedSections[sec] = scores;
+        }
+      }
+
+      // Delete old attempt and create new in_progress one with carried scores
+      await supabase.from('quiz_attempts').delete().eq('id', attemptId);
+      await supabase.from('quiz_attempts').insert({
+        user_id: userId,
+        project_id: projectId,
+        quiz_set_id: attempt.quiz_set_id,
+        assigned_questions: [],
+        answers_given: {},
+        status: 'in_progress',
+        carried_sections: Object.keys(carriedSections).length > 0 ? carriedSections : null,
+      });
+    } else {
+      // Attempt not found, just delete
+      await supabase.from('quiz_attempts').delete().eq('id', attemptId);
+    }
+  } else {
+    // Full reset — existing behavior
+    await supabase.from('quiz_attempts').delete().eq('id', attemptId);
+  }
+
   await supabase.from('quiz_resets').insert({
     user_id: userId,
     project_id: projectId,
@@ -178,11 +224,13 @@ export async function createQuizSetAction(formData: FormData) {
   const projectId = String(formData.get('project_id') ?? '');
   const setName = String(formData.get('set_name') ?? '');
   const setNumber = Number(formData.get('set_number') ?? 1);
+  const category = String(formData.get('category') ?? 'general').trim().toLowerCase() || 'general';
 
   await supabase.from('quiz_sets').insert({
     project_id: projectId,
     set_name: setName,
     set_number: setNumber,
+    category,
     is_active: true,
   });
 
@@ -193,19 +241,54 @@ export async function createQuizQuestionAction(formData: FormData) {
   const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '');
   const quizSetId = String(formData.get('quiz_set_id') ?? '');
+  const questionType = String(formData.get('question_type') ?? 'mcq');
+  const isTrueFalse = questionType === 'true_false';
 
   await supabase.from('quiz_questions').insert({
     quiz_set_id: quizSetId,
     question_text: String(formData.get('question_text') ?? ''),
     option_a: String(formData.get('option_a') ?? ''),
     option_b: String(formData.get('option_b') ?? ''),
-    option_c: String(formData.get('option_c') ?? ''),
-    option_d: String(formData.get('option_d') ?? ''),
+    option_c: isTrueFalse ? '' : String(formData.get('option_c') ?? ''),
+    option_d: isTrueFalse ? '' : String(formData.get('option_d') ?? ''),
     correct_option: String(formData.get('correct_option') ?? 'A'),
     explanation: String(formData.get('explanation') ?? ''),
     marks: Number(formData.get('marks') ?? 1),
+    question_type: questionType,
   });
 
+  revalidatePath(`/admin/projects/${projectId}/quiz`);
+}
+
+export async function updateQuizQuestionAction(formData: FormData) {
+  const supabase = getAdminSupabase();
+  const questionId = String(formData.get('question_id') ?? '');
+  const projectId = String(formData.get('project_id') ?? '');
+  const questionType = String(formData.get('question_type') ?? 'mcq');
+  const isTrueFalse = questionType === 'true_false';
+
+  await supabase.from('quiz_questions').update({
+    question_text: String(formData.get('question_text') ?? ''),
+    option_a: String(formData.get('option_a') ?? ''),
+    option_b: String(formData.get('option_b') ?? ''),
+    option_c: isTrueFalse ? '' : String(formData.get('option_c') ?? ''),
+    option_d: isTrueFalse ? '' : String(formData.get('option_d') ?? ''),
+    correct_option: String(formData.get('correct_option') ?? 'A'),
+    explanation: String(formData.get('explanation') ?? ''),
+    marks: Number(formData.get('marks') ?? 1),
+    question_type: questionType,
+  }).eq('id', questionId);
+
+  revalidatePath(`/admin/projects/${projectId}/quiz`);
+}
+
+export async function toggleQuizSetActiveAction(formData: FormData) {
+  const supabase = getAdminSupabase();
+  const setId = String(formData.get('set_id') ?? '');
+  const projectId = String(formData.get('project_id') ?? '');
+  const nextActive = formData.get('next_active') === 'true';
+
+  await supabase.from('quiz_sets').update({ is_active: nextActive }).eq('id', setId);
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 

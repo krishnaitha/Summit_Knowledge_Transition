@@ -2,14 +2,13 @@ import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import type { ChatCompletion } from 'groq-sdk/resources/chat/completions';
 
-import { createGroqQuizCompletion } from '@/lib/groq/chat';
+import { createQuizCompletion } from '@/lib/llm';
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
 import sql from '@/lib/db';
 import { sleep } from '@/lib/utils';
 import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
-import { r2, R2_BUCKET } from '@/lib/storage/r2';
+import { downloadFile } from '@/lib/storage/local';
 
 // ─── Quiz generation helpers ────────────────────────────────────────────────────
 
@@ -186,14 +185,8 @@ async function processDocumentJob(payload: Record<string, unknown>) {
   const document = docs[0];
   if (!document) throw new Error('Document not found');
 
-  // Download from R2
-  const r2Response = await r2.send(new GetObjectCommand({
-    Bucket: R2_BUCKET,
-    Key: document.file_url as string,
-  }));
-
-  if (!r2Response.Body) throw new Error('Unable to download file from R2');
-  const buffer = Buffer.from(await r2Response.Body.transformToByteArray());
+  // Download from local storage
+  const buffer = await downloadFile(document.file_url as string);
 
   const content = await extractTextFromFile(document.file_name as string, buffer);
   const chunkCount = await processDocumentRecord(documentId, projectId, content);
@@ -239,7 +232,7 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
     let questions: RawQuestion[] = [];
 
     try {
-      const completion = await createGroqQuizCompletion({
+      const completion = await createQuizCompletion({
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -247,13 +240,13 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
         response_format: { type: 'json_object' },
         temperature: 0.8,
         max_tokens: 2500,
-      }) as ChatCompletion;
+      });
 
       const raw = completion?.choices?.[0]?.message?.content ?? '{}';
       questions = parseQuestions(raw);
     } catch (groqErr) {
       const msg = groqErr instanceof Error ? groqErr.message : String(groqErr);
-      console.error(`[worker] Groq error on set ${i + 1}:`, msg);
+      console.error(`[worker] LLM error on set ${i + 1}:`, msg);
       if (i === 0) throw new Error(`AI generation failed: ${msg}`);
       continue;
     }

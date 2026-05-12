@@ -5,8 +5,13 @@ export const appEnv = {
   nextauthSecret: process.env.NEXTAUTH_SECRET,
   r2AccountId: process.env.R2_ACCOUNT_ID,
   r2BucketName: process.env.R2_BUCKET_NAME,
+  // LLM Provider selection
+  llmProvider: (process.env.LLM_PROVIDER ?? 'groq') as 'groq' | 'copilot',
+  // Groq configuration
   groqApiKey: process.env.GROQ_API_KEY,
   groqQuizApiKey: process.env.GROQ_API_KEY_QUIZ,
+  // Copilot proxy configuration
+  copilotProxyToken: process.env.COPILOT_PROXY_TOKEN,
 };
 
 export function isDatabaseConfigured() {
@@ -19,6 +24,17 @@ export function isR2Configured() {
 
 export function isGroqConfigured() {
   return Boolean(appEnv.groqApiKey);
+}
+
+export function isCopilotProxyConfigured() {
+  return Boolean(appEnv.copilotProxyToken);
+}
+
+export function isLlmConfigured() {
+  if (appEnv.llmProvider === 'copilot') {
+    return isCopilotProxyConfigured();
+  }
+  return isGroqConfigured();
 }
 
 export function assertEnv(name: keyof typeof appEnv) {

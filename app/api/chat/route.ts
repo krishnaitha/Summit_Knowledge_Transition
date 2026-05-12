@@ -2,13 +2,15 @@ import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
 import { getProjectById, logActivity, userHasProjectAccess } from '@/lib/data';
-import { buildKtPrompt, createGroqChatCompletion } from '@/lib/groq/chat';
+import { buildKtPrompt } from '@/lib/groq/chat';
 import { streamGroqText } from '@/lib/groq/streaming';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
 import { validateOrigin } from '@/lib/security';
 import sql from '@/lib/db';
 import type { RagTraceRecord } from '@/lib/types/database';
+import { createChatCompletion, getCurrentLlmProvider } from '@/lib/llm';
+import { createGroqChatCompletion } from '@/lib/groq/chat';
 
 const answerCache = new Map<string, string>();
 
@@ -282,29 +284,63 @@ export async function POST(request: Request) {
         const enqueue = (text: string) => controller.enqueue(new TextEncoder().encode(text));
         const tGenStart = Date.now();
 
-        let completion;
+        let generated = '';
+        let usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | null = null;
+        let modelUsed: string | null = null;
 
         try {
-          completion = await createGroqChatCompletion(
-            {
-              stream: true,
-              max_tokens: 1024,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              stream_options: { include_usage: true } as any,
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: body.message },
-              ],
-            },
-            (statusMessage) => enqueue(`\x00${statusMessage}`),
-          );
-        } catch {
-          enqueue('\x00Failed to reach the AI. Please try again.');
+          // For Groq, use streaming; for Copilot, buffer the full response
+          if (getCurrentLlmProvider() === 'Groq') {
+            const completion = await createGroqChatCompletion(
+              {
+                stream: true,
+                max_tokens: 1024,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                stream_options: { include_usage: true } as any,
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: body.message },
+                ],
+              },
+              (statusMessage) => enqueue(`\x00${statusMessage}`),
+            );
+
+            const { text, usage: streamUsage, modelUsed: model } = await streamGroqText(completion, (token) => {
+              generated += token;
+              enqueue(token);
+            });
+
+            generated = text;
+            usage = streamUsage;
+            modelUsed = model;
+          } else {
+            // Copilot proxy — non-streaming
+            const result = await createChatCompletion(
+              {
+                max_tokens: 1024,
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: body.message },
+                ],
+              },
+              (statusMessage) => enqueue(`\x00${statusMessage}`),
+            );
+
+            generated = result.choices[0]?.message.content ?? '';
+            usage = result.usage ?? null;
+            modelUsed = getCurrentLlmProvider();
+
+            // Stream the response character by character for consistency
+            for (const char of generated) {
+              enqueue(char);
+            }
+          }
+        } catch (err) {
+          enqueue(`\x00Failed to reach the AI. Please try again.${err instanceof Error ? ` (${err.message})` : ''}`);
           controller.close();
           return;
         }
 
-        const { text: generated, usage, modelUsed } = await streamGroqText(completion, (token) => enqueue(token));
         const generation_ms = Date.now() - tGenStart;
 
         answerCache.set(cacheKey, generated);

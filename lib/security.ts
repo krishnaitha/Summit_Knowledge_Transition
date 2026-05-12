@@ -18,14 +18,16 @@ export function validateOrigin(request: Request): boolean {
   }
 }
 
-const ALLOWED_EXTENSIONS = new Set(['pdf', 'docx', 'xlsx', 'txt', 'csv']);
-const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3 MB
+const ALLOWED_EXTENSIONS = new Set(['pdf', 'docx', 'xlsx', 'pptx', 'ppt', 'txt', 'csv']);
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 // Magic bytes for binary formats
 const MAGIC: Record<string, number[]> = {
-  pdf:  [0x25, 0x50, 0x44, 0x46], // %PDF
-  docx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP)
-  xlsx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP — same as docx)
+  pdf:  [0x25, 0x50, 0x44, 0x46],       // %PDF
+  docx: [0x50, 0x4b, 0x03, 0x04],       // PK.. (ZIP-based Office Open XML)
+  xlsx: [0x50, 0x4b, 0x03, 0x04],       // PK.. (ZIP-based Office Open XML)
+  pptx: [0x50, 0x4b, 0x03, 0x04],       // PK.. (ZIP-based Office Open XML)
+  ppt:  [0xd0, 0xcf, 0x11, 0xe0],       // OLE2 compound document
 };
 
 /**
@@ -40,11 +42,11 @@ export async function validateUploadedFile(file: File): Promise<string | null> {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
 
   if (!ALLOWED_EXTENSIONS.has(ext)) {
-    return `File type ".${ext}" is not allowed. Accepted types: PDF, DOCX, XLSX, TXT, CSV.`;
+    return `File type ".${ext}" is not allowed. Accepted types: PDF, DOCX, XLSX, PPTX, PPT, TXT, CSV.`;
   }
 
   if (file.size > MAX_FILE_SIZE) {
-    return `File "${file.name}" exceeds the 3 MB limit (${(file.size / 1024 / 1024).toFixed(1)} MB).`;
+    return `File "${file.name}" exceeds the 5 MB limit (${(file.size / 1024 / 1024).toFixed(1)} MB).`;
   }
 
   if (MAGIC[ext]) {

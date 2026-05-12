@@ -1,8 +1,9 @@
 # Summit KT Portal — Architecture & Feature Analysis
 
-> **Version:** 0.2.0
-> **Stack:** Next.js 14 · PostgreSQL · NextAuth.js v4 · Cloudflare R2 · Groq · @xenova/transformers · Resend · Tailwind CSS
-> **Purpose:** Enterprise knowledge-transfer portal for structured team transitions
+> **Version:** 0.2.0  
+> **Stack:** Next.js 14 · PostgreSQL · NextAuth.js v4 · Local File Storage · Groq · @xenova/transformers · Resend · Tailwind CSS  
+> **Purpose:** Enterprise knowledge-transfer portal for structured team transitions  
+> **Data Compliance:** All KT documents stored locally — no external cloud storage
 
 ---
 
@@ -67,16 +68,16 @@ Summit KT Portal is a **multi-role, project-scoped knowledge-transfer platform**
         │            │              │                  │
         ▼            ▼              ▼                  ▼
   ┌──────────┐ ┌──────────────┐ ┌──────────┐  ┌──────────────┐
-  │PostgreSQL│ │  Groq Cloud  │ │  Cloudfl │  │    Resend    │
-  │(local)   │ │              │ │  are R2  │  │    (Email)   │
-  │          │ │ Chat:        │ │          │  │              │
-  │ pgvector │ │ llama-3.3-  │ │ Document │  │ Invite links │
-  │ pgcrypto │ │ 70b-versatile│ │ Storage  │  │ Password     │
-  │          │ │              │ │          │  │ reset email  │
-  │          │ │ Quiz gen:    │ └──────────┘  │ Quiz notifs  │
-  │          │ │ llama-3.1-  │               └──────────────┘
-  │          │ │ 8b-instant  │
-  └──────────┘ └──────────────┘
+  │PostgreSQL│ │  Groq Cloud  │ │  Local   │  │    Resend    │
+  │(local)   │ │              │ │ Storage  │  │    (Email)   │
+  │          │ │ Chat:        │ │ (Node.js │  │              │
+  │ pgvector │ │ llama-3.3-  │ │ fs API)  │  │ Invite links │
+  │ pgcrypto │ │ 70b-versatile│ │          │  │ Password     │
+  │          │ │              │ │ File     │  │ reset email  │
+  │          │ │ Quiz gen:    │ │ uploads: │  │ Quiz notifs  │
+  │          │ │ llama-3.1-  │ │ /public/ │  └──────────────┘
+  │          │ │ 8b-instant  │ │ uploads/ │
+  └──────────┘ └──────────────┘ └──────────┘
 
   Auth (NextAuth.js v4)
   ┌──────────────────────────────────────┐
@@ -187,7 +188,7 @@ summit-kt-portal/
 │   ├── documents/
 │   │   ├── parse.ts                  ← PDF / DOCX / CSV text extraction
 │   │   ├── process.ts                ← Chunk + embed + upsert pipeline
-│   │   └── upload.ts                 ← Cloudflare R2 upload helper
+│   │   └── upload.ts                 ← Local file upload helper
 │   ├── groq/
 │   │   ├── chat.ts                   ← Groq client, retry, model selection
 │   │   └── streaming.ts              ← Stream token consumer
@@ -200,7 +201,7 @@ summit-kt-portal/
 │   │   ├── scoring.ts                ← Score calculation
 │   │   └── shuffle.ts                ← Question/option shuffling
 │   ├── storage/
-│   │   └── r2.ts                     ← Cloudflare R2 S3 client
+│   │   └── local.ts                  ← Local file system storage (Node.js fs)
 │   └── types/
 │       └── database.ts               ← Shared TypeScript types
 │
@@ -460,8 +461,10 @@ No Row Level Security (RLS). All access control is enforced at the application l
   POST /api/documents/upload
   ┌──────────────────────────────────────────┐
   │ 1. Validate file type (PDF/DOCX/CSV/TXT) │
-  │ 2. Upload to Cloudflare R2 (PutObject)   │
+  │ 2. Upload to local storage (Node.js fs)  │
+  │    → /public/uploads/[timestamp]-name    │
   │ 3. Insert record in documents table      │
+  │    (file_url = "uploads/...")            │
   └──────────────────────────────────────────┘
           │
           ▼
@@ -484,7 +487,7 @@ No Row Level Security (RLS). All access control is enforced at the application l
   Background worker picks up job (within 1 s)
   POST /api/jobs/worker (internal)
   ┌──────────────────────────────────────────────────────┐
-  │ 1. Download file from Cloudflare R2 (GetObject)      │
+  │ 1. Download file from local storage (readFileSync)   │
   │ 2. Extract text                                      │
   │    ├── PDF    → pdf-parse                            │
   │    ├── DOCX   → mammoth                              │
@@ -502,6 +505,9 @@ No Row Level Security (RLS). All access control is enforced at the application l
           │
           ▼
   Frontend poll detects status='done' → shows "Ready"
+
+  Security note: All files are stored locally; no external
+  cloud APIs are called. Access control enforced via auth.
 ```
 
 ### 5.3 AI-Grounded Chat (RAG)
@@ -750,9 +756,9 @@ app/layout.tsx
 |---|---|---|---|
 | GET | `/api/chat?sessionId=` | Member/Admin | Load chat history for a session |
 | POST | `/api/chat` | Member/Admin | Send message, get streaming response |
-| POST | `/api/documents/upload` | Admin | Upload file to Cloudflare R2 |
+| POST | `/api/documents/upload` | Admin | Upload file to local storage (`public/uploads/`) |
 | POST | `/api/documents/process` | Admin | Queue document_process job; returns `{ jobId }` |
-| GET | `/api/documents/view?documentId=` | Member/Admin | Get R2 signed URL for document preview |
+| GET | `/api/documents/view?documentId=` | Member/Admin | Stream document from local storage |
 | POST | `/api/quiz/generate` | Admin | Queue quiz_generate job; returns `{ jobId }` |
 | POST | `/api/quiz/start` | Member | Begin quiz attempt |
 | POST | `/api/quiz/submit` | Member | Submit answers and receive score |
@@ -822,7 +828,7 @@ app/layout.tsx
 | 3 | **Quiz Anti-Cheat** | Tab-switch detection triggers auto-submit but copy-paste and screen-share prevention are not enforced | Quiz integrity not fully guaranteed |
 | 4 | **Email Required for Reset** | Forgot-password and invite flows require `RESEND_API_KEY`; silently skipped if unset | Users cannot recover accounts without email config |
 | 5 | **Admin Bootstrap** | No seeding UI; first admin must be promoted manually via SQL | Manual DB step required after first signup |
-| 6 | **Document Deletion** | No server-side R2 object cleanup when documents are deleted from DB | Orphaned files accumulate in R2 |
+| 6 | **Document Backup** | Local storage requires manual backup strategy; no automatic replication | Data loss possible if disk fails |
 | 7 | **Pagination** | All data fetches are unbounded | Performance degrades at scale |
 | 8 | **File Validation** | No server-side MIME type check beyond extension | Malicious files can be uploaded |
 | 9 | **File Size Limit** | No size cap on upload endpoint | Storage exhaustion possible |

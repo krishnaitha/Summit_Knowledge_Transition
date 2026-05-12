@@ -1,11 +1,9 @@
-import { GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
 import { logActivity, userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
-import { r2, R2_BUCKET } from '@/lib/storage/r2';
+import { getFileStream } from '@/lib/storage/local';
 
 export async function GET(request: Request) {
   try {
@@ -39,15 +37,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const signedUrl = await getSignedUrl(
-      r2,
-      new GetObjectCommand({ Bucket: R2_BUCKET, Key: document.file_url }),
-      { expiresIn: 300 },
-    );
-
-    if (!signedUrl) {
-      return NextResponse.json({ error: 'Could not generate download link' }, { status: 500 });
-    }
+    // Get file stream from local storage
+    const fileStream = getFileStream(document.file_url);
 
     await logActivity({
       userId,
@@ -57,14 +48,32 @@ export async function GET(request: Request) {
     });
 
     const fileExt = document.file_name.split('.').pop()?.toLowerCase() ?? '';
+    const mimeTypes: Record<string, string> = {
+      'pdf': 'application/pdf',
+      'txt': 'text/plain',
+      'csv': 'text/csv',
+      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'doc': 'application/msword',
+      'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'xls': 'application/vnd.ms-excel',
+    };
+
+    const mimeType = mimeTypes[fileExt] || 'application/octet-stream';
     const officeTypes = ['docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt'];
 
-    if (officeTypes.includes(fileExt)) {
-      const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(signedUrl)}`;
-      return NextResponse.redirect(viewerUrl);
-    }
+    // For Office documents, provide a direct download (not viewable inline)
+    // For PDFs and text, allow inline viewing
+    const contentDisposition = officeTypes.includes(fileExt)
+      ? `attachment; filename="${encodeURIComponent(document.file_name)}"`
+      : 'inline';
 
-    return NextResponse.redirect(signedUrl);
+    return new NextResponse(fileStream, {
+      headers: {
+        'Content-Type': mimeType,
+        'Content-Disposition': contentDisposition,
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed' }, { status: 500 });
   }

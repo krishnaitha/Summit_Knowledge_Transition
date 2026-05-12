@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import sql from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -11,28 +11,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'messageId and projectId required' }, { status: 400 });
     }
 
-    const supabase = createServiceRoleSupabaseClient();
-    const { user } = await getCurrentUserContext();
+    const { userId } = await getCurrentUserContext();
 
-    if (!supabase || !user) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data, error } = await supabase
-      .from('chat_bookmarks')
-      .insert({ user_id: user.id, project_id: body.projectId, message_id: body.messageId })
-      .select('id')
-      .single();
-
-    if (error) {
+    try {
+      const rows = await sql`
+        INSERT INTO chat_bookmarks (user_id, project_id, message_id)
+        VALUES (${userId}, ${body.projectId}, ${body.messageId})
+        RETURNING id
+      `;
+      return NextResponse.json({ id: rows[0].id });
+    } catch (err: unknown) {
       // Unique violation = already bookmarked — treat as success
-      if (error.code === '23505') {
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        (err as { code: string }).code === '23505'
+      ) {
         return NextResponse.json({ id: null, alreadyBookmarked: true });
       }
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: err instanceof Error ? err.message : 'Failed' },
+        { status: 500 },
+      );
     }
-
-    return NextResponse.json({ id: data.id });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed' }, { status: 500 });
   }
@@ -47,18 +53,17 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'messageId required' }, { status: 400 });
     }
 
-    const supabase = createServiceRoleSupabaseClient();
-    const { user } = await getCurrentUserContext();
+    const { userId } = await getCurrentUserContext();
 
-    if (!supabase || !user) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await supabase
-      .from('chat_bookmarks')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('message_id', messageId);
+    await sql`
+      DELETE FROM chat_bookmarks
+      WHERE user_id = ${userId}
+        AND message_id = ${messageId}
+    `;
 
     return NextResponse.json({ ok: true });
   } catch (error) {

@@ -1,19 +1,16 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { getProfileById } from '@/lib/data';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import sql from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
-    const { user } = await getCurrentUserContext();
-    const supabase = createServiceRoleSupabaseClient();
+    const { userId, profile } = await getCurrentUserContext();
 
-    if (!user || !supabase) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const profile = await getProfileById(user.id);
     if (profile?.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -24,12 +21,12 @@ export async function POST(request: Request) {
     const numSets = Math.min(5, Math.max(1, Number(body.numSets) || 3));
 
     // Fail fast: ensure there are document chunks to generate from
-    const { count } = await supabase
-      .from('document_chunks')
-      .select('*', { count: 'exact', head: true })
-      .eq('project_id', projectId);
+    const countRows = await sql`
+      SELECT COUNT(*) AS c FROM document_chunks WHERE project_id = ${projectId}
+    `;
+    const count = Number(countRows[0]?.c ?? 0);
 
-    if (!count || count === 0) {
+    if (count === 0) {
       return NextResponse.json(
         { error: 'No document content found. Upload and process KT documents first.' },
         { status: 400 },
@@ -37,18 +34,26 @@ export async function POST(request: Request) {
     }
 
     // Insert background job
-    const { data: job, error: jobError } = await supabase
-      .from('processing_jobs')
-      .insert({
-        type: 'quiz_generate',
-        payload: { projectId, category, numSets },
-      })
-      .select('id')
-      .single();
+    const jobs = await sql`
+      INSERT INTO processing_jobs (type, payload)
+      VALUES ('quiz_generate', ${sql.json({ projectId, category, numSets })})
+      RETURNING id
+    `;
+    const job = jobs[0] ?? null;
 
-    if (jobError || !job) {
+    if (!job) {
       return NextResponse.json({ error: 'Failed to queue generation job' }, { status: 500 });
     }
+
+    // Kick the worker immediately (fire-and-forget)
+    const workerUrl = `${process.env.INTERNAL_APP_URL ?? 'http://localhost:3000'}/api/jobs/worker`;
+    fetch(workerUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-worker-secret': process.env.WORKER_SECRET ?? '',
+      },
+    }).catch(() => { /* worker will run on next trigger */ });
 
     return NextResponse.json({ jobId: job.id });
   } catch (error) {

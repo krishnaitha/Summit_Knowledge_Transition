@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { getProfileById } from '@/lib/data';
+import sql from '@/lib/db';
 import { validateOrigin } from '@/lib/security';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -11,14 +10,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { user } = await getCurrentUserContext();
-    const supabase = createServiceRoleSupabaseClient();
+    const { userId, profile } = await getCurrentUserContext();
 
-    if (!user || !supabase) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const profile = await getProfileById(user.id);
     if (profile?.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -26,29 +23,36 @@ export async function POST(request: Request) {
     const body = (await request.json()) as { documentId: string; projectId: string };
 
     // Verify document exists before queuing
-    const { data: document, error: docError } = await supabase
-      .from('documents')
-      .select('id')
-      .eq('id', body.documentId)
-      .maybeSingle();
+    const docs = await sql`
+      SELECT id FROM documents WHERE id = ${body.documentId}
+    `;
+    const document = docs[0] ?? null;
 
-    if (docError || !document) {
+    if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });
     }
 
     // Insert background job
-    const { data: job, error: jobError } = await supabase
-      .from('processing_jobs')
-      .insert({
-        type: 'document_process',
-        payload: { documentId: body.documentId, projectId: body.projectId },
-      })
-      .select('id')
-      .single();
+    const jobs = await sql`
+      INSERT INTO processing_jobs (type, payload)
+      VALUES ('document_process', ${sql.json({ documentId: body.documentId, projectId: body.projectId })})
+      RETURNING id
+    `;
+    const job = jobs[0] ?? null;
 
-    if (jobError || !job) {
+    if (!job) {
       return NextResponse.json({ error: 'Failed to queue processing job' }, { status: 500 });
     }
+
+    // Trigger the worker asynchronously (fire-and-forget)
+    const workerUrl = `${process.env.INTERNAL_APP_URL ?? 'http://localhost:3000'}/api/jobs/worker`;
+    fetch(workerUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-worker-secret': process.env.WORKER_SECRET ?? '',
+      },
+    }).catch(() => { /* worker will be retried on next upload */ });
 
     return NextResponse.json({ jobId: job.id });
   } catch (error) {

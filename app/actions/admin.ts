@@ -1,150 +1,159 @@
 'use server';
 
+import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { parse } from 'csv-parse/sync';
+import crypto from 'crypto';
 
+import sql from '@/lib/db';
 import { computeSectionScores } from '@/lib/quiz/scoring';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import type { AssignedQuestion, QuizOptionKey } from '@/lib/types/database';
-
-function getAdminSupabase() {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    throw new Error('Supabase service role is not configured.');
-  }
-
-  return supabase;
-}
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { r2, R2_BUCKET } from '@/lib/storage/r2';
 
 export async function createProjectAction(formData: FormData) {
-  const supabase = getAdminSupabase();
-
   const payload = {
     name: String(formData.get('name') ?? ''),
     description: String(formData.get('description') ?? ''),
     created_by: String(formData.get('created_by') ?? ''),
-    is_active: true,
     pass_threshold: Number(formData.get('pass_threshold') ?? 60),
   };
 
-  await supabase.from('projects').insert(payload);
+  await sql`
+    INSERT INTO projects (name, description, created_by, pass_threshold, is_active)
+    VALUES (${payload.name}, ${payload.description}, ${payload.created_by}, ${payload.pass_threshold}, true)
+  `;
   revalidatePath('/admin/projects');
 }
 
 export async function toggleProjectStatusAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '');
   const nextState = String(formData.get('next_state') ?? 'true') === 'true';
 
-  await supabase.from('projects').update({ is_active: nextState }).eq('id', projectId);
+  await sql`UPDATE projects SET is_active = ${nextState} WHERE id = ${projectId}`;
   revalidatePath('/admin/projects');
   revalidatePath(`/admin/projects/${projectId}`);
 }
 
 export async function deleteDocumentAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const documentId = String(formData.get('document_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
   const storagePath = String(formData.get('file_url') ?? '');
 
   if (storagePath) {
-    await supabase.storage.from('documents').remove([storagePath]);
+    try {
+      await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: storagePath }));
+    } catch {
+      // Non-fatal if file already removed
+    }
   }
 
-  await supabase.from('documents').delete().eq('id', documentId);
-  await supabase.from('document_chunks').delete().eq('document_id', documentId);
+  await sql`DELETE FROM documents WHERE id = ${documentId}`;
+  await sql`DELETE FROM document_chunks WHERE document_id = ${documentId}`;
 
   revalidatePath(`/admin/projects/${projectId}/documents`);
 }
 
 export async function inviteProjectMemberAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const fullName = String(formData.get('full_name') ?? '').trim();
   const projectId = String(formData.get('project_id') ?? '');
 
-  if (!email || !projectId) {
+  if (!email || !projectId) return;
+
+  // Check if user already exists
+  const existing = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+  let userId = existing[0]?.id as string | undefined;
+
+  if (!userId) {
+    // Create invite token and send email
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
+
+    await sql`
+      INSERT INTO invite_tokens (email, token, role, project_id, expires_at)
+      VALUES (${email}, ${token}, 'member', ${projectId}, ${expiresAt})
+      ON CONFLICT (token) DO NOTHING
+    `;
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const inviteLink = `${appUrl}/auth/accept-invite?token=${token}`;
+
+    // Send invite email via Resend (fire-and-forget; if Resend not configured, skip)
+    if (process.env.RESEND_API_KEY) {
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const from = process.env.RESEND_FROM_EMAIL ?? 'notifications@summit.app';
+      try {
+        await resend.emails.send({
+          from,
+          to: email,
+          subject: 'You have been invited to Summit KT Portal',
+          html: `
+            <p>Hi${fullName ? ` ${fullName}` : ''},</p>
+            <p>You have been invited to join <strong>Summit KT Portal</strong>.</p>
+            <p>Click the link below to set your password and access your account:</p>
+            <p><a href="${inviteLink}">${inviteLink}</a></p>
+            <p>This link expires in 7 days.</p>
+          `,
+        });
+      } catch {
+        // Email failure is non-fatal
+      }
+    }
+
+    revalidatePath(`/admin/projects/${projectId}/members`);
     return;
   }
 
-  const { data: existingProfile } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
-  let userId = existingProfile?.id as string | undefined;
-
-  if (!userId) {
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
-      redirectTo: process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard` : undefined,
-      data: {
-        full_name: fullName,
-      },
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    userId = data.user.id;
-    await supabase.from('users').upsert({
-      id: userId,
-      email,
-      full_name: fullName || null,
-      role: 'member',
-      is_active: true,
-    });
-  }
-
-  await supabase.from('project_members').upsert({ project_id: projectId, user_id: userId });
+  // User exists — add to project directly
+  await sql`
+    INSERT INTO project_members (project_id, user_id)
+    VALUES (${projectId}, ${userId})
+    ON CONFLICT (project_id, user_id) DO NOTHING
+  `;
   revalidatePath(`/admin/projects/${projectId}/members`);
 }
 
 export async function removeProjectMemberAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const userId = String(formData.get('user_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
 
-  await supabase.from('project_members').delete().eq('project_id', projectId).eq('user_id', userId);
+  await sql`
+    DELETE FROM project_members WHERE project_id = ${projectId} AND user_id = ${userId}
+  `;
   revalidatePath(`/admin/projects/${projectId}/members`);
 }
 
 const MAX_QUIZ_RESETS = 2;
 
 export async function resetQuizAttemptAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const attemptId = String(formData.get('attempt_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
   const userId = String(formData.get('user_id') ?? '');
   const reason = String(formData.get('reason') ?? '').trim() || 'Reset by admin';
-  const resetBy = String(formData.get('reset_by') ?? '');
+  const resetBy = String(formData.get('reset_by') ?? '') || null;
   const sectionsJson = String(formData.get('sections_to_reset') ?? '');
 
-  // Enforce max reset limit
-  const { count } = await supabase
-    .from('quiz_resets')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .eq('project_id', projectId);
+  const resetCountRows = await sql`
+    SELECT COUNT(*) as c FROM quiz_resets WHERE user_id = ${userId} AND project_id = ${projectId}
+  `;
+  if (Number(resetCountRows[0]?.c ?? 0) >= MAX_QUIZ_RESETS) return;
 
-  if ((count ?? 0) >= MAX_QUIZ_RESETS) {
-    return;
-  }
-
-  // Determine if this is a partial reset (specific sections) or full reset (all sections)
   const sectionsToReset: string[] | null = sectionsJson ? (JSON.parse(sectionsJson) as string[]) : null;
 
   if (sectionsToReset && sectionsToReset.length > 0) {
-    // Partial reset: fetch the attempt, compute section scores, carry non-reset sections
-    const { data: attempt } = await supabase
-      .from('quiz_attempts')
-      .select('assigned_questions, answers_given, quiz_set_id')
-      .eq('id', attemptId)
-      .maybeSingle();
+    const attemptRows = await sql`
+      SELECT assigned_questions, answers_given, quiz_set_id
+      FROM quiz_attempts WHERE id = ${attemptId} LIMIT 1
+    `;
+    const attempt = attemptRows[0];
 
     if (attempt) {
       const assignedQs = (attempt.assigned_questions ?? []) as AssignedQuestion[];
       const answersGiven = (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>;
       const allSectionScores = computeSectionScores(assignedQs, answersGiven);
 
-      // Sections NOT being reset are carried forward
       const carriedSections: Record<string, { score: number; total: number }> = {};
       for (const [sec, scores] of Object.entries(allSectionScores)) {
         if (!sectionsToReset.includes(sec)) {
@@ -152,236 +161,229 @@ export async function resetQuizAttemptAction(formData: FormData) {
         }
       }
 
-      // Delete old attempt and create new in_progress one with carried scores
-      await supabase.from('quiz_attempts').delete().eq('id', attemptId);
-      await supabase.from('quiz_attempts').insert({
-        user_id: userId,
-        project_id: projectId,
-        quiz_set_id: attempt.quiz_set_id,
-        assigned_questions: [],
-        answers_given: {},
-        status: 'in_progress',
-        carried_sections: Object.keys(carriedSections).length > 0 ? carriedSections : null,
-      });
+      await sql`DELETE FROM quiz_attempts WHERE id = ${attemptId}`;
+      await sql`
+        INSERT INTO quiz_attempts (user_id, project_id, quiz_set_id, assigned_questions, answers_given, status, carried_sections)
+        VALUES (${userId}, ${projectId}, ${attempt.quiz_set_id}, ${sql.json([])}, ${sql.json({})}, 'in_progress', ${Object.keys(carriedSections).length > 0 ? sql.json(carriedSections) : null})
+      `;
     } else {
-      // Attempt not found, just delete
-      await supabase.from('quiz_attempts').delete().eq('id', attemptId);
+      await sql`DELETE FROM quiz_attempts WHERE id = ${attemptId}`;
     }
   } else {
-    // Full reset — existing behavior
-    await supabase.from('quiz_attempts').delete().eq('id', attemptId);
+    await sql`DELETE FROM quiz_attempts WHERE id = ${attemptId}`;
   }
 
-  await supabase.from('quiz_resets').insert({
-    user_id: userId,
-    project_id: projectId,
-    reset_by: resetBy || null,
-    reason,
-  });
+  await sql`
+    INSERT INTO quiz_resets (user_id, project_id, reset_by, reason)
+    VALUES (${userId}, ${projectId}, ${resetBy}, ${reason})
+  `;
 
   revalidatePath(`/admin/projects/${projectId}/analytics`);
 }
 
 export async function setQuizWindowAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '');
   const openAtRaw = (formData.get('quiz_open_at') as string | null) || '';
   const closeAtRaw = (formData.get('quiz_close_at') as string | null) || '';
 
-  await supabase
-    .from('projects')
-    .update({
-      quiz_open_at: openAtRaw ? new Date(openAtRaw).toISOString() : null,
-      quiz_close_at: closeAtRaw ? new Date(closeAtRaw).toISOString() : null,
-    })
-    .eq('id', projectId);
+  await sql`
+    UPDATE projects SET
+      quiz_open_at = ${openAtRaw ? new Date(openAtRaw).toISOString() : null},
+      quiz_close_at = ${closeAtRaw ? new Date(closeAtRaw).toISOString() : null}
+    WHERE id = ${projectId}
+  `;
 
   revalidatePath(`/admin/projects/${projectId}/analytics`);
   revalidatePath(`/projects/${projectId}/quiz`);
 }
 
 export async function deleteQuizSetAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const setId = String(formData.get('set_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
 
-  await supabase.from('quiz_questions').delete().eq('quiz_set_id', setId);
-  await supabase.from('quiz_sets').delete().eq('id', setId);
+  await sql`DELETE FROM quiz_questions WHERE quiz_set_id = ${setId}`;
+  await sql`DELETE FROM quiz_sets WHERE id = ${setId}`;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function deleteQuizQuestionAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const questionId = String(formData.get('question_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
 
-  await supabase.from('quiz_questions').delete().eq('id', questionId);
+  await sql`DELETE FROM quiz_questions WHERE id = ${questionId}`;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function createQuizSetAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '');
   const setName = String(formData.get('set_name') ?? '');
   const setNumber = Number(formData.get('set_number') ?? 1);
   const category = String(formData.get('category') ?? 'general').trim().toLowerCase() || 'general';
 
-  await supabase.from('quiz_sets').insert({
-    project_id: projectId,
-    set_name: setName,
-    set_number: setNumber,
-    category,
-    is_active: true,
-  });
-
+  await sql`
+    INSERT INTO quiz_sets (project_id, set_name, set_number, category, is_active)
+    VALUES (${projectId}, ${setName}, ${setNumber}, ${category}, true)
+  `;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function createQuizQuestionAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '');
   const quizSetId = String(formData.get('quiz_set_id') ?? '');
   const questionType = String(formData.get('question_type') ?? 'mcq');
   const isTrueFalse = questionType === 'true_false';
 
-  await supabase.from('quiz_questions').insert({
-    quiz_set_id: quizSetId,
-    question_text: String(formData.get('question_text') ?? ''),
-    option_a: String(formData.get('option_a') ?? ''),
-    option_b: String(formData.get('option_b') ?? ''),
-    option_c: isTrueFalse ? '' : String(formData.get('option_c') ?? ''),
-    option_d: isTrueFalse ? '' : String(formData.get('option_d') ?? ''),
-    correct_option: String(formData.get('correct_option') ?? 'A'),
-    explanation: String(formData.get('explanation') ?? ''),
-    marks: Number(formData.get('marks') ?? 1),
-    question_type: questionType,
-  });
-
+  await sql`
+    INSERT INTO quiz_questions
+      (quiz_set_id, question_text, option_a, option_b, option_c, option_d, correct_option, explanation, marks, question_type)
+    VALUES (
+      ${quizSetId},
+      ${String(formData.get('question_text') ?? '')},
+      ${String(formData.get('option_a') ?? '')},
+      ${String(formData.get('option_b') ?? '')},
+      ${isTrueFalse ? '' : String(formData.get('option_c') ?? '')},
+      ${isTrueFalse ? '' : String(formData.get('option_d') ?? '')},
+      ${String(formData.get('correct_option') ?? 'A')},
+      ${String(formData.get('explanation') ?? '')},
+      ${Number(formData.get('marks') ?? 1)},
+      ${questionType}
+    )
+  `;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function updateQuizQuestionAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const questionId = String(formData.get('question_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
   const questionType = String(formData.get('question_type') ?? 'mcq');
   const isTrueFalse = questionType === 'true_false';
 
-  await supabase.from('quiz_questions').update({
-    question_text: String(formData.get('question_text') ?? ''),
-    option_a: String(formData.get('option_a') ?? ''),
-    option_b: String(formData.get('option_b') ?? ''),
-    option_c: isTrueFalse ? '' : String(formData.get('option_c') ?? ''),
-    option_d: isTrueFalse ? '' : String(formData.get('option_d') ?? ''),
-    correct_option: String(formData.get('correct_option') ?? 'A'),
-    explanation: String(formData.get('explanation') ?? ''),
-    marks: Number(formData.get('marks') ?? 1),
-    question_type: questionType,
-  }).eq('id', questionId);
-
+  await sql`
+    UPDATE quiz_questions SET
+      question_text  = ${String(formData.get('question_text') ?? '')},
+      option_a       = ${String(formData.get('option_a') ?? '')},
+      option_b       = ${String(formData.get('option_b') ?? '')},
+      option_c       = ${isTrueFalse ? '' : String(formData.get('option_c') ?? '')},
+      option_d       = ${isTrueFalse ? '' : String(formData.get('option_d') ?? '')},
+      correct_option = ${String(formData.get('correct_option') ?? 'A')},
+      explanation    = ${String(formData.get('explanation') ?? '')},
+      marks          = ${Number(formData.get('marks') ?? 1)},
+      question_type  = ${questionType}
+    WHERE id = ${questionId}
+  `;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function toggleQuizSetActiveAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const setId = String(formData.get('set_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
   const nextActive = formData.get('next_active') === 'true';
 
-  await supabase.from('quiz_sets').update({ is_active: nextActive }).eq('id', setId);
+  await sql`UPDATE quiz_sets SET is_active = ${nextActive} WHERE id = ${setId}`;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function importQuizCsvAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '');
   const quizSetId = String(formData.get('quiz_set_id') ?? '');
   const csvText = String(formData.get('csv_text') ?? '');
 
-  if (!csvText.trim()) {
-    return;
+  if (!csvText.trim()) return;
+
+  const rows = parse(csvText, { columns: true, skip_empty_lines: true, trim: true }) as Array<Record<string, string>>;
+  if (!rows.length) return;
+
+  for (const row of rows) {
+    await sql`
+      INSERT INTO quiz_questions
+        (quiz_set_id, question_text, option_a, option_b, option_c, option_d, correct_option, explanation, marks)
+      VALUES (
+        ${quizSetId}, ${row.question_text}, ${row.option_a}, ${row.option_b},
+        ${row.option_c}, ${row.option_d}, ${row.correct_option}, ${row.explanation}, ${Number(row.marks ?? 1)}
+      )
+    `;
   }
-
-  const rows = parse(csvText, {
-    columns: true,
-    skip_empty_lines: true,
-    trim: true,
-  }) as Array<Record<string, string>>;
-
-  if (!rows.length) {
-    return;
-  }
-
-  await supabase.from('quiz_questions').insert(
-    rows.map((row) => ({
-      quiz_set_id: quizSetId,
-      question_text: row.question_text,
-      option_a: row.option_a,
-      option_b: row.option_b,
-      option_c: row.option_c,
-      option_d: row.option_d,
-      correct_option: row.correct_option,
-      explanation: row.explanation,
-      marks: Number(row.marks ?? 1),
-    })),
-  );
 
   revalidatePath(`/admin/projects/${projectId}/quiz`);
 }
 
 export async function createDemoUserAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const projectId = String(formData.get('project_id') ?? '').trim();
 
   const DEMO_EMAIL = 'demo@summit.app';
   const DEMO_PASSWORD = 'Demo@Summit1';
   const DEMO_NAME = 'Demo Member';
 
-  // Check if already exists
-  const { data: existing } = await supabase.from('users').select('id').eq('email', DEMO_EMAIL).maybeSingle();
-  let userId = existing?.id as string | undefined;
+  const existing = await sql`SELECT id FROM users WHERE email = ${DEMO_EMAIL} LIMIT 1`;
+  let userId = existing[0]?.id as string | undefined;
 
   if (!userId) {
-    const { data, error } = await supabase.auth.admin.createUser({
-      email: DEMO_EMAIL,
-      password: DEMO_PASSWORD,
-      email_confirm: true,
-      user_metadata: { full_name: DEMO_NAME },
-    });
-
-    if (error) throw error;
-    userId = data.user.id;
-
-    await supabase.from('users').upsert({
-      id: userId,
-      email: DEMO_EMAIL,
-      full_name: DEMO_NAME,
-      role: 'member',
-      is_active: true,
-    });
+    const hash = await bcrypt.hash(DEMO_PASSWORD, 12);
+    const newUser = await sql`
+      INSERT INTO users (email, full_name, role, password_hash, is_active)
+      VALUES (${DEMO_EMAIL}, ${DEMO_NAME}, 'member', ${hash}, true)
+      RETURNING id
+    `;
+    userId = newUser[0]?.id as string;
   }
 
   if (projectId && userId) {
-    await supabase.from('project_members').upsert({ project_id: projectId, user_id: userId });
+    await sql`
+      INSERT INTO project_members (project_id, user_id)
+      VALUES (${projectId}, ${userId})
+      ON CONFLICT (project_id, user_id) DO NOTHING
+    `;
   }
 
   revalidatePath('/admin/users');
 }
 
 export async function updateUserRoleAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const userId = String(formData.get('user_id') ?? '');
   const role = String(formData.get('role') ?? 'member');
 
-  await supabase.from('users').update({ role }).eq('id', userId);
+  await sql`UPDATE users SET role = ${role} WHERE id = ${userId}`;
   revalidatePath('/admin/users');
 }
 
 export async function toggleUserActiveAction(formData: FormData) {
-  const supabase = getAdminSupabase();
   const userId = String(formData.get('user_id') ?? '');
   const nextState = String(formData.get('next_state') ?? 'true') === 'true';
 
-  await supabase.from('users').update({ is_active: nextState }).eq('id', userId);
+  await sql`UPDATE users SET is_active = ${nextState} WHERE id = ${userId}`;
   revalidatePath('/admin/users');
+}
+
+export async function approveRetakeRequestAction(formData: FormData) {
+  const requestId = String(formData.get('request_id') ?? '');
+  const projectId = String(formData.get('project_id') ?? '');
+  const memberId = String(formData.get('member_id') ?? '');
+  const adminId = String(formData.get('admin_id') ?? '') || null;
+
+  // Delete the existing quiz attempt so the member can retake
+  await sql`DELETE FROM quiz_attempts WHERE user_id = ${memberId} AND project_id = ${projectId}`;
+
+  // Mark request as approved
+  await sql`
+    UPDATE quiz_retake_requests
+    SET status = 'approved', resolved_at = NOW(), resolved_by = ${adminId}
+    WHERE id = ${requestId}
+  `;
+
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(`/admin/projects/${projectId}/analytics`);
+}
+
+export async function rejectRetakeRequestAction(formData: FormData) {
+  const requestId = String(formData.get('request_id') ?? '');
+  const projectId = String(formData.get('project_id') ?? '');
+  const adminId = String(formData.get('admin_id') ?? '') || null;
+
+  await sql`
+    UPDATE quiz_retake_requests
+    SET status = 'rejected', resolved_at = NOW(), resolved_by = ${adminId}
+    WHERE id = ${requestId}
+  `;
+
+  revalidatePath(`/admin/projects/${projectId}`);
 }

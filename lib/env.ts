@@ -1,19 +1,20 @@
 export const appEnv = {
   appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'Summit KT Portal',
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  databaseUrl: process.env.DATABASE_URL,
+  nextauthSecret: process.env.NEXTAUTH_SECRET,
+  r2AccountId: process.env.R2_ACCOUNT_ID,
+  r2BucketName: process.env.R2_BUCKET_NAME,
   groqApiKey: process.env.GROQ_API_KEY,
   groqQuizApiKey: process.env.GROQ_API_KEY_QUIZ,
 };
 
-export function isSupabaseConfigured() {
-  return Boolean(appEnv.supabaseUrl && appEnv.supabaseAnonKey);
+export function isDatabaseConfigured() {
+  return Boolean(appEnv.databaseUrl);
 }
 
-export function isSupabaseAdminConfigured() {
-  return Boolean(isSupabaseConfigured() && appEnv.supabaseServiceRoleKey);
+export function isR2Configured() {
+  return Boolean(appEnv.r2AccountId && appEnv.r2BucketName);
 }
 
 export function isGroqConfigured() {

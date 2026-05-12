@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { embedText } from '@/lib/rag/embeddings';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import sql from '@/lib/db';
 
 export interface RetrievedChunk {
   id: string;
@@ -12,22 +12,16 @@ export interface RetrievedChunk {
 }
 
 export async function retrieveRelevantChunks(projectId: string, query: string, limit = 5) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return [] as RetrievedChunk[];
-  }
-
   const embedding = await embedText(query);
-  const { data, error } = await supabase.rpc('match_document_chunks', {
-    filter_project_id: projectId,
-    query_embedding: embedding,
-    match_count: limit,
-  });
 
-  if (error) {
-    throw error;
-  }
+  // postgres.js passes arrays as Postgres array literals; cast to vector explicitly
+  const rows = await sql<RetrievedChunk[]>`
+    SELECT * FROM match_document_chunks(
+      ${JSON.stringify(embedding)}::vector,
+      ${projectId}::uuid,
+      ${limit}
+    )
+  `;
 
-  return (data ?? []) as RetrievedChunk[];
+  return rows;
 }

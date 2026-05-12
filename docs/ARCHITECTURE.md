@@ -1,7 +1,7 @@
 # Summit KT Portal — Architecture & Feature Analysis
 
-> **Version:** 0.1.0
-> **Stack:** Next.js 14 · Supabase · Groq · @xenova/transformers · Resend · Tailwind CSS
+> **Version:** 0.2.0
+> **Stack:** Next.js 14 · PostgreSQL · NextAuth.js v4 · Cloudflare R2 · Groq · @xenova/transformers · Resend · Tailwind CSS
 > **Purpose:** Enterprise knowledge-transfer portal for structured team transitions
 
 ---
@@ -17,7 +17,8 @@
    - 5.2 Document Ingestion (RAG Pipeline)
    - 5.3 AI-Grounded Chat
    - 5.4 Quiz Generation & Delivery
-   - 5.5 Background Job Queue
+   - 5.5 Quiz Re-enable Request Flow
+   - 5.6 Background Job Queue
 6. [Component Hierarchy](#6-component-hierarchy)
 7. [API Surface](#7-api-surface)
 8. [Security Model](#8-security-model)
@@ -39,9 +40,10 @@ Summit KT Portal is a **multi-role, project-scoped knowledge-transfer platform**
 │   • Create & manage projects     • View assigned projects       │
 │   • Upload & process KT docs     • Chat with AI assistant       │
 │   • Generate AI quizzes          • Take one-time readiness quiz │
-│   • Invite team members          • Review quiz results          │
-│   • View analytics & activity    • Access KT documents          │
-│   • Reset quiz attempts                                         │
+│   • Invite team members          • Request quiz re-enable       │
+│   • View analytics & activity    • Review quiz results          │
+│   • Reset quiz attempts          • Reset own password           │
+│   • Review re-enable requests                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -61,20 +63,27 @@ Summit KT Portal is a **multi-role, project-scoped knowledge-transfer platform**
   │                  │ Server Actions / API Routes       │
   └──────────────────┼──────────────────────────────────┘
                      │
-        ┌────────────┼────────────────────┐
-        │            │                    │
-        ▼            ▼                    ▼
-  ┌──────────┐ ┌──────────────┐  ┌──────────────────┐
-  │ Supabase │ │  Groq Cloud  │  │ Resend (Email)   │
-  │          │ │              │  │                  │
-  │ • Auth   │ │ Chat:        │  │ Quiz submission  │
-  │ • Postgres│ │ llama-3.3-  │  │ notifications    │
-  │ • Storage│ │ 70b-versatile│  │                  │
-  │ • pgvector│ │              │  └──────────────────┘
-  │ • pg_cron│ │ Quiz gen:    │
-  └──────────┘ │ llama-3.1-  │
-               │ 8b-instant  │
-               └──────────────┘
+        ┌────────────┼──────────────┬──────────────────┐
+        │            │              │                  │
+        ▼            ▼              ▼                  ▼
+  ┌──────────┐ ┌──────────────┐ ┌──────────┐  ┌──────────────┐
+  │PostgreSQL│ │  Groq Cloud  │ │  Cloudfl │  │    Resend    │
+  │(local)   │ │              │ │  are R2  │  │    (Email)   │
+  │          │ │ Chat:        │ │          │  │              │
+  │ pgvector │ │ llama-3.3-  │ │ Document │  │ Invite links │
+  │ pgcrypto │ │ 70b-versatile│ │ Storage  │  │ Password     │
+  │          │ │              │ │          │  │ reset email  │
+  │          │ │ Quiz gen:    │ └──────────┘  │ Quiz notifs  │
+  │          │ │ llama-3.1-  │               └──────────────┘
+  │          │ │ 8b-instant  │
+  └──────────┘ └──────────────┘
+
+  Auth (NextAuth.js v4)
+  ┌──────────────────────────────────────┐
+  │  Credentials provider (email+bcrypt) │
+  │  JWT sessions · httpOnly cookie      │
+  │  Session: next-auth.session-token    │
+  └──────────────────────────────────────┘
 
   Embeddings (local, server-side)
   ┌──────────────────────────────────────┐
@@ -90,6 +99,7 @@ Summit KT Portal is a **multi-role, project-scoped knowledge-transfer platform**
   │  Polls POST /api/jobs/worker @ 1 s  │
   │  Processes document_process and      │
   │  quiz_generate jobs from queue       │
+  │  Inline stuck-job reset (no pg_cron) │
   └──────────────────────────────────────┘
 ```
 
@@ -101,18 +111,19 @@ Summit KT Portal is a **multi-role, project-scoped knowledge-transfer platform**
 summit-kt-portal/
 │
 ├── app/                              ← Next.js App Router
-│   ├── (auth)/                       ← Public auth routes
-│   │   ├── login/
-│   │   ├── signup/
-│   │   ├── forgot-password/
-│   │   └── reset-password/
+│   ├── login/                        ← Login page
+│   ├── register/                     ← Self-registration page
+│   ├── forgot-password/              ← Password reset request page
+│   ├── auth/
+│   │   ├── reset-password/           ← Set new password (token link)
+│   │   └── accept-invite/            ← Admin invite acceptance page
 │   │
 │   ├── (admin)/                      ← Role-guarded admin routes
 │   │   └── admin/
-│   │       ├── dashboard/            ← Global stats + activity feed
-│   │       ├── projects/             ← Project list
+│   │       ├── dashboard/            ← Global stats + retake request alert
+│   │       ├── projects/             ← Project list with pending-request badges
 │   │       └── projects/[id]/
-│   │           ├── page.tsx          ← Project overview
+│   │           ├── page.tsx          ← Project overview + retake requests card
 │   │           ├── documents/        ← Upload & process KT docs
 │   │           ├── members/          ← Invite & manage members
 │   │           ├── chat/             ← Admin can preview chatbot
@@ -124,46 +135,59 @@ summit-kt-portal/
 │   │   └── projects/[id]/
 │   │       ├── page.tsx              ← Project overview
 │   │       ├── chat/                 ← RAG chat interface
-│   │       └── quiz/                 ← One-time quiz
+│   │       └── quiz/                 ← One-time quiz + retake request button
 │   │
-│   ├── api/
-│   │   ├── chat/                     ← GET history | POST streaming chat
-│   │   ├── documents/
-│   │   │   ├── upload/               ← POST upload to Supabase Storage
-│   │   │   ├── process/              ← POST queue document_process job
-│   │   │   └── view/                 ← GET signed URL for doc preview
-│   │   ├── quiz/
-│   │   │   ├── generate/             ← POST queue quiz_generate job
-│   │   │   ├── start/                ← POST begin quiz attempt
-│   │   │   └── submit/               ← POST submit answers + score
-│   │   ├── jobs/
-│   │   │   ├── worker/               ← POST claim + execute next pending job
-│   │   │   └── [id]/                 ← GET job status for polling
-│   │   └── admin/
-│   │       ├── analytics/            ← GET project analytics
-│   │       └── invite/               ← POST invite member by email
-│   │
-│   └── auth/callback/                ← Supabase OAuth callback
+│   └── api/
+│       ├── auth/
+│       │   ├── [...nextauth]/        ← NextAuth.js route handler
+│       │   ├── register/             ← POST self-registration
+│       │   ├── forgot-password/      ← POST send reset email
+│       │   └── reset-password/       ← POST apply new password
+│       ├── chat/                     ← GET history | POST streaming chat
+│       ├── documents/
+│       │   ├── upload/               ← POST upload to Cloudflare R2
+│       │   ├── process/              ← POST queue document_process job
+│       │   └── view/                 ← GET signed URL for doc preview
+│       ├── quiz/
+│       │   ├── generate/             ← POST queue quiz_generate job
+│       │   ├── start/                ← POST begin quiz attempt
+│       │   ├── submit/               ← POST submit answers + score
+│       │   └── request-retake/       ← POST member requests re-enable
+│       ├── jobs/
+│       │   ├── worker/               ← POST claim + execute next pending job
+│       │   └── [id]/                 ← GET job status for polling
+│       └── admin/
+│           ├── analytics/            ← GET project analytics
+│           └── invite/               ← POST invite member by email
 │
 ├── components/
 │   ├── admin/                        ← Admin-only UI components
+│   │   └── retake-requests-card.tsx  ← Approve/reject re-enable requests
 │   ├── auth/                         ← Auth form components
+│   │   ├── login-form.tsx
+│   │   ├── register-form.tsx
+│   │   ├── forgot-password-form.tsx
+│   │   └── reset-password-form.tsx
 │   ├── chat/                         ← Chat interface components
 │   ├── layout/                       ← Sidebars, navbar, project card
-│   ├── quiz/                         ← Quiz experience components
+│   ├── quiz/
+│   │   ├── quiz-experience.tsx       ← Full quiz flow (start→answer→result)
+│   │   └── retake-request-button.tsx ← Member re-enable request UI
 │   └── ui/                           ← Base UI primitives (shadcn-style)
 │
 ├── lib/
-│   ├── auth.ts                       ← Session helpers, role guards
+│   ├── auth.ts                       ← NextAuth session helpers, role guards
 │   ├── data.ts                       ← All DB query functions
+│   ├── db.ts                         ← postgres.js tagged-template client
 │   ├── email.ts                      ← Resend email templates
 │   ├── env.ts                        ← Env var validation
 │   ├── rate-limit.ts                 ← Activity-log-based rate limiting
+│   ├── security.ts                   ← Origin validation helper
 │   ├── utils.ts                      ← Formatting utilities
 │   ├── documents/
 │   │   ├── parse.ts                  ← PDF / DOCX / CSV text extraction
 │   │   ├── process.ts                ← Chunk + embed + upsert pipeline
-│   │   └── upload.ts                 ← Supabase Storage upload helper
+│   │   └── upload.ts                 ← Cloudflare R2 upload helper
 │   ├── groq/
 │   │   ├── chat.ts                   ← Groq client, retry, model selection
 │   │   └── streaming.ts              ← Stream token consumer
@@ -175,22 +199,22 @@ summit-kt-portal/
 │   │   ├── assignment.ts             ← Quiz question assignment logic
 │   │   ├── scoring.ts                ← Score calculation
 │   │   └── shuffle.ts                ← Question/option shuffling
-│   ├── supabase/
-│   │   ├── client.ts                 ← Browser Supabase client
-│   │   ├── server.ts                 ← Server Supabase clients
-│   │   └── middleware.ts             ← Session refresh middleware
+│   ├── storage/
+│   │   └── r2.ts                     ← Cloudflare R2 S3 client
 │   └── types/
 │       └── database.ts               ← Shared TypeScript types
 │
 ├── worker/
 │   └── index.mjs                     ← Standalone background worker process
 │
-├── supabase/migrations/
-│   ├── 001_init.sql                  ← Full schema + RLS + functions
-│   ├── 002_quiz_window_resets.sql    ← Quiz scheduling + reset table
-│   └── 010_processing_jobs.sql       ← Background job queue table + pg_cron
+├── postgres/
+│   ├── schema.sql                    ← Full DB schema (run once)
+│   └── migrations/
+│       ├── add_password_reset_tokens.sql
+│       └── add_quiz_retake_requests.sql
 │
-└── middleware.ts                     ← Global session middleware
+├── auth.ts                           ← NextAuth configuration
+└── middleware.ts                     ← Global route guard (NextAuth-based)
 ```
 
 ---
@@ -200,16 +224,13 @@ summit-kt-portal/
 ### Entity-Relationship Diagram
 
 ```
-  auth.users (Supabase managed)
-       │
-       │ trigger: handle_new_user()
-       ▼
   public.users
   ┌──────────────────────────────┐
-  │ id (PK, FK → auth.users)    │
+  │ id (PK, uuid)                │
   │ email                        │
   │ full_name                    │
   │ role: admin | member         │
+  │ password_hash (bcrypt)       │
   │ is_active                    │
   │ last_login_at                │
   │ created_at                   │
@@ -237,7 +258,7 @@ summit-kt-portal/
   │ id (PK)                │               │ id (PK)              │
   │ project_id (FK)        │               │ user_id (FK)         │
   │ file_name              │               │ project_id (FK)      │
-  │ file_url               │               │ started_at           │
+  │ file_url (R2 key)      │               │ started_at           │
   │ file_type              │               │ message_count        │
   │ chunk_count            │               │ last_message_at      │
   │ uploaded_by (FK)       │               └──────────┬───────────┘
@@ -291,7 +312,22 @@ summit-kt-portal/
   │ passed                         │
   │ status: in_progress|submitted  │
   │ started_at / submitted_at      │
+  │ carried_sections (JSONB)       │
   └────────────────────────────────┘
+
+  public.quiz_retake_requests       ← Member re-enable requests
+  ┌────────────────────────────┐
+  │ id (PK)                    │
+  │ user_id (FK → users)       │
+  │ project_id (FK → projects) │
+  │ attempt_id (uuid, nullable)│
+  │ reason (text)              │
+  │ status: pending|approved   │
+  │         |rejected          │
+  │ created_at                 │
+  │ resolved_at                │
+  │ resolved_by (FK → users)   │
+  └────────────────────────────┘
 
   public.quiz_resets
   ┌────────────────────────┐
@@ -314,6 +350,26 @@ summit-kt-portal/
   │ created_at / started_at / completed_at│
   └──────────────────────────────────────┘
 
+  public.invite_tokens                      ← Admin invite flow
+  ┌────────────────────────┐
+  │ id (PK)                │
+  │ email                  │
+  │ token (unique)         │
+  │ role                   │
+  │ project_id (nullable)  │
+  │ expires_at             │
+  │ created_at             │
+  └────────────────────────┘
+
+  public.password_reset_tokens              ← Forgot-password flow
+  ┌────────────────────────┐
+  │ id (PK)                │
+  │ email                  │
+  │ token (unique)         │
+  │ expires_at (1 hour)    │
+  │ created_at             │
+  └────────────────────────┘
+
   public.activity_log
   ┌────────────────────────┐
   │ id (PK)                │
@@ -325,7 +381,9 @@ summit-kt-portal/
   └────────────────────────┘
 ```
 
-### Row Level Security Summary
+### Access Control Summary
+
+No Row Level Security (RLS). All access control is enforced at the application layer.
 
 | Table | Member Access | Admin Access |
 |---|---|---|
@@ -339,8 +397,11 @@ summit-kt-portal/
 | quiz_sets | Assigned projects | Full |
 | quiz_questions | Assigned projects | Full |
 | quiz_attempts | Own attempts | Full |
+| quiz_retake_requests | Own requests (create only) | Full |
 | quiz_resets | — | Full |
-| processing_jobs | — | Service role only |
+| invite_tokens | — | Full |
+| password_reset_tokens | Own (via token link) | — |
+| processing_jobs | — | Full |
 | activity_log | Own actions | Full |
 
 ---
@@ -353,12 +414,9 @@ summit-kt-portal/
   User visits protected route
           │
           ▼
-  middleware.ts
-  updateSession() ← refreshes Supabase session cookie
-          │
-          ▼
-  lib/supabase/middleware.ts
+  middleware.ts (NextAuth-based)
   ┌────────────────────────────────────────────────┐
+  │ Read next-auth.session-token cookie            │
   │ Public routes?  → pass through                 │
   │ /admin/* ?      → require role = 'admin'       │
   │ /dashboard/* ?  → require role = 'member'      │
@@ -369,7 +427,28 @@ summit-kt-portal/
           ▼
   Page Server Component
   requireAdmin() | requireMember()  ← lib/auth.ts
-  Returns { user, profile } or redirects
+  Calls auth() from NextAuth, fetches profile from DB
+  Returns { userId, user, profile } or redirects
+
+  Login flow:
+  POST credentials → NextAuth authorize() → bcrypt.compare()
+  → JWT issued → session cookie set
+
+  Forgot-password flow:
+  POST /api/auth/forgot-password
+  → generate crypto token → insert password_reset_tokens
+  → send Resend email with /auth/reset-password?token=...
+  POST /api/auth/reset-password
+  → validate token not expired → bcrypt.hash → UPDATE users
+  → DELETE token
+
+  Invite flow (admin → member):
+  POST /api/admin/invite
+  → generate token → insert invite_tokens → send Resend email
+  GET /auth/accept-invite?token=...
+  → validate token → member sets name + password
+  POST /api/auth/accept-invite
+  → bcrypt.hash → INSERT users → DELETE token
 ```
 
 ### 5.2 Document Ingestion Pipeline (RAG)
@@ -381,7 +460,7 @@ summit-kt-portal/
   POST /api/documents/upload
   ┌──────────────────────────────────────────┐
   │ 1. Validate file type (PDF/DOCX/CSV/TXT) │
-  │ 2. Upload to Supabase Storage            │
+  │ 2. Upload to Cloudflare R2 (PutObject)   │
   │ 3. Insert record in documents table      │
   └──────────────────────────────────────────┘
           │
@@ -395,7 +474,8 @@ summit-kt-portal/
   │ 2. INSERT processing_jobs                            │
   │    { type: 'document_process',                       │
   │      payload: { documentId, projectId } }            │
-  │ 3. Return { jobId } immediately (< 100 ms)           │
+  │ 3. Fire-and-forget POST /api/jobs/worker             │
+  │ 4. Return { jobId } immediately (< 100 ms)           │
   └──────────────────────────────────────────────────────┘
           │
           │  Frontend polls GET /api/jobs/[id] every 3 s
@@ -404,7 +484,7 @@ summit-kt-portal/
   Background worker picks up job (within 1 s)
   POST /api/jobs/worker (internal)
   ┌──────────────────────────────────────────────────────┐
-  │ 1. Download file from Supabase Storage               │
+  │ 1. Download file from Cloudflare R2 (GetObject)      │
   │ 2. Extract text                                      │
   │    ├── PDF    → pdf-parse                            │
   │    ├── DOCX   → mammoth                              │
@@ -447,6 +527,7 @@ summit-kt-portal/
   │    └── Fallback: llama-3.1-8b-instant (on rate limit/error)  │
   │ 8. Stream tokens to client via ReadableStream                │
   │ 9. Persist user + assistant messages in chat_messages        │
+  │    (sources stored as JSONB via sql.json())                  │
   │ 10. Log activity                                             │
   └──────────────────────────────────────────────────────────────┘
           │
@@ -470,7 +551,8 @@ summit-kt-portal/
   │  3. INSERT processing_jobs                      │
   │     { type: 'quiz_generate',                    │
   │       payload: { projectId, category, numSets }}│
-  │  4. Return { jobId } immediately                │
+  │  4. Fire-and-forget POST /api/jobs/worker       │
+  │  5. Return { jobId } immediately                │
   │                                                 │
   │  Background worker picks up job within 1 s:     │
   │  1. Fetch up to 30 document_chunks              │
@@ -499,6 +581,10 @@ summit-kt-portal/
   │     └── Shuffle options (Fisher-Yates)          │
   │  4. Create quiz_attempt (status=in_progress)    │
   │                                                 │
+  │  Anti-cheat guard (client-side):                │
+  │  Tab/window visibility change detected          │
+  │  → quiz auto-submitted immediately              │
+  │                                                 │
   │  Member answers questions one-by-one            │
   │                                                 │
   │  POST /api/quiz/submit                          │
@@ -511,7 +597,59 @@ summit-kt-portal/
   └─────────────────────────────────────────────────┘
 ```
 
-### 5.5 Background Job Queue
+### 5.5 Quiz Re-enable Request Flow
+
+```
+  Member's quiz auto-submitted (tab switch)
+          │
+          ▼
+  Result screen shows score + "Request re-enable" button
+          │
+          ▼
+  Member optionally fills reason → clicks Submit
+          │
+          ▼
+  POST /api/quiz/request-retake
+  ┌──────────────────────────────────────────────────────┐
+  │ 1. Verify submitted attempt exists                   │
+  │ 2. Check no duplicate pending request               │
+  │ 3. INSERT quiz_retake_requests (status='pending')   │
+  └──────────────────────────────────────────────────────┘
+          │
+          ▼
+  Admin sees notification in two places:
+  ┌──────────────────────────────────────────────────────┐
+  │  Admin dashboard:                                    │
+  │  "Quiz re-enable requests" StatsCard shows count     │
+  │  → Clickable when count > 0, links to /admin/projects│
+  │                                                      │
+  │  Projects list:                                      │
+  │  Project card gets amber ring + "N re-enable         │
+  │  requests" badge → "Open" button changes to "Review" │
+  └──────────────────────────────────────────────────────┘
+          │
+          ▼
+  Admin opens project detail page
+  → RetakeRequestsCard shows pending requests
+  → Admin clicks Approve or Reject
+          │
+  ┌───────┴──────────┐
+  ▼                  ▼
+Approve            Reject
+  │                  │
+  ▼                  ▼
+DELETE quiz_attempt  UPDATE status='rejected'
+UPDATE status=       resolved_at=NOW()
+  'approved'         resolved_by=adminId
+resolved_at=NOW()
+resolved_by=adminId
+  │
+  ▼
+Member can now retake
+quiz from scratch
+```
+
+### 5.6 Background Job Queue
 
 ```
   Admin action (process doc / generate quiz)
@@ -519,6 +657,7 @@ summit-kt-portal/
           ▼
   API route inserts row into processing_jobs
   { status: 'pending', type, payload }
+  + fire-and-forget POST /api/jobs/worker
           │
           │  Returns jobId to client immediately
           │
@@ -529,8 +668,10 @@ summit-kt-portal/
           ▼
   /api/jobs/worker
   ┌──────────────────────────────────────────────┐
+  │ 0. Reset stuck jobs (> 10 min in 'running')  │
+  │    → back to 'pending' for retry             │
   │ 1. Auth: x-worker-secret header check        │
-  │ 2. claim_next_pending_job() RPC              │
+  │ 2. claim_next_pending_job() function         │
   │    SELECT ... FOR UPDATE SKIP LOCKED         │
   │    → atomically sets status='running'        │
   │ 3. Route by job.type:                        │
@@ -544,11 +685,8 @@ summit-kt-portal/
   Frontend polls GET /api/jobs/[id] every 3 s
   until status = 'done' | 'failed'
 
-  Safety net (pg_cron, every 1 minute):
-  ┌─────────────────────────────────────────────┐
-  │ Reset jobs stuck in 'running' > 10 minutes  │
-  │ back to 'pending' for retry                 │
-  └─────────────────────────────────────────────┘
+  Note: pg_cron is NOT used. Stuck-job reset runs
+  inline at the start of every worker poll cycle.
 ```
 
 ---
@@ -564,13 +702,15 @@ app/layout.tsx
     │   │   └── LogoutButton
     │   └── [page content]
     │       ├── AdminDashboardPage
-    │       │   ├── StatsCard ×5
+    │       │   ├── StatsCard ×6 (incl. retake requests)
     │       │   └── ActivityFeed
     │       ├── AdminProjectsPage
-    │       │   └── ProjectCard ×N
+    │       │   └── ProjectCard ×N (amber badge if pending retakes)
     │       └── AdminProjectDetailPage
     │           ├── DocumentUploadPanel
     │           │   └── (upload → job queue → poll → done)
+    │           ├── RetakeRequestsCard (if requests exist)
+    │           │   └── RequestRow × N (Approve / Reject)
     │           ├── MembersPage
     │           │   └── InviteForm
     │           ├── QuizPage
@@ -598,7 +738,8 @@ app/layout.tsx
                 └── QuizExperience
                     ├── QuizCard (pre-start)
                     ├── QuestionView ×N
-                    └── ResultSummary
+                    ├── ResultSummary
+                    └── RetakeRequestButton (if submitted)
 ```
 
 ---
@@ -609,55 +750,65 @@ app/layout.tsx
 |---|---|---|---|
 | GET | `/api/chat?sessionId=` | Member/Admin | Load chat history for a session |
 | POST | `/api/chat` | Member/Admin | Send message, get streaming response |
-| POST | `/api/documents/upload` | Admin | Upload file to Supabase Storage |
+| POST | `/api/documents/upload` | Admin | Upload file to Cloudflare R2 |
 | POST | `/api/documents/process` | Admin | Queue document_process job; returns `{ jobId }` |
-| GET | `/api/documents/view?documentId=` | Member/Admin | Get signed URL for document preview |
+| GET | `/api/documents/view?documentId=` | Member/Admin | Get R2 signed URL for document preview |
 | POST | `/api/quiz/generate` | Admin | Queue quiz_generate job; returns `{ jobId }` |
 | POST | `/api/quiz/start` | Member | Begin quiz attempt |
 | POST | `/api/quiz/submit` | Member | Submit answers and receive score |
+| POST | `/api/quiz/request-retake` | Member | Request admin to re-enable quiz |
 | POST | `/api/jobs/worker` | Worker secret | Claim and execute next pending job |
 | GET | `/api/jobs/[id]` | Authenticated | Poll job status (`pending/running/done/failed`) |
 | GET | `/api/admin/analytics?projectId=` | Admin | Per-project chatbot + quiz + login analytics |
-| POST | `/api/admin/invite` | Admin | Invite member by email (Supabase invite) |
-| GET | `/auth/callback` | Public | Supabase OAuth/magic-link callback |
+| POST | `/api/admin/invite` | Admin | Invite member by email (token-based) |
+| POST | `/api/auth/register` | Public | Self-register as member |
+| POST | `/api/auth/forgot-password` | Public | Send password reset email |
+| POST | `/api/auth/reset-password` | Public (token) | Apply new password from reset link |
+| GET/POST | `/api/auth/[...nextauth]` | Public | NextAuth.js session handler |
 
 ---
 
 ## 8. Security Model
 
 ```
-  ┌────────────────────────────────────────────────────┐
-  │                 SECURITY LAYERS                    │
-  │                                                    │
-  │  1. Supabase Auth (JWT)                            │
-  │     └── Session cookie refreshed on every request  │
-  │                                                    │
-  │  2. Middleware Route Guards                        │
-  │     ├── /admin/* → role must be 'admin'            │
-  │     └── /dashboard,/projects → role = 'member'     │
-  │                                                    │
-  │  3. API Route Auth Checks                          │
-  │     ├── getCurrentUserContext() on every request   │
-  │     ├── getProfileById() to verify role            │
-  │     └── userHasProjectAccess() for member APIs     │
-  │                                                    │
-  │  4. Postgres Row Level Security (RLS)              │
-  │     ├── is_admin() SQL function                    │
-  │     ├── is_project_member(project_id) function     │
-  │     └── Policies on all tables                     │
-  │                                                    │
-  │  5. Rate Limiting                                  │
-  │     └── 30 chat messages / hour / user             │
-  │         (enforced via activity_log count query)    │
-  │                                                    │
-  │  6. Service Role Client                            │
-  │     └── Used server-side only (bypasses RLS)       │
-  │         never exposed to browser                   │
-  │                                                    │
-  │  7. Worker Route Authentication                    │
-  │     └── x-worker-secret header must match          │
-  │         WORKER_SECRET env var when set             │
-  └────────────────────────────────────────────────────┘
+  ┌────────────────────────────────────────────────┐
+  │                 SECURITY LAYERS                │
+  │                                                │
+  │  1. NextAuth.js JWT (httpOnly cookie)          │
+  │     └── Session verified on every server      │
+  │         component and API route call           │
+  │                                                │
+  │  2. Middleware Route Guards                    │
+  │     ├── /admin/* → role must be 'admin'        │
+  │     └── /dashboard,/projects → role='member'  │
+  │                                                │
+  │  3. API Route Auth Checks                      │
+  │     ├── getCurrentUserContext() on every req   │
+  │     ├── profile.role check per endpoint        │
+  │     └── userHasProjectAccess() for members     │
+  │                                                │
+  │  4. Application-Level Access Control           │
+  │     (replaces Supabase RLS)                    │
+  │     └── All SQL queries scoped by userId or    │
+  │         projectId verified against session     │
+  │                                                │
+  │  5. Rate Limiting                              │
+  │     └── 30 chat messages / hour / user         │
+  │         (enforced via activity_log count)      │
+  │                                                │
+  │  6. Origin Validation                          │
+  │     └── validateOrigin() on mutation routes   │
+  │         (checks Host / Origin headers)         │
+  │                                                │
+  │  7. Worker Route Authentication                │
+  │     └── x-worker-secret header must match      │
+  │         WORKER_SECRET env var when set         │
+  │                                                │
+  │  8. Password Security                          │
+  │     └── bcrypt (cost factor 12) for all        │
+  │         stored passwords; reset tokens are     │
+  │         cryptographically random, 1-hour TTL   │
+  └────────────────────────────────────────────────┘
 ```
 
 ---
@@ -667,15 +818,15 @@ app/layout.tsx
 | # | Area | Gap | Impact |
 |---|---|---|---|
 | 1 | **Answer Cache** | In-memory `Map` is per-process and lost on restart; shared cache (Redis/KV) not implemented | Cache is useless in multi-instance deployments |
-| 2 | **Embedding Cold Start** | `@xenova/transformers` model downloads on first request (~80MB); no warmup or persistent cache | First chat per cold start can take 30–60s |
-| 3 | **Quiz Anti-Cheating** | Tab-switch/window-blur detection is absent; copy-paste prevention not enforced | Quiz integrity not guaranteed |
-| 4 | **Email Configuration** | `RESEND_API_KEY` and `RESEND_FROM_EMAIL` are absent from `.env.example`; email silently skipped if unset | Admin never receives quiz notifications |
-| 5 | **Admin Creation** | No seeding mechanism or UI flow to promote the first user to admin | Manual DB update required after first signup |
-| 6 | **Document Deletion** | No API or UI to delete documents or reprocess after re-upload | Stale/incorrect chunks accumulate |
-| 7 | **Quiz Set Deletion** | No ability to delete a generated quiz set or individual questions | Bad AI output cannot be removed |
-| 8 | **Pagination** | All data fetches are unbounded | Performance degrades at scale |
-| 9 | **File Validation** | No server-side MIME type check beyond extension | Malicious files can be uploaded |
-| 10 | **File Size Limit** | No size cap on upload endpoint | Storage exhaustion possible |
+| 2 | **Embedding Cold Start** | `@xenova/transformers` model downloads on first request (~80MB); no warmup | First chat per cold start can take 30–60s |
+| 3 | **Quiz Anti-Cheat** | Tab-switch detection triggers auto-submit but copy-paste and screen-share prevention are not enforced | Quiz integrity not fully guaranteed |
+| 4 | **Email Required for Reset** | Forgot-password and invite flows require `RESEND_API_KEY`; silently skipped if unset | Users cannot recover accounts without email config |
+| 5 | **Admin Bootstrap** | No seeding UI; first admin must be promoted manually via SQL | Manual DB step required after first signup |
+| 6 | **Document Deletion** | No server-side R2 object cleanup when documents are deleted from DB | Orphaned files accumulate in R2 |
+| 7 | **Pagination** | All data fetches are unbounded | Performance degrades at scale |
+| 8 | **File Validation** | No server-side MIME type check beyond extension | Malicious files can be uploaded |
+| 9 | **File Size Limit** | No size cap on upload endpoint | Storage exhaustion possible |
+| 10 | **Retake Request Notification** | No real-time push (email/webhook) to admin when a retake request is created; admin must check dashboard | Requests may go unnoticed until admin logs in |
 
 ---
 
@@ -708,6 +859,7 @@ app/layout.tsx
 | **Per-question analytics** | Track which questions are most frequently wrong |
 | **Completion dashboard** | Visual progress bars per project |
 | **Score trend over resets** | Chart score improvement across multiple attempts |
+| **Retake request analytics** | Track approval rate, most common reasons, time-to-resolve |
 
 ### 10.4 Infrastructure
 
@@ -715,4 +867,5 @@ app/layout.tsx
 |---|---|
 | **Shared embedding cache** | Replace in-process singleton with persistent cache or external API |
 | **Test suite** | Unit tests for scoring, chunking, shuffling; integration tests for routes |
-| **SSO / SAML integration** | Enterprise SSO via Supabase Auth providers (Okta, Azure AD) |
+| **Real-time retake notifications** | Email admin when a re-enable request is submitted |
+| **SSO / SAML integration** | Enterprise SSO via OAuth providers (Okta, Azure AD) |

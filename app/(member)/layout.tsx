@@ -1,20 +1,9 @@
 import { MemberMobileSidebar } from '@/components/layout/member-mobile-sidebar';
 import { MemberSidebar } from '@/components/layout/member-sidebar';
 import { Navbar } from '@/components/layout/navbar';
-import { SetupPanel } from '@/components/layout/setup-panel';
 import { requireMember } from '@/lib/auth';
-import { isSupabaseConfigured } from '@/lib/env';
 
 export default async function MemberLayout({ children }: { children: React.ReactNode }) {
-  if (!isSupabaseConfigured()) {
-    return (
-      <SetupPanel
-        title="Supabase configuration required"
-        description="Set NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY to enable authentication, data access, and file storage."
-      />
-    );
-  }
-
   const { profile } = await requireMember();
 
   return (

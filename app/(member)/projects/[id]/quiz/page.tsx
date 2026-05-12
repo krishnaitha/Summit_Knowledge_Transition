@@ -6,6 +6,7 @@ import { QuizExperience } from '@/components/quiz/quiz-experience';
 import { Card, CardContent } from '@/components/ui/card';
 import { requireMember } from '@/lib/auth';
 import { getProjectById, getQuizAttemptForProject, userHasProjectAccess } from '@/lib/data';
+import sql from '@/lib/db';
 
 function formatWindowDate(iso: string) {
   return new Date(iso).toLocaleString(undefined, {
@@ -22,7 +23,12 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
     redirect('/dashboard');
   }
 
-  const [project, attempt] = await Promise.all([getProjectById(params.id), getQuizAttemptForProject(profile!.id, params.id)]);
+  const [project, attempt, pendingRequests] = await Promise.all([
+    getProjectById(params.id),
+    getQuizAttemptForProject(profile!.id, params.id),
+    sql`SELECT id FROM quiz_retake_requests WHERE user_id = ${profile!.id} AND project_id = ${params.id} AND status = 'pending' LIMIT 1`,
+  ]);
+  const hasPendingRetakeRequest = pendingRequests.length > 0;
 
   const now = new Date();
   const openAt = project?.quiz_open_at ? new Date(project.quiz_open_at) : null;
@@ -78,7 +84,7 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
           </CardContent>
         </Card>
       ) : (
-        <QuizExperience lockedAttempt={lockedAttempt} projectId={params.id} projectName={project?.name ?? 'Project'} />
+        <QuizExperience lockedAttempt={lockedAttempt} projectId={params.id} projectName={project?.name ?? 'Project'} hasPendingRetakeRequest={hasPendingRetakeRequest} />
       )}
     </div>
   );

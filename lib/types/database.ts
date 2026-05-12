@@ -168,3 +168,28 @@ export interface ProjectDashboardCard extends ProjectRecord {
   quizStatus: 'Not Started' | 'In Progress' | 'Completed';
   quizScoreLabel: string | null;
 }
+
+export interface RagTraceRecord {
+  id: string;
+  created_at: string;
+  project_id: string | null;
+  user_id: string | null;
+  session_id: string | null;
+  message_id: string | null;
+  query_text: string;
+  chunks_retrieved: number;
+  max_similarity: number | null;
+  avg_similarity: number | null;
+  retrieval_hit: boolean;
+  retrieval_ms: number | null;
+  model_used: string | null;
+  prompt_tokens: number | null;
+  completion_tokens: number | null;
+  total_tokens: number | null;
+  generation_ms: number | null;
+  total_ms: number | null;
+  answer_cached: boolean;
+  answer_refused: boolean;
+  possible_hallucination: boolean;
+  is_slow: boolean; // generated column — read-only
+}

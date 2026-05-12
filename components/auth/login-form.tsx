@@ -1,69 +1,38 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { signIn } from 'next-auth/react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createClientSupabaseClient } from '@/lib/supabase/client';
-import { appEnv, isSupabaseConfigured } from '@/lib/env';
 
 export function LoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const supabaseReady = useMemo(() => isSupabaseConfigured(), []);
-
-  const handlePasswordLogin = () => {
-    if (!supabaseReady) {
-      setMessage('Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env.local file.');
-      return;
-    }
-
-    const supabase = createClientSupabaseClient();
-
-    if (!supabase) {
-      setMessage('Could not connect to Supabase. Check your environment variables.');
+  const handleLogin = () => {
+    if (!email || !password) {
+      setMessage('Please enter your email and password.');
       return;
     }
 
     startTransition(async () => {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
 
-      if (error) {
-        setMessage(error.message);
+      if (result?.error) {
+        setMessage('Invalid email or password. Please try again.');
         return;
       }
 
-      router.push('/dashboard');
-      router.refresh();
-    });
-  };
-
-  const handleMagicLink = () => {
-    if (!supabaseReady) {
-      setMessage('Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env.local file.');
-      return;
-    }
-
-    const supabase = createClientSupabaseClient();
-
-    if (!supabase) {
-      setMessage('Could not connect to Supabase. Check your environment variables.');
-      return;
-    }
-
-    startTransition(async () => {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: `${appEnv.appUrl}/dashboard` },
-      });
-
-      setMessage(error ? error.message : 'Magic link sent — check your inbox.');
+      // Successful — redirect to dashboard
+      window.location.href = '/dashboard';
     });
   };
 
@@ -98,7 +67,10 @@ export function LoginForm() {
             <label className="text-sm font-medium text-slate-700" htmlFor="password">
               Password
             </label>
-            <Link href="/forgot-password" className="text-xs text-brand-700 hover:underline">
+            <Link
+              href="/forgot-password"
+              className="text-xs font-medium text-brand-700 hover:underline"
+            >
               Forgot password?
             </Link>
           </div>
@@ -110,7 +82,7 @@ export function LoginForm() {
             placeholder="••••••••"
             autoComplete="current-password"
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handlePasswordLogin();
+              if (e.key === 'Enter') handleLogin();
             }}
           />
         </div>
@@ -119,24 +91,14 @@ export function LoginForm() {
           <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-600">{message}</p>
         )}
 
-        <Button className="w-full" disabled={isPending} onClick={handlePasswordLogin} type="button">
-          {isPending ? 'Signing in…' : 'Sign in with password'}
-        </Button>
-
-        <div className="relative flex items-center gap-3">
-          <div className="h-px flex-1 bg-slate-200" />
-          <span className="text-xs text-slate-400">or</span>
-          <div className="h-px flex-1 bg-slate-200" />
-        </div>
-
-        <Button className="w-full" disabled={isPending} onClick={handleMagicLink} type="button" variant="secondary">
-          Send magic link
+        <Button className="w-full" disabled={isPending} onClick={handleLogin} type="button">
+          {isPending ? 'Signing in…' : 'Sign in'}
         </Button>
 
         <p className="pt-1 text-center text-sm text-slate-500">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="font-medium text-brand-700 hover:underline">
-            Sign up
+          <Link href="/register" className="font-medium text-brand-700 hover:underline">
+            Create one
           </Link>
         </p>
       </div>

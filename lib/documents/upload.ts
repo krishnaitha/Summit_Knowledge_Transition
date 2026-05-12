@@ -1,28 +1,21 @@
 import 'server-only';
 
 import { randomUUID } from 'crypto';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { r2, R2_BUCKET } from '@/lib/storage/r2';
 
 export async function uploadDocumentToStorage(projectId: string, file: File) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    throw new Error('Supabase service role is not configured.');
-  }
-
   const extension = file.name.split('.').pop() ?? 'bin';
   const path = `${projectId}/${randomUUID()}.${extension}`;
-  const arrayBuffer = await file.arrayBuffer();
+  const body = Buffer.from(await file.arrayBuffer());
 
-  const { error } = await supabase.storage.from('documents').upload(path, arrayBuffer, {
-    contentType: file.type,
-    upsert: false,
-  });
-
-  if (error) {
-    throw error;
-  }
+  await r2.send(new PutObjectCommand({
+    Bucket: R2_BUCKET,
+    Key: path,
+    Body: body,
+    ContentType: file.type,
+  }));
 
   return path;
 }

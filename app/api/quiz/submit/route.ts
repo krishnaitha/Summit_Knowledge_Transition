@@ -2,11 +2,11 @@ import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { getProfileById, getProjectById, logActivity } from '@/lib/data';
+import { getProjectById, logActivity } from '@/lib/data';
+import sql from '@/lib/db';
 import { sendQuizSubmissionEmail } from '@/lib/email';
 import { scoreQuizSubmission } from '@/lib/quiz/scoring';
 import { validateOrigin } from '@/lib/security';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import type { AssignedQuestion, QuizOptionKey } from '@/lib/types/database';
 
 export async function POST(request: Request) {
@@ -15,14 +15,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { user } = await getCurrentUserContext();
-    const supabase = createServiceRoleSupabaseClient();
+    const { userId, profile } = await getCurrentUserContext();
 
-    if (!user || !supabase) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const profile = await getProfileById(user.id);
 
     if (!profile || profile.role !== 'member') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -36,13 +33,14 @@ export async function POST(request: Request) {
       disqualifyReason?: string;
     };
 
-    const { data: attempt } = await supabase
-      .from('quiz_attempts')
-      .select('*')
-      .eq('id', body.attemptId)
-      .eq('user_id', user.id)
-      .eq('project_id', body.projectId)
-      .maybeSingle();
+    const attemptRows = await sql`
+      SELECT * FROM quiz_attempts
+      WHERE id = ${body.attemptId}
+        AND user_id = ${userId}
+        AND project_id = ${body.projectId}
+      LIMIT 1
+    `;
+    const attempt = attemptRows[0] ?? null;
 
     if (!attempt) {
       return NextResponse.json({ error: 'Quiz attempt not found' }, { status: 404 });
@@ -77,21 +75,21 @@ export async function POST(request: Request) {
     const finalPercentage = finalTotal > 0 ? (finalScore / finalTotal) * 100 : 0;
     const finalPassed = finalPercentage >= (project?.pass_threshold ?? 60);
 
-    await supabase
-      .from('quiz_attempts')
-      .update({
-        answers_given: body.answers,
-        score: finalScore,
-        total_marks: finalTotal,
-        percentage: isDisqualified ? 0 : finalPercentage,
-        passed: isDisqualified ? false : finalPassed,
-        submitted_at: new Date().toISOString(),
-        status: 'submitted',
-      })
-      .eq('id', body.attemptId);
+    await sql`
+      UPDATE quiz_attempts
+      SET
+        answers_given = ${sql.json(body.answers)},
+        score = ${finalScore},
+        total_marks = ${finalTotal},
+        percentage = ${isDisqualified ? 0 : finalPercentage},
+        passed = ${isDisqualified ? false : finalPassed},
+        submitted_at = ${new Date().toISOString()},
+        status = 'submitted'
+      WHERE id = ${body.attemptId}
+    `;
 
     await logActivity({
-      userId: user.id,
+      userId,
       projectId: body.projectId,
       action: 'quiz_submitted',
       metadata: {
@@ -104,11 +102,10 @@ export async function POST(request: Request) {
 
     // Email the project admin (non-blocking, fire-and-forget)
     if (project?.created_by) {
-      const { data: adminUser } = await supabase
-        .from('users')
-        .select('email')
-        .eq('id', project.created_by)
-        .maybeSingle();
+      const adminRows = await sql`
+        SELECT email FROM users WHERE id = ${project.created_by} LIMIT 1
+      `;
+      const adminUser = adminRows[0] ?? null;
 
       if (adminUser?.email) {
         sendQuizSubmissionEmail({

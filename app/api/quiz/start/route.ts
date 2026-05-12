@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { getProfileById, getProjectById, getProjectMembers, logActivity, userHasProjectAccess } from '@/lib/data';
+import { getProjectById, getProjectMembers, logActivity, userHasProjectAccess } from '@/lib/data';
+import sql from '@/lib/db';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { createSectionedQuestions } from '@/lib/quiz/assignment';
 import { validateOrigin } from '@/lib/security';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import type { AssignedQuestion, QuizQuestionRecord, QuizSetRecord } from '@/lib/types/database';
 
 const QUESTIONS_PER_SECTION = 20;
@@ -31,52 +31,52 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { user } = await getCurrentUserContext();
-    const supabase = createServiceRoleSupabaseClient();
+    const { userId, profile } = await getCurrentUserContext();
 
-    if (!user || !supabase) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const profile = await getProfileById(user.id);
     const { projectId } = (await request.json()) as { projectId: string };
 
     if (!profile || profile.role !== 'member') {
       return NextResponse.json({ error: 'Admins cannot take quizzes.' }, { status: 403 });
     }
 
-    const canAccess = await userHasProjectAccess(user.id, profile.role, projectId);
+    const canAccess = await userHasProjectAccess(userId, profile.role, projectId);
     if (!canAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Rate limit: max 5 quiz starts per hour
-    const rateCheck = await checkRateLimit(user.id, 'quiz_started', 5, 3600);
+    const rateCheck = await checkRateLimit(userId, 'quiz_started', 5, 3600);
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many quiz attempts. Please wait before trying again.' }, { status: 429 });
     }
 
     // Already submitted — return the locked attempt
-    const { data: submittedAttempt } = await supabase
-      .from('quiz_attempts')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('project_id', projectId)
-      .eq('status', 'submitted')
-      .maybeSingle();
+    const submittedRows = await sql`
+      SELECT * FROM quiz_attempts
+      WHERE user_id = ${userId}
+        AND project_id = ${projectId}
+        AND status = 'submitted'
+      LIMIT 1
+    `;
+    const submittedAttempt = submittedRows[0] ?? null;
 
     if (submittedAttempt) {
       return NextResponse.json({ error: 'Quiz already submitted.', attempt: submittedAttempt }, { status: 403 });
     }
 
     // Resume a valid in_progress attempt that has the new sectioned format
-    const { data: inProgressAttempt } = await supabase
-      .from('quiz_attempts')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('project_id', projectId)
-      .eq('status', 'in_progress')
-      .maybeSingle();
+    const inProgressRows = await sql`
+      SELECT * FROM quiz_attempts
+      WHERE user_id = ${userId}
+        AND project_id = ${projectId}
+        AND status = 'in_progress'
+      LIMIT 1
+    `;
+    const inProgressAttempt = inProgressRows[0] ?? null;
 
     if (inProgressAttempt) {
       const saved = inProgressAttempt.assigned_questions as AssignedQuestion[];
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
           return NextResponse.json({ attemptId: inProgressAttempt.id, sections });
         }
 
-        await supabase.from('quiz_attempts').delete().eq('id', inProgressAttempt.id);
+        await sql`DELETE FROM quiz_attempts WHERE id = ${inProgressAttempt.id}`;
       } else if (carried && Object.keys(carried).length > 0) {
         // Partial retake: carried_sections set but questions not yet assigned.
         // Fall through to question assignment below, but remember the attempt ID to update.
@@ -104,14 +104,13 @@ export async function POST(request: Request) {
         const carriedCategories = new Set(Object.keys(carried));
 
         // Load sets, filter out carried categories
-        const { data: sets } = await supabase
-          .from('quiz_sets')
-          .select('*')
-          .eq('project_id', projectId)
-          .eq('is_active', true)
-          .order('set_number', { ascending: true });
-
-        const typedSets = (sets ?? []) as QuizSetRecord[];
+        const setsRows = await sql`
+          SELECT * FROM quiz_sets
+          WHERE project_id = ${projectId}
+            AND is_active = true
+          ORDER BY set_number ASC
+        `;
+        const typedSets = setsRows as unknown as QuizSetRecord[];
         const retakeSets = typedSets.filter((s) => !carriedCategories.has(s.category ?? 'general'));
 
         if (!retakeSets.length) {
@@ -126,9 +125,11 @@ export async function POST(request: Request) {
         }
 
         const allSetIds = retakeSets.map((s) => s.id);
-        const { data: allQs } = await supabase.from('quiz_questions').select('*').in('quiz_set_id', allSetIds);
+        const allQsRows = await sql`
+          SELECT * FROM quiz_questions WHERE quiz_set_id = ANY(${allSetIds})
+        `;
         const questionsBySetId = new Map<string, QuizQuestionRecord[]>();
-        for (const q of (allQs ?? []) as QuizQuestionRecord[]) {
+        for (const q of allQsRows as unknown as QuizQuestionRecord[]) {
           if (!questionsBySetId.has(q.quiz_set_id)) questionsBySetId.set(q.quiz_set_id, []);
           questionsBySetId.get(q.quiz_set_id)!.push(q);
         }
@@ -148,10 +149,11 @@ export async function POST(request: Request) {
         }
 
         // Update the existing in_progress attempt with the assigned questions
-        await supabase
-          .from('quiz_attempts')
-          .update({ assigned_questions: retakeAssigned })
-          .eq('id', inProgressAttempt.id);
+        await sql`
+          UPDATE quiz_attempts
+          SET assigned_questions = ${sql.json(retakeAssigned)}
+          WHERE id = ${inProgressAttempt.id}
+        `;
 
         const sections = retakeSectionOrder.map((cat) => ({
           name: displayName(cat),
@@ -162,16 +164,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ attemptId: inProgressAttempt.id, sections });
       } else {
         // Old format or completely empty — delete and start fresh
-        await supabase.from('quiz_attempts').delete().eq('id', inProgressAttempt.id);
+        await sql`DELETE FROM quiz_attempts WHERE id = ${inProgressAttempt.id}`;
       }
     }
 
     // Check quiz window
-    const { data: projectWindow } = await supabase
-      .from('projects')
-      .select('quiz_open_at, quiz_close_at')
-      .eq('id', projectId)
-      .maybeSingle();
+    const projectWindowRows = await sql`
+      SELECT quiz_open_at, quiz_close_at FROM projects WHERE id = ${projectId} LIMIT 1
+    `;
+    const projectWindow = projectWindowRows[0] ?? null;
 
     const now = new Date();
     if (projectWindow?.quiz_open_at && new Date(projectWindow.quiz_open_at) > now) {
@@ -188,18 +189,18 @@ export async function POST(request: Request) {
     }
 
     // Load all active sets for this project
-    const { data: sets } = await supabase
-      .from('quiz_sets')
-      .select('*')
-      .eq('project_id', projectId)
-      .eq('is_active', true)
-      .order('set_number', { ascending: true });
+    const setsRows = await sql`
+      SELECT * FROM quiz_sets
+      WHERE project_id = ${projectId}
+        AND is_active = true
+      ORDER BY set_number ASC
+    `;
 
-    if (!sets?.length) {
+    if (!setsRows.length) {
       return NextResponse.json({ error: 'No quiz sets have been created for this project yet.' }, { status: 400 });
     }
 
-    const typedSets = sets as QuizSetRecord[];
+    const typedSets = setsRows as unknown as QuizSetRecord[];
 
     // Group sets by category
     const categoryMap = new Map<string, QuizSetRecord[]>();
@@ -213,15 +214,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No quiz sets have been created for this project yet.' }, { status: 400 });
     }
 
-    // Fetch questions for all sets in all categories in parallel
+    // Fetch questions for all sets in all categories
     const allSetIds = typedSets.map((s) => s.id);
-    const { data: allQuestions } = await supabase
-      .from('quiz_questions')
-      .select('*')
-      .in('quiz_set_id', allSetIds);
+    const allQsRows = await sql`
+      SELECT * FROM quiz_questions WHERE quiz_set_id = ANY(${allSetIds})
+    `;
 
     const questionsBySetId = new Map<string, QuizQuestionRecord[]>();
-    for (const q of (allQuestions ?? []) as QuizQuestionRecord[]) {
+    for (const q of allQsRows as unknown as QuizQuestionRecord[]) {
       if (!questionsBySetId.has(q.quiz_set_id)) questionsBySetId.set(q.quiz_set_id, []);
       questionsBySetId.get(q.quiz_set_id)!.push(q);
     }
@@ -257,23 +257,26 @@ export async function POST(request: Request) {
     // Use the first set's id as the representative quiz_set_id
     const representativeSetId = typedSets[0].id;
 
-    const { data: attempt, error } = await supabase
-      .from('quiz_attempts')
-      .insert({
-        user_id: user.id,
-        project_id: projectId,
-        quiz_set_id: representativeSetId,
-        assigned_questions: allAssigned,
-        answers_given: {},
-        status: 'in_progress',
-      })
-      .select('*')
-      .single();
+    const attemptRows = await sql`
+      INSERT INTO quiz_attempts (user_id, project_id, quiz_set_id, assigned_questions, answers_given, status)
+      VALUES (
+        ${userId},
+        ${projectId},
+        ${representativeSetId},
+        ${sql.json(allAssigned)},
+        ${sql.json({})},
+        'in_progress'
+      )
+      RETURNING *
+    `;
+    const attempt = attemptRows[0];
 
-    if (error) throw error;
+    if (!attempt) {
+      throw new Error('Failed to create quiz attempt');
+    }
 
     await logActivity({
-      userId: user.id,
+      userId,
       projectId,
       action: 'quiz_started',
       metadata: {

@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { getProjectById, getProjectQuizSets } from '@/lib/data';
 
-export default async function ProjectQuizAdminPage({ params }: { params: { id: string } }) {
+export default async function ProjectQuizAdminPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [project, sets] = await Promise.all([
     getProjectById(params.id),
     getProjectQuizSets(params.id),

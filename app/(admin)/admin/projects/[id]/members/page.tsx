@@ -11,7 +11,8 @@ import { getProjectById, getProjectMembers } from '@/lib/data';
 import { requireProjectAdmin } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
 
-export default async function ProjectMembersPage({ params }: { params: { id: string } }) {
+export default async function ProjectMembersPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireProjectAdmin(params.id);
   const [project, members] = await Promise.all([
     getProjectById(params.id),

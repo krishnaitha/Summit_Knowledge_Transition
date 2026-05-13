@@ -9,7 +9,8 @@ import { requireMember } from '@/lib/auth';
 import { getProjectById, getProjectDocuments, getQuizAttemptForProject, userHasProjectAccess } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export default async function ProjectOverviewPage({ params }: { params: { id: string } }) {
+export default async function ProjectOverviewPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { profile } = await requireMember();
   const canAccess = await userHasProjectAccess(profile!.id, profile?.role, params.id);
 

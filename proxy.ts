@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 // Lightweight middleware — no NextAuth import (openid-client breaks Edge runtime).
 // We check only for the presence of the NextAuth session cookie here.
 // Full JWT verification happens server-side in every route via getCurrentUserContext().
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isPublicPath =

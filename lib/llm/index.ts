@@ -3,7 +3,7 @@ import 'server-only';
 import { appEnv, assertEnv, isLlmConfigured } from '@/lib/env';
 import type Groq from 'groq-sdk';
 import { createGroqChatCompletion as groqCreate, createGroqQuizCompletion as groqQuizCreate } from '@/lib/groq/chat';
-import { createCopilotChatCompletion, type CopilotChatResponse } from '@/lib/llm/copilot';
+import { createCopilotChatCompletion } from '@/lib/llm/copilot';
 
 /**
  * Unified LLM provider abstraction
@@ -83,7 +83,7 @@ export async function createQuizCompletion(
     temperature?: number;
     max_tokens?: number;
     top_p?: number;
-    response_format?: { type: string };
+    response_format?: { type: 'json_object' };
   },
 ): Promise<UnifiedChatCompletion> {
   if (!isLlmConfigured()) {
@@ -95,7 +95,8 @@ export async function createQuizCompletion(
 
   if (appEnv.llmProvider === 'copilot') {
     // Copilot proxy - use regular completion for quiz generation
-    return await createCopilotChatCompletion(args);
+    const { response_format: _rf, ...copilotArgs } = args;
+    return await createCopilotChatCompletion(copilotArgs);
   }
 
   // Default to Groq - use quiz-optimized client

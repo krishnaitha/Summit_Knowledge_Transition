@@ -8,7 +8,7 @@ import { getFileInfo, getFileStream } from '@/lib/storage/local';
 import { downloadFromR2 } from '@/lib/storage/r2';
 
 function toWebStream(stream: NodeJS.ReadableStream) {
-  return Readable.toWeb(stream) as ReadableStream<Uint8Array>;
+  return Readable.toWeb(stream as Readable) as ReadableStream<Uint8Array>;
 }
 
 export async function GET(request: Request) {

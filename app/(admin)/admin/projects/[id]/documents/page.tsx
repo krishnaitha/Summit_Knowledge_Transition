@@ -6,7 +6,8 @@ import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
 import { DocumentsList } from '@/components/admin/documents-list';
 import { getProjectById, getProjectDocuments } from '@/lib/data';
 
-export default async function ProjectDocumentsPage({ params }: { params: { id: string } }) {
+export default async function ProjectDocumentsPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [project, documents] = await Promise.all([
     getProjectById(params.id),
     getProjectDocuments(params.id),

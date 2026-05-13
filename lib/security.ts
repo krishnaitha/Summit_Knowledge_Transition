@@ -50,7 +50,7 @@ export async function validateUploadedFile(file: File): Promise<string | null> {
   }
 
   if (MAGIC[ext]) {
-    const header = new Uint8Array(await file.arrayBuffer().then((buf) => buf.slice(0, 4)));
+    const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
     const valid = MAGIC[ext].every((byte, i) => header[i] === byte);
     if (!valid) {
       return `File "${file.name}" does not appear to be a valid ${ext.toUpperCase()} file.`;

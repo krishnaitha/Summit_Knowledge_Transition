@@ -8,7 +8,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
 import { validateOrigin } from '@/lib/security';
 import sql from '@/lib/db';
-import type { RagTraceRecord } from '@/lib/types/database';
+import type { ChatMessageRecord, RagTraceRecord } from '@/lib/types/database';
 import { createChatCompletion, getCurrentLlmProvider } from '@/lib/llm';
 import { createGroqChatCompletion } from '@/lib/groq/chat';
 
@@ -66,7 +66,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Session not found' }, { status: 404 });
   }
 
-  const messages = await sql`
+  const messages = await sql<ChatMessageRecord[]>`
     SELECT * FROM chat_messages WHERE session_id = ${sessionId} ORDER BY created_at ASC
   `;
 
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message limit reached. Please try again later.' }, { status: 429 });
     }
 
-    const canAccess = await userHasProjectAccess(userId, profile?.role as string | undefined, body.projectId);
+    const canAccess = await userHasProjectAccess(userId, profile?.role, body.projectId);
 
     if (!canAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -292,17 +292,21 @@ export async function POST(request: Request) {
         try {
           // For Groq, use streaming; for Copilot, buffer the full response
           if (getCurrentLlmProvider() === 'Groq') {
-            const completion = await createGroqChatCompletion(
+            // stream_options is a valid Groq API field not yet typed in groq-sdk;
+            // Object.assign avoids the excess-property check.
+            const groqArgs = Object.assign(
               {
-                stream: true,
+                stream: true as const,
                 max_tokens: 1024,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                stream_options: { include_usage: true } as any,
                 messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: body.message },
+                  { role: 'system' as const, content: systemPrompt },
+                  { role: 'user' as const, content: body.message },
                 ],
               },
+              { stream_options: { include_usage: true } },
+            );
+            const completion = await createGroqChatCompletion(
+              groqArgs,
               (statusMessage) => enqueueStatus(statusMessage),
             );
 

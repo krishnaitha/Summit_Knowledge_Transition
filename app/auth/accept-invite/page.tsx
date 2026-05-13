@@ -2,11 +2,12 @@ import { redirect } from 'next/navigation';
 import { AcceptInviteForm } from '@/components/auth/accept-invite-form';
 import sql from '@/lib/db';
 
-export default async function AcceptInvitePage({
-  searchParams,
-}: {
-  searchParams: { token?: string };
-}) {
+export default async function AcceptInvitePage(
+  props: {
+    searchParams: Promise<{ token?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const token = searchParams.token ?? '';
 
   if (!token) redirect('/login');

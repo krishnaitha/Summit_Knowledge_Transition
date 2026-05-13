@@ -51,7 +51,7 @@ export function RetakeRequestButton({
 
   if (!showForm) {
     return (
-      <Button variant="outline" size="sm" onClick={() => setShowForm(true)}>
+      <Button variant="secondary" size="sm" onClick={() => setShowForm(true)}>
         <RefreshCw className="h-3.5 w-3.5" />
         Request re-enable
       </Button>

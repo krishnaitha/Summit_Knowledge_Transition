@@ -14,7 +14,8 @@ import { requireProjectAdmin } from '@/lib/auth';
 import { getProjectAnnouncements, getProjectById, getProjectDocuments, getProjectMembers, getProjectQuizSets, getRetakeRequestsForProject } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export default async function AdminProjectDetailPage({ params }: { params: { id: string } }) {
+export default async function AdminProjectDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { userId, profile } = await requireProjectAdmin(params.id);
   const isSuperAdmin = profile?.role === 'admin';
 

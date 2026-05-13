@@ -3,6 +3,7 @@ export type ProjectMemberRole = "admin" | "member";
 export type MessageRole = "user" | "assistant";
 export type QuizAttemptStatus = "in_progress" | "submitted";
 export type QuizOptionKey = "A" | "B" | "C" | "D";
+export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 
 export interface UserProfile {
   id: string;

@@ -8,6 +8,7 @@ import type {
   ChatMessageRecord,
   ChatSessionRecord,
   DocumentRecord,
+  Json,
   ProjectDashboardCard,
   QuizCoachingPlanRecord,
   ProjectAnnouncementRecord,
@@ -378,7 +379,7 @@ export async function getProjectAnalytics(projectId: string) {
   const quizResults = attempts.map((attempt) => {
     const user = userIndex.get(attempt.user_id);
     const assignedQs = (attempt.assigned_questions ?? []) as Array<{ section?: string }>;
-    const sectionSet = [...new Set(assignedQs.map((q) => q.section).filter(Boolean))];
+    const sectionSet = [...new Set(assignedQs.map((q) => q.section).filter((s): s is string => Boolean(s)))];
     const carriedKeys = Object.keys(attempt.carried_sections ?? {});
     const allSections = [...new Set([...sectionSet, ...carriedKeys])];
     const sectionLabel = allSections.length > 0
@@ -574,7 +575,7 @@ export async function logActivity({
 }) {
   await sql`
     INSERT INTO activity_log (user_id, project_id, action, metadata)
-    VALUES (${userId}, ${projectId ?? null}, ${action}, ${metadata ? sql.json(metadata) : null})
+    VALUES (${userId}, ${projectId ?? null}, ${action}, ${metadata ? sql.json(metadata as unknown as Json) : null})
   `;
 }
 
@@ -592,7 +593,7 @@ export async function getMemberDashboardStats(userId: string) {
       pendingQuizProjects: 0,
       totalDocs: 0,
       recentActivity: [] as Array<{ action: string; projectName: string | null; createdAt: string }>,
-      recentBookmarks: [] as Array<{ projectName: string; content: string; createdAt: string }>,
+      recentBookmarks: [] as Array<{ projectName: string; question: string | null; content: string; createdAt: string }>,
       recentAnnouncements: [] as Array<{ projectName: string; title: string; message: string; createdAt: string }>,
     };
   }

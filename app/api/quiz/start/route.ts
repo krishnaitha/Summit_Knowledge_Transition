@@ -6,7 +6,7 @@ import sql from '@/lib/db';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { createSectionedQuestions } from '@/lib/quiz/assignment';
 import { validateOrigin } from '@/lib/security';
-import type { AssignedQuestion, QuizQuestionRecord, QuizSetRecord } from '@/lib/types/database';
+import type { AssignedQuestion, Json, QuizQuestionRecord, QuizSetRecord } from '@/lib/types/database';
 
 const QUESTIONS_PER_SECTION = 20;
 const SECTION_DURATION_SECONDS = 900;  // 15 min per section
@@ -184,7 +184,7 @@ export async function POST(request: Request) {
         // Update the existing in_progress attempt with the assigned questions
         await sql`
           UPDATE quiz_attempts
-          SET assigned_questions = ${sql.json(retakeAssigned)}
+          SET assigned_questions = ${sql.json(retakeAssigned as unknown as Json)}
           WHERE id = ${inProgressAttempt.id}
         `;
 
@@ -296,8 +296,9 @@ export async function POST(request: Request) {
         ${userId},
         ${projectId},
         ${representativeSetId},
-        ${sql.json(allAssigned)},
+        ${sql.json(allAssigned as unknown as Json)},
         ${sql.json({})},
+
         'in_progress'
       )
       RETURNING *

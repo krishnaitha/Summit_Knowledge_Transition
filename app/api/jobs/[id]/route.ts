@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserContext } from '@/lib/auth';
 import sql from '@/lib/db';
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { userId } = await getCurrentUserContext();
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

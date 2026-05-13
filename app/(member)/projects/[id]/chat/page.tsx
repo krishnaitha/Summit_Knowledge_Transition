@@ -6,7 +6,8 @@ import { ChatInterface } from '@/components/chat/chat-interface';
 import { requireMember } from '@/lib/auth';
 import { getChatMessages, getBookmarkedMessageIds, getProjectById, getProjectChatSessions, userHasProjectAccess } from '@/lib/data';
 
-export default async function ProjectChatPage({ params }: { params: { id: string } }) {
+export default async function ProjectChatPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { profile } = await requireMember();
   const canAccess = await userHasProjectAccess(profile!.id, profile?.role, params.id);
 

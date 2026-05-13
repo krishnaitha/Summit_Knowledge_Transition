@@ -3,7 +3,7 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { parse } from "csv-parse/sync";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth";
 import sql from "@/lib/db";
@@ -34,6 +34,7 @@ export async function toggleProjectStatusAction(formData: FormData) {
   await sql`UPDATE projects SET is_active = ${nextState} WHERE id = ${projectId}`;
   revalidatePath("/admin/projects");
   revalidatePath(`/admin/projects/${projectId}`);
+  revalidateTag(`project:${projectId}`, 'max');
 }
 
 export async function deleteDocumentAction(formData: FormData) {
@@ -55,6 +56,7 @@ export async function deleteDocumentAction(formData: FormData) {
   await sql`DELETE FROM document_chunks WHERE document_id = ${documentId}`;
 
   revalidatePath(`/admin/projects/${projectId}/documents`);
+  revalidateTag(`project-docs:${projectId}`, 'max');
 }
 
 export async function toggleDocumentRequiredAction(formData: FormData) {
@@ -129,6 +131,7 @@ export async function inviteProjectMemberAction(formData: FormData) {
     }
 
     revalidatePath(`/admin/projects/${projectId}/members`);
+    revalidateTag(`project-members:${projectId}`, 'max');
     return;
   }
 
@@ -139,6 +142,7 @@ export async function inviteProjectMemberAction(formData: FormData) {
     ON CONFLICT (project_id, user_id) DO NOTHING
   `;
   revalidatePath(`/admin/projects/${projectId}/members`);
+  revalidateTag(`project-members:${projectId}`, 'max');
 }
 
 export async function sendProjectAnnouncementAction(formData: FormData) {
@@ -177,6 +181,7 @@ export async function removeProjectMemberAction(formData: FormData) {
     DELETE FROM project_members WHERE project_id = ${projectId} AND user_id = ${userId}
   `;
   revalidatePath(`/admin/projects/${projectId}/members`);
+  revalidateTag(`project-members:${projectId}`, 'max');
 }
 
 export async function updateProjectMemberRoleAction(formData: FormData) {
@@ -190,6 +195,7 @@ export async function updateProjectMemberRoleAction(formData: FormData) {
     UPDATE project_members SET role = ${role} WHERE project_id = ${projectId} AND user_id = ${userId}
   `;
   revalidatePath(`/admin/projects/${projectId}/members`);
+  revalidateTag(`project-members:${projectId}`, 'max');
 }
 
 const MAX_QUIZ_RESETS = 2;
@@ -270,6 +276,7 @@ export async function setQuizWindowAction(formData: FormData) {
 
   revalidatePath(`/admin/projects/${projectId}/analytics`);
   revalidatePath(`/projects/${projectId}/quiz`);
+  revalidateTag(`project:${projectId}`, 'max');
 }
 
 export async function deleteQuizSetAction(formData: FormData) {
@@ -279,6 +286,7 @@ export async function deleteQuizSetAction(formData: FormData) {
   await sql`DELETE FROM quiz_questions WHERE quiz_set_id = ${setId}`;
   await sql`DELETE FROM quiz_sets WHERE id = ${setId}`;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function deleteQuizQuestionAction(formData: FormData) {
@@ -287,6 +295,7 @@ export async function deleteQuizQuestionAction(formData: FormData) {
 
   await sql`DELETE FROM quiz_questions WHERE id = ${questionId}`;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function createQuizSetAction(formData: FormData) {
@@ -303,6 +312,7 @@ export async function createQuizSetAction(formData: FormData) {
     VALUES (${projectId}, ${setName}, ${setNumber}, ${category}, true)
   `;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function createQuizQuestionAction(formData: FormData) {
@@ -328,6 +338,7 @@ export async function createQuizQuestionAction(formData: FormData) {
     )
   `;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function updateQuizQuestionAction(formData: FormData) {
@@ -350,6 +361,7 @@ export async function updateQuizQuestionAction(formData: FormData) {
     WHERE id = ${questionId}
   `;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function toggleQuizSetActiveAction(formData: FormData) {
@@ -359,6 +371,7 @@ export async function toggleQuizSetActiveAction(formData: FormData) {
 
   await sql`UPDATE quiz_sets SET is_active = ${nextActive} WHERE id = ${setId}`;
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function importQuizCsvAction(formData: FormData) {
@@ -387,6 +400,7 @@ export async function importQuizCsvAction(formData: FormData) {
   }
 
   revalidatePath(`/admin/projects/${projectId}/quiz`);
+  revalidateTag(`project-quiz:${projectId}`, 'max');
 }
 
 export async function createDemoUserAction(formData: FormData) {

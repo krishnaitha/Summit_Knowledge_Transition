@@ -1,8 +1,10 @@
 import 'server-only';
 
-import { appEnv, assertEnv, isLlmConfigured } from '@/lib/env';
-import type Groq from 'groq-sdk';
-import { createGroqChatCompletion as groqCreate, createGroqQuizCompletion as groqQuizCreate } from '@/lib/groq/chat';
+import { appEnv, isLlmConfigured } from '@/lib/env';
+import {
+  createGroqChatCompletion as groqCreate,
+  createGroqQuizCompletion as groqQuizCreate,
+} from '@/lib/groq/chat';
 import { createCopilotChatCompletion } from '@/lib/llm/copilot';
 
 /**
@@ -41,7 +43,7 @@ export async function createChatCompletion(
     const provider = appEnv.llmProvider;
     throw new Error(
       `${provider === 'copilot' ? 'Copilot proxy' : 'Groq'} is not configured. ` +
-      `Add required environment variables and set LLM_PROVIDER="${provider}".`,
+        `Add required environment variables and set LLM_PROVIDER="${provider}".`,
     );
   }
 
@@ -77,15 +79,13 @@ export async function createChatCompletion(
  * Create a quiz completion (used during quiz generation)
  * This is optimized for quiz generation tasks
  */
-export async function createQuizCompletion(
-  args: {
-    messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
-    temperature?: number;
-    max_tokens?: number;
-    top_p?: number;
-    response_format?: { type: 'json_object' };
-  },
-): Promise<UnifiedChatCompletion> {
+export async function createQuizCompletion(args: {
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+  temperature?: number;
+  max_tokens?: number;
+  top_p?: number;
+  response_format?: { type: 'json_object' };
+}): Promise<UnifiedChatCompletion> {
   if (!isLlmConfigured()) {
     const provider = appEnv.llmProvider;
     throw new Error(

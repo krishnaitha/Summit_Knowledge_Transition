@@ -3,14 +3,19 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserContext } from '@/lib/auth';
 import { getProjectById, getProjectMembers, logActivity, userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
-import { checkRateLimit } from '@/lib/rate-limit';
 import { createSectionedQuestions } from '@/lib/quiz/assignment';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { validateOrigin } from '@/lib/security';
-import type { AssignedQuestion, Json, QuizQuestionRecord, QuizSetRecord } from '@/lib/types/database';
+import type {
+  AssignedQuestion,
+  Json,
+  QuizQuestionRecord,
+  QuizSetRecord,
+} from '@/lib/types/database';
 
 const QUESTIONS_PER_SECTION = 20;
-const SECTION_DURATION_SECONDS = 900;  // 15 min per section
-const ATTEMPT_TIMEOUT_SECONDS  = 3600; // 1 hour — 2× the total intended quiz duration
+const SECTION_DURATION_SECONDS = 900; // 15 min per section
+const ATTEMPT_TIMEOUT_SECONDS = 3600; // 1 hour — 2× the total intended quiz duration
 
 function toClientQuestions(questions: AssignedQuestion[]) {
   return questions.map((q) => ({
@@ -84,7 +89,10 @@ export async function POST(request: Request) {
     // Rate limit: max 5 quiz starts per hour
     const rateCheck = await checkRateLimit(userId, 'quiz_started', 5, 3600);
     if (!rateCheck.allowed) {
-      return NextResponse.json({ error: 'Too many quiz attempts. Please wait before trying again.' }, { status: 429 });
+      return NextResponse.json(
+        { error: 'Too many quiz attempts. Please wait before trying again.' },
+        { status: 429 },
+      );
     }
 
     // Already submitted — return the locked attempt
@@ -98,7 +106,10 @@ export async function POST(request: Request) {
     const submittedAttempt = submittedRows[0] ?? null;
 
     if (submittedAttempt) {
-      return NextResponse.json({ error: 'Quiz already submitted.', attempt: submittedAttempt }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Quiz already submitted.', attempt: submittedAttempt },
+        { status: 403 },
+      );
     }
 
     // Resume a valid in_progress attempt that has the new sectioned format
@@ -113,11 +124,15 @@ export async function POST(request: Request) {
 
     if (inProgressAttempt) {
       const saved = inProgressAttempt.assigned_questions as AssignedQuestion[];
-      const carried = inProgressAttempt.carried_sections as Record<string, { score: number; total: number }> | null;
+      const carried = inProgressAttempt.carried_sections as Record<
+        string,
+        { score: number; total: number }
+      > | null;
 
       if (saved?.length && saved[0]?.section) {
         // Normal resume: questions already assigned — check timeout before resuming
-        const elapsedSeconds = (Date.now() - new Date(inProgressAttempt.started_at).getTime()) / 1000;
+        const elapsedSeconds =
+          (Date.now() - new Date(inProgressAttempt.started_at).getTime()) / 1000;
 
         if (elapsedSeconds <= ATTEMPT_TIMEOUT_SECONDS) {
           const sectionNames = [...new Set(saved.map((q) => q.section))];
@@ -178,7 +193,10 @@ export async function POST(request: Request) {
         }
 
         if (!retakeAssigned.length) {
-          return NextResponse.json({ error: 'No questions available for the retake sections.' }, { status: 400 });
+          return NextResponse.json(
+            { error: 'No questions available for the retake sections.' },
+            { status: 400 },
+          );
         }
 
         // Update the existing in_progress attempt with the assigned questions
@@ -230,7 +248,10 @@ export async function POST(request: Request) {
     `;
 
     if (!setsRows.length) {
-      return NextResponse.json({ error: 'No quiz sets have been created for this project yet.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No quiz sets have been created for this project yet.' },
+        { status: 400 },
+      );
     }
 
     const typedSets = setsRows as unknown as QuizSetRecord[];
@@ -244,7 +265,10 @@ export async function POST(request: Request) {
     }
 
     if (categoryMap.size === 0) {
-      return NextResponse.json({ error: 'No quiz sets have been created for this project yet.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No quiz sets have been created for this project yet.' },
+        { status: 400 },
+      );
     }
 
     // Fetch questions for all sets in all categories
@@ -272,7 +296,9 @@ export async function POST(request: Request) {
 
       if (!catQuestions.length) {
         return NextResponse.json(
-          { error: `No questions found for category "${category}". Ask your admin to add questions.` },
+          {
+            error: `No questions found for category "${category}". Ask your admin to add questions.`,
+          },
           { status: 400 },
         );
       }

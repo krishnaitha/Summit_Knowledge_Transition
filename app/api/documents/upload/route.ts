@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
 
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
       RETURNING id
     `;
 
+    revalidateTag(`project-docs:${projectId}`, 'max');
     return NextResponse.json({ documentId: rows[0].id });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Upload failed' }, { status: 500 });

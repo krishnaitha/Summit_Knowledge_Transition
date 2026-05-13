@@ -1,41 +1,34 @@
 import 'server-only';
 
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
+import { authOptions } from '@/auth';
+import sql from '@/lib/db';
 import type { UserProfile } from '@/lib/types/database';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function getCurrentUserContext() {
-  const supabase = createServerSupabaseClient();
+  const session = await getServerSession(authOptions);
+  const userId = (session?.user as { id?: string } | undefined)?.id ?? null;
 
-  if (!supabase) {
-    return { user: null, profile: null as UserProfile | null };
+  if (!userId) {
+    return { user: null, userId: null, profile: null as UserProfile | null };
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { user: null, profile: null as UserProfile | null };
-  }
-
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle<UserProfile>();
+  const rows = await sql<UserProfile[]>`SELECT * FROM users WHERE id = ${userId} LIMIT 1`;
+  const profile = rows[0] ?? null;
 
   return {
-    user,
-    profile: profile ?? null,
+    user: session!.user,
+    userId,
+    profile,
   };
 }
 
 export async function requireAuthenticatedUser() {
   const context = await getCurrentUserContext();
 
-  if (!context.user) {
+  if (!context.userId) {
     redirect('/login');
   }
 

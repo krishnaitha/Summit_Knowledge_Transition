@@ -1,6 +1,6 @@
 import Groq from 'groq-sdk';
 
-import { assertEnv, isGroqConfigured } from '@/lib/env';
+import { appEnv, assertEnv, isGroqConfigured } from '@/lib/env';
 import { sleep } from '@/lib/utils';
 
 const PRIMARY_MODEL = 'llama-3.3-70b-versatile';

@@ -10,6 +10,7 @@ export interface SidebarItem {
   href: string;
   label: string;
   icon?: LucideIcon;
+  badge?: number;
 }
 
 export function Sidebar({ items, sectionLabel }: { items: SidebarItem[]; sectionLabel?: string }) {
@@ -42,6 +43,11 @@ export function Sidebar({ items, sectionLabel }: { items: SidebarItem[]; section
                   />
                 )}
                 {item.label}
+                {item.badge != null && item.badge > 0 && (
+                  <span className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {item.badge > 9 ? '9+' : item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}

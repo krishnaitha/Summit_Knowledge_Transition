@@ -1,19 +1,25 @@
 import Link from 'next/link';
 import { BarChart3, BookOpen, ChevronRight, FileText, MessageSquare, Users } from 'lucide-react';
 
+import { approveRetakeRequestAction, rejectRetakeRequestAction } from '@/app/actions/admin';
 import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
+import { RetakeRequestsCard } from '@/components/admin/retake-requests-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getProjectById, getProjectDocuments, getProjectMembers, getProjectQuizSets } from '@/lib/data';
+import { requireAdmin } from '@/lib/auth';
+import { getProjectById, getProjectDocuments, getProjectMembers, getProjectQuizSets, getRetakeRequestsForProject } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
 export default async function AdminProjectDetailPage({ params }: { params: { id: string } }) {
-  const [project, documents, members, sets] = await Promise.all([
+  const { userId } = await requireAdmin();
+
+  const [project, documents, members, sets, retakeRequests] = await Promise.all([
     getProjectById(params.id),
     getProjectDocuments(params.id),
     getProjectMembers(params.id),
     getProjectQuizSets(params.id),
+    getRetakeRequestsForProject(params.id),
   ]);
 
   const recentDocs = documents.slice(0, 5);
@@ -136,6 +142,17 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
           </CardContent>
         </Card>
       </div>
+
+      {/* Quiz re-enable requests — show only when there are requests */}
+      {retakeRequests.length > 0 && (
+        <RetakeRequestsCard
+          projectId={params.id}
+          adminId={userId ?? undefined}
+          requests={retakeRequests}
+          approveAction={approveRetakeRequestAction}
+          rejectAction={rejectRetakeRequestAction}
+        />
+      )}
     </div>
   );
 }

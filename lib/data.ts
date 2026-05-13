@@ -15,316 +15,276 @@ import type {
   QuizSetRecord,
   UserProfile,
 } from '@/lib/types/database';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+
+export interface ObservabilityMetrics {
+  totalRequests: number;
+  retrievalHitRate: number;
+  avgSimilarityScore: number;
+  refusalRate: number;
+  possibleHallucinationCount: number;
+  slowQueryCount: number;
+  tokenUsageByDay: Array<{ date: string; promptTokens: number; completionTokens: number; totalTokens: number }>;
+  topUnansweredQueries: Array<{ query: string; occurrences: number }>;
+  possibleHallucinations: Array<{ query: string; maxSimilarity: string; askedAt: string }>;
+  slowQueries: Array<{ query: string; totalMs: number; generationMs: number; askedAt: string }>;
+}
+
+import sql from '@/lib/db';
 import { computeSectionScores } from '@/lib/quiz/scoring';
 import { formatDate } from '@/lib/utils';
 
 export async function getProfileById(userId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return null;
-  }
-
-  const { data } = await supabase.from('users').select('*').eq('id', userId).maybeSingle<UserProfile>();
-  return data ?? null;
+  const rows = await sql<UserProfile[]>`SELECT * FROM users WHERE id = ${userId} LIMIT 1`;
+  return rows[0] ?? null;
 }
 
-export async function getAssignedProjects(userId: string) {
-  const supabase = createServiceRoleSupabaseClient();
+export async function getAssignedProjects(userId: string, lastLoginAt?: string | null) {
+  const rows = await sql<{ project_id: string }[]>`
+    SELECT project_id FROM project_members WHERE user_id = ${userId}
+  `;
+  const projectIds = rows.map((r) => r.project_id);
 
-  if (!supabase) {
-    return [] as ProjectDashboardCard[];
-  }
+  if (!projectIds.length) return [] as ProjectDashboardCard[];
 
-  const { data: memberships } = await supabase.from('project_members').select('project_id').eq('user_id', userId);
-  const projectIds = (memberships ?? []).map((membership) => membership.project_id);
+  const [projects, documents, attempts, viewedDocs, newDocRows] = await Promise.all([
+    sql<ProjectRecord[]>`SELECT * FROM projects WHERE id = ANY(${projectIds}) ORDER BY created_at DESC`,
+    sql<{ project_id: string }[]>`SELECT project_id FROM documents WHERE project_id = ANY(${projectIds})`,
+    sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE user_id = ${userId}`,
+    sql<{ project_id: string; c: string }[]>`
+      SELECT project_id, COUNT(DISTINCT (metadata->>'documentId')) AS c
+      FROM activity_log
+      WHERE user_id = ${userId} AND action = 'document_viewed' AND project_id = ANY(${projectIds})
+      GROUP BY project_id
+    `,
+    lastLoginAt
+      ? sql<{ project_id: string }[]>`
+          SELECT DISTINCT project_id FROM documents
+          WHERE project_id = ANY(${projectIds}) AND uploaded_at > ${lastLoginAt}
+        `
+      : Promise.resolve([] as { project_id: string }[]),
+  ]);
 
-  if (!projectIds.length) {
-    return [] as ProjectDashboardCard[];
-  }
+  const viewedMap = new Map(viewedDocs.map((v) => [v.project_id, Number(v.c)]));
+  const newDocProjects = new Set(newDocRows.map((n) => n.project_id));
 
-  const { data: projects } = await supabase.from('projects').select('*').in('id', projectIds).order('created_at', { ascending: false });
-  const { data: documents } = await supabase.from('documents').select('project_id').in('project_id', projectIds);
-  const { data: attempts } = await supabase.from('quiz_attempts').select('*').eq('user_id', userId);
-
-  return ((projects ?? []) as ProjectRecord[])
+  return projects
     .filter((project) => project.is_active)
     .map((project) => {
-      const projectDocuments = (documents ?? []).filter((document) => document.project_id === project.id).length;
-      const attempt = (attempts ?? []).find((entry) => entry.project_id === project.id) as QuizAttemptRecord | undefined;
+      const projectDocuments = documents.filter((d) => d.project_id === project.id).length;
+      const attempt = attempts.find((a) => a.project_id === project.id);
 
       return {
         ...project,
         documentCount: projectDocuments,
+        docsViewedCount: viewedMap.get(project.id) ?? 0,
+        isNewDocs: newDocProjects.has(project.id),
+        quizCloseAt: project.quiz_close_at ?? null,
         quizStatus: attempt?.status === 'submitted' ? 'Completed' : attempt?.status === 'in_progress' ? 'In Progress' : 'Not Started',
         quizScoreLabel:
           attempt?.status === 'submitted' && attempt.score != null && attempt.total_marks != null
             ? `${attempt.score}/${attempt.total_marks}`
             : null,
+        quizPercentage:
+          attempt?.status === 'submitted' && attempt.percentage != null ? Number(attempt.percentage) : null,
+        quizPassed: attempt?.status === 'submitted' && attempt.passed != null ? attempt.passed : null,
       } satisfies ProjectDashboardCard;
     });
 }
 
 export async function getProjectById(projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return null;
-  }
-
-  const { data } = await supabase.from('projects').select('*').eq('id', projectId).maybeSingle<ProjectRecord>();
-  return data ?? null;
+  const rows = await sql<ProjectRecord[]>`SELECT * FROM projects WHERE id = ${projectId} LIMIT 1`;
+  return rows[0] ?? null;
 }
 
 export async function getProjectDocuments(projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return [] as DocumentRecord[];
-  }
-
-  const { data } = await supabase
-    .from('documents')
-    .select('*')
-    .eq('project_id', projectId)
-    .order('uploaded_at', { ascending: false });
-
-  return (data ?? []) as DocumentRecord[];
+  return sql<DocumentRecord[]>`
+    SELECT * FROM documents WHERE project_id = ${projectId} ORDER BY uploaded_at DESC
+  `;
 }
 
 export async function getProjectMembers(projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return [] as Array<UserProfile & { assigned_at: string }>;
-  }
-
-  const { data: members } = await supabase
-    .from('project_members')
-    .select('assigned_at,user:users(*)')
-    .eq('project_id', projectId)
-    .order('assigned_at', { ascending: true });
-
-  return (members ?? [])
-    .map((member) => {
-      const user = Array.isArray(member.user) ? member.user[0] : member.user;
-      if (!user) {
-        return null;
-      }
-
-      return {
-        ...(user as UserProfile),
-        assigned_at: member.assigned_at as string,
-      };
-    })
-    .filter(Boolean) as Array<UserProfile & { assigned_at: string }>;
+  const rows = await sql`
+    SELECT pm.assigned_at, u.*
+    FROM project_members pm
+    JOIN users u ON u.id = pm.user_id
+    WHERE pm.project_id = ${projectId}
+    ORDER BY pm.assigned_at ASC
+  `;
+  return rows as Array<UserProfile & { assigned_at: string }>;
 }
 
 export async function getQuizAttemptForProject(userId: string, projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return null;
-  }
-
-  const { data } = await supabase
-    .from('quiz_attempts')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('project_id', projectId)
-    .order('started_at', { ascending: false })
-    .limit(1)
-    .maybeSingle<QuizAttemptRecord>();
-
-  return data ?? null;
+  const rows = await sql<QuizAttemptRecord[]>`
+    SELECT * FROM quiz_attempts
+    WHERE user_id = ${userId} AND project_id = ${projectId}
+    ORDER BY started_at DESC
+    LIMIT 1
+  `;
+  return rows[0] ?? null;
 }
 
 export async function getProjectChatSessions(userId: string, projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return [] as ChatSessionRecord[];
-  }
-
-  const { data } = await supabase
-    .from('chat_sessions')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('project_id', projectId)
-    .order('last_message_at', { ascending: false });
-
-  return (data ?? []) as ChatSessionRecord[];
+  return sql<ChatSessionRecord[]>`
+    SELECT * FROM chat_sessions
+    WHERE user_id = ${userId} AND project_id = ${projectId}
+    ORDER BY last_message_at DESC
+  `;
 }
 
 export async function getChatMessages(sessionId: string) {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return [] as ChatMessageRecord[];
-  }
-
-  const { data } = await supabase
-    .from('chat_messages')
-    .select('*')
-    .eq('session_id', sessionId)
-    .order('created_at', { ascending: true });
-
-  return (data ?? []) as ChatMessageRecord[];
+  return sql<ChatMessageRecord[]>`
+    SELECT * FROM chat_messages WHERE session_id = ${sessionId} ORDER BY created_at ASC
+  `;
 }
 
 export async function userHasProjectAccess(userId: string, role: UserProfile['role'] | null | undefined, projectId: string) {
-  if (role === 'admin') {
-    return true;
-  }
+  if (role === 'admin') return true;
 
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return false;
-  }
-
-  const { data } = await supabase
-    .from('project_members')
-    .select('id')
-    .eq('project_id', projectId)
-    .eq('user_id', userId)
-    .maybeSingle();
-
-  return Boolean(data);
+  const rows = await sql`
+    SELECT id FROM project_members
+    WHERE project_id = ${projectId} AND user_id = ${userId}
+    LIMIT 1
+  `;
+  return rows.length > 0;
 }
 
 export async function getAdminDashboardStats() {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return {
-      totalUsers: 0,
-      activeUsers: 0,
-      totalMessages: 0,
-      quizCompletionRate: 0,
-      recentActivity: [] as ActivityRecord[],
-    };
-  }
-
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [{ count: totalUsers }, { count: activeUsers }, { count: totalMessages }, { count: totalDocuments }, { count: completedQuizzes }, { count: totalAttempts }, { data: recentActivity }] = await Promise.all([
-    supabase.from('users').select('*', { count: 'exact', head: true }),
-    supabase.from('users').select('*', { count: 'exact', head: true }).gte('last_login_at', sevenDaysAgo),
-    supabase.from('chat_messages').select('*', { count: 'exact', head: true }),
-    supabase.from('documents').select('*', { count: 'exact', head: true }),
-    supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('status', 'submitted'),
-    supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }),
-    supabase.from('activity_log').select('*, user:users(full_name, email)').order('created_at', { ascending: false }).limit(10),
+  const [
+    totalUsersRows,
+    activeUsersRows,
+    totalMessagesRows,
+    totalDocumentsRows,
+    completedQuizzesRows,
+    totalAttemptsRows,
+    pendingRetakeRows,
+    recentActivityRows,
+  ] = await Promise.all([
+    sql`SELECT COUNT(*) as c FROM users`,
+    sql`SELECT COUNT(*) as c FROM users WHERE last_login_at >= ${sevenDaysAgo}`,
+    sql`SELECT COUNT(*) as c FROM chat_messages`,
+    sql`SELECT COUNT(*) as c FROM documents`,
+    sql`SELECT COUNT(*) as c FROM quiz_attempts WHERE status = 'submitted'`,
+    sql`SELECT COUNT(*) as c FROM quiz_attempts`,
+    sql`SELECT COUNT(*) as c FROM quiz_retake_requests WHERE status = 'pending'`,
+    sql`
+      SELECT al.*, u.full_name as user_full_name, u.email as user_email
+      FROM activity_log al
+      LEFT JOIN users u ON u.id = al.user_id
+      ORDER BY al.created_at DESC
+      LIMIT 10
+    `,
   ]);
 
-  type ActivityWithUser = ActivityRecord & { user: { full_name: string | null; email: string | null } | null };
+  const totalUsers = Number(totalUsersRows[0]?.c ?? 0);
+  const activeUsers = Number(activeUsersRows[0]?.c ?? 0);
+  const totalMessages = Number(totalMessagesRows[0]?.c ?? 0);
+  const totalDocuments = Number(totalDocumentsRows[0]?.c ?? 0);
+  const completedQuizzes = Number(completedQuizzesRows[0]?.c ?? 0);
+  const totalAttempts = Number(totalAttemptsRows[0]?.c ?? 0);
+  const pendingRetakeRequests = Number(pendingRetakeRows[0]?.c ?? 0);
 
-  const enrichedActivity = ((recentActivity ?? []) as ActivityWithUser[]).map((item) => {
-    const rawName = item.user?.full_name;
-    const name = (rawName && rawName !== 'undefined' && rawName.trim())
-      ? rawName
-      : (item.user?.email ?? null);
-    return { ...item, userName: name };
+  const enrichedActivity = recentActivityRows.map((item) => {
+    const rawName = item.user_full_name as string | null;
+    const name = (rawName && rawName !== 'undefined' && rawName.trim()) ? rawName : (item.user_email as string | null);
+    return { ...item, userName: name } as ActivityRecord & { userName: string | null };
   });
 
   return {
-    totalUsers: totalUsers ?? 0,
-    activeUsers: activeUsers ?? 0,
-    totalMessages: totalMessages ?? 0,
-    totalDocuments: totalDocuments ?? 0,
-    quizCompletionRate: totalAttempts ? Math.round(((completedQuizzes ?? 0) / totalAttempts) * 100) : 0,
+    totalUsers,
+    activeUsers,
+    totalMessages,
+    totalDocuments,
+    quizCompletionRate: totalAttempts ? Math.round((completedQuizzes / totalAttempts) * 100) : 0,
+    pendingRetakeRequests,
     recentActivity: enrichedActivity,
   };
 }
 
 export async function getAllProjects() {
-  const supabase = createServiceRoleSupabaseClient();
+  return sql<ProjectRecord[]>`SELECT * FROM projects ORDER BY created_at DESC`;
+}
 
-  if (!supabase) {
-    return [] as ProjectRecord[];
-  }
-
-  const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-  return (data ?? []) as ProjectRecord[];
+export async function getPendingRetakeCountsByProject(): Promise<Map<string, number>> {
+  const rows = await sql<{ project_id: string; c: string }[]>`
+    SELECT project_id, COUNT(*) as c
+    FROM quiz_retake_requests
+    WHERE status = 'pending'
+    GROUP BY project_id
+  `;
+  return new Map(rows.map((r) => [r.project_id, Number(r.c)]));
 }
 
 export async function getProjectQuizSets(projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
+  const [sets, questions] = await Promise.all([
+    sql<QuizSetRecord[]>`SELECT * FROM quiz_sets WHERE project_id = ${projectId} ORDER BY set_number ASC`,
+    sql<QuizQuestionRecord[]>`
+      SELECT qq.* FROM quiz_questions qq
+      JOIN quiz_sets qs ON qs.id = qq.quiz_set_id
+      WHERE qs.project_id = ${projectId}
+    `,
+  ]);
 
-  if (!supabase) {
-    return [] as Array<QuizSetRecord & { questions: QuizQuestionRecord[] }>;
-  }
-
-  const { data: sets } = await supabase
-    .from('quiz_sets')
-    .select('*')
-    .eq('project_id', projectId)
-    .order('set_number', { ascending: true });
-
-  const { data: questions } = await supabase.from('quiz_questions').select('*').in(
-    'quiz_set_id',
-    ((sets ?? []) as QuizSetRecord[]).map((set) => set.id),
-  );
-
-  return ((sets ?? []) as QuizSetRecord[]).map((set) => ({
+  return sets.map((set) => ({
     ...set,
-    questions: ((questions ?? []) as QuizQuestionRecord[]).filter((question) => question.quiz_set_id === set.id),
+    questions: questions.filter((q) => q.quiz_set_id === set.id),
   }));
 }
 
+export async function getRetakeRequestsForProject(projectId: string) {
+  return sql<{
+    id: string;
+    user_id: string;
+    project_id: string;
+    attempt_id: string | null;
+    reason: string | null;
+    status: string;
+    created_at: Date;
+    resolved_at: Date | null;
+    resolved_by: string | null;
+    user_name: string;
+    user_email: string;
+  }[]>`
+    SELECT r.*, u.full_name AS user_name, u.email AS user_email
+    FROM quiz_retake_requests r
+    JOIN users u ON u.id = r.user_id
+    WHERE r.project_id = ${projectId}
+    ORDER BY r.created_at DESC
+  `;
+}
+
 export async function getAllUsers() {
-  const supabase = createServiceRoleSupabaseClient();
-
-  if (!supabase) {
-    return [] as UserProfile[];
-  }
-
-  const { data } = await supabase.from('users').select('*').order('created_at', { ascending: false });
-  return (data ?? []) as UserProfile[];
+  return sql<UserProfile[]>`SELECT * FROM users ORDER BY created_at DESC`;
 }
 
 export async function getProjectAnalytics(projectId: string) {
-  const supabase = createServiceRoleSupabaseClient();
+  const memberRows = await sql<{ user_id: string; assigned_at: string }[]>`
+    SELECT user_id, assigned_at FROM project_members WHERE project_id = ${projectId}
+  `;
+  const memberIds = memberRows.map((m) => m.user_id);
+  const memberAssignedAt = new Map(memberRows.map((m) => [m.user_id, m.assigned_at]));
 
-  if (!supabase) {
-    return { chatbotUsage: [], quizResults: [], loginActivity: [], knowledgeGaps: [] };
-  }
-
-  // Fetch project members first — needed for login activity
-  const { data: memberRows } = await supabase
-    .from('project_members')
-    .select('user_id, assigned_at')
-    .eq('project_id', projectId);
-
-  const memberIds = (memberRows ?? []).map((m: { user_id: string; assigned_at: string }) => m.user_id);
-  const memberAssignedAt = new Map(
-    (memberRows ?? []).map((m: { user_id: string; assigned_at: string }) => [m.user_id, m.assigned_at]),
-  );
-
-  const [{ data: sessions }, { data: attempts }, { data: users }, { data: quizSets }, { data: resets }, { data: gapLogs }] = await Promise.all([
-    supabase.from('chat_sessions').select('*').eq('project_id', projectId),
-    supabase.from('quiz_attempts').select('*').eq('project_id', projectId).eq('status', 'submitted'),
-    supabase.from('users').select('*'),
-    supabase.from('quiz_sets').select('id,set_name').eq('project_id', projectId),
-    supabase.from('quiz_resets').select('user_id').eq('project_id', projectId),
-    supabase
-      .from('activity_log')
-      .select('metadata, created_at, user_id')
-      .eq('project_id', projectId)
-      .eq('action', 'knowledge_gap')
-      .order('created_at', { ascending: false })
-      .limit(50),
+  const [sessions, attempts, users, quizSets, resets, gapLogs] = await Promise.all([
+    sql<ChatSessionRecord[]>`SELECT * FROM chat_sessions WHERE project_id = ${projectId}`,
+    sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE project_id = ${projectId} AND status = 'submitted'`,
+    sql<UserProfile[]>`SELECT * FROM users`,
+    sql<{ id: string; set_name: string }[]>`SELECT id, set_name FROM quiz_sets WHERE project_id = ${projectId}`,
+    sql<{ user_id: string }[]>`SELECT user_id FROM quiz_resets WHERE project_id = ${projectId}`,
+    sql<{ metadata: Record<string, unknown>; created_at: string; user_id: string | null }[]>`
+      SELECT metadata, created_at, user_id
+      FROM activity_log
+      WHERE project_id = ${projectId} AND action = 'knowledge_gap'
+      ORDER BY created_at DESC
+      LIMIT 50
+    `,
   ]);
 
   const resetCounts = new Map<string, number>();
-  ((resets ?? []) as Array<{ user_id: string }>).forEach((r) => {
-    resetCounts.set(r.user_id, (resetCounts.get(r.user_id) ?? 0) + 1);
-  });
+  resets.forEach((r) => { resetCounts.set(r.user_id, (resetCounts.get(r.user_id) ?? 0) + 1); });
 
-  const userIndex = new Map(((users ?? []) as UserProfile[]).map((user) => [user.id, user]));
-  const setIndex = new Map(((quizSets ?? []) as { id: string; set_name: string }[]).map((s) => [s.id, s.set_name]));
+  const userIndex = new Map(users.map((u) => [u.id, u]));
+  const setIndex = new Map(quizSets.map((s) => [s.id, s.set_name]));
 
   function resolveDisplayName(userId: string) {
     const user = userIndex.get(userId);
@@ -333,7 +293,7 @@ export async function getProjectAnalytics(projectId: string) {
       : (user?.email ?? userId.slice(0, 8));
   }
 
-  const chatbotUsage = ((sessions ?? []) as ChatSessionRecord[]).map((session) => ({
+  const chatbotUsage = sessions.map((session) => ({
     name: resolveDisplayName(session.user_id),
     email: userIndex.get(session.user_id)?.email ?? '—',
     sessions: 1,
@@ -341,22 +301,15 @@ export async function getProjectAnalytics(projectId: string) {
     lastActive: formatDate(session.last_message_at ?? session.started_at, true),
   }));
 
-  const quizResults = ((attempts ?? []) as QuizAttemptRecord[]).map((attempt) => {
+  const quizResults = attempts.map((attempt) => {
     const user = userIndex.get(attempt.user_id);
-
-    // Determine which sections were included by reading assigned_questions directly
     const assignedQs = (attempt.assigned_questions ?? []) as Array<{ section?: string }>;
     const sectionSet = [...new Set(assignedQs.map((q) => q.section).filter(Boolean))];
-
-    // Merge with carried sections for display
     const carriedKeys = Object.keys(attempt.carried_sections ?? {});
     const allSections = [...new Set([...sectionSet, ...carriedKeys])];
-
     const sectionLabel = allSections.length > 0
       ? allSections.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' + ')
       : (setIndex.get(attempt.quiz_set_id) ?? 'Unknown');
-
-    // Compute per-section scores (retaken sections from JSONB, carried from carried_sections)
     const retakenScores = computeSectionScores(
       attempt.assigned_questions as AssignedQuestion[],
       (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>,
@@ -365,7 +318,6 @@ export async function getProjectAnalytics(projectId: string) {
       ...retakenScores,
       ...(attempt.carried_sections ?? {}),
     };
-
     return {
       attemptId: attempt.id,
       userId: attempt.user_id,
@@ -380,7 +332,6 @@ export async function getProjectAnalytics(projectId: string) {
     };
   });
 
-  // Login activity is derived from project member profiles (last_login_at from users table)
   const loginActivity = memberIds.map((userId) => {
     const user = userIndex.get(userId);
     return {
@@ -391,13 +342,13 @@ export async function getProjectAnalytics(projectId: string) {
     };
   });
 
-  const knowledgeGaps = (gapLogs ?? []).map((log) => {
+  const knowledgeGaps = gapLogs.map((log) => {
     const meta = (log.metadata ?? {}) as Record<string, unknown>;
     return {
-      query:      (meta.query as string) ?? '—',
+      query: (meta.query as string) ?? '—',
       confidence: `${(((meta.maxSimilarity as number) ?? 0) * 100).toFixed(0)}%`,
-      askedBy:    resolveDisplayName(log.user_id ?? ''),
-      askedAt:    formatDate(log.created_at, true),
+      askedBy: resolveDisplayName(log.user_id ?? ''),
+      askedAt: formatDate(log.created_at, true),
     };
   });
 
@@ -405,44 +356,31 @@ export async function getProjectAnalytics(projectId: string) {
 }
 
 export async function getBookmarkedMessageIds(userId: string, sessionId: string): Promise<string[]> {
-  const supabase = createServiceRoleSupabaseClient();
-  if (!supabase) return [];
-
-  // Get message IDs for the session first
-  const { data: messages } = await supabase
-    .from('chat_messages')
-    .select('id')
-    .eq('session_id', sessionId);
-
-  const messageIds = (messages ?? []).map((m) => m.id);
+  const messages = await sql<{ id: string }[]>`
+    SELECT id FROM chat_messages WHERE session_id = ${sessionId}
+  `;
+  const messageIds = messages.map((m) => m.id);
   if (!messageIds.length) return [];
 
-  const { data: bookmarks } = await supabase
-    .from('chat_bookmarks')
-    .select('message_id')
-    .eq('user_id', userId)
-    .in('message_id', messageIds);
-
-  return (bookmarks ?? []).map((b) => b.message_id);
+  const bookmarks = await sql<{ message_id: string }[]>`
+    SELECT message_id FROM chat_bookmarks
+    WHERE user_id = ${userId} AND message_id = ANY(${messageIds})
+  `;
+  return bookmarks.map((b) => b.message_id);
 }
 
 export async function getProjectBookmarks(
   userId: string,
   projectId: string,
 ): Promise<Array<ChatBookmarkRecord & { message: ChatMessageRecord }>> {
-  const supabase = createServiceRoleSupabaseClient();
-  if (!supabase) return [];
-
-  const { data: bookmarks } = await supabase
-    .from('chat_bookmarks')
-    .select('*, message:chat_messages(*)')
-    .eq('user_id', userId)
-    .eq('project_id', projectId)
-    .order('created_at', { ascending: false });
-
-  return ((bookmarks ?? []) as Array<ChatBookmarkRecord & { message: ChatMessageRecord }>).filter(
-    (b) => b.message != null,
-  );
+  const rows = await sql`
+    SELECT cb.*, row_to_json(cm) as message
+    FROM chat_bookmarks cb
+    JOIN chat_messages cm ON cm.id = cb.message_id
+    WHERE cb.user_id = ${userId} AND cb.project_id = ${projectId}
+    ORDER BY cb.created_at DESC
+  `;
+  return rows.filter((b) => b.message != null) as Array<ChatBookmarkRecord & { message: ChatMessageRecord }>;
 }
 
 export async function logActivity({
@@ -456,16 +394,190 @@ export async function logActivity({
   action: string;
   metadata?: Record<string, unknown> | null;
 }) {
-  const supabase = createServiceRoleSupabaseClient();
+  await sql`
+    INSERT INTO activity_log (user_id, project_id, action, metadata)
+    VALUES (${userId}, ${projectId ?? null}, ${action}, ${metadata ? sql.json(metadata) : null})
+  `;
+}
 
-  if (!supabase) {
-    return;
+export async function getMemberDashboardStats(userId: string) {
+  const rows = await sql<{ project_id: string }[]>`
+    SELECT project_id FROM project_members WHERE user_id = ${userId}
+  `;
+  const projectIds = rows.map((r) => r.project_id);
+
+  if (!projectIds.length) {
+    return {
+      totalProjects: 0,
+      completedQuizzes: 0,
+      inProgressQuizzes: 0,
+      pendingQuizProjects: 0,
+      totalDocs: 0,
+      recentActivity: [] as Array<{ action: string; projectName: string | null; createdAt: string }>,
+      recentBookmarks: [] as Array<{ projectName: string; content: string; createdAt: string }>,
+    };
   }
 
-  await supabase.from('activity_log').insert({
-    user_id: userId,
-    project_id: projectId ?? null,
-    action,
-    metadata: metadata ?? null,
-  });
+  const [docRows, attemptRows, activityRows, bookmarkRows] = await Promise.all([
+    sql<{ c: string }[]>`SELECT COUNT(*) as c FROM documents WHERE project_id = ANY(${projectIds})`,
+    sql<{ status: string }[]>`SELECT status FROM quiz_attempts WHERE user_id = ${userId} AND project_id = ANY(${projectIds})`,
+    sql<{ action: string; project_id: string | null; created_at: string }[]>`
+      SELECT al.action, al.project_id, al.created_at
+      FROM activity_log al
+      WHERE al.user_id = ${userId}
+      ORDER BY al.created_at DESC
+      LIMIT 8
+    `,
+    sql<{ project_name: string; content: string; created_at: string }[]>`
+      SELECT p.name AS project_name, cm.content, cb.created_at
+      FROM chat_bookmarks cb
+      JOIN chat_messages cm ON cm.id = cb.message_id
+      JOIN projects p ON p.id = cb.project_id
+      WHERE cb.user_id = ${userId}
+      ORDER BY cb.created_at DESC
+      LIMIT 3
+    `,
+  ]);
+
+  const projectNames = projectIds.length
+    ? await sql<{ id: string; name: string }[]>`SELECT id, name FROM projects WHERE id = ANY(${projectIds})`
+    : [];
+  const nameMap = new Map(projectNames.map((p) => [p.id, p.name]));
+
+  const completedCount = attemptRows.filter((a) => a.status === 'submitted').length;
+  const inProgressCount = attemptRows.filter((a) => a.status === 'in_progress').length;
+
+  return {
+    totalProjects: projectIds.length,
+    completedQuizzes: completedCount,
+    inProgressQuizzes: inProgressCount,
+    pendingQuizProjects: Math.max(0, projectIds.length - completedCount - inProgressCount),
+    totalDocs: Number(docRows[0]?.c ?? 0),
+    recentActivity: activityRows.map((a) => ({
+      action: a.action,
+      projectName: a.project_id ? (nameMap.get(a.project_id) ?? null) : null,
+      createdAt: a.created_at,
+    })),
+    recentBookmarks: bookmarkRows.map((b) => ({
+      projectName: b.project_name,
+      content: b.content,
+      createdAt: b.created_at,
+    })),
+  };
+}
+
+export async function getMemberNotificationCount(userId: string): Promise<number> {
+  const rows = await sql<{ c: string }[]>`
+    SELECT COUNT(*) AS c
+    FROM project_members pm
+    JOIN projects p ON p.id = pm.project_id AND p.is_active = true
+    WHERE pm.user_id = ${userId}
+      AND NOT EXISTS (
+        SELECT 1 FROM quiz_attempts qa
+        WHERE qa.user_id = pm.user_id AND qa.project_id = pm.project_id AND qa.status = 'submitted'
+      )
+  `;
+  return Number(rows[0]?.c ?? 0);
+}
+
+export async function getObservabilityMetrics(projectId: string): Promise<ObservabilityMetrics> {
+  const empty: ObservabilityMetrics = {
+    totalRequests: 0,
+    retrievalHitRate: 0,
+    avgSimilarityScore: 0,
+    refusalRate: 0,
+    possibleHallucinationCount: 0,
+    slowQueryCount: 0,
+    tokenUsageByDay: [],
+    topUnansweredQueries: [],
+    possibleHallucinations: [],
+    slowQueries: [],
+  };
+
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [summaryRows, unansweredRows, hallucinationRows, slowRows, tokenRows] = await Promise.all([
+    sql`SELECT * FROM get_rag_trace_summary(${projectId})`,
+    sql`
+      SELECT query_text FROM rag_traces
+      WHERE project_id = ${projectId} AND answer_refused = true
+      ORDER BY created_at DESC LIMIT 200
+    `,
+    sql`
+      SELECT query_text, max_similarity, created_at FROM rag_traces
+      WHERE project_id = ${projectId} AND possible_hallucination = true
+      ORDER BY created_at DESC LIMIT 50
+    `,
+    sql`
+      SELECT query_text, total_ms, generation_ms, created_at FROM rag_traces
+      WHERE project_id = ${projectId} AND is_slow = true
+      ORDER BY total_ms DESC LIMIT 50
+    `,
+    sql`
+      SELECT created_at, prompt_tokens, completion_tokens, total_tokens FROM rag_traces
+      WHERE project_id = ${projectId} AND total_tokens IS NOT NULL AND created_at >= ${thirtyDaysAgo}
+      ORDER BY created_at ASC
+    `,
+  ]);
+
+  const summary = summaryRows[0];
+  if (!summary) return empty;
+
+  const totalRequests = Number(summary.total_requests ?? 0);
+  const retrievalHitRate = totalRequests > 0
+    ? Math.round((Number(summary.hit_count ?? 0) / totalRequests) * 100)
+    : 0;
+  const refusalRate = totalRequests > 0
+    ? Math.round((Number(summary.refused_count ?? 0) / totalRequests) * 100)
+    : 0;
+
+  const dayMap = new Map<string, { promptTokens: number; completionTokens: number; totalTokens: number }>();
+  for (const row of tokenRows) {
+    const day = new Date(row.created_at as string | Date).toISOString().slice(0, 10);
+    const existing = dayMap.get(day) ?? { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+    dayMap.set(day, {
+      promptTokens: existing.promptTokens + (Number(row.prompt_tokens) || 0),
+      completionTokens: existing.completionTokens + (Number(row.completion_tokens) || 0),
+      totalTokens: existing.totalTokens + (Number(row.total_tokens) || 0),
+    });
+  }
+  const tokenUsageByDay = [...dayMap.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, vals]) => ({ date, ...vals }));
+
+  const queryCounts = new Map<string, number>();
+  for (const row of unansweredRows) {
+    const key = (row.query_text as string).trim().toLowerCase();
+    queryCounts.set(key, (queryCounts.get(key) ?? 0) + 1);
+  }
+  const topUnansweredQueries = [...queryCounts.entries()]
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 20)
+    .map(([query, occurrences]) => ({ query, occurrences }));
+
+  const possibleHallucinations = hallucinationRows.map((row) => ({
+    query: row.query_text as string,
+    maxSimilarity: `${(Number(row.max_similarity ?? 0) * 100).toFixed(0)}%`,
+    askedAt: formatDate(row.created_at as string, true),
+  }));
+
+  const slowQueries = slowRows.map((row) => ({
+    query: row.query_text as string,
+    totalMs: Number(row.total_ms ?? 0),
+    generationMs: Number(row.generation_ms ?? 0),
+    askedAt: formatDate(row.created_at as string, true),
+  }));
+
+  return {
+    totalRequests,
+    retrievalHitRate,
+    avgSimilarityScore: Number(summary.avg_similarity ?? 0),
+    refusalRate,
+    possibleHallucinationCount: Number(summary.hallucination_count ?? 0),
+    slowQueryCount: Number(summary.slow_count ?? 0),
+    tokenUsageByDay,
+    topUnansweredQueries,
+    possibleHallucinations,
+    slowQueries,
+  };
 }

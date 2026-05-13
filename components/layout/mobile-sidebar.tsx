@@ -12,6 +12,7 @@ export interface MobileSidebarItem {
   href: string;
   label: string;
   icon?: LucideIcon;
+  badge?: number;
 }
 
 export function MobileSidebar({ items, sectionLabel }: { items: MobileSidebarItem[]; sectionLabel?: string }) {
@@ -75,6 +76,11 @@ export function MobileSidebar({ items, sectionLabel }: { items: MobileSidebarIte
                       <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-slate-400')} />
                     )}
                     {item.label}
+                    {item.badge != null && item.badge > 0 && (
+                      <span className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                        {item.badge > 9 ? '9+' : item.badge}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

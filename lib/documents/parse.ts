@@ -54,5 +54,19 @@ export async function extractTextFromFile(fileName: string, buffer: Buffer) {
     }).join('\n\n');
   }
 
+  if (extension === 'pptx' || extension === 'ppt') {
+    // XLSX library can read PowerPoint slide text via the Sheets API
+    const workbook = XLSX.read(buffer, { type: 'buffer' });
+    const slides = workbook.SheetNames.map((name, i) => {
+      const sheet = workbook.Sheets[name];
+      const text = XLSX.utils.sheet_to_txt(sheet).trim();
+      return `Slide ${i + 1} (${name}):\n${text}`;
+    }).filter((s) => s.includes('\n'));
+
+    return slides.length > 0
+      ? slides.join('\n\n')
+      : '[No extractable text found in presentation]';
+  }
+
   return buffer.toString('utf8');
 }

@@ -1,20 +1,9 @@
 import { AdminMobileSidebar } from '@/components/layout/admin-mobile-sidebar';
 import { AdminSidebar } from '@/components/layout/admin-sidebar';
 import { Navbar } from '@/components/layout/navbar';
-import { SetupPanel } from '@/components/layout/setup-panel';
 import { requireAdmin } from '@/lib/auth';
-import { isSupabaseConfigured } from '@/lib/env';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  if (!isSupabaseConfigured()) {
-    return (
-      <SetupPanel
-        title="Supabase configuration required"
-        description="Admin screens require the full Supabase environment to manage projects, documents, members, quizzes, and analytics."
-      />
-    );
-  }
-
   const { profile } = await requireAdmin();
 
   return (

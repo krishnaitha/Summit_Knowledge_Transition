@@ -1,26 +1,23 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import sql from '@/lib/db';
 
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
-  const { user } = await getCurrentUserContext();
-  if (!user) {
+  const { userId } = await getCurrentUserContext();
+  if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const supabase = createServiceRoleSupabaseClient();
-  if (!supabase) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
-  }
+  const rows = await sql`
+    SELECT id, status, result, error, created_at, started_at, completed_at
+    FROM processing_jobs
+    WHERE id = ${params.id}
+    LIMIT 1
+  `;
+  const job = rows[0] ?? null;
 
-  const { data: job, error } = await supabase
-    .from('processing_jobs')
-    .select('id, status, result, error, created_at, started_at, completed_at')
-    .eq('id', params.id)
-    .maybeSingle();
-
-  if (error || !job) {
+  if (!job) {
     return NextResponse.json({ error: 'Job not found' }, { status: 404 });
   }
 

@@ -125,6 +125,9 @@ export function ChatInterface({
       const decoder = new TextDecoder();
       let done = false;
       let generated = '';
+      let inStatusFrame = false;
+      let statusBuffer = '';
+      let lastStatus: string | null = null;
 
       while (!done) {
         const chunk = await reader.read();
@@ -133,10 +136,29 @@ export function ChatInterface({
         if (chunk.value) {
           const decoded = decoder.decode(chunk.value, { stream: true });
 
-          if (decoded.startsWith('\x00')) {
-            setStatus(decoded.slice(1));
-          } else {
-            generated += decoded;
+          let hasGeneratedDelta = false;
+
+          for (const char of decoded) {
+            if (char === '\x00') {
+              inStatusFrame = !inStatusFrame;
+              if (!inStatusFrame) {
+                lastStatus = statusBuffer || null;
+                setStatus(lastStatus);
+                statusBuffer = '';
+              }
+              continue;
+            }
+
+            if (inStatusFrame) {
+              statusBuffer += char;
+              continue;
+            }
+
+            generated += char;
+            hasGeneratedDelta = true;
+          }
+
+          if (hasGeneratedDelta) {
             setMessages((current) =>
               current.map((message) =>
                 message.id === assistantId ? { ...message, content: generated, sources } : message,
@@ -144,6 +166,15 @@ export function ChatInterface({
             );
           }
         }
+      }
+
+      if (!generated.trim()) {
+        const fallback = lastStatus ?? 'No response received from AI. Please try again.';
+        setMessages((current) =>
+          current.map((message) =>
+            message.id === assistantId ? { ...message, content: fallback, sources } : message,
+          ),
+        );
       }
 
       setStatus(null);

@@ -7,6 +7,7 @@ import { AlertCircle, CheckCircle2, Clock, Maximize2, ShieldAlert } from 'lucide
 import { QuestionView, type QuizQuestionViewModel } from '@/components/quiz/question-view';
 import { QuizCard } from '@/components/quiz/quiz-card';
 import { ResultSummary } from '@/components/quiz/result-summary';
+import { RetakeRequestButton } from '@/components/quiz/retake-request-button';
 import { Button } from '@/components/ui/button';
 
 const SECTION_DURATION = 900; // 15 minutes in seconds
@@ -31,9 +32,10 @@ interface QuizExperienceProps {
   projectId: string;
   projectName: string;
   lockedAttempt?: QuizResult | null;
+  hasPendingRetakeRequest?: boolean;
 }
 
-export function QuizExperience({ projectId, projectName, lockedAttempt }: QuizExperienceProps) {
+export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendingRetakeRequest = false }: QuizExperienceProps) {
   // Quiz flow state
   const [phase, setPhase] = useState<Phase>('start');
   const [sections, setSections] = useState<QuizSection[]>([]);
@@ -246,7 +248,13 @@ export function QuizExperience({ projectId, projectName, lockedAttempt }: QuizEx
             disqualifyReason={result.disqualifyReason}
           />
         )}
-        <Link href="/dashboard"><Button>Back to Dashboard</Button></Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/dashboard"><Button>Back to Dashboard</Button></Link>
+          <RetakeRequestButton
+            projectId={projectId}
+            hasPendingRequest={hasPendingRetakeRequest}
+          />
+        </div>
       </div>
     );
   }

@@ -2,14 +2,15 @@ import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import type { ChatCompletion } from 'groq-sdk/resources/chat/completions';
 
-import { createGroqQuizCompletion } from '@/lib/groq/chat';
+import { createQuizCompletion } from '@/lib/llm';
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import sql from '@/lib/db';
 import { sleep } from '@/lib/utils';
 import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
+import { downloadFile } from '@/lib/storage/local';
 
-// ─── Quiz generation helpers (moved from /api/quiz/generate) ──────────────────
+// ─── Quiz generation helpers ────────────────────────────────────────────────────
 
 type Category = 'functional' | 'technical';
 
@@ -174,37 +175,23 @@ function parseQuestions(raw: string): RawQuestion[] {
   }
 }
 
-// ─── Job processors ────────────────────────────────────────────────────────────
+// ─── Job processors ──────────────────────────────────────────────────────────────
 
 async function processDocumentJob(payload: Record<string, unknown>) {
   const documentId = String(payload.documentId ?? '');
   const projectId = String(payload.projectId ?? '');
 
-  const supabase = createServiceRoleSupabaseClient();
-  if (!supabase) throw new Error('Supabase not configured');
+  const docs = await sql`SELECT * FROM documents WHERE id = ${documentId} LIMIT 1`;
+  const document = docs[0];
+  if (!document) throw new Error('Document not found');
 
-  const { data: document, error } = await supabase
-    .from('documents')
-    .select('*')
-    .eq('id', documentId)
-    .maybeSingle();
+  // Download from local storage
+  const buffer = await downloadFile(document.file_url as string);
 
-  if (error || !document) throw new Error('Document not found');
-
-  const { data: fileData, error: downloadError } = await supabase.storage
-    .from('documents')
-    .download(document.file_url);
-
-  if (downloadError || !fileData) {
-    throw downloadError ?? new Error('Unable to download file from storage');
-  }
-
-  const buffer = Buffer.from(await fileData.arrayBuffer());
-  const content = await extractTextFromFile(document.file_name, buffer);
+  const content = await extractTextFromFile(document.file_name as string, buffer);
   const chunkCount = await processDocumentRecord(documentId, projectId, content);
 
   revalidatePath(`/admin/projects/${projectId}`);
-
   return { chunkCount };
 }
 
@@ -213,30 +200,21 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   const category: Category = payload.category === 'technical' ? 'technical' : 'functional';
   const numSets = Math.min(5, Math.max(1, Number(payload.numSets) || 3));
 
-  const supabase = createServiceRoleSupabaseClient();
-  if (!supabase) throw new Error('Supabase not configured');
+  const rawChunks = await sql<{ content: string }[]>`
+    SELECT content FROM document_chunks WHERE project_id = ${projectId} LIMIT 30
+  `;
 
-  const { data: rawChunks } = await supabase
-    .from('document_chunks')
-    .select('content')
-    .eq('project_id', projectId)
-    .limit(30);
-
-  if (!rawChunks?.length) {
+  if (!rawChunks.length) {
     throw new Error('No document content found. Upload and process KT documents first.');
   }
 
   const shuffled = shuffle(rawChunks);
   const chunkGroups = splitIntoGroups(shuffled, numSets);
 
-  const { data: existingSets } = await supabase
-    .from('quiz_sets')
-    .select('set_number')
-    .eq('project_id', projectId)
-    .order('set_number', { ascending: false })
-    .limit(1);
-
-  const startSetNumber = ((existingSets?.[0]?.set_number as number) ?? 0) + 1;
+  const existingSets = await sql`
+    SELECT set_number FROM quiz_sets WHERE project_id = ${projectId} ORDER BY set_number DESC LIMIT 1
+  `;
+  const startSetNumber = (Number(existingSets[0]?.set_number ?? 0)) + 1;
   const categoryLabel = category === 'functional' ? 'Functional' : 'Technical';
   const systemPrompt = buildSystemPrompt(category);
 
@@ -254,7 +232,7 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
     let questions: RawQuestion[] = [];
 
     try {
-      const completion = await createGroqQuizCompletion({
+      const completion = await createQuizCompletion({
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -262,13 +240,13 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
         response_format: { type: 'json_object' },
         temperature: 0.8,
         max_tokens: 2500,
-      }) as ChatCompletion;
+      });
 
       const raw = completion?.choices?.[0]?.message?.content ?? '{}';
       questions = parseQuestions(raw);
     } catch (groqErr) {
       const msg = groqErr instanceof Error ? groqErr.message : String(groqErr);
-      console.error(`[worker] Groq error on set ${i + 1}:`, msg);
+      console.error(`[worker] LLM error on set ${i + 1}:`, msg);
       if (i === 0) throw new Error(`AI generation failed: ${msg}`);
       continue;
     }
@@ -276,38 +254,29 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
     if (!questions.length) continue;
 
     const setNumber = startSetNumber + i;
-    const { data: newSet, error: setError } = await supabase
-      .from('quiz_sets')
-      .insert({
-        project_id: projectId,
-        set_name: `${categoryLabel} Set ${setNumber}`,
-        set_number: setNumber,
-        category,
-        is_active: false,
-      })
-      .select('id')
-      .single();
+    const newSetRows = await sql`
+      INSERT INTO quiz_sets (project_id, set_name, set_number, category, is_active)
+      VALUES (${projectId}, ${`${categoryLabel} Set ${setNumber}`}, ${setNumber}, ${category}, false)
+      RETURNING id
+    `;
+    const newSetId = newSetRows[0]?.id as string | undefined;
+    if (!newSetId) continue;
 
-    if (setError || !newSet) continue;
-
-    const rows = questions.map((q) => ({
-      quiz_set_id: newSet.id,
-      question_text: q.question_text,
-      question_type: q.question_type,
-      option_a: q.option_a,
-      option_b: q.option_b,
-      option_c: q.option_c ?? '',
-      option_d: q.option_d ?? '',
-      correct_option: q.correct_option as QuizOptionKey,
-      explanation: q.explanation || null,
-      marks: q.question_type === 'true_false' ? 1 : q.marks === 3 ? 3 : 2,
-    }));
-
-    const { error: qError } = await supabase.from('quiz_questions').insert(rows);
-    if (!qError) {
-      createdSets++;
-      createdQuestions += rows.length;
+    for (const q of questions) {
+      await sql`
+        INSERT INTO quiz_questions
+          (quiz_set_id, question_text, question_type, option_a, option_b, option_c, option_d, correct_option, explanation, marks)
+        VALUES (
+          ${newSetId}, ${q.question_text}, ${q.question_type},
+          ${q.option_a}, ${q.option_b}, ${q.option_c ?? ''}, ${q.option_d ?? ''},
+          ${q.correct_option as QuizOptionKey}, ${q.explanation || null},
+          ${q.question_type === 'true_false' ? 1 : q.marks === 3 ? 3 : 2}
+        )
+      `;
     }
+
+    createdSets++;
+    createdQuestions += questions.length;
   }
 
   if (createdSets === 0) {
@@ -315,33 +284,28 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   }
 
   revalidatePath(`/admin/projects/${projectId}/quiz`);
-
   return { createdSets, createdQuestions };
 }
 
-// ─── Route handler ─────────────────────────────────────────────────────────────
+// ─── Route handler ──────────────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
-  // Authenticate: if x-worker-secret header is present, it must match.
-  // Absence of the header is allowed (fire-and-forget calls from the app itself).
   const workerSecret = process.env.WORKER_SECRET;
   const headerSecret = request.headers.get('x-worker-secret');
   if (workerSecret && headerSecret !== workerSecret) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const supabase = createServiceRoleSupabaseClient();
-  if (!supabase) {
-    return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
-  }
+  // Phase 5: Reset jobs stuck in 'running' for > 10 minutes (replaces pg_cron)
+  await sql`
+    UPDATE processing_jobs
+    SET status = 'pending', started_at = NULL
+    WHERE status = 'running' AND started_at < NOW() - INTERVAL '10 minutes'
+  `;
 
-  // Atomically claim the next pending job (uses FOR UPDATE SKIP LOCKED internally)
-  const { data: jobs, error: rpcError } = await supabase.rpc('claim_next_pending_job');
-  if (rpcError) {
-    console.error('[worker route] claim_next_pending_job RPC error:', rpcError);
-    return NextResponse.json({ error: rpcError.message }, { status: 500 });
-  }
-  const job = (jobs as ProcessingJobRecord[] | null)?.[0];
+  // Claim the next pending job atomically (FOR UPDATE SKIP LOCKED)
+  const jobs = await sql<ProcessingJobRecord[]>`SELECT * FROM claim_next_pending_job()`;
+  const job = jobs[0];
 
   if (!job) {
     return NextResponse.json({ processed: false });
@@ -352,9 +316,9 @@ export async function POST(request: Request) {
 
   try {
     if (job.type === 'document_process') {
-      result = await processDocumentJob(job.payload);
+      result = await processDocumentJob(job.payload as Record<string, unknown>);
     } else if (job.type === 'quiz_generate') {
-      result = await processQuizGenerateJob(job.payload);
+      result = await processQuizGenerateJob(job.payload as Record<string, unknown>);
     } else {
       throw new Error(`Unknown job type: ${job.type}`);
     }
@@ -362,16 +326,14 @@ export async function POST(request: Request) {
     jobError = err instanceof Error ? err.message : 'Unknown error';
   }
 
-  // Mark job as done or failed
-  await supabase
-    .from('processing_jobs')
-    .update({
-      status: jobError ? 'failed' : 'done',
-      result: result ?? null,
-      error: jobError,
-      completed_at: new Date().toISOString(),
-    })
-    .eq('id', job.id);
+  await sql`
+    UPDATE processing_jobs
+    SET status = ${jobError ? 'failed' : 'done'},
+        result = ${result ? sql.json(result as Parameters<typeof sql.json>[0]) : null},
+        error = ${jobError},
+        completed_at = NOW()
+    WHERE id = ${job.id}
+  `;
 
   return NextResponse.json({ processed: true, jobId: job.id });
 }

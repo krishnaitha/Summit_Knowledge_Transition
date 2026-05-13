@@ -1,4 +1,4 @@
-# Database & Backend Platform Options — Comparison
+t# Database & Backend Platform Options — Comparison
 
 > Created: May 2026 | Context: Summit KT Portal (Next.js 14 + Supabase)
 

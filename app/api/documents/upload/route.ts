@@ -2,10 +2,10 @@ import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { getProfileById, userHasProjectAccess } from '@/lib/data';
+import { userHasProjectAccess } from '@/lib/data';
+import sql from '@/lib/db';
 import { uploadDocumentToStorage } from '@/lib/documents/upload';
 import { validateOrigin, validateUploadedFile } from '@/lib/security';
-import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -13,14 +13,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { user } = await getCurrentUserContext();
-    const supabase = createServiceRoleSupabaseClient();
+    const { userId, profile } = await getCurrentUserContext();
 
-    if (!user || !supabase) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const profile = await getProfileById(user.id);
 
     if (profile?.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -39,32 +36,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: fileError }, { status: 400 });
     }
 
-    const canAccess = await userHasProjectAccess(user.id, profile?.role, projectId);
-
+    const canAccess = await userHasProjectAccess(userId, profile?.role, projectId);
     if (!canAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const storagePath = await uploadDocumentToStorage(projectId, file);
-    const { data, error } = await supabase
-      .from('documents')
-      .insert({
-        id: randomUUID(),
-        project_id: projectId,
-        file_name: file.name,
-        file_url: storagePath,
-        file_type: file.name.split('.').pop()?.toLowerCase() ?? 'txt',
-        uploaded_by: user.id,
-        chunk_count: 0,
-      })
-      .select('*')
-      .single();
 
-    if (error) {
-      throw error;
-    }
+    const rows = await sql`
+      INSERT INTO documents (id, project_id, file_name, file_url, file_type, uploaded_by, chunk_count)
+      VALUES (
+        ${randomUUID()}, ${projectId}, ${file.name}, ${storagePath},
+        ${file.name.split('.').pop()?.toLowerCase() ?? 'txt'}, ${userId}, 0
+      )
+      RETURNING id
+    `;
 
-    return NextResponse.json({ documentId: data.id });
+    return NextResponse.json({ documentId: rows[0].id });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Upload failed' }, { status: 500 });
   }

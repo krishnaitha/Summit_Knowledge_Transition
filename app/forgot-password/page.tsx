@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
             Forgot your<br />password?
           </h1>
           <p className="max-w-md text-base leading-relaxed text-slate-300">
-            No problem. Enter your work email and we&apos;ll send you a secure link to set a new one.
+            No worries — enter your email and we&apos;ll send you a secure link to set a new one.
           </p>
         </div>
 

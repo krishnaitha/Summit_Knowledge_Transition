@@ -120,31 +120,6 @@ create table if not exists documents (
     check (classification in ('public', 'internal', 'confidential'))
 );
 
--- Per-attempt coaching generated after submission
-create table if not exists quiz_coaching_plans (
-  id               uuid        primary key default gen_random_uuid(),
-  attempt_id       uuid        not null unique references quiz_attempts(id) on delete cascade,
-  user_id          uuid        not null references users(id) on delete cascade,
-  project_id       uuid        not null references projects(id) on delete cascade,
-  weak_sections    jsonb       not null default '[]',
-  recommendations  jsonb       not null default '[]',
-  created_at       timestamptz not null default now()
-);
-
--- Member feedback on AI answers
-create table if not exists chat_answer_feedback (
-  id          uuid        primary key default gen_random_uuid(),
-  user_id     uuid        not null references users(id) on delete cascade,
-  project_id  uuid        not null references projects(id) on delete cascade,
-  message_id  uuid        not null references chat_messages(id) on delete cascade,
-  rating      text        not null check (rating in ('up', 'down')),
-  reason_tag  text,
-  comment     text,
-  created_at  timestamptz not null default now(),
-  updated_at  timestamptz not null default now(),
-  unique(user_id, message_id)
-);
-
 -- Document chunks (vector embeddings)
 create table if not exists document_chunks (
   id          uuid        primary key default gen_random_uuid(),
@@ -174,6 +149,20 @@ create table if not exists chat_messages (
   content    text        not null,
   sources    jsonb,
   created_at timestamptz not null default now()
+);
+
+-- Member feedback on AI answers
+create table if not exists chat_answer_feedback (
+  id          uuid        primary key default gen_random_uuid(),
+  user_id     uuid        not null references users(id) on delete cascade,
+  project_id  uuid        not null references projects(id) on delete cascade,
+  message_id  uuid        not null references chat_messages(id) on delete cascade,
+  rating      text        not null check (rating in ('up', 'down')),
+  reason_tag  text,
+  comment     text,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  unique(user_id, message_id)
 );
 
 -- Chat bookmarks (006)
@@ -232,6 +221,17 @@ create table if not exists quiz_attempts (
   status              quiz_attempt_status  not null default 'in_progress',
   -- 008: partial retake
   carried_sections    jsonb
+);
+
+-- Per-attempt coaching generated after submission
+create table if not exists quiz_coaching_plans (
+  id               uuid        primary key default gen_random_uuid(),
+  attempt_id       uuid        not null unique references quiz_attempts(id) on delete cascade,
+  user_id          uuid        not null references users(id) on delete cascade,
+  project_id       uuid        not null references projects(id) on delete cascade,
+  weak_sections    jsonb       not null default '[]',
+  recommendations  jsonb       not null default '[]',
+  created_at       timestamptz not null default now()
 );
 
 -- Quiz resets (002)

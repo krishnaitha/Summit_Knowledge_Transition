@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     },
   },
   serverExternalPackages: ['@xenova/transformers', 'onnxruntime-node'],
+  outputFileTracingIncludes: {
+    '/api/**': ['./node_modules/@xenova/transformers/**', './node_modules/onnxruntime-node/**'],
+  },
   images: {
     remotePatterns: [],
   },

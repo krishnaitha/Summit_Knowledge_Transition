@@ -29,6 +29,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static    ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public          ./public
 COPY --from=builder --chown=nextjs:nodejs /app/worker          ./worker
 
+# Ensure uploads dir exists and is writable by the nextjs user
+# (named Docker volumes copy ownership from the image on first init)
+RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/public/uploads
+
 USER nextjs
 EXPOSE 3000
 

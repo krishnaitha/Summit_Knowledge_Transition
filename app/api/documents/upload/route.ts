@@ -1,5 +1,5 @@
-import { revalidateTag } from 'next/cache';
 import { randomUUID } from 'crypto';
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
@@ -56,6 +56,9 @@ export async function POST(request: Request) {
     revalidateTag(`project-docs:${projectId}`, 'max');
     return NextResponse.json({ documentId: rows[0].id });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Upload failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Upload failed' },
+      { status: 500 },
+    );
   }
 }

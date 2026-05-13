@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
     // Check there is a submitted attempt to request a retake for
     const attempts = await sql`
-      SELECT id FROM quiz_attempts
+      SELECT id, COALESCE(score, 0) as score FROM quiz_attempts
       WHERE user_id = ${userId} AND project_id = ${projectId} AND status = 'submitted'
       LIMIT 1
     `;
@@ -30,6 +30,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No submitted attempt found for this project.' }, { status: 400 });
     }
     const attemptId = attempts[0].id as string;
+    const attemptScore = Number(attempts[0].score ?? 0);
+
+    if (attemptScore > 0) {
+      return NextResponse.json(
+        { error: 'Re-enable requests are only available when the quiz score is 0.' },
+        { status: 403 },
+      );
+    }
 
     // Check for an already-pending request
     const existing = await sql`

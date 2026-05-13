@@ -10,6 +10,7 @@ import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
 import { requireAdmin } from '@/lib/auth';
 import { getAllProjects, getPendingRetakeCountsByProject } from '@/lib/data';
+import { cn } from '@/lib/utils';
 
 export default async function AdminProjectsPage() {
   const { profile } = await requireAdmin();
@@ -64,10 +65,16 @@ export default async function AdminProjectsPage() {
                   <p className="mt-2 max-w-2xl text-sm text-slate-600">{project.description ?? 'No description available.'}</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <Link href={`/admin/projects/${project.id}`}>
-                    <Button variant={pendingCount > 0 ? 'primary' : 'secondary'}>
-                      {pendingCount > 0 ? 'Review' : 'Open'}
-                    </Button>
+                  <Link
+                    href={`/admin/projects/${project.id}`}
+                    className={cn(
+                      'inline-flex h-11 items-center justify-center rounded-xl px-4 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2',
+                      pendingCount > 0
+                        ? 'bg-brand-700 text-white hover:bg-brand-800'
+                        : 'bg-white text-brand-700 ring-1 ring-slate-200 hover:bg-slate-50',
+                    )}
+                  >
+                    {pendingCount > 0 ? 'Review' : 'Open'}
                   </Link>
                   <form action={toggleProjectStatusAction}>
                     <input name="project_id" type="hidden" value={project.id} />

@@ -1,4 +1,5 @@
 export type UserRole = 'admin' | 'member';
+export type ProjectMemberRole = 'admin' | 'member';
 export type MessageRole = 'user' | 'assistant';
 export type QuizAttemptStatus = 'in_progress' | 'submitted';
 export type QuizOptionKey = 'A' | 'B' | 'C' | 'D';
@@ -11,6 +12,11 @@ export interface UserProfile {
   created_at: string;
   last_login_at: string | null;
   is_active?: boolean | null;
+}
+
+export interface ProjectMember extends UserProfile {
+  assigned_at: string;
+  project_role: ProjectMemberRole;
 }
 
 export interface ProjectRecord {
@@ -45,7 +51,39 @@ export interface DocumentRecord {
   chunk_count: number;
   pii_detections: number;
   classification: 'confidential' | 'internal' | 'public';
+  is_required: boolean;
   scan_flags: string[];
+}
+
+export interface QuizCoachingPlanRecord {
+  id: string;
+  attempt_id: string;
+  user_id: string;
+  project_id: string;
+  weak_sections: Array<{ section: string; score: number; total: number; percentage: number }>;
+  recommendations: Array<{ section: string; focus: string; documents: Array<{ id: string; name: string }> }>;
+  created_at: string;
+}
+
+export interface ChatAnswerFeedbackRecord {
+  id: string;
+  user_id: string;
+  project_id: string;
+  message_id: string;
+  rating: 'up' | 'down';
+  reason_tag: string | null;
+  comment: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectAnnouncementRecord {
+  id: string;
+  project_id: string;
+  title: string;
+  message: string;
+  sent_by: string | null;
+  created_at: string;
 }
 
 export interface ChatSessionRecord {

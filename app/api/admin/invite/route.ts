@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserContext } from '@/lib/auth';
 import { validateOrigin } from '@/lib/security';
 import sql from '@/lib/db';
+import { sendEmail } from '@/lib/email-sendgrid';
 
 export async function POST(request: Request) {
   try {
@@ -28,10 +29,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // If user already exists, just return their ID
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+
+    // If user already exists, assign them directly to the project if provided.
     const existing = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
     if (existing.length) {
-      return NextResponse.json({ invited: true, userId: existing[0].id });
+      const userId = existing[0].id as string;
+
+      if (body.projectId) {
+        await sql`
+          INSERT INTO project_members (project_id, user_id)
+          VALUES (${body.projectId}, ${userId})
+          ON CONFLICT (project_id, user_id) DO NOTHING
+        `;
+      }
+
+      return NextResponse.json({ invited: true, assigned: true, userId });
     }
 
     // Generate invite token
@@ -44,32 +57,25 @@ export async function POST(request: Request) {
     `;
 
     // Send invite email
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
     const inviteLink = `${appUrl}/auth/accept-invite?token=${token}`;
+    const emailResult = await sendEmail(
+      email,
+      'You have been invited to Summit KT Portal',
+      `
+        <p>Hi${body.fullName ? ` ${body.fullName}` : ''},</p>
+        <p>You have been invited to join <strong>Summit KT Portal</strong>.</p>
+        <p>Click the link below to set your password and access your account:</p>
+        <p><a href="${inviteLink}">${inviteLink}</a></p>
+        <p>This link expires in 7 days.</p>
+      `,
+    );
 
-    if (process.env.RESEND_API_KEY) {
-      const { Resend } = await import('resend');
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      const from = process.env.RESEND_FROM_EMAIL ?? 'notifications@summit.app';
-      try {
-        await resend.emails.send({
-          from,
-          to: email,
-          subject: 'You have been invited to Summit KT Portal',
-          html: `
-            <p>Hi${body.fullName ? ` ${body.fullName}` : ''},</p>
-            <p>You have been invited to join <strong>Summit KT Portal</strong>.</p>
-            <p>Click the link below to set your password and access your account:</p>
-            <p><a href="${inviteLink}">${inviteLink}</a></p>
-            <p>This link expires in 7 days.</p>
-          `,
-        });
-      } catch {
-        // Non-fatal
-      }
-    }
-
-    return NextResponse.json({ invited: true, inviteLink });
+    return NextResponse.json({
+      invited: true,
+      inviteLink,
+      emailSent: emailResult.success,
+      emailError: emailResult.error,
+    });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Invite failed' }, { status: 500 });
   }

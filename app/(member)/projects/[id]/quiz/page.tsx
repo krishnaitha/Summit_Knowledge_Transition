@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { QuizExperience } from '@/components/quiz/quiz-experience';
 import { Card, CardContent } from '@/components/ui/card';
 import { requireMember } from '@/lib/auth';
-import { getProjectById, getQuizAttemptForProject, userHasProjectAccess } from '@/lib/data';
+import { getLatestCoachingPlan, getProjectById, getQuizAttemptForProject, userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
 
 function formatWindowDate(iso: string) {
@@ -23,10 +23,11 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
     redirect('/dashboard');
   }
 
-  const [project, attempt, pendingRequests] = await Promise.all([
+  const [project, attempt, pendingRequests, coachingPlan] = await Promise.all([
     getProjectById(params.id),
     getQuizAttemptForProject(profile!.id, params.id),
     sql`SELECT id FROM quiz_retake_requests WHERE user_id = ${profile!.id} AND project_id = ${params.id} AND status = 'pending' LIMIT 1`,
+    getLatestCoachingPlan(profile!.id, params.id),
   ]);
   const hasPendingRetakeRequest = pendingRequests.length > 0;
 
@@ -45,6 +46,12 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
       score: attempt.score ?? 0,
       totalMarks: attempt.total_marks ?? 0,
       percentage: Number(attempt.percentage ?? 0),
+      coachingPlan: coachingPlan
+        ? {
+            weakSections: coachingPlan.weak_sections,
+            recommendations: coachingPlan.recommendations,
+          }
+        : undefined,
     };
   }
 

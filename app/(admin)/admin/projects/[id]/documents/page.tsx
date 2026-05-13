@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 
+import { toggleDocumentRequiredAction } from '@/app/actions/admin';
 import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
 import { DocumentsList } from '@/components/admin/documents-list';
 import { getProjectById, getProjectDocuments } from '@/lib/data';
@@ -21,7 +22,7 @@ export default async function ProjectDocumentsPage({ params }: { params: { id: s
         <span className="font-medium text-slate-900">Documents</span>
       </nav>
       <DocumentUploadPanel projectId={params.id} />
-      <DocumentsList documents={documents} projectId={params.id} />
+      <DocumentsList documents={documents} projectId={params.id} toggleRequiredAction={toggleDocumentRequiredAction} />
     </div>
   );
 }

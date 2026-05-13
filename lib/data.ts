@@ -3,11 +3,14 @@ import 'server-only';
 import type {
   ActivityRecord,
   AssignedQuestion,
+  ChatAnswerFeedbackRecord,
   ChatBookmarkRecord,
   ChatMessageRecord,
   ChatSessionRecord,
   DocumentRecord,
   ProjectDashboardCard,
+  QuizCoachingPlanRecord,
+  ProjectAnnouncementRecord,
   ProjectRecord,
   QuizAttemptRecord,
   QuizOptionKey,
@@ -102,15 +105,37 @@ export async function getProjectDocuments(projectId: string) {
   `;
 }
 
+export async function getLatestCoachingPlan(userId: string, projectId: string) {
+  const rows = await sql<QuizCoachingPlanRecord[]>`
+    SELECT *
+    FROM quiz_coaching_plans
+    WHERE user_id = ${userId} AND project_id = ${projectId}
+    ORDER BY created_at DESC
+    LIMIT 1
+  `;
+  return rows[0] ?? null;
+}
+
+export async function getProjectAnnouncements(projectId: string, limit = 5) {
+  return sql<(ProjectAnnouncementRecord & { sender_name: string | null })[]>`
+    SELECT pa.*, COALESCE(u.full_name, u.email) AS sender_name
+    FROM project_announcements pa
+    LEFT JOIN users u ON u.id = pa.sent_by
+    WHERE pa.project_id = ${projectId}
+    ORDER BY pa.created_at DESC
+    LIMIT ${Math.max(1, limit)}
+  `;
+}
+
 export async function getProjectMembers(projectId: string) {
-  const rows = await sql`
-    SELECT pm.assigned_at, u.*
+  const rows = await sql<Array<any>>`
+    SELECT pm.assigned_at, pm.role as project_role, u.*
     FROM project_members pm
     JOIN users u ON u.id = pm.user_id
     WHERE pm.project_id = ${projectId}
     ORDER BY pm.assigned_at ASC
   `;
-  return rows as Array<UserProfile & { assigned_at: string }>;
+  return rows as Array<(UserProfile & { assigned_at: string; project_role: 'admin' | 'member' })>;
 }
 
 export async function getQuizAttemptForProject(userId: string, projectId: string) {
@@ -258,6 +283,42 @@ export async function getAllUsers() {
   return sql<UserProfile[]>`SELECT * FROM users ORDER BY created_at DESC`;
 }
 
+export async function getUserActivity(userId: string) {
+  return sql<ActivityRecord[]>`
+    SELECT * FROM activity_log
+    WHERE user_id = ${userId}
+    ORDER BY created_at DESC
+    LIMIT 20
+  `;
+}
+
+export async function getUserProjectCount(userId: string) {
+  const rows = await sql<{ c: string }[]>`
+    SELECT COUNT(*) as c FROM project_members WHERE user_id = ${userId}
+  `;
+  return Number(rows[0]?.c ?? 0);
+}
+
+export async function getUserQuizStats(userId: string) {
+  const rows = await sql<{ status: string; c: string }[]>`
+    SELECT status, COUNT(*) as c FROM quiz_attempts
+    WHERE user_id = ${userId}
+    GROUP BY status
+  `;
+  
+  const stats = { completed: 0, inProgress: 0, notStarted: 0 };
+  
+  for (const row of rows) {
+    if (row.status === 'submitted') {
+      stats.completed = Number(row.c);
+    } else if (row.status === 'in_progress') {
+      stats.inProgress = Number(row.c);
+    }
+  }
+  
+  return stats;
+}
+
 export async function getProjectAnalytics(projectId: string) {
   const memberRows = await sql<{ user_id: string; assigned_at: string }[]>`
     SELECT user_id, assigned_at FROM project_members WHERE project_id = ${projectId}
@@ -265,7 +326,7 @@ export async function getProjectAnalytics(projectId: string) {
   const memberIds = memberRows.map((m) => m.user_id);
   const memberAssignedAt = new Map(memberRows.map((m) => [m.user_id, m.assigned_at]));
 
-  const [sessions, attempts, users, quizSets, resets, gapLogs] = await Promise.all([
+  const [sessions, attempts, users, quizSets, resets, gapLogs, allAttempts, feedbackRows] = await Promise.all([
     sql<ChatSessionRecord[]>`SELECT * FROM chat_sessions WHERE project_id = ${projectId}`,
     sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE project_id = ${projectId} AND status = 'submitted'`,
     sql<UserProfile[]>`SELECT * FROM users`,
@@ -277,6 +338,19 @@ export async function getProjectAnalytics(projectId: string) {
       WHERE project_id = ${projectId} AND action = 'knowledge_gap'
       ORDER BY created_at DESC
       LIMIT 50
+    `,
+    sql<{ user_id: string; status: string; started_at: string; submitted_at: string | null; assigned_questions: AssignedQuestion[]; answers_given: Record<string, QuizOptionKey> | null }[]>`
+      SELECT user_id, status, started_at, submitted_at, assigned_questions, answers_given
+      FROM quiz_attempts
+      WHERE project_id = ${projectId}
+    `,
+    sql<(ChatAnswerFeedbackRecord & { user_name: string | null; user_email: string | null })[]>`
+      SELECT f.*, u.full_name as user_name, u.email as user_email
+      FROM chat_answer_feedback f
+      LEFT JOIN users u ON u.id = f.user_id
+      WHERE f.project_id = ${projectId}
+      ORDER BY f.created_at DESC
+      LIMIT 200
     `,
   ]);
 
@@ -342,17 +416,121 @@ export async function getProjectAnalytics(projectId: string) {
     };
   });
 
-  const knowledgeGaps = gapLogs.map((log) => {
-    const meta = (log.metadata ?? {}) as Record<string, unknown>;
-    return {
-      query: (meta.query as string) ?? '—',
-      confidence: `${(((meta.maxSimilarity as number) ?? 0) * 100).toFixed(0)}%`,
-      askedBy: resolveDisplayName(log.user_id ?? ''),
-      askedAt: formatDate(log.created_at, true),
-    };
+  const knowledgeGaps = gapLogs
+    .map((log) => {
+      const meta = (log.metadata ?? {}) as Record<string, unknown>;
+      const query = String(meta.query ?? '').trim();
+      if (!query) {
+        return null;
+      }
+
+      return {
+        query,
+        confidence: `${(((meta.maxSimilarity as number) ?? 0) * 100).toFixed(0)}%`,
+        askedBy: resolveDisplayName(log.user_id ?? ''),
+        askedAt: formatDate(log.created_at, true),
+      };
+    })
+    .filter((row): row is { query: string; confidence: string; askedBy: string; askedAt: string } => row !== null);
+
+  const membersWithSubmitted = new Set(attempts.map((a) => a.user_id));
+  const membersWithAnyAttempt = new Set(allAttempts.map((a) => a.user_id));
+  const membersWithChat = new Set(sessions.map((s) => s.user_id));
+
+  const completionDurationsHours = attempts
+    .map((a) => {
+      const assignedAt = memberAssignedAt.get(a.user_id);
+      if (!assignedAt || !a.submitted_at) return null;
+      return (new Date(a.submitted_at).getTime() - new Date(assignedAt).getTime()) / (1000 * 60 * 60);
+    })
+    .filter((v): v is number => v != null && Number.isFinite(v) && v >= 0);
+
+  const averageCompletionHours = completionDurationsHours.length
+    ? completionDurationsHours.reduce((s, h) => s + h, 0) / completionDurationsHours.length
+    : 0;
+
+  const attemptsByUser = new Map<string, number>();
+  allAttempts.forEach((a) => attemptsByUser.set(a.user_id, (attemptsByUser.get(a.user_id) ?? 0) + 1));
+  const averageAttemptsPerMember = memberIds.length
+    ? memberIds.reduce((s, id) => s + (attemptsByUser.get(id) ?? 0), 0) / memberIds.length
+    : 0;
+
+  const topicTotals = new Map<string, { correct: number; total: number }>();
+  attempts.forEach((attempt) => {
+    const sectionScores = computeSectionScores(
+      attempt.assigned_questions as AssignedQuestion[],
+      (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>,
+    );
+    Object.entries(sectionScores).forEach(([section, value]) => {
+      const current = topicTotals.get(section) ?? { correct: 0, total: 0 };
+      topicTotals.set(section, {
+        correct: current.correct + value.score,
+        total: current.total + value.total,
+      });
+    });
   });
 
-  return { chatbotUsage, quizResults, loginActivity, knowledgeGaps };
+  const weakTopics = [...topicTotals.entries()]
+    .map(([section, value]) => {
+      const pct = value.total > 0 ? (value.correct / value.total) * 100 : 0;
+      return {
+        topic: section.charAt(0).toUpperCase() + section.slice(1),
+        score: `${pct.toFixed(1)}%`,
+        correct: `${value.correct}/${value.total}`,
+      };
+    })
+    .sort((a, b) => parseFloat(a.score) - parseFloat(b.score));
+
+  const dropOffRows = memberIds
+    .map((memberId) => {
+      const user = userIndex.get(memberId);
+      const stage = membersWithSubmitted.has(memberId)
+        ? 'Completed'
+        : membersWithAnyAttempt.has(memberId)
+          ? 'Started quiz, not submitted'
+          : membersWithChat.has(memberId)
+            ? 'Chat active, quiz not started'
+            : 'No onboarding activity';
+      return {
+        member: resolveDisplayName(memberId),
+        email: user?.email ?? '—',
+        stage,
+      };
+    })
+    .sort((a, b) => a.stage.localeCompare(b.stage));
+
+  const feedbackSummaryMap = new Map<string, number>();
+  feedbackRows.forEach((row) => {
+    const key = `${row.rating}:${row.reason_tag ?? 'unspecified'}`;
+    feedbackSummaryMap.set(key, (feedbackSummaryMap.get(key) ?? 0) + 1);
+  });
+
+  const answerFeedback = [...feedbackSummaryMap.entries()].map(([key, count]) => {
+    const [rating, reason] = key.split(':');
+    return {
+      rating,
+      reason,
+      count,
+    };
+  }).sort((a, b) => b.count - a.count);
+
+  const onboardingSummary = {
+    membersAssigned: memberIds.length,
+    completionRate: memberIds.length ? Math.round((membersWithSubmitted.size / memberIds.length) * 100) : 0,
+    averageCompletionHours: Number(averageCompletionHours.toFixed(1)),
+    averageAttemptsPerMember: Number(averageAttemptsPerMember.toFixed(2)),
+  };
+
+  return {
+    chatbotUsage,
+    quizResults,
+    loginActivity,
+    knowledgeGaps,
+    weakTopics,
+    dropOffRows,
+    answerFeedback,
+    onboardingSummary,
+  };
 }
 
 export async function getBookmarkedMessageIds(userId: string, sessionId: string): Promise<string[]> {
@@ -415,10 +593,11 @@ export async function getMemberDashboardStats(userId: string) {
       totalDocs: 0,
       recentActivity: [] as Array<{ action: string; projectName: string | null; createdAt: string }>,
       recentBookmarks: [] as Array<{ projectName: string; content: string; createdAt: string }>,
+      recentAnnouncements: [] as Array<{ projectName: string; title: string; message: string; createdAt: string }>,
     };
   }
 
-  const [docRows, attemptRows, activityRows, bookmarkRows] = await Promise.all([
+  const [docRows, attemptRows, activityRows, bookmarkRows, announcementRows] = await Promise.all([
     sql<{ c: string }[]>`SELECT COUNT(*) as c FROM documents WHERE project_id = ANY(${projectIds})`,
     sql<{ status: string }[]>`SELECT status FROM quiz_attempts WHERE user_id = ${userId} AND project_id = ANY(${projectIds})`,
     sql<{ action: string; project_id: string | null; created_at: string }[]>`
@@ -428,14 +607,30 @@ export async function getMemberDashboardStats(userId: string) {
       ORDER BY al.created_at DESC
       LIMIT 8
     `,
-    sql<{ project_name: string; content: string; created_at: string }[]>`
-      SELECT p.name AS project_name, cm.content, cb.created_at
+    sql<{ project_name: string; content: string; question: string | null; created_at: string }[]>`
+      SELECT p.name AS project_name, cm.content, cb.created_at,
+        (
+          SELECT content FROM chat_messages
+          WHERE session_id = cm.session_id
+            AND created_at < cm.created_at
+            AND role = 'user'
+          ORDER BY created_at DESC
+          LIMIT 1
+        ) AS question
       FROM chat_bookmarks cb
       JOIN chat_messages cm ON cm.id = cb.message_id
       JOIN projects p ON p.id = cb.project_id
       WHERE cb.user_id = ${userId}
       ORDER BY cb.created_at DESC
-      LIMIT 3
+      LIMIT 4
+    `,
+    sql<{ project_name: string; title: string; message: string; created_at: string }[]>`
+      SELECT p.name AS project_name, pa.title, pa.message, pa.created_at
+      FROM project_announcements pa
+      JOIN projects p ON p.id = pa.project_id
+      WHERE pa.project_id = ANY(${projectIds})
+      ORDER BY pa.created_at DESC
+      LIMIT 5
     `,
   ]);
 
@@ -460,14 +655,22 @@ export async function getMemberDashboardStats(userId: string) {
     })),
     recentBookmarks: bookmarkRows.map((b) => ({
       projectName: b.project_name,
+      question: b.question ?? null,
       content: b.content,
       createdAt: b.created_at,
+    })),
+    recentAnnouncements: announcementRows.map((a) => ({
+      projectName: a.project_name,
+      title: a.title,
+      message: a.message,
+      createdAt: a.created_at,
     })),
   };
 }
 
 export async function getMemberNotificationCount(userId: string): Promise<number> {
-  const rows = await sql<{ c: string }[]>`
+  const [quizRows, announcementRows] = await Promise.all([
+    sql<{ c: string }[]>`
     SELECT COUNT(*) AS c
     FROM project_members pm
     JOIN projects p ON p.id = pm.project_id AND p.is_active = true
@@ -476,8 +679,17 @@ export async function getMemberNotificationCount(userId: string): Promise<number
         SELECT 1 FROM quiz_attempts qa
         WHERE qa.user_id = pm.user_id AND qa.project_id = pm.project_id AND qa.status = 'submitted'
       )
-  `;
-  return Number(rows[0]?.c ?? 0);
+  `,
+    sql<{ c: string }[]>`
+      SELECT COUNT(*) AS c
+      FROM project_announcements pa
+      JOIN project_members pm ON pm.project_id = pa.project_id AND pm.user_id = ${userId}
+      JOIN users u ON u.id = pm.user_id
+      WHERE pa.created_at > COALESCE(u.last_login_at, '1970-01-01'::timestamptz)
+    `,
+  ]);
+
+  return Number(quizRows[0]?.c ?? 0) + Number(announcementRows[0]?.c ?? 0);
 }
 
 export async function getObservabilityMetrics(projectId: string): Promise<ObservabilityMetrics> {

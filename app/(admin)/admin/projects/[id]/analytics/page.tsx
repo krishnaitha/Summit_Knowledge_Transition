@@ -2,9 +2,7 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 
 import { resetQuizAttemptAction, setQuizWindowAction } from '@/app/actions/admin';
-import { AnalyticsTable } from '@/components/admin/analytics-table';
-import { ObservabilityPanel } from '@/components/admin/observability-panel';
-import { QuizResultsCard } from '@/components/admin/quiz-results-card';
+import { ProjectAnalyticsTabs } from '@/components/admin/project-analytics-tabs';
 import { QuizWindowForm } from '@/components/admin/quiz-window-form';
 import { requireAdmin } from '@/lib/auth';
 import { getObservabilityMetrics, getProjectAnalytics, getProjectById } from '@/lib/data';
@@ -32,19 +30,13 @@ export default async function ProjectAnalyticsPage({ params }: { params: { id: s
         currentCloseAt={project?.quiz_close_at}
         setWindowAction={setQuizWindowAction}
       />
-      <QuizResultsCard
+      <ProjectAnalyticsTabs
         projectId={params.id}
         adminId={profile?.id}
-        rows={analytics.quizResults}
         resetAction={resetQuizAttemptAction}
+        analytics={analytics}
+        observability={observability}
       />
-      <AnalyticsTable rows={analytics.chatbotUsage} title="Chatbot usage" />
-      <AnalyticsTable rows={analytics.loginActivity} title="Login activity" />
-      <AnalyticsTable rows={analytics.knowledgeGaps} title="Knowledge gaps — unanswered queries" />
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-slate-900">RAG Observability</h2>
-        <ObservabilityPanel metrics={observability} />
-      </div>
     </div>
   );
 }

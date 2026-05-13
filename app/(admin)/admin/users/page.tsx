@@ -5,10 +5,16 @@ import { UsersTable } from '@/components/admin/users-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { getAllProjects, getAllUsers } from '@/lib/data';
+import { getAllProjects, getAllUsers, getAdminDashboardStats } from '@/lib/data';
+import { requireAdmin } from '@/lib/auth';
 
 export default async function AdminUsersPage() {
-  const [users, projects] = await Promise.all([getAllUsers(), getAllProjects()]);
+  await requireAdmin();
+  const [users, projects, dashboardStats] = await Promise.all([
+    getAllUsers(),
+    getAllProjects(),
+    getAdminDashboardStats(),
+  ]);
   const activeProjects = projects.filter((p) => p.is_active);
 
   return (
@@ -80,9 +86,12 @@ export default async function AdminUsersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Users</CardTitle>
+          <p className="text-sm text-slate-500">
+            Locking a user immediately blocks new logins for that account.
+          </p>
         </CardHeader>
         <CardContent>
-          <UsersTable users={users} />
+          <UsersTable users={users} projects={activeProjects} activity={dashboardStats.recentActivity} />
         </CardContent>
       </Card>
 

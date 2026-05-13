@@ -1,15 +1,18 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 
-import { inviteProjectMemberAction, removeProjectMemberAction } from '@/app/actions/admin';
+import { removeProjectMemberAction, updateProjectMemberRoleAction } from '@/app/actions/admin';
+import { MemberInviteForm } from '@/components/admin/member-invite-form';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { getProjectById, getProjectMembers } from '@/lib/data';
+import { requireProjectAdmin } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
 
 export default async function ProjectMembersPage({ params }: { params: { id: string } }) {
+  await requireProjectAdmin(params.id);
   const [project, members] = await Promise.all([
     getProjectById(params.id),
     getProjectMembers(params.id),
@@ -29,32 +32,45 @@ export default async function ProjectMembersPage({ params }: { params: { id: str
           <CardTitle>Invite or assign member</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={inviteProjectMemberAction} className="grid gap-4 lg:grid-cols-3">
-            <input name="project_id" type="hidden" value={params.id} />
-            <Input name="full_name" placeholder="Full name" />
-            <Input name="email" placeholder="name@company.com" required type="email" />
-            <SubmitButton className="lg:w-fit" loadingText="Inviting…">Invite with magic link</SubmitButton>
-          </form>
+          <MemberInviteForm projectId={params.id} />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>Assigned members</CardTitle>
+          <p className="text-sm text-slate-500">
+            Project admins can manage documents, members, and quizzes for this project only. They don't have access to other projects.
+          </p>
         </CardHeader>
         <CardContent className="space-y-3">
           {members.length ? (
             members.map((member) => (
               <div key={member.id} className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <p className="font-semibold text-slate-900">{member.full_name ?? member.email}</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-slate-900">{member.full_name ?? member.email}</p>
+                    <Badge variant={member.project_role === 'admin' ? 'info' : 'neutral'}>
+                      {member.project_role === 'admin' ? 'Project admin' : 'Member'}
+                    </Badge>
+                  </div>
                   <p className="text-sm text-slate-500">{member.email} • Assigned {formatDate(member.assigned_at, true)}</p>
                 </div>
-                <form action={removeProjectMemberAction}>
-                  <input name="project_id" type="hidden" value={params.id} />
-                  <input name="user_id" type="hidden" value={member.id} />
-                  <SubmitButton variant="danger" loadingText="Removing…">Remove</SubmitButton>
-                </form>
+                <div className="flex flex-wrap gap-2">
+                  <form action={updateProjectMemberRoleAction} className="flex items-center gap-2">
+                    <input name="project_id" type="hidden" value={params.id} />
+                    <input name="user_id" type="hidden" value={member.id} />
+                    <input name="role" type="hidden" value={member.project_role === 'admin' ? 'member' : 'admin'} />
+                    <SubmitButton variant="secondary" loadingText="Updating…">
+                      {member.project_role === 'admin' ? 'Remove admin' : 'Make admin'}
+                    </SubmitButton>
+                  </form>
+                  <form action={removeProjectMemberAction}>
+                    <input name="project_id" type="hidden" value={params.id} />
+                    <input name="user_id" type="hidden" value={member.id} />
+                    <SubmitButton variant="danger" loadingText="Removing…">Remove</SubmitButton>
+                  </form>
+                </div>
               </div>
             ))
           ) : (

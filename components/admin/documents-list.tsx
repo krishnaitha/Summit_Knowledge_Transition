@@ -14,7 +14,15 @@ import { formatDate } from '@/lib/utils';
 
 const PAGE_SIZE = 10;
 
-export function DocumentsList({ documents, projectId }: { documents: DocumentRecord[]; projectId: string }) {
+export function DocumentsList({
+  documents,
+  projectId,
+  toggleRequiredAction,
+}: {
+  documents: DocumentRecord[];
+  projectId: string;
+  toggleRequiredAction: (formData: FormData) => Promise<void>;
+}) {
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(0);
 
@@ -72,12 +80,23 @@ export function DocumentsList({ documents, projectId }: { documents: DocumentRec
                   {document.pii_detections > 0 && (
                     <Badge variant="danger">PII &middot; {document.pii_detections}</Badge>
                   )}
+                  {document.is_required && (
+                    <Badge variant="warning">Required before quiz</Badge>
+                  )}
                 </div>
                 <p className="mt-1 text-sm text-slate-500">
                   Uploaded {formatDate(document.uploaded_at, true)} &bull; {document.chunk_count} chunks
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <form action={toggleRequiredAction}>
+                  <input name="project_id" type="hidden" value={projectId} />
+                  <input name="document_id" type="hidden" value={document.id} />
+                  <input name="next_required" type="hidden" value={String(!document.is_required)} />
+                  <SubmitButton variant="secondary" loadingText="Updating…">
+                    {document.is_required ? 'Unmark Required' : 'Mark Required'}
+                  </SubmitButton>
+                </form>
                 <a
                   href={`/api/documents/view?documentId=${document.id}`}
                   target="_blank"

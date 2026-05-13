@@ -8,15 +8,21 @@ import { Button } from '@/components/ui/button';
 export function RetakeRequestButton({
   projectId,
   hasPendingRequest,
+  canRequestRetake,
 }: {
   projectId: string;
   hasPendingRequest: boolean;
+  canRequestRetake: boolean;
 }) {
   const [pending, startTransition] = useTransition();
   const [submitted, setSubmitted] = useState(hasPendingRequest);
   const [reason, setReason] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+
+  if (!canRequestRetake && !submitted) {
+    return null;
+  }
 
   if (submitted) {
     return (

@@ -1,4 +1,5 @@
 import { BookmarkButton } from '@/components/chat/bookmark-button';
+import { FeedbackButtons } from '@/components/chat/feedback-buttons';
 import { SourceTag } from '@/components/chat/source-tag';
 import { cn } from '@/lib/utils';
 
@@ -36,11 +37,14 @@ export function MessageBubble({
         ) : null}
         {showBookmark && (
           <div className="mt-2 flex justify-end">
-            <BookmarkButton
-              messageId={message.id}
-              projectId={projectId}
-              initialIsBookmarked={isBookmarked ?? false}
-            />
+            <div className="flex items-end gap-2">
+              <FeedbackButtons messageId={message.id} projectId={projectId!} />
+              <BookmarkButton
+                messageId={message.id}
+                projectId={projectId}
+                initialIsBookmarked={isBookmarked ?? false}
+              />
+            </div>
           </div>
         )}
       </div>

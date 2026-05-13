@@ -6,7 +6,7 @@ import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsUp
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 const MAX_RESETS = 2;
 
 type SortKey = 'member' | 'score' | 'percentage' | 'setTaken' | 'submittedAt';

@@ -6,7 +6,11 @@ export interface TextChunk {
   content: string;
 }
 
-export function chunkDocumentText(text: string, chunkSize = DEFAULT_CHUNK_SIZE, overlap = DEFAULT_OVERLAP) {
+export function chunkDocumentText(
+  text: string,
+  chunkSize = DEFAULT_CHUNK_SIZE,
+  overlap = DEFAULT_OVERLAP,
+) {
   const tokens = text.replace(/\s+/g, ' ').trim().split(' ');
 
   if (!tokens.filter(Boolean).length) {
@@ -17,7 +21,10 @@ export function chunkDocumentText(text: string, chunkSize = DEFAULT_CHUNK_SIZE, 
   let index = 0;
 
   for (let cursor = 0; cursor < tokens.length; cursor += chunkSize - overlap) {
-    const content = tokens.slice(cursor, cursor + chunkSize).join(' ').trim();
+    const content = tokens
+      .slice(cursor, cursor + chunkSize)
+      .join(' ')
+      .trim();
 
     if (!content) {
       continue;

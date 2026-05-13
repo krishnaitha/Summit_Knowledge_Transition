@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Menu } from "lucide-react";
-import { MOBILE_NAV_OPEN_EVENT } from "./mobile-sidebar";
+import { Menu } from 'lucide-react';
+import { MOBILE_NAV_OPEN_EVENT } from './mobile-sidebar';
 
 export function MobileMenuButton() {
   return (

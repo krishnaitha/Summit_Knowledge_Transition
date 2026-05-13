@@ -16,7 +16,17 @@ export async function sendQuizSubmissionEmail(params: {
 }) {
   if (!resend) return;
 
-  const { adminEmail, memberName, memberEmail, projectName, score, totalMarks, percentage, disqualified, disqualifyReason } = params;
+  const {
+    adminEmail,
+    memberName,
+    memberEmail,
+    projectName,
+    score,
+    totalMarks,
+    percentage,
+    disqualified,
+    disqualifyReason,
+  } = params;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
 
   const subject = disqualified

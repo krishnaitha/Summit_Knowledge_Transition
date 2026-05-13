@@ -23,7 +23,9 @@ export function BookmarkButton({ messageId, projectId, initialIsBookmarked }: Bo
 
     try {
       if (prev) {
-        const res = await fetch(`/api/bookmarks?messageId=${encodeURIComponent(messageId)}`, { method: 'DELETE' });
+        const res = await fetch(`/api/bookmarks?messageId=${encodeURIComponent(messageId)}`, {
+          method: 'DELETE',
+        });
         if (!res.ok) setIsBookmarked(prev);
       } else {
         const res = await fetch('/api/bookmarks', {

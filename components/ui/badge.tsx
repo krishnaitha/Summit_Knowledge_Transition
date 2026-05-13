@@ -18,7 +18,13 @@ export function Badge({
   variant?: keyof typeof variants;
 }) {
   return (
-    <span className={cn('inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold', variants[variant], className)}>
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold',
+        variants[variant],
+        className,
+      )}
+    >
       {children}
     </span>
   );

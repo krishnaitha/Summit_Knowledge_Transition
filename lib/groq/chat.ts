@@ -44,7 +44,11 @@ export function getGroqQuizClient(): Groq | null {
 function isRateLimitError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const status = (error as { status?: number }).status;
-  return status === 429 || error.message.includes('429') || error.message.toLowerCase().includes('rate limit');
+  return (
+    status === 429 ||
+    error.message.includes('429') ||
+    error.message.toLowerCase().includes('rate limit')
+  );
 }
 
 export function buildKtPrompt(projectName: string, context: string) {
@@ -95,7 +99,9 @@ export async function createGroqChatCompletion(
     }
   }
 
-  throw new Error(`Groq request failed after all retries. Last error may be a rate limit — wait a minute and try again.`);
+  throw new Error(
+    `Groq request failed after all retries. Last error may be a rate limit — wait a minute and try again.`,
+  );
 }
 
 /**
@@ -132,5 +138,7 @@ export async function createGroqQuizCompletion(
     }
   }
 
-  throw new Error(`Groq quiz request failed after all retries. Last error may be a rate limit — wait a minute and try again.`);
+  throw new Error(
+    `Groq quiz request failed after all retries. Last error may be a rate limit — wait a minute and try again.`,
+  );
 }

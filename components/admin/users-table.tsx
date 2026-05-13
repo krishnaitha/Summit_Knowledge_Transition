@@ -19,10 +19,7 @@ export function UsersTable({ users }: { users: UserProfile[] }) {
 
   const filtered = users.filter((u) => {
     const q = filter.toLowerCase();
-    return (
-      u.email.toLowerCase().includes(q) ||
-      (u.full_name ?? '').toLowerCase().includes(q)
-    );
+    return u.email.toLowerCase().includes(q) || (u.full_name ?? '').toLowerCase().includes(q);
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -41,7 +38,10 @@ export function UsersTable({ users }: { users: UserProfile[] }) {
             className="pl-9"
             placeholder="Filter by name or email…"
             value={filter}
-            onChange={(e) => { setFilter(e.target.value); setPage(0); }}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              setPage(0);
+            }}
           />
         </div>
       )}
@@ -62,13 +62,18 @@ export function UsersTable({ users }: { users: UserProfile[] }) {
               </div>
               <p className="mt-1 text-sm text-slate-500">{user.email}</p>
               <p className="mt-1 text-xs text-slate-400">
-                Created {formatDate(user.created_at, true)} &bull; Last login {formatDate(user.last_login_at, true)}
+                Created {formatDate(user.created_at, true)} &bull; Last login{' '}
+                {formatDate(user.last_login_at, true)}
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <form action={updateUserRoleAction}>
                 <input name="user_id" type="hidden" value={user.id} />
-                <input name="role" type="hidden" value={user.role === 'admin' ? 'member' : 'admin'} />
+                <input
+                  name="role"
+                  type="hidden"
+                  value={user.role === 'admin' ? 'member' : 'admin'}
+                />
                 <SubmitButton variant="secondary" loadingText="Updating…">
                   {user.role === 'admin' ? 'Demote to member' : 'Promote to admin'}
                 </SubmitButton>
@@ -76,7 +81,10 @@ export function UsersTable({ users }: { users: UserProfile[] }) {
               <form action={toggleUserActiveAction}>
                 <input name="user_id" type="hidden" value={user.id} />
                 <input name="next_state" type="hidden" value={String(user.is_active === false)} />
-                <SubmitButton variant={user.is_active === false ? 'primary' : 'danger'} loadingText="Updating…">
+                <SubmitButton
+                  variant={user.is_active === false ? 'primary' : 'danger'}
+                  loadingText="Updating…"
+                >
                   {user.is_active === false ? 'Reactivate' : 'Deactivate'}
                 </SubmitButton>
               </form>

@@ -51,9 +51,13 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
   return (
     <div className="space-y-6">
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/dashboard" className="transition hover:text-slate-900">Dashboard</Link>
+        <Link href="/dashboard" className="transition hover:text-slate-900">
+          Dashboard
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">{project?.name ?? 'Project'}</Link>
+        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">
+          {project?.name ?? 'Project'}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-slate-900">Quiz</span>
       </nav>
@@ -69,7 +73,8 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
                 <p className="text-lg font-semibold text-slate-900">Quiz not open yet</p>
                 <p className="text-sm text-slate-500">
                   This quiz opens on <strong>{formatWindowDate(project!.quiz_open_at!)}</strong>.
-                  <br />Please come back then.
+                  <br />
+                  Please come back then.
                 </p>
               </>
             ) : (
@@ -77,14 +82,20 @@ export default async function ProjectQuizPage({ params }: { params: { id: string
                 <p className="text-lg font-semibold text-slate-900">Quiz window has closed</p>
                 <p className="text-sm text-slate-500">
                   The quiz closed on <strong>{formatWindowDate(project!.quiz_close_at!)}</strong>.
-                  <br />Contact your admin if you believe this is an error.
+                  <br />
+                  Contact your admin if you believe this is an error.
                 </p>
               </>
             )}
           </CardContent>
         </Card>
       ) : (
-        <QuizExperience lockedAttempt={lockedAttempt} projectId={params.id} projectName={project?.name ?? 'Project'} hasPendingRetakeRequest={hasPendingRetakeRequest} />
+        <QuizExperience
+          lockedAttempt={lockedAttempt}
+          projectId={params.id}
+          projectName={project?.name ?? 'Project'}
+          hasPendingRetakeRequest={hasPendingRetakeRequest}
+        />
       )}
     </div>
   );

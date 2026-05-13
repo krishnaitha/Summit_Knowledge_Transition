@@ -43,7 +43,9 @@ export function QuestionView({
             key={option.key}
             className={cn(
               'rounded-2xl border px-5 py-4 text-left text-sm transition',
-              selected === option.key ? 'border-accent-500 bg-accent-50 text-accent-900' : 'border-slate-200 bg-white hover:border-slate-300',
+              selected === option.key
+                ? 'border-accent-500 bg-accent-50 text-accent-900'
+                : 'border-slate-200 bg-white hover:border-slate-300',
             )}
             onClick={() => onSelect(option.key)}
             type="button"

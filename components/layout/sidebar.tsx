@@ -19,12 +19,15 @@ export function Sidebar({ items, sectionLabel }: { items: SidebarItem[]; section
     <aside className="hidden w-60 shrink-0 xl:block">
       <div className="glass-panel rounded-2xl p-3">
         {sectionLabel && (
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">{sectionLabel}</p>
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+            {sectionLabel}
+          </p>
         )}
         <nav className="space-y-0.5">
           {items.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            const isActive =
+              pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}

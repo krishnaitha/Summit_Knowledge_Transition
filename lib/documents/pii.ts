@@ -7,9 +7,9 @@ export interface PiiResult {
 }
 
 const PATTERNS: Array<{ name: string; regex: RegExp }> = [
-  { name: 'email',       regex: /\b[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}\b/g },
-  { name: 'phone',       regex: /\b(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g },
-  { name: 'ssn',         regex: /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g },
+  { name: 'email', regex: /\b[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}\b/g },
+  { name: 'phone', regex: /\b(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g },
+  { name: 'ssn', regex: /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g },
   { name: 'credit_card', regex: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g },
 ];
 

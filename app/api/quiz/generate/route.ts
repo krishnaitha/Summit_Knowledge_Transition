@@ -53,7 +53,9 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
         'x-worker-secret': process.env.WORKER_SECRET ?? '',
       },
-    }).catch(() => { /* worker will run on next trigger */ });
+    }).catch(() => {
+      /* worker will run on next trigger */
+    });
 
     return NextResponse.json({ jobId: job.id });
   } catch (error) {

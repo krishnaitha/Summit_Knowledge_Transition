@@ -52,7 +52,9 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
         'x-worker-secret': process.env.WORKER_SECRET ?? '',
       },
-    }).catch(() => { /* worker will be retried on next upload */ });
+    }).catch(() => {
+      /* worker will be retried on next upload */
+    });
 
     return NextResponse.json({ jobId: job.id });
   } catch (error) {

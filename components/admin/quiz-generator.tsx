@@ -18,7 +18,9 @@ export function QuizGenerator({ projectId }: { projectId: string }) {
   const [category, setCategory] = useState<Category>('functional');
   const [numSets, setNumSets] = useState(3);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ createdSets: number; createdQuestions: number } | null>(null);
+  const [result, setResult] = useState<{ createdSets: number; createdQuestions: number } | null>(
+    null,
+  );
   const [isPending, setIsPending] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -97,7 +99,8 @@ export function QuizGenerator({ projectId }: { projectId: string }) {
           <div>
             <CardTitle>Generate questions with AI</CardTitle>
             <p className="mt-0.5 text-xs text-slate-500">
-              Groq reads your KT documents and generates medium-to-high complexity questions. Runs in the background — you can navigate away.
+              Groq reads your KT documents and generates medium-to-high complexity questions. Runs
+              in the background — you can navigate away.
             </p>
           </div>
         </div>
@@ -122,7 +125,12 @@ export function QuizGenerator({ projectId }: { projectId: string }) {
                   isPending && 'pointer-events-none opacity-60',
                 )}
               >
-                <p className={cn('text-sm font-semibold capitalize', category === cat ? 'text-accent-700' : 'text-slate-700')}>
+                <p
+                  className={cn(
+                    'text-sm font-semibold capitalize',
+                    category === cat ? 'text-accent-700' : 'text-slate-700',
+                  )}
+                >
                   {cat}
                 </p>
                 <p className="mt-0.5 text-xs text-slate-500">
@@ -165,17 +173,16 @@ export function QuizGenerator({ projectId }: { projectId: string }) {
         </div>
 
         {/* Error */}
-        {error && (
-          <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>
-        )}
+        {error && <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
 
         {/* Success */}
         {result && (
           <div className="flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3">
             <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
             <p className="text-sm text-emerald-800">
-              Generated <span className="font-semibold">{result.createdQuestions} questions</span> across{' '}
-              <span className="font-semibold">{result.createdSets} sets</span>. Scroll down to review and activate them.
+              Generated <span className="font-semibold">{result.createdQuestions} questions</span>{' '}
+              across <span className="font-semibold">{result.createdSets} sets</span>. Scroll down
+              to review and activate them.
             </p>
           </div>
         )}

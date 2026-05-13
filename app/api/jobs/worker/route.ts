@@ -103,13 +103,19 @@ Question type rules:
 Return ONLY a JSON object. No markdown fences. No commentary outside the JSON.`;
 }
 
-function buildUserPrompt(context: string, category: Category, setIndex: number, totalSets: number): string {
+function buildUserPrompt(
+  context: string,
+  category: Category,
+  setIndex: number,
+  totalSets: number,
+): string {
   const label = category === 'functional' ? 'Functional' : 'Technical';
-  const topicHint = setIndex === 0
-    ? 'Cover the foundational concepts introduced early in the documents.'
-    : setIndex === totalSets - 1
-    ? 'Cover advanced, edge-case, and exception-handling aspects from the documents.'
-    : `Cover mid-level concepts from the documents. This is set ${setIndex + 1} of ${totalSets} — do NOT repeat topics or question patterns from the other sets.`;
+  const topicHint =
+    setIndex === 0
+      ? 'Cover the foundational concepts introduced early in the documents.'
+      : setIndex === totalSets - 1
+        ? 'Cover advanced, edge-case, and exception-handling aspects from the documents.'
+        : `Cover mid-level concepts from the documents. This is set ${setIndex + 1} of ${totalSets} — do NOT repeat topics or question patterns from the other sets.`;
 
   return `You are generating Set ${setIndex + 1} of ${totalSets} for a ${label} quiz.
 ${topicHint}
@@ -155,7 +161,11 @@ Generate 10 questions now.`;
 
 function parseQuestions(raw: string): RawQuestion[] {
   try {
-    const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    const cleaned = raw
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```\s*$/i, '')
+      .trim();
     const parsed = JSON.parse(cleaned);
     const list: RawQuestion[] = Array.isArray(parsed) ? parsed : (parsed.questions ?? []);
     return list
@@ -168,7 +178,8 @@ function parseQuestions(raw: string): RawQuestion[] {
       })
       .map((q) => ({
         ...q,
-        question_type: String(q.question_type ?? '').toLowerCase() === 'true_false' ? 'true_false' : 'mcq',
+        question_type:
+          String(q.question_type ?? '').toLowerCase() === 'true_false' ? 'true_false' : 'mcq',
         correct_option: String(q.correct_option).toUpperCase(),
       }));
   } catch {
@@ -187,10 +198,12 @@ async function processDocumentJob(payload: Record<string, unknown>) {
   if (!document) throw new Error('Document not found');
 
   // Download from R2
-  const r2Response = await r2.send(new GetObjectCommand({
-    Bucket: R2_BUCKET,
-    Key: document.file_url as string,
-  }));
+  const r2Response = await r2.send(
+    new GetObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: document.file_url as string,
+    }),
+  );
 
   if (!r2Response.Body) throw new Error('Unable to download file from R2');
   const buffer = Buffer.from(await r2Response.Body.transformToByteArray());
@@ -221,7 +234,7 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   const existingSets = await sql`
     SELECT set_number FROM quiz_sets WHERE project_id = ${projectId} ORDER BY set_number DESC LIMIT 1
   `;
-  const startSetNumber = (Number(existingSets[0]?.set_number ?? 0)) + 1;
+  const startSetNumber = Number(existingSets[0]?.set_number ?? 0) + 1;
   const categoryLabel = category === 'functional' ? 'Functional' : 'Technical';
   const systemPrompt = buildSystemPrompt(category);
 
@@ -239,7 +252,7 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
     let questions: RawQuestion[] = [];
 
     try {
-      const completion = await createGroqQuizCompletion({
+      const completion = (await createGroqQuizCompletion({
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -247,7 +260,7 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
         response_format: { type: 'json_object' },
         temperature: 0.8,
         max_tokens: 2500,
-      }) as ChatCompletion;
+      })) as ChatCompletion;
 
       const raw = completion?.choices?.[0]?.message?.content ?? '{}';
       questions = parseQuestions(raw);
@@ -287,7 +300,9 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   }
 
   if (createdSets === 0) {
-    throw new Error('No sets were created. The AI may have returned unusable output — please try again.');
+    throw new Error(
+      'No sets were created. The AI may have returned unusable output — please try again.',
+    );
   }
 
   revalidatePath(`/admin/projects/${projectId}/quiz`);

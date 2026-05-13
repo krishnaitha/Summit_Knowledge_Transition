@@ -8,10 +8,10 @@ export interface ScanResult {
 }
 
 const SECRET_PATTERNS: Array<{ name: string; regex: RegExp }> = [
-  { name: 'aws_key',      regex: /AKIA[0-9A-Z]{16}/g },
-  { name: 'api_key',      regex: /\b(api[_-]?key|apikey|bearer)\s*[:=]\s*[a-zA-Z0-9_-]{20,}/gi },
-  { name: 'password',     regex: /\b(password|passwd|pwd)\s*[:=]\s*\S+/gi },
-  { name: 'connection',   regex: /\b(postgres|mysql|mongodb|redis):\/\/[^\s]+/gi },
+  { name: 'aws_key', regex: /AKIA[0-9A-Z]{16}/g },
+  { name: 'api_key', regex: /\b(api[_-]?key|apikey|bearer)\s*[:=]\s*[a-zA-Z0-9_-]{20,}/gi },
+  { name: 'password', regex: /\b(password|passwd|pwd)\s*[:=]\s*\S+/gi },
+  { name: 'connection', regex: /\b(postgres|mysql|mongodb|redis):\/\/[^\s]+/gi },
   { name: 'secret_token', regex: /\b(secret|token)\s*[:=]\s*[^\s]{8,}/gi },
 ];
 

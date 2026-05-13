@@ -5,9 +5,9 @@ function getConfidence(similarity?: number): {
   variant: 'success' | 'warning' | 'neutral';
 } {
   if (similarity == null) return { label: 'Unknown', variant: 'neutral' };
-  if (similarity >= 0.50)  return { label: 'High',    variant: 'success' };
-  if (similarity >= 0.35)  return { label: 'Medium',  variant: 'warning' };
-  return                          { label: 'Low',     variant: 'neutral' };
+  if (similarity >= 0.5) return { label: 'High', variant: 'success' };
+  if (similarity >= 0.35) return { label: 'Medium', variant: 'warning' };
+  return { label: 'Low', variant: 'neutral' };
 }
 
 export function SourceTag({

@@ -8,7 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireAdmin } from '@/lib/auth';
-import { getProjectById, getProjectDocuments, getProjectMembers, getProjectQuizSets, getRetakeRequestsForProject } from '@/lib/data';
+import {
+  getProjectById,
+  getProjectDocuments,
+  getProjectMembers,
+  getProjectQuizSets,
+  getRetakeRequestsForProject,
+} from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
 export default async function AdminProjectDetailPage({ params }: { params: { id: string } }) {
@@ -28,7 +34,9 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
     <div className="space-y-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/admin/projects" className="transition hover:text-slate-900">Projects</Link>
+        <Link href="/admin/projects" className="transition hover:text-slate-900">
+          Projects
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-slate-900">{project?.name ?? 'Project'}</span>
       </nav>
@@ -84,8 +92,12 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
         ].map((stat) => (
           <Card key={stat.label}>
             <CardContent className="p-5">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">{stat.label}</p>
-              <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{stat.value}</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                {stat.label}
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                {stat.value}
+              </p>
             </CardContent>
           </Card>
         ))}

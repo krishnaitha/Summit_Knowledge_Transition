@@ -106,7 +106,10 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
     pollRefs.current.set(itemId, timer);
   };
 
-  const onDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); setDragging(true); }, []);
+  const onDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(true);
+  }, []);
   const onDragLeave = useCallback(() => setDragging(false), []);
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -131,7 +134,11 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
         const uploadData = await uploadRes.json();
 
         if (!uploadRes.ok) {
-          updateItem(item.id, { status: 'error', step: null, error: uploadData.error ?? 'Upload failed' });
+          updateItem(item.id, {
+            status: 'error',
+            step: null,
+            error: uploadData.error ?? 'Upload failed',
+          });
           continue;
         }
 
@@ -145,7 +152,11 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
         const processData = await processRes.json();
 
         if (!processRes.ok) {
-          updateItem(item.id, { status: 'error', step: null, error: processData.error ?? 'Processing failed' });
+          updateItem(item.id, {
+            status: 'error',
+            step: null,
+            error: processData.error ?? 'Processing failed',
+          });
           continue;
         }
 
@@ -159,7 +170,8 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
   };
 
   const pendingCount = queue.filter((i) => i.status === 'pending').length;
-  const allDone = queue.length > 0 && queue.every((i) => i.status === 'done' || i.status === 'error');
+  const allDone =
+    queue.length > 0 && queue.every((i) => i.status === 'done' || i.status === 'error');
 
   return (
     <Card>
@@ -192,14 +204,19 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
           <p className="mt-3 text-sm font-medium text-slate-700">
             Drop files here or click to browse
           </p>
-          <p className="mt-1 text-xs text-slate-400">PDF · DOCX · XLSX · TXT · CSV · Multiple files supported</p>
+          <p className="mt-1 text-xs text-slate-400">
+            PDF · DOCX · XLSX · TXT · CSV · Multiple files supported
+          </p>
           <input
             ref={inputRef}
             accept=".pdf,.docx,.xlsx,.txt,.csv"
             className="hidden"
             type="file"
             multiple
-            onChange={(e) => { if (e.target.files) addFiles(e.target.files); e.target.value = ''; }}
+            onChange={(e) => {
+              if (e.target.files) addFiles(e.target.files);
+              e.target.value = '';
+            }}
           />
         </div>
 
@@ -216,17 +233,21 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
                   item.status === 'uploading' || item.status === 'processing'
                     ? 'border-accent-200 bg-accent-50'
                     : item.status === 'pending'
-                    ? 'border-slate-200 bg-slate-50'
-                    : '',
+                      ? 'border-slate-200 bg-slate-50'
+                      : '',
                 )}
               >
                 {/* Icon */}
-                <div className={cn(
-                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
-                  item.status === 'done' ? 'bg-emerald-100' :
-                  item.status === 'error' ? 'bg-rose-100' :
-                  'bg-brand-100',
-                )}>
+                <div
+                  className={cn(
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
+                    item.status === 'done'
+                      ? 'bg-emerald-100'
+                      : item.status === 'error'
+                        ? 'bg-rose-100'
+                        : 'bg-brand-100',
+                  )}
+                >
                   {item.status === 'done' && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
                   {item.status === 'error' && <AlertCircle className="h-4 w-4 text-rose-600" />}
                   {(item.status === 'uploading' || item.status === 'processing') && (
@@ -242,10 +263,10 @@ export function DocumentUploadPanel({ projectId }: { projectId: string }) {
                     {item.error
                       ? item.error
                       : item.step
-                      ? item.step
-                      : item.status === 'done'
-                      ? 'Ready in knowledge base'
-                      : formatBytes(item.file.size)}
+                        ? item.step
+                        : item.status === 'done'
+                          ? 'Ready in knowledge base'
+                          : formatBytes(item.file.size)}
                   </p>
                 </div>
 

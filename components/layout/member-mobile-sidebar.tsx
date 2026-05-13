@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { FolderOpen, LayoutDashboard } from "lucide-react";
+import { FolderOpen, LayoutDashboard } from 'lucide-react';
 
-import { MobileSidebar } from "./mobile-sidebar";
+import { MobileSidebar } from './mobile-sidebar';
 
 const items = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/projects", label: "My Projects", icon: FolderOpen },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/projects', label: 'My Projects', icon: FolderOpen },
 ];
 
 export function MemberMobileSidebar() {

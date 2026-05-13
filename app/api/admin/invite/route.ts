@@ -71,6 +71,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ invited: true, inviteLink });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Invite failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Invite failed' },
+      { status: 500 },
+    );
   }
 }

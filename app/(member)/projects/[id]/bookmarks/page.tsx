@@ -24,9 +24,13 @@ export default async function ProjectBookmarksPage({ params }: { params: { id: s
   return (
     <div className="space-y-6">
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/dashboard" className="transition hover:text-slate-900">Dashboard</Link>
+        <Link href="/dashboard" className="transition hover:text-slate-900">
+          Dashboard
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">{project?.name ?? 'Project'}</Link>
+        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">
+          {project?.name ?? 'Project'}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-slate-900">Bookmarks</span>
       </nav>
@@ -42,21 +46,29 @@ export default async function ProjectBookmarksPage({ params }: { params: { id: s
           {bookmarks.length ? (
             bookmarks.map((bookmark) => (
               <div key={bookmark.id} className="rounded-2xl bg-slate-50 p-4">
-                <p className="whitespace-pre-wrap text-sm leading-7 text-slate-900">{bookmark.message.content}</p>
+                <p className="whitespace-pre-wrap text-sm leading-7 text-slate-900">
+                  {bookmark.message.content}
+                </p>
                 {Array.isArray(bookmark.message.sources) && bookmark.message.sources.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {bookmark.message.sources.map((source, i) => (
-                      <Badge key={i} variant="info">{source.documentName}</Badge>
+                      <Badge key={i} variant="info">
+                        {source.documentName}
+                      </Badge>
                     ))}
                   </div>
                 )}
-                <p className="mt-3 text-xs text-slate-400">Bookmarked {formatDate(bookmark.created_at, true)}</p>
+                <p className="mt-3 text-xs text-slate-400">
+                  Bookmarked {formatDate(bookmark.created_at, true)}
+                </p>
               </div>
             ))
           ) : (
             <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center">
               <Bookmark className="mx-auto h-8 w-8 text-slate-400" />
-              <p className="mt-4 text-sm text-slate-500">No bookmarks yet. Click the bookmark icon on any AI answer in chat to save it here.</p>
+              <p className="mt-4 text-sm text-slate-500">
+                No bookmarks yet. Click the bookmark icon on any AI answer in chat to save it here.
+              </p>
             </div>
           )}
         </CardContent>

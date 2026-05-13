@@ -35,7 +35,8 @@ export function ResultSummary({
             </p>
           </div>
           <p className="text-sm text-slate-500">
-            This result has been recorded. Please contact your admin if you believe this is an error.
+            This result has been recorded. Please contact your admin if you believe this is an
+            error.
           </p>
         </CardContent>
       </Card>

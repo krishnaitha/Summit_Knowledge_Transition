@@ -70,9 +70,13 @@ export function QuizWindowForm({
           </Button>
           {(currentOpenAt || currentCloseAt) && (
             <p className="w-full text-xs text-slate-400">
-              {currentOpenAt ? `Opens ${new Date(currentOpenAt).toLocaleString()}` : 'No open restriction'}
+              {currentOpenAt
+                ? `Opens ${new Date(currentOpenAt).toLocaleString()}`
+                : 'No open restriction'}
               {' · '}
-              {currentCloseAt ? `Closes ${new Date(currentCloseAt).toLocaleString()}` : 'No close restriction'}
+              {currentCloseAt
+                ? `Closes ${new Date(currentCloseAt).toLocaleString()}`
+                : 'No close restriction'}
             </p>
           )}
         </form>

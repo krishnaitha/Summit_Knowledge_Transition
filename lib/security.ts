@@ -23,7 +23,7 @@ const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3 MB
 
 // Magic bytes for binary formats
 const MAGIC: Record<string, number[]> = {
-  pdf:  [0x25, 0x50, 0x44, 0x46], // %PDF
+  pdf: [0x25, 0x50, 0x44, 0x46], // %PDF
   docx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP)
   xlsx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP — same as docx)
 };

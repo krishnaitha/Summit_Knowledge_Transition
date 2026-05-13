@@ -35,7 +35,12 @@ interface QuizExperienceProps {
   hasPendingRetakeRequest?: boolean;
 }
 
-export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendingRetakeRequest = false }: QuizExperienceProps) {
+export function QuizExperience({
+  projectId,
+  projectName,
+  lockedAttempt,
+  hasPendingRetakeRequest = false,
+}: QuizExperienceProps) {
   // Quiz flow state
   const [phase, setPhase] = useState<Phase>('start');
   const [sections, setSections] = useState<QuizSection[]>([]);
@@ -68,46 +73,67 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
   const currentSectionIdxRef = useRef(0);
   const tabSwitchCountRef = useRef(0);
 
-  useEffect(() => { phaseRef.current = phase; }, [phase]);
-  useEffect(() => { answersRef.current = answers; }, [answers]);
-  useEffect(() => { attemptIdRef.current = attemptId; }, [attemptId]);
-  useEffect(() => { sectionsRef.current = sections; }, [sections]);
-  useEffect(() => { currentSectionIdxRef.current = currentSectionIdx; }, [currentSectionIdx]);
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
+  useEffect(() => {
+    attemptIdRef.current = attemptId;
+  }, [attemptId]);
+  useEffect(() => {
+    sectionsRef.current = sections;
+  }, [sections]);
+  useEffect(() => {
+    currentSectionIdxRef.current = currentSectionIdx;
+  }, [currentSectionIdx]);
 
   const formatTime = (s: number) => {
-    const m = Math.floor(s / 60).toString().padStart(2, '0');
+    const m = Math.floor(s / 60)
+      .toString()
+      .padStart(2, '0');
     const sec = (s % 60).toString().padStart(2, '0');
     return `${m}:${sec}`;
   };
 
   // ── Submit ──────────────────────────────────────────────────────────────
-  const submitQuiz = useCallback(async (
-    finalAnswers: Record<string, 'A' | 'B' | 'C' | 'D'>,
-    id: string,
-    disqualified = false,
-    disqualifyReason = '',
-  ) => {
-    setPhase('submitting');
-    try {
-      const res = await fetch('/api/quiz/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId, attemptId: id, answers: finalAnswers, disqualified, disqualifyReason }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? 'Unable to submit quiz.');
+  const submitQuiz = useCallback(
+    async (
+      finalAnswers: Record<string, 'A' | 'B' | 'C' | 'D'>,
+      id: string,
+      disqualified = false,
+      disqualifyReason = '',
+    ) => {
+      setPhase('submitting');
+      try {
+        const res = await fetch('/api/quiz/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId,
+            attemptId: id,
+            answers: finalAnswers,
+            disqualified,
+            disqualifyReason,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error ?? 'Unable to submit quiz.');
+          setPhase('in_section');
+          return;
+        }
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        setResult(data);
+        setPhase('submitted');
+      } catch {
+        setError('Network error — please try again.');
         setPhase('in_section');
-        return;
       }
-      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      setResult(data);
-      setPhase('submitted');
-    } catch {
-      setError('Network error — please try again.');
-      setPhase('in_section');
-    }
-  }, [projectId]);
+    },
+    [projectId],
+  );
 
   // ── Timer expiry handler (uses refs — no stale closure) ─────────────────
   const handleTimerExpiry = useCallback(() => {
@@ -139,7 +165,9 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
         return prev - 1;
       });
     }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [phase, currentSectionIdx, handleTimerExpiry]);
 
   // ── Tab-switch detection ────────────────────────────────────────────────
@@ -181,7 +209,10 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
 
   // ── Start quiz ──────────────────────────────────────────────────────────
   const startQuiz = () => {
-    if (!confirmed) { setCheckboxWarning(true); return; }
+    if (!confirmed) {
+      setCheckboxWarning(true);
+      return;
+    }
     setCheckboxWarning(false);
     setError(null);
     startTransition(async () => {
@@ -193,7 +224,10 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
         });
         const data = await res.json();
         if (!res.ok) {
-          if (data.attempt) { setResult(data.attempt); return; }
+          if (data.attempt) {
+            setResult(data.attempt);
+            return;
+          }
           setError(data.error ?? 'Unable to start quiz.');
           return;
         }
@@ -206,7 +240,9 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
         setCurrentSectionIdx(0);
         setCurrentQuestionIdx(0);
         setAnswers({});
-        try { await document.documentElement.requestFullscreen(); } catch {}
+        try {
+          await document.documentElement.requestFullscreen();
+        } catch {}
         setPhase('in_section');
       } catch {
         setError('Network error — please try again.');
@@ -249,11 +285,10 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
           />
         )}
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/dashboard"><Button>Back to Dashboard</Button></Link>
-          <RetakeRequestButton
-            projectId={projectId}
-            hasPendingRequest={hasPendingRetakeRequest}
-          />
+          <Link href="/dashboard">
+            <Button>Back to Dashboard</Button>
+          </Link>
+          <RetakeRequestButton projectId={projectId} hasPendingRequest={hasPendingRetakeRequest} />
         </div>
       </div>
     );
@@ -275,29 +310,33 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
   if (phase === 'section_done') {
     const nextSection = sections[currentSectionIdx];
     return (
-      <QuizCard title="Functional section complete" description="Your answers have been saved. Start the Technical section when you're ready.">
+      <QuizCard
+        title="Functional section complete"
+        description="Your answers have been saved. Start the Technical section when you're ready."
+      >
         <div className="space-y-4">
           <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 p-4">
             <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
             <div>
               <p className="font-semibold text-emerald-800">Functional — done</p>
               <p className="text-xs text-emerald-700">
-                {Object.keys(answers).filter((id) =>
-                  sections[0]?.questions.some((q) => q.questionId === id),
-                ).length} of {sections[0]?.questions.length ?? 20} questions answered
+                {
+                  Object.keys(answers).filter((id) =>
+                    sections[0]?.questions.some((q) => q.questionId === id),
+                  ).length
+                }{' '}
+                of {sections[0]?.questions.length ?? 20} questions answered
               </p>
             </div>
           </div>
           <div className="rounded-2xl bg-violet-50 p-4">
             <p className="text-sm font-semibold text-violet-900">Technical section up next</p>
             <p className="mt-0.5 text-xs text-violet-700">
-              {nextSection?.questions.length ?? 20} questions · 15 minutes · timer starts immediately
+              {nextSection?.questions.length ?? 20} questions · 15 minutes · timer starts
+              immediately
             </p>
           </div>
-          <Button
-            onClick={() => setPhase('in_section')}
-            type="button"
-          >
+          <Button onClick={() => setPhase('in_section')} type="button">
             Start Technical Section →
           </Button>
         </div>
@@ -316,11 +355,15 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl bg-blue-50 p-4">
               <p className="text-sm font-semibold text-blue-900">Functional Section</p>
-              <p className="mt-1 text-xs text-blue-700">20 questions · 15 minutes · business processes &amp; workflows</p>
+              <p className="mt-1 text-xs text-blue-700">
+                20 questions · 15 minutes · business processes &amp; workflows
+              </p>
             </div>
             <div className="rounded-2xl bg-violet-50 p-4">
               <p className="text-sm font-semibold text-violet-900">Technical Section</p>
-              <p className="mt-1 text-xs text-violet-700">20 questions · 15 minutes · architecture, APIs &amp; design</p>
+              <p className="mt-1 text-xs text-violet-700">
+                20 questions · 15 minutes · architecture, APIs &amp; design
+              </p>
             </div>
           </div>
 
@@ -328,26 +371,36 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
             <p className="text-base font-semibold">One attempt only — read before starting</p>
             <ul className="mt-2 space-y-1 text-sm">
               <li>• You cannot go back to a previous question</li>
-              <li>• Each section has a 15-minute countdown — it auto-advances when time runs out</li>
+              <li>
+                • Each section has a 15-minute countdown — it auto-advances when time runs out
+              </li>
               <li>• The quiz runs in fullscreen — do not exit or switch tabs</li>
               <li>• Both sections must be completed in a single session</li>
             </ul>
           </div>
 
-          <label className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 px-4 py-3 text-sm transition ${
-            checkboxWarning
-              ? 'border-amber-400 bg-amber-50 text-amber-900'
-              : confirmed
-              ? 'border-emerald-300 bg-emerald-50 text-slate-700'
-              : 'border-slate-200 bg-slate-50 text-slate-700'
-          }`}>
+          <label
+            className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 px-4 py-3 text-sm transition ${
+              checkboxWarning
+                ? 'border-amber-400 bg-amber-50 text-amber-900'
+                : confirmed
+                  ? 'border-emerald-300 bg-emerald-50 text-slate-700'
+                  : 'border-slate-200 bg-slate-50 text-slate-700'
+            }`}
+          >
             <input
               checked={confirmed}
               className="mt-0.5 h-4 w-4 accent-brand-700"
               type="checkbox"
-              onChange={(e) => { setConfirmed(e.target.checked); if (e.target.checked) setCheckboxWarning(false); }}
+              onChange={(e) => {
+                setConfirmed(e.target.checked);
+                if (e.target.checked) setCheckboxWarning(false);
+              }}
             />
-            <span>I understand this is a one-time attempt with a 15-minute timer per section. I will not switch tabs or exit fullscreen during the quiz.</span>
+            <span>
+              I understand this is a one-time attempt with a 15-minute timer per section. I will not
+              switch tabs or exit fullscreen during the quiz.
+            </span>
           </label>
 
           {checkboxWarning && (
@@ -391,8 +444,9 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
             <ShieldAlert className="mx-auto h-12 w-12 text-rose-500" />
             <h2 className="mt-4 text-xl font-bold text-slate-900">Tab switch detected</h2>
             <p className="mt-2 text-sm text-slate-600">
-              You switched away from the quiz <strong>{tabSwitchCount}</strong> time{tabSwitchCount !== 1 ? 's' : ''}.
-              This is recorded. Please stay on this page during the assessment.
+              You switched away from the quiz <strong>{tabSwitchCount}</strong> time
+              {tabSwitchCount !== 1 ? 's' : ''}. This is recorded. Please stay on this page during
+              the assessment.
             </p>
             <Button className="mt-6 w-full" onClick={() => setShowTabWarning(false)} type="button">
               Resume Quiz
@@ -414,7 +468,9 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
               className="mt-6 w-full"
               type="button"
               onClick={async () => {
-                try { await document.documentElement.requestFullscreen(); } catch {}
+                try {
+                  await document.documentElement.requestFullscreen();
+                } catch {}
                 setShowFullscreenWarning(false);
               }}
             >
@@ -426,10 +482,14 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
 
       {/* Top bar: section badge + timer */}
       <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
-        <div className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white ${isFunctional ? 'bg-blue-500' : 'bg-violet-600'}`}>
+        <div
+          className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white ${isFunctional ? 'bg-blue-500' : 'bg-violet-600'}`}
+        >
           {section.name}
         </div>
-        <div className={`flex items-center gap-2 text-lg font-bold tabular-nums ${isTimeCritical ? 'text-rose-600' : isTimeLow ? 'text-amber-600' : 'text-slate-700'}`}>
+        <div
+          className={`flex items-center gap-2 text-lg font-bold tabular-nums ${isTimeCritical ? 'text-rose-600' : isTimeLow ? 'text-amber-600' : 'text-slate-700'}`}
+        >
           <Clock className={`h-5 w-5 ${isTimeCritical ? 'animate-pulse' : ''}`} />
           {formatTime(timeLeft)}
         </div>
@@ -446,9 +506,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
             question={question}
             selected={answers[question.questionId]}
             total={section.questions.length}
-            onSelect={(value) =>
-              setAnswers((curr) => ({ ...curr, [question.questionId]: value }))
-            }
+            onSelect={(value) => setAnswers((curr) => ({ ...curr, [question.questionId]: value }))}
           />
 
           {error && (
@@ -458,11 +516,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
             </div>
           )}
 
-          <Button
-            disabled={!answers[question.questionId]}
-            onClick={advance}
-            type="button"
-          >
+          <Button disabled={!answers[question.questionId]} onClick={advance} type="button">
             {isLastQuestion
               ? isLastSection
                 ? 'Submit Quiz'

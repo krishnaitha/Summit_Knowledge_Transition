@@ -53,7 +53,7 @@ export function RetakeRequestButton({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+    <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
       <p className="text-sm font-medium text-slate-800">Request re-enable</p>
       <textarea
         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -67,7 +67,14 @@ export function RetakeRequestButton({
         <Button size="sm" disabled={pending} onClick={handleSubmit}>
           {pending ? 'Submitting…' : 'Submit request'}
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => { setShowForm(false); setError(null); }}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            setShowForm(false);
+            setError(null);
+          }}
+        >
           Cancel
         </Button>
       </div>

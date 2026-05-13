@@ -4,7 +4,13 @@ import { redirect } from 'next/navigation';
 
 import { ChatInterface } from '@/components/chat/chat-interface';
 import { requireMember } from '@/lib/auth';
-import { getChatMessages, getBookmarkedMessageIds, getProjectById, getProjectChatSessions, userHasProjectAccess } from '@/lib/data';
+import {
+  getChatMessages,
+  getBookmarkedMessageIds,
+  getProjectById,
+  getProjectChatSessions,
+  userHasProjectAccess,
+} from '@/lib/data';
 
 export default async function ProjectChatPage({ params }: { params: { id: string } }) {
   const { profile } = await requireMember();
@@ -25,9 +31,13 @@ export default async function ProjectChatPage({ params }: { params: { id: string
   return (
     <div className="space-y-6">
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/dashboard" className="transition hover:text-slate-900">Dashboard</Link>
+        <Link href="/dashboard" className="transition hover:text-slate-900">
+          Dashboard
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">{project?.name ?? 'Project'}</Link>
+        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">
+          {project?.name ?? 'Project'}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-slate-900">Chat</span>
       </nav>

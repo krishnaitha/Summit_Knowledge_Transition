@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type { LucideIcon } from "lucide-react";
-import { X } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import type { LucideIcon } from 'lucide-react';
+import { X } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export interface MobileSidebarItem {
   href: string;
@@ -15,7 +15,7 @@ export interface MobileSidebarItem {
 }
 
 // Custom event name used to open the drawer from MobileMenuButton in the Navbar
-export const MOBILE_NAV_OPEN_EVENT = "mobile-nav-open";
+export const MOBILE_NAV_OPEN_EVENT = 'mobile-nav-open';
 
 export function MobileSidebar({
   items,
@@ -56,7 +56,7 @@ export function MobileSidebar({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <nav className="p-3 space-y-0.5">
+            <nav className="space-y-0.5 p-3">
               {sectionLabel && (
                 <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                   {sectionLabel}
@@ -65,24 +65,23 @@ export function MobileSidebar({
               {items.map((item) => {
                 const Icon = item.icon;
                 const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/" && pathname.startsWith(item.href));
+                  pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
                       isActive
-                        ? "bg-brand-700 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+                        ? 'bg-brand-700 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
                     )}
                   >
                     {Icon && (
                       <Icon
                         className={cn(
-                          "h-4 w-4 shrink-0",
-                          isActive ? "text-white" : "text-slate-400",
+                          'h-4 w-4 shrink-0',
+                          isActive ? 'text-white' : 'text-slate-400',
                         )}
                       />
                     )}

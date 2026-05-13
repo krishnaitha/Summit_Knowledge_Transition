@@ -26,11 +26,12 @@ export async function extractTextFromFile(fileName: string, buffer: Buffer) {
     }) as Array<Record<string, string>>;
 
     return rows
-      .map((row, i) =>
-        `Row ${i + 1}: ` +
-        Object.entries(row)
-          .map(([col, val]) => `${col}: ${val}`)
-          .join(' | '),
+      .map(
+        (row, i) =>
+          `Row ${i + 1}: ` +
+          Object.entries(row)
+            .map(([col, val]) => `${col}: ${val}`)
+            .join(' | '),
       )
       .join('\n');
   }
@@ -38,16 +39,16 @@ export async function extractTextFromFile(fileName: string, buffer: Buffer) {
   if (extension === 'xlsx') {
     const workbook = XLSX.read(buffer);
     return workbook.SheetNames.map((name) => {
-      const rows = XLSX.utils.sheet_to_json<Record<string, string>>(
-        workbook.Sheets[name],
-        { defval: '' },
-      );
+      const rows = XLSX.utils.sheet_to_json<Record<string, string>>(workbook.Sheets[name], {
+        defval: '',
+      });
       const rowText = rows
-        .map((row, i) =>
-          `Row ${i + 1}: ` +
-          Object.entries(row)
-            .map(([col, val]) => `${col}: ${val}`)
-            .join(' | '),
+        .map(
+          (row, i) =>
+            `Row ${i + 1}: ` +
+            Object.entries(row)
+              .map(([col, val]) => `${col}: ${val}`)
+              .join(' | '),
         )
         .join('\n');
       return `Sheet: ${name}\n${rowText}`;

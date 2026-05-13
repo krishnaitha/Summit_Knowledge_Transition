@@ -45,9 +45,12 @@ interface QuizSetsPanelProps {
 
 function categoryColor(category: string) {
   switch (category?.toLowerCase()) {
-    case 'functional': return 'bg-blue-50 text-blue-700';
-    case 'technical':  return 'bg-violet-50 text-violet-700';
-    default:           return 'bg-slate-100 text-slate-600';
+    case 'functional':
+      return 'bg-blue-50 text-blue-700';
+    case 'technical':
+      return 'bg-violet-50 text-violet-700';
+    default:
+      return 'bg-slate-100 text-slate-600';
   }
 }
 
@@ -55,7 +58,6 @@ function categoryLabel(category: string) {
   if (!category) return 'Other';
   return category.charAt(0).toUpperCase() + category.slice(1);
 }
-
 
 interface AddEditFormProps {
   projectId: string;
@@ -65,7 +67,13 @@ interface AddEditFormProps {
   onClose: () => void;
 }
 
-function AddEditQuestionForm({ projectId, quizSetId, question, action, onClose }: AddEditFormProps) {
+function AddEditQuestionForm({
+  projectId,
+  quizSetId,
+  question,
+  action,
+  onClose,
+}: AddEditFormProps) {
   const [qType, setQType] = useState<'mcq' | 'true_false'>(
     (question?.question_type as 'mcq' | 'true_false') ?? 'mcq',
   );
@@ -82,7 +90,7 @@ function AddEditQuestionForm({ projectId, quizSetId, question, action, onClose }
       {question && <input name="question_id" type="hidden" value={question.id} />}
 
       {/* Question type selector */}
-      <div className="lg:col-span-2 flex items-center gap-3">
+      <div className="flex items-center gap-3 lg:col-span-2">
         <label className="text-sm font-medium text-slate-700">Type</label>
         <select
           name="question_type"
@@ -113,9 +121,9 @@ function AddEditQuestionForm({ projectId, quizSetId, question, action, onClose }
           <input name="option_b" type="hidden" value="False" />
           <input name="option_c" type="hidden" value="" />
           <input name="option_d" type="hidden" value="" />
-          <div className="lg:col-span-2 flex items-center gap-4 text-sm text-slate-600">
-            <span className="rounded-lg bg-white border border-slate-200 px-3 py-2">A: True</span>
-            <span className="rounded-lg bg-white border border-slate-200 px-3 py-2">B: False</span>
+          <div className="flex items-center gap-4 text-sm text-slate-600 lg:col-span-2">
+            <span className="rounded-lg border border-slate-200 bg-white px-3 py-2">A: True</span>
+            <span className="rounded-lg border border-slate-200 bg-white px-3 py-2">B: False</span>
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-600">Correct answer</label>
@@ -132,10 +140,30 @@ function AddEditQuestionForm({ projectId, quizSetId, question, action, onClose }
         </>
       ) : (
         <>
-          <Input name="option_a" placeholder="Option A" defaultValue={question?.option_a} required />
-          <Input name="option_b" placeholder="Option B" defaultValue={question?.option_b} required />
-          <Input name="option_c" placeholder="Option C" defaultValue={question?.option_c} required />
-          <Input name="option_d" placeholder="Option D" defaultValue={question?.option_d} required />
+          <Input
+            name="option_a"
+            placeholder="Option A"
+            defaultValue={question?.option_a}
+            required
+          />
+          <Input
+            name="option_b"
+            placeholder="Option B"
+            defaultValue={question?.option_b}
+            required
+          />
+          <Input
+            name="option_c"
+            placeholder="Option C"
+            defaultValue={question?.option_c}
+            required
+          />
+          <Input
+            name="option_d"
+            placeholder="Option D"
+            defaultValue={question?.option_d}
+            required
+          />
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-600">Correct answer</label>
             <select
@@ -151,13 +179,7 @@ function AddEditQuestionForm({ projectId, quizSetId, question, action, onClose }
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-600">Marks</label>
-            <Input
-              name="marks"
-              type="number"
-              min={1}
-              max={5}
-              defaultValue={question?.marks ?? 2}
-            />
+            <Input name="marks" type="number" min={1} max={5} defaultValue={question?.marks ?? 2} />
           </div>
         </>
       )}
@@ -175,7 +197,9 @@ function AddEditQuestionForm({ projectId, quizSetId, question, action, onClose }
         <SubmitButton className="lg:w-fit" loadingText="Saving…">
           {question ? 'Save changes' : 'Add question'}
         </SubmitButton>
-        <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
+        <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+          Cancel
+        </Button>
       </div>
     </form>
   );
@@ -207,7 +231,9 @@ export function QuizSetsPanel({
             <CardHeader className="py-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <span className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-semibold ${tagClasses}`}>
+                  <span
+                    className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-semibold ${tagClasses}`}
+                  >
                     {categoryLabel(set.category)}
                   </span>
                   <CardTitle className="truncate text-base">{set.set_name}</CardTitle>
@@ -240,7 +266,11 @@ export function QuizSetsPanel({
                       variant="ghost"
                       className="h-8 w-8 p-0 text-slate-400 hover:text-rose-600"
                       onClick={(e) => {
-                        if (!confirm(`Delete "${set.set_name}" and all ${set.questions.length} questions? This cannot be undone.`)) {
+                        if (
+                          !confirm(
+                            `Delete "${set.set_name}" and all ${set.questions.length} questions? This cannot be undone.`,
+                          )
+                        ) {
                           e.preventDefault();
                         }
                       }}
@@ -256,7 +286,11 @@ export function QuizSetsPanel({
                     className="h-8 w-8 p-0"
                     onClick={() => setExpanded(isOpen ? null : set.id)}
                   >
-                    {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    {isOpen ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -285,11 +319,17 @@ export function QuizSetsPanel({
                             </div>
                           ) : (
                             <div className="flex items-start gap-3 px-4 py-3">
-                              <span className="mt-0.5 shrink-0 text-xs font-semibold text-slate-400">{index + 1}.</span>
+                              <span className="mt-0.5 shrink-0 text-xs font-semibold text-slate-400">
+                                {index + 1}.
+                              </span>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-start justify-between gap-2">
-                                  <p className="text-sm font-medium text-slate-900">{q.question_text}</p>
-                                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${isTF ? 'bg-amber-50 text-amber-700' : 'bg-sky-50 text-sky-700'}`}>
+                                  <p className="text-sm font-medium text-slate-900">
+                                    {q.question_text}
+                                  </p>
+                                  <span
+                                    className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${isTF ? 'bg-amber-50 text-amber-700' : 'bg-sky-50 text-sky-700'}`}
+                                  >
                                     {isTF ? 'T/F' : 'MCQ'}
                                   </span>
                                 </div>
@@ -307,10 +347,13 @@ export function QuizSetsPanel({
                                   </div>
                                 )}
                                 <p className="mt-1 text-xs font-semibold text-emerald-600">
-                                  Correct: {q.correct_option} · {q.marks} mark{q.marks !== 1 ? 's' : ''}
+                                  Correct: {q.correct_option} · {q.marks} mark
+                                  {q.marks !== 1 ? 's' : ''}
                                 </p>
                                 {q.explanation && (
-                                  <p className="mt-1 text-xs text-slate-400 italic">{q.explanation}</p>
+                                  <p className="mt-1 text-xs italic text-slate-400">
+                                    {q.explanation}
+                                  </p>
                                 )}
                               </div>
                               <div className="flex shrink-0 items-center gap-1">
@@ -332,7 +375,9 @@ export function QuizSetsPanel({
                                     variant="ghost"
                                     className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600"
                                     onClick={(e) => {
-                                      if (!confirm('Delete this question? This cannot be undone.')) {
+                                      if (
+                                        !confirm('Delete this question? This cannot be undone.')
+                                      ) {
                                         e.preventDefault();
                                       }
                                     }}
@@ -357,7 +402,10 @@ export function QuizSetsPanel({
                     size="sm"
                     type="button"
                     variant="secondary"
-                    onClick={() => { setAddingTo(set.id); setEditingQuestion(null); }}
+                    onClick={() => {
+                      setAddingTo(set.id);
+                      setEditingQuestion(null);
+                    }}
                   >
                     + Add question
                   </Button>
@@ -394,10 +442,13 @@ export function QuizSetsPanel({
                     <input name="project_id" type="hidden" value={projectId} />
                     <input name="quiz_set_id" type="hidden" value={set.id} />
                     <p className="text-xs text-slate-400">
-                      Columns: question_text, option_a, option_b, option_c, option_d, correct_option, explanation, marks
+                      Columns: question_text, option_a, option_b, option_c, option_d,
+                      correct_option, explanation, marks
                     </p>
                     <Textarea name="csv_text" placeholder="Paste CSV rows here…" rows={4} />
-                    <SubmitButton size="sm" variant="secondary" loadingText="Importing…">Import</SubmitButton>
+                    <SubmitButton size="sm" variant="secondary" loadingText="Importing…">
+                      Import
+                    </SubmitButton>
                   </form>
                 </details>
               </CardContent>

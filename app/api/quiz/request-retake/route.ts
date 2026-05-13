@@ -12,7 +12,8 @@ export async function POST(request: Request) {
 
     const { userId, profile } = await getCurrentUserContext();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    if (profile?.role !== 'member') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (profile?.role !== 'member')
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const body = (await request.json()) as { projectId: string; reason?: string };
     const projectId = String(body.projectId ?? '');
@@ -27,7 +28,10 @@ export async function POST(request: Request) {
       LIMIT 1
     `;
     if (!attempts.length) {
-      return NextResponse.json({ error: 'No submitted attempt found for this project.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No submitted attempt found for this project.' },
+        { status: 400 },
+      );
     }
     const attemptId = attempts[0].id as string;
 
@@ -38,7 +42,10 @@ export async function POST(request: Request) {
       LIMIT 1
     `;
     if (existing.length) {
-      return NextResponse.json({ error: 'You already have a pending re-enable request for this project.' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'You already have a pending re-enable request for this project.' },
+        { status: 409 },
+      );
     }
 
     await sql`

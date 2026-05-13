@@ -14,7 +14,13 @@ import { formatDate } from '@/lib/utils';
 
 const PAGE_SIZE = 10;
 
-export function DocumentsList({ documents, projectId }: { documents: DocumentRecord[]; projectId: string }) {
+export function DocumentsList({
+  documents,
+  projectId,
+}: {
+  documents: DocumentRecord[];
+  projectId: string;
+}) {
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(0);
 
@@ -41,7 +47,10 @@ export function DocumentsList({ documents, projectId }: { documents: DocumentRec
                 className="pl-9"
                 placeholder="Filter by file name…"
                 value={filter}
-                onChange={(e) => { setFilter(e.target.value); setPage(0); }}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                  setPage(0);
+                }}
               />
             </div>
           )}
@@ -67,14 +76,16 @@ export function DocumentsList({ documents, projectId }: { documents: DocumentRec
                           : 'success'
                     }
                   >
-                    {document.classification.charAt(0).toUpperCase() + document.classification.slice(1)}
+                    {document.classification.charAt(0).toUpperCase() +
+                      document.classification.slice(1)}
                   </Badge>
                   {document.pii_detections > 0 && (
                     <Badge variant="danger">PII &middot; {document.pii_detections}</Badge>
                   )}
                 </div>
                 <p className="mt-1 text-sm text-slate-500">
-                  Uploaded {formatDate(document.uploaded_at, true)} &bull; {document.chunk_count} chunks
+                  Uploaded {formatDate(document.uploaded_at, true)} &bull; {document.chunk_count}{' '}
+                  chunks
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -83,13 +94,17 @@ export function DocumentsList({ documents, projectId }: { documents: DocumentRec
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button type="button" variant="secondary">View</Button>
+                  <Button type="button" variant="secondary">
+                    View
+                  </Button>
                 </a>
                 <form action={deleteDocumentAction}>
                   <input name="project_id" type="hidden" value={projectId} />
                   <input name="document_id" type="hidden" value={document.id} />
                   <input name="file_url" type="hidden" value={document.file_url} />
-                  <SubmitButton variant="danger" loadingText="Deleting…">Delete</SubmitButton>
+                  <SubmitButton variant="danger" loadingText="Deleting…">
+                    Delete
+                  </SubmitButton>
                 </form>
               </div>
             </div>

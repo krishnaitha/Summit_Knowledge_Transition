@@ -1,7 +1,18 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsUpDown, Download, RotateCcw, Search, X } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronsUpDown,
+  Download,
+  RotateCcw,
+  Search,
+  X,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,12 +51,23 @@ function exportToCsv(rows: QuizResultRow[]) {
   const seen = new Set<string>();
   for (const row of rows) {
     for (const sec of Object.keys(row.sectionScores ?? {})) {
-      if (!seen.has(sec)) { seen.add(sec); sectionNames.push(sec); }
+      if (!seen.has(sec)) {
+        seen.add(sec);
+        sectionNames.push(sec);
+      }
     }
   }
 
-  const headers = ['Member', 'Email', 'Score', 'Percentage', 'Set Taken', 'Submitted At', 'Reset Count',
-    ...sectionNames.map((s) => `${s.charAt(0).toUpperCase() + s.slice(1)} Score`)];
+  const headers = [
+    'Member',
+    'Email',
+    'Score',
+    'Percentage',
+    'Set Taken',
+    'Submitted At',
+    'Reset Count',
+    ...sectionNames.map((s) => `${s.charAt(0).toUpperCase() + s.slice(1)} Score`),
+  ];
 
   const csvRows = rows.map((row) => {
     const base = [
@@ -78,9 +100,11 @@ function exportToCsv(rows: QuizResultRow[]) {
 
 function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
   if (col !== sortKey) return <ChevronsUpDown className="ml-1 inline h-3 w-3 text-slate-300" />;
-  return sortDir === 'asc'
-    ? <ChevronUp className="ml-1 inline h-3 w-3 text-brand-600" />
-    : <ChevronDown className="ml-1 inline h-3 w-3 text-brand-600" />;
+  return sortDir === 'asc' ? (
+    <ChevronUp className="ml-1 inline h-3 w-3 text-brand-600" />
+  ) : (
+    <ChevronDown className="ml-1 inline h-3 w-3 text-brand-600" />
+  );
 }
 
 export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizResultsCardProps) {
@@ -169,7 +193,8 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
     });
   }
 
-  const thCls = 'pb-3 pr-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer select-none hover:text-slate-800 whitespace-nowrap';
+  const thCls =
+    'pb-3 pr-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer select-none hover:text-slate-800 whitespace-nowrap';
 
   return (
     <>
@@ -200,7 +225,10 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                 <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
                 <input
                   className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-8 pr-4 text-sm"
-                  onChange={(e) => { setFilter(e.target.value); setPage(1); }}
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                    setPage(1);
+                  }}
                   placeholder="Filter by name or set…"
                   value={filter}
                 />
@@ -213,7 +241,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
             <div className="rounded-xl border border-dashed border-slate-200 px-6 py-10 text-center">
               <BookOpen className="mx-auto h-7 w-7 text-slate-300" />
               <p className="mt-3 text-sm text-slate-400">No quiz submissions yet.</p>
-              <p className="mt-1 text-xs text-slate-400">Results will appear here once members complete their quiz.</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Results will appear here once members complete their quiz.
+              </p>
             </div>
           ) : (
             <>
@@ -236,7 +266,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                       <th className={thCls} onClick={() => toggleSort('submittedAt')}>
                         Submitted <SortIcon col="submittedAt" sortKey={sortKey} sortDir={sortDir} />
                       </th>
-                      <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                      <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -254,20 +286,23 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                               <div className="mt-0.5 space-y-0.5">
                                 {Object.entries(row.sectionScores).map(([sec, s]) => (
                                   <p key={sec} className="text-xs text-slate-400">
-                                    {sec.charAt(0).toUpperCase() + sec.slice(1)}: {s.score}/{s.total}
+                                    {sec.charAt(0).toUpperCase() + sec.slice(1)}: {s.score}/
+                                    {s.total}
                                   </p>
                                 ))}
                               </div>
                             )}
                           </td>
                           <td className="py-3 pr-6">
-                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                              parseFloat(row.percentage) >= 70
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : parseFloat(row.percentage) >= 50
-                                ? 'bg-amber-50 text-amber-700'
-                                : 'bg-rose-50 text-rose-700'
-                            }`}>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                                parseFloat(row.percentage) >= 70
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : parseFloat(row.percentage) >= 50
+                                    ? 'bg-amber-50 text-amber-700'
+                                    : 'bg-rose-50 text-rose-700'
+                              }`}
+                            >
                               {row.percentage}
                             </span>
                           </td>
@@ -280,7 +315,11 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                                 type="button"
                                 variant="secondary"
                                 disabled={atLimit}
-                                title={atLimit ? `Reset limit reached (${MAX_RESETS} resets used)` : undefined}
+                                title={
+                                  atLimit
+                                    ? `Reset limit reached (${MAX_RESETS} resets used)`
+                                    : undefined
+                                }
                                 onClick={() => openResetModal(row)}
                                 className="flex items-center gap-1.5"
                               >
@@ -288,7 +327,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                                 Reset
                               </Button>
                               {row.resetCount > 0 && (
-                                <span className={`text-xs ${atLimit ? 'text-rose-500 font-semibold' : 'text-slate-400'}`}>
+                                <span
+                                  className={`text-xs ${atLimit ? 'font-semibold text-rose-500' : 'text-slate-400'}`}
+                                >
                                   {row.resetCount}/{MAX_RESETS}
                                 </span>
                               )}
@@ -300,7 +341,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                   </tbody>
                 </table>
                 {paginated.length === 0 && (
-                  <p className="py-6 text-center text-sm text-slate-400">No results match your filter.</p>
+                  <p className="py-6 text-center text-sm text-slate-400">
+                    No results match your filter.
+                  </p>
                 )}
               </div>
 
@@ -308,7 +351,8 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
               {totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
                   <p className="text-xs text-slate-400">
-                    {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
+                    {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of{' '}
+                    {sorted.length}
                   </p>
                   <div className="flex items-center gap-1">
                     <Button
@@ -319,7 +363,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                     >
                       <ChevronLeft className="h-3.5 w-3.5" />
                     </Button>
-                    <span className="px-2 text-xs text-slate-600">{page} / {totalPages}</span>
+                    <span className="px-2 text-xs text-slate-600">
+                      {page} / {totalPages}
+                    </span>
                     <Button
                       size="sm"
                       variant="secondary"
@@ -346,7 +392,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <form onSubmit={handleResetSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleResetSubmit} className="space-y-4 p-5">
               <input type="hidden" name="attempt_id" value={pendingReset.attemptId} />
               <input type="hidden" name="project_id" value={projectId} />
               <input type="hidden" name="user_id" value={pendingReset.userId} />
@@ -355,13 +401,15 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
               {/* Section selection for partial retake — only shown when there are multiple sections */}
               {pendingReset.sectionScores && Object.keys(pendingReset.sectionScores).length > 1 && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Sections to reset
-                    <span className="ml-1 text-xs font-normal text-slate-400">(uncheck to carry score forward)</span>
+                    <span className="ml-1 text-xs font-normal text-slate-400">
+                      (uncheck to carry score forward)
+                    </span>
                   </label>
                   <div className="space-y-2">
                     {Object.entries(pendingReset.sectionScores).map(([sec, s]) => (
-                      <label key={sec} className="flex items-center gap-2 cursor-pointer">
+                      <label key={sec} className="flex cursor-pointer items-center gap-2">
                         <input
                           type="checkbox"
                           className="rounded border-slate-300"
@@ -370,19 +418,23 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                         />
                         <span className="text-sm text-slate-700">
                           {sec.charAt(0).toUpperCase() + sec.slice(1)}
-                          <span className="ml-1 text-slate-400 text-xs">({s.score}/{s.total})</span>
+                          <span className="ml-1 text-xs text-slate-400">
+                            ({s.score}/{s.total})
+                          </span>
                         </span>
                       </label>
                     ))}
                   </div>
                   {sectionsToReset.size === 0 && (
-                    <p className="mt-2 text-xs text-amber-600">Select at least one section to reset.</p>
+                    <p className="mt-2 text-xs text-amber-600">
+                      Select at least one section to reset.
+                    </p>
                   )}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
                   Reason for reset <span className="text-rose-500">*</span>
                 </label>
                 <textarea

@@ -7,7 +7,12 @@ export function Table({ className, ...props }: React.TableHTMLAttributes<HTMLTab
 }
 
 export function THead({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn('bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500', className)} {...props} />;
+  return (
+    <thead
+      className={cn('bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500', className)}
+      {...props}
+    />
+  );
 }
 
 export function TBody({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {

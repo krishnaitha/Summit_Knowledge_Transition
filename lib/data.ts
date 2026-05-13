@@ -23,7 +23,12 @@ export interface ObservabilityMetrics {
   refusalRate: number;
   possibleHallucinationCount: number;
   slowQueryCount: number;
-  tokenUsageByDay: Array<{ date: string; promptTokens: number; completionTokens: number; totalTokens: number }>;
+  tokenUsageByDay: Array<{
+    date: string;
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  }>;
   topUnansweredQueries: Array<{ query: string; occurrences: number }>;
   possibleHallucinations: Array<{ query: string; maxSimilarity: string; askedAt: string }>;
   slowQueries: Array<{ query: string; totalMs: number; generationMs: number; askedAt: string }>;
@@ -47,8 +52,12 @@ export async function getAssignedProjects(userId: string) {
   if (!projectIds.length) return [] as ProjectDashboardCard[];
 
   const [projects, documents, attempts] = await Promise.all([
-    sql<ProjectRecord[]>`SELECT * FROM projects WHERE id = ANY(${projectIds}) ORDER BY created_at DESC`,
-    sql<{ project_id: string }[]>`SELECT project_id FROM documents WHERE project_id = ANY(${projectIds})`,
+    sql<
+      ProjectRecord[]
+    >`SELECT * FROM projects WHERE id = ANY(${projectIds}) ORDER BY created_at DESC`,
+    sql<
+      { project_id: string }[]
+    >`SELECT project_id FROM documents WHERE project_id = ANY(${projectIds})`,
     sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE user_id = ${userId}`,
   ]);
 
@@ -61,7 +70,12 @@ export async function getAssignedProjects(userId: string) {
       return {
         ...project,
         documentCount: projectDocuments,
-        quizStatus: attempt?.status === 'submitted' ? 'Completed' : attempt?.status === 'in_progress' ? 'In Progress' : 'Not Started',
+        quizStatus:
+          attempt?.status === 'submitted'
+            ? 'Completed'
+            : attempt?.status === 'in_progress'
+              ? 'In Progress'
+              : 'Not Started',
         quizScoreLabel:
           attempt?.status === 'submitted' && attempt.score != null && attempt.total_marks != null
             ? `${attempt.score}/${attempt.total_marks}`
@@ -116,7 +130,11 @@ export async function getChatMessages(sessionId: string) {
   `;
 }
 
-export async function userHasProjectAccess(userId: string, role: UserProfile['role'] | null | undefined, projectId: string) {
+export async function userHasProjectAccess(
+  userId: string,
+  role: UserProfile['role'] | null | undefined,
+  projectId: string,
+) {
   if (role === 'admin') return true;
 
   const rows = await sql`
@@ -166,7 +184,10 @@ export async function getAdminDashboardStats() {
 
   const enrichedActivity = recentActivityRows.map((item) => {
     const rawName = item.user_full_name as string | null;
-    const name = (rawName && rawName !== 'undefined' && rawName.trim()) ? rawName : (item.user_email as string | null);
+    const name =
+      rawName && rawName !== 'undefined' && rawName.trim()
+        ? rawName
+        : (item.user_email as string | null);
     return { ...item, userName: name } as ActivityRecord & { userName: string | null };
   });
 
@@ -197,7 +218,9 @@ export async function getPendingRetakeCountsByProject(): Promise<Map<string, num
 
 export async function getProjectQuizSets(projectId: string) {
   const [sets, questions] = await Promise.all([
-    sql<QuizSetRecord[]>`SELECT * FROM quiz_sets WHERE project_id = ${projectId} ORDER BY set_number ASC`,
+    sql<
+      QuizSetRecord[]
+    >`SELECT * FROM quiz_sets WHERE project_id = ${projectId} ORDER BY set_number ASC`,
     sql<QuizQuestionRecord[]>`
       SELECT qq.* FROM quiz_questions qq
       JOIN quiz_sets qs ON qs.id = qq.quiz_set_id
@@ -212,19 +235,21 @@ export async function getProjectQuizSets(projectId: string) {
 }
 
 export async function getRetakeRequestsForProject(projectId: string) {
-  return sql<{
-    id: string;
-    user_id: string;
-    project_id: string;
-    attempt_id: string | null;
-    reason: string | null;
-    status: string;
-    created_at: Date;
-    resolved_at: Date | null;
-    resolved_by: string | null;
-    user_name: string;
-    user_email: string;
-  }[]>`
+  return sql<
+    {
+      id: string;
+      user_id: string;
+      project_id: string;
+      attempt_id: string | null;
+      reason: string | null;
+      status: string;
+      created_at: Date;
+      resolved_at: Date | null;
+      resolved_by: string | null;
+      user_name: string;
+      user_email: string;
+    }[]
+  >`
     SELECT r.*, u.full_name AS user_name, u.email AS user_email
     FROM quiz_retake_requests r
     JOIN users u ON u.id = r.user_id
@@ -246,9 +271,13 @@ export async function getProjectAnalytics(projectId: string) {
 
   const [sessions, attempts, users, quizSets, resets, gapLogs] = await Promise.all([
     sql<ChatSessionRecord[]>`SELECT * FROM chat_sessions WHERE project_id = ${projectId}`,
-    sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE project_id = ${projectId} AND status = 'submitted'`,
+    sql<
+      QuizAttemptRecord[]
+    >`SELECT * FROM quiz_attempts WHERE project_id = ${projectId} AND status = 'submitted'`,
     sql<UserProfile[]>`SELECT * FROM users`,
-    sql<{ id: string; set_name: string }[]>`SELECT id, set_name FROM quiz_sets WHERE project_id = ${projectId}`,
+    sql<
+      { id: string; set_name: string }[]
+    >`SELECT id, set_name FROM quiz_sets WHERE project_id = ${projectId}`,
     sql<{ user_id: string }[]>`SELECT user_id FROM quiz_resets WHERE project_id = ${projectId}`,
     sql<{ metadata: Record<string, unknown>; created_at: string; user_id: string | null }[]>`
       SELECT metadata, created_at, user_id
@@ -260,14 +289,16 @@ export async function getProjectAnalytics(projectId: string) {
   ]);
 
   const resetCounts = new Map<string, number>();
-  resets.forEach((r) => { resetCounts.set(r.user_id, (resetCounts.get(r.user_id) ?? 0) + 1); });
+  resets.forEach((r) => {
+    resetCounts.set(r.user_id, (resetCounts.get(r.user_id) ?? 0) + 1);
+  });
 
   const userIndex = new Map(users.map((u) => [u.id, u]));
   const setIndex = new Map(quizSets.map((s) => [s.id, s.set_name]));
 
   function resolveDisplayName(userId: string) {
     const user = userIndex.get(userId);
-    return (user?.full_name && user.full_name !== 'undefined' && user.full_name.trim())
+    return user?.full_name && user.full_name !== 'undefined' && user.full_name.trim()
       ? user.full_name
       : (user?.email ?? userId.slice(0, 8));
   }
@@ -286,9 +317,10 @@ export async function getProjectAnalytics(projectId: string) {
     const sectionSet = [...new Set(assignedQs.map((q) => q.section).filter(Boolean))];
     const carriedKeys = Object.keys(attempt.carried_sections ?? {});
     const allSections = [...new Set([...sectionSet, ...carriedKeys])];
-    const sectionLabel = allSections.length > 0
-      ? allSections.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' + ')
-      : (setIndex.get(attempt.quiz_set_id) ?? 'Unknown');
+    const sectionLabel =
+      allSections.length > 0
+        ? allSections.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' + ')
+        : (setIndex.get(attempt.quiz_set_id) ?? 'Unknown');
     const retakenScores = computeSectionScores(
       attempt.assigned_questions as AssignedQuestion[],
       (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>,
@@ -334,7 +366,10 @@ export async function getProjectAnalytics(projectId: string) {
   return { chatbotUsage, quizResults, loginActivity, knowledgeGaps };
 }
 
-export async function getBookmarkedMessageIds(userId: string, sessionId: string): Promise<string[]> {
+export async function getBookmarkedMessageIds(
+  userId: string,
+  sessionId: string,
+): Promise<string[]> {
   const messages = await sql<{ id: string }[]>`
     SELECT id FROM chat_messages WHERE session_id = ${sessionId}
   `;
@@ -359,7 +394,9 @@ export async function getProjectBookmarks(
     WHERE cb.user_id = ${userId} AND cb.project_id = ${projectId}
     ORDER BY cb.created_at DESC
   `;
-  return rows.filter((b) => b.message != null) as Array<ChatBookmarkRecord & { message: ChatMessageRecord }>;
+  return rows.filter((b) => b.message != null) as Array<
+    ChatBookmarkRecord & { message: ChatMessageRecord }
+  >;
 }
 
 export async function logActivity({
@@ -423,14 +460,15 @@ export async function getObservabilityMetrics(projectId: string): Promise<Observ
   if (!summary) return empty;
 
   const totalRequests = Number(summary.total_requests ?? 0);
-  const retrievalHitRate = totalRequests > 0
-    ? Math.round((Number(summary.hit_count ?? 0) / totalRequests) * 100)
-    : 0;
-  const refusalRate = totalRequests > 0
-    ? Math.round((Number(summary.refused_count ?? 0) / totalRequests) * 100)
-    : 0;
+  const retrievalHitRate =
+    totalRequests > 0 ? Math.round((Number(summary.hit_count ?? 0) / totalRequests) * 100) : 0;
+  const refusalRate =
+    totalRequests > 0 ? Math.round((Number(summary.refused_count ?? 0) / totalRequests) * 100) : 0;
 
-  const dayMap = new Map<string, { promptTokens: number; completionTokens: number; totalTokens: number }>();
+  const dayMap = new Map<
+    string,
+    { promptTokens: number; completionTokens: number; totalTokens: number }
+  >();
   for (const row of tokenRows) {
     const day = new Date(row.created_at as string | Date).toISOString().slice(0, 10);
     const existing = dayMap.get(day) ?? { promptTokens: 0, completionTokens: 0, totalTokens: 0 };

@@ -35,7 +35,10 @@ export function ActivityFeed({
               };
               const Icon = config.icon;
               return (
-                <div key={item.id} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50">
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50"
+                >
                   <div className={`h-2 w-2 shrink-0 rounded-full ${config.dot}`} />
                   <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                   <div className="flex flex-1 items-baseline gap-2 overflow-hidden">
@@ -44,7 +47,9 @@ export function ActivityFeed({
                       <p className="truncate text-sm text-slate-500">· {item.userName}</p>
                     )}
                   </div>
-                  <p className="shrink-0 text-xs text-slate-400">{formatDate(item.created_at, true)}</p>
+                  <p className="shrink-0 text-xs text-slate-400">
+                    {formatDate(item.created_at, true)}
+                  </p>
                 </div>
               );
             })}

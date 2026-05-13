@@ -83,7 +83,9 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
             <CardTitle>Token usage (last 30 days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-slate-400">No token data yet — send some chat messages to see usage.</p>
+            <p className="text-sm text-slate-400">
+              No token data yet — send some chat messages to see usage.
+            </p>
           </CardContent>
         </Card>
       )}

@@ -10,12 +10,14 @@ export async function uploadDocumentToStorage(projectId: string, file: File) {
   const path = `${projectId}/${randomUUID()}.${extension}`;
   const body = Buffer.from(await file.arrayBuffer());
 
-  await r2.send(new PutObjectCommand({
-    Bucket: R2_BUCKET,
-    Key: path,
-    Body: body,
-    ContentType: file.type,
-  }));
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: path,
+      Body: body,
+      ContentType: file.type,
+    }),
+  );
 
   return path;
 }

@@ -18,9 +18,13 @@ export default async function ProjectMembersPage({ params }: { params: { id: str
   return (
     <div className="space-y-8">
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/admin/projects" className="transition hover:text-slate-900">Projects</Link>
+        <Link href="/admin/projects" className="transition hover:text-slate-900">
+          Projects
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/admin/projects/${params.id}`} className="transition hover:text-slate-900">{project?.name ?? 'Project'}</Link>
+        <Link href={`/admin/projects/${params.id}`} className="transition hover:text-slate-900">
+          {project?.name ?? 'Project'}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-slate-900">Members</span>
       </nav>
@@ -33,7 +37,9 @@ export default async function ProjectMembersPage({ params }: { params: { id: str
             <input name="project_id" type="hidden" value={params.id} />
             <Input name="full_name" placeholder="Full name" />
             <Input name="email" placeholder="name@company.com" required type="email" />
-            <SubmitButton className="lg:w-fit" loadingText="Inviting…">Invite with magic link</SubmitButton>
+            <SubmitButton className="lg:w-fit" loadingText="Inviting…">
+              Invite with magic link
+            </SubmitButton>
           </form>
         </CardContent>
       </Card>
@@ -45,15 +51,22 @@ export default async function ProjectMembersPage({ params }: { params: { id: str
         <CardContent className="space-y-3">
           {members.length ? (
             members.map((member) => (
-              <div key={member.id} className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 lg:flex-row lg:items-center lg:justify-between">
+              <div
+                key={member.id}
+                className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 lg:flex-row lg:items-center lg:justify-between"
+              >
                 <div>
                   <p className="font-semibold text-slate-900">{member.full_name ?? member.email}</p>
-                  <p className="text-sm text-slate-500">{member.email} • Assigned {formatDate(member.assigned_at, true)}</p>
+                  <p className="text-sm text-slate-500">
+                    {member.email} • Assigned {formatDate(member.assigned_at, true)}
+                  </p>
                 </div>
                 <form action={removeProjectMemberAction}>
                   <input name="project_id" type="hidden" value={params.id} />
                   <input name="user_id" type="hidden" value={member.id} />
-                  <SubmitButton variant="danger" loadingText="Removing…">Remove</SubmitButton>
+                  <SubmitButton variant="danger" loadingText="Removing…">
+                    Remove
+                  </SubmitButton>
                 </form>
               </div>
             ))

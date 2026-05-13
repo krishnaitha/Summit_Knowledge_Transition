@@ -24,7 +24,11 @@ export function AnalyticsTable({
   const filteredRows = useMemo(() => {
     setPage(1);
     if (!filter) return rows;
-    return rows.filter((row) => Object.values(row).some((value) => String(value).toLowerCase().includes(filter.toLowerCase())));
+    return rows.filter((row) =>
+      Object.values(row).some((value) =>
+        String(value).toLowerCase().includes(filter.toLowerCase()),
+      ),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, rows]);
 
@@ -79,14 +83,27 @@ export function AnalyticsTable({
         {totalPages > 1 && (
           <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
             <p className="text-xs text-slate-400">
-              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredRows.length)} of {filteredRows.length}
+              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredRows.length)} of{' '}
+              {filteredRows.length}
             </p>
             <div className="flex items-center gap-1">
-              <Button size="sm" variant="secondary" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
                 <ChevronLeft className="h-3.5 w-3.5" />
               </Button>
-              <span className="px-2 text-xs text-slate-600">{page} / {totalPages}</span>
-              <Button size="sm" variant="secondary" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
+              <span className="px-2 text-xs text-slate-600">
+                {page} / {totalPages}
+              </span>
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
                 <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>

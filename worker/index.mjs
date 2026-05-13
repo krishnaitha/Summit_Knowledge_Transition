@@ -13,10 +13,10 @@
  *   npm run worker
  */
 
-const APP_URL     = (process.env.INTERNAL_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '');
-const SECRET      = process.env.WORKER_SECRET ?? '';
-const POLL_MS     = Math.max(1000, Number(process.env.WORKER_POLL_MS) || 1000);
-const WORKER_URL  = `${APP_URL}/api/jobs/worker`;
+const APP_URL = (process.env.INTERNAL_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+const SECRET = process.env.WORKER_SECRET ?? '';
+const POLL_MS = Math.max(1000, Number(process.env.WORKER_POLL_MS) || 1000);
+const WORKER_URL = `${APP_URL}/api/jobs/worker`;
 
 const headers = {
   'Content-Type': 'application/json',
@@ -25,8 +25,14 @@ const headers = {
 
 let running = true;
 
-process.on('SIGINT',  () => { console.log('\n[worker] Shutting down…'); running = false; });
-process.on('SIGTERM', () => { console.log('\n[worker] Shutting down…'); running = false; });
+process.on('SIGINT', () => {
+  console.log('\n[worker] Shutting down…');
+  running = false;
+});
+process.on('SIGTERM', () => {
+  console.log('\n[worker] Shutting down…');
+  running = false;
+});
 
 /** Simple sleep — does NOT add extra process signal listeners. */
 function sleep(ms) {
@@ -64,7 +70,9 @@ async function poll() {
 async function loop() {
   console.log(`[worker] Started — polling ${WORKER_URL} every ${POLL_MS}ms`);
   if (!SECRET) {
-    console.warn('[worker] WORKER_SECRET is not set — requests will be rejected if the app requires it.');
+    console.warn(
+      '[worker] WORKER_SECRET is not set — requests will be rejected if the app requires it.',
+    );
   }
 
   while (running) {

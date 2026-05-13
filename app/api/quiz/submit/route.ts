@@ -59,11 +59,18 @@ export async function POST(request: Request) {
     }
 
     const project = await getProjectById(body.projectId);
-    const scored = scoreQuizSubmission(assignedQuestions, body.answers, project?.pass_threshold ?? 60);
+    const scored = scoreQuizSubmission(
+      assignedQuestions,
+      body.answers,
+      project?.pass_threshold ?? 60,
+    );
     const isDisqualified = body.disqualified === true;
 
     // Merge any carried section scores from a partial retake
-    const carried = attempt.carried_sections as Record<string, { score: number; total: number }> | null;
+    const carried = attempt.carried_sections as Record<
+      string,
+      { score: number; total: number }
+    > | null;
     let finalScore = isDisqualified ? 0 : scored.score;
     let finalTotal = scored.totalMarks;
     if (carried) {
@@ -136,6 +143,9 @@ export async function POST(request: Request) {
       disqualifyReason: body.disqualifyReason ?? null,
     });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Quiz submission failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Quiz submission failed' },
+      { status: 500 },
+    );
   }
 }

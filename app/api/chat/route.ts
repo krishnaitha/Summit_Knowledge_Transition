@@ -12,7 +12,7 @@ import type { RagTraceRecord } from '@/lib/types/database';
 
 const answerCache = new Map<string, string>();
 
-const NO_MATCH_THRESHOLD = 0.20;
+const NO_MATCH_THRESHOLD = 0.2;
 const HALLUCINATION_THRESHOLD = 0.35;
 const NOT_FOUND_MSG =
   'I could not find enough information in the KT documents to answer this question. ' +
@@ -72,7 +72,11 @@ export async function GET(request: Request) {
   const normalizedMessages = messages.map((m) => {
     let sources = m.sources;
     if (typeof sources === 'string') {
-      try { sources = JSON.parse(sources); } catch { sources = null; }
+      try {
+        sources = JSON.parse(sources);
+      } catch {
+        sources = null;
+      }
     }
     return { ...m, sources: Array.isArray(sources) ? sources : null };
   });
@@ -112,10 +116,17 @@ export async function POST(request: Request) {
     // Rate limit: 30 chat messages per hour per user
     const rateCheck = await checkRateLimit(userId, 'chatbot_message', 30, 3600);
     if (!rateCheck.allowed) {
-      return NextResponse.json({ error: 'Message limit reached. Please try again later.' }, { status: 429 });
+      return NextResponse.json(
+        { error: 'Message limit reached. Please try again later.' },
+        { status: 429 },
+      );
     }
 
-    const canAccess = await userHasProjectAccess(userId, profile?.role as string | undefined, body.projectId);
+    const canAccess = await userHasProjectAccess(
+      userId,
+      profile?.role as string | undefined,
+      body.projectId,
+    );
 
     if (!canAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -233,7 +244,8 @@ export async function POST(request: Request) {
         VALUES (${sessionId}, 'assistant', ${cachedAnswer}, ${sql.json(sources)})
       `;
 
-      const countRows = await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
+      const countRows =
+        await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
       const count = Number(countRows[0]?.c ?? 0);
 
       await sql`
@@ -242,7 +254,12 @@ export async function POST(request: Request) {
         WHERE id = ${sessionId}
       `;
 
-      await logActivity({ userId, projectId: body.projectId, action: 'chatbot_message', metadata: { cached: true } });
+      await logActivity({
+        userId,
+        projectId: body.projectId,
+        action: 'chatbot_message',
+        metadata: { cached: true },
+      });
 
       writeRagTrace({
         project_id: body.projectId,
@@ -304,7 +321,11 @@ export async function POST(request: Request) {
           return;
         }
 
-        const { text: generated, usage, modelUsed } = await streamGroqText(completion, (token) => enqueue(token));
+        const {
+          text: generated,
+          usage,
+          modelUsed,
+        } = await streamGroqText(completion, (token) => enqueue(token));
         const generation_ms = Date.now() - tGenStart;
 
         answerCache.set(cacheKey, generated);
@@ -316,7 +337,8 @@ export async function POST(request: Request) {
         `;
         const assistantMsgId = (assistantMsgRows[0]?.id as string) ?? null;
 
-        const countRows = await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
+        const countRows =
+          await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
         const count = Number(countRows[0]?.c ?? 0);
 
         await sql`
@@ -325,7 +347,12 @@ export async function POST(request: Request) {
           WHERE id = ${sessionId}
         `;
 
-        await logActivity({ userId, projectId: body.projectId, action: 'chatbot_message', metadata: { cached: false } });
+        await logActivity({
+          userId,
+          projectId: body.projectId,
+          action: 'chatbot_message',
+          metadata: { cached: false },
+        });
 
         controller.close();
 
@@ -361,6 +388,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Chat failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Chat failed' },
+      { status: 500 },
+    );
   }
 }

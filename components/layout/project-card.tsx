@@ -8,7 +8,11 @@ import type { ProjectDashboardCard } from '@/lib/types/database';
 
 export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
   const statusVariant =
-    project.quizStatus === 'Completed' ? 'success' : project.quizStatus === 'In Progress' ? 'warning' : 'neutral';
+    project.quizStatus === 'Completed'
+      ? 'success'
+      : project.quizStatus === 'In Progress'
+        ? 'warning'
+        : 'neutral';
 
   return (
     <Card className="flex h-full flex-col">
@@ -29,15 +33,21 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
             <FileText className="h-4 w-4 shrink-0 text-slate-400" />
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Docs</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                Docs
+              </p>
               <p className="text-xl font-semibold text-slate-950">{project.documentCount}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
             <BookOpen className="h-4 w-4 shrink-0 text-slate-400" />
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Quiz</p>
-              <p className="text-base font-semibold text-slate-950">{project.quizScoreLabel ?? '—'}</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                Quiz
+              </p>
+              <p className="text-base font-semibold text-slate-950">
+                {project.quizScoreLabel ?? '—'}
+              </p>
             </div>
           </div>
         </div>

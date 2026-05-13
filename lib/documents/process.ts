@@ -7,7 +7,11 @@ import { scanDocument } from '@/lib/documents/scan';
 import { chunkDocumentText } from '@/lib/rag/chunking';
 import { embedText } from '@/lib/rag/embeddings';
 
-export async function processDocumentRecord(documentId: string, projectId: string, content: string) {
+export async function processDocumentRecord(
+  documentId: string,
+  projectId: string,
+  content: string,
+) {
   // Redact PII and scan for secrets before chunking
   const pii = redactPii(content);
   const scan = scanDocument(content, pii.count > 0);

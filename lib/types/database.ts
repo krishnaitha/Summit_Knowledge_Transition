@@ -62,7 +62,12 @@ export interface ChatMessageRecord {
   session_id: string;
   role: MessageRole;
   content: string;
-  sources: Array<{ documentId?: string; documentName: string; chunkId?: string; similarity?: number }> | null;
+  sources: Array<{
+    documentId?: string;
+    documentName: string;
+    chunkId?: string;
+    similarity?: number;
+  }> | null;
   created_at: string;
 }
 

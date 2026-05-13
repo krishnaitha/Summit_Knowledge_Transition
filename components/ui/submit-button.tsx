@@ -20,7 +20,9 @@ export function SubmitButton({ children, loadingText, ...props }: SubmitButtonPr
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
           {loadingText ?? children}
         </>
-      ) : children}
+      ) : (
+        children
+      )}
     </Button>
   );
 }

@@ -11,11 +11,14 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <Card className="bg-hero-grid text-white">
         <CardHeader>
-          <CardTitle className="text-3xl text-white">Welcome back, {profile?.full_name ?? 'team member'}</CardTitle>
+          <CardTitle className="text-3xl text-white">
+            Welcome back, {profile?.full_name ?? 'team member'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="max-w-3xl text-sm leading-7 text-slate-200">
-            Review your assigned transition projects, ask grounded KT questions, and complete your one-time quiz when you are ready.
+            Review your assigned transition projects, ask grounded KT questions, and complete your
+            one-time quiz when you are ready.
           </p>
         </CardContent>
       </Card>
@@ -23,14 +26,18 @@ export default async function DashboardPage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">Assigned projects</h2>
-          <p className="text-sm text-slate-500">Each card shows document coverage and your quiz status.</p>
+          <p className="text-sm text-slate-500">
+            Each card shows document coverage and your quiz status.
+          </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           {projects.length ? (
             projects.map((project) => <ProjectCard key={project.id} project={project} />)
           ) : (
             <Card>
-              <CardContent className="p-6 text-sm text-slate-500">No active projects are assigned yet.</CardContent>
+              <CardContent className="p-6 text-sm text-slate-500">
+                No active projects are assigned yet.
+              </CardContent>
             </Card>
           )}
         </div>

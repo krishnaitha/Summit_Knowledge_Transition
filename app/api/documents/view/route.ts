@@ -66,6 +66,9 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(signedUrl);
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed' },
+      { status: 500 },
+    );
   }
 }

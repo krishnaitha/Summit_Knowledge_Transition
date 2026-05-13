@@ -7,10 +7,11 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { requireAdmin } from '@/lib/auth';
 import sql from '@/lib/db';
+import { isR2Configured } from '@/lib/env';
 import { computeSectionScores } from '@/lib/quiz/scoring';
-import { r2, R2_BUCKET } from '@/lib/storage/r2';
+import { deleteFile } from '@/lib/storage/local';
+import { deleteFromR2 } from '@/lib/storage/r2';
 import type { AssignedQuestion, QuizOptionKey } from '@/lib/types/database';
-import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 export async function createProjectAction(formData: FormData) {
   const payload = {
@@ -44,7 +45,11 @@ export async function deleteDocumentAction(formData: FormData) {
 
   if (storagePath) {
     try {
-      await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: storagePath }));
+      if (isR2Configured()) {
+        await deleteFromR2(storagePath);
+      } else {
+        await deleteFile(storagePath);
+      }
     } catch {
       // Non-fatal if file already removed
     }

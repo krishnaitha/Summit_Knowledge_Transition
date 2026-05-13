@@ -4,18 +4,18 @@ An enterprise knowledge-transfer portal built with Next.js 14, PostgreSQL, NextA
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 App Router + TypeScript |
-| Database | PostgreSQL (local) with pgvector + pgcrypto |
-| Auth | NextAuth.js v4 — credentials (email + bcrypt password), JWT sessions |
-| Storage | Cloudflare R2 (S3-compatible object storage) |
-| AI Chat | Groq `llama-3.3-70b-versatile` |
-| AI Quiz Generation | Groq `llama-3.1-8b-instant` |
-| Embeddings | `@xenova/transformers` · `Xenova/all-MiniLM-L6-v2` (384-dim, runs locally) |
-| Email | Resend |
-| Styling | Tailwind CSS |
-| Background Jobs | Standalone Node.js worker (`worker/index.mjs`) |
+| Layer              | Technology                                                                 |
+| ------------------ | -------------------------------------------------------------------------- |
+| Framework          | Next.js 14 App Router + TypeScript                                         |
+| Database           | PostgreSQL (local) with pgvector + pgcrypto                                |
+| Auth               | NextAuth.js v4 — AWS Cognito SSO (via CognitoProvider), JWT sessions       |
+| Storage            | Cloudflare R2 (S3-compatible object storage)                               |
+| AI Chat            | Groq `llama-3.3-70b-versatile`                                             |
+| AI Quiz Generation | Groq `llama-3.1-8b-instant`                                                |
+| Embeddings         | `@xenova/transformers` · `Xenova/all-MiniLM-L6-v2` (384-dim, runs locally) |
+| Email              | Resend                                                                     |
+| Styling            | Tailwind CSS                                                               |
+| Background Jobs    | Standalone Node.js worker (`worker/index.mjs`)                             |
 
 ---
 
@@ -55,9 +55,12 @@ Open `.env.local` and fill in the values:
 # PostgreSQL
 DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/Summit_KT
 
-# NextAuth.js
+# NextAuth.js — NexTurn SSO - AWS Cognito
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=<run: openssl rand -base64 32>
+NEXTAUTH_SECRET=*Run: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))" to generate secret*
+COGNITO_CLIENT_ID=*App client id*
+COGNITO_CLIENT_SECRET=*App client secret*
+COGNITO_ISSUER=*The issuer is a URL, that looks like this: https://cognito-idp.{region}.amazonaws.com/{PoolId}*
 
 # Cloudflare R2
 R2_ACCOUNT_ID=your-account-id
@@ -92,7 +95,7 @@ postgres/migrations/add_quiz_retake_requests.sql
 
 ### 5. Create the first admin user
 
-Sign up via `/register`, then promote the account to admin in psql or pgAdmin:
+Log in via the SSO (this auto-provisions your account as `member`), then promote to admin in psql or pgAdmin:
 
 ```sql
 UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
@@ -119,6 +122,7 @@ INTERNAL_APP_URL=http://localhost:3000 WORKER_SECRET=your-secret npm run worker
 ```
 
 You should see:
+
 ```
 [worker] Started — polling http://localhost:3000/api/jobs/worker every 1000ms
 ```
@@ -129,14 +133,14 @@ Keep this terminal open while developing. See [docs/WORKER_SETUP.md](docs/WORKER
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start Next.js dev server on port 3000 |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run worker` | Start background job worker |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript type check |
+| Command             | Description                           |
+| ------------------- | ------------------------------------- |
+| `npm run dev`       | Start Next.js dev server on port 3000 |
+| `npm run build`     | Production build                      |
+| `npm run start`     | Start production server               |
+| `npm run worker`    | Start background job worker           |
+| `npm run lint`      | ESLint                                |
+| `npm run typecheck` | TypeScript type check                 |
 
 ---
 
@@ -147,14 +151,11 @@ summit-kt-portal/
 ├── app/                    Next.js App Router pages and API routes
 │   ├── (admin)/            Admin-only pages (role-guarded)
 │   ├── (member)/           Member pages (role-guarded)
-│   ├── forgot-password/    Password reset request page
-│   ├── register/           Self-registration page
-│   ├── login/              Login page
-│   ├── auth/               Accept invite + reset password pages
+│   ├── login/              Login page (auto-redirects to Cognito SSO)
 │   └── api/                API routes (chat, documents, quiz, jobs, auth)
 ├── components/             React components
 │   ├── admin/              Admin-specific UI
-│   ├── auth/               Login, register, forgot/reset password forms
+│   ├── auth/               Login form (SSO redirect)
 │   ├── chat/               Chat interface
 │   ├── quiz/               Quiz experience + retake request button
 │   └── ui/                 Shared primitives
@@ -183,7 +184,7 @@ summit-kt-portal/
 
 ### Authentication
 
-Users log in with email and password. Passwords are hashed with bcrypt. Sessions are JWT-based via NextAuth.js and stored in an httpOnly cookie. Admins can invite members via a secure token email link. Members can also self-register at `/register` and reset their password via the forgot-password flow.
+Authentication is handled entirely by AWS Cognito SSO (NexTurn). Employees are redirected to Cognito on login and auto-provisioned in the app database on first sign-in. Sessions are JWT-based via NextAuth.js, stored in an httpOnly cookie. Role management (admin vs member) is handled in the app database — an admin can promote users via the `/admin/users` page.
 
 ### Document Processing
 

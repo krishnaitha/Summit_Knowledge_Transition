@@ -49,7 +49,6 @@ create table if not exists users (
   email         text        not null unique,
   full_name     text,
   role          user_role   not null default 'member',
-  password_hash text,                     -- bcrypt hash; null until user accepts invite
   created_at    timestamptz not null default now(),
   last_login_at timestamptz,
   is_active     boolean     not null default true

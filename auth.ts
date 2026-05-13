@@ -1,70 +1,81 @@
-import bcrypt from 'bcryptjs';
-import type { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-
-import sql from '@/lib/db';
+import sql from "@/lib/db";
+import type { UserProfile } from "@/lib/types/database";
+import type { NextAuthOptions } from "next-auth";
+import CognitoProvider from "next-auth/providers/cognito";
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        const email = credentials?.email;
-        const password = credentials?.password;
-        if (!email || !password) return null;
-
-        const rows = await sql`
-          SELECT id, email, full_name, role, password_hash
-          FROM users
-          WHERE email = ${email} AND is_active = true
-          LIMIT 1
-        `;
-
-        const user = rows[0];
-        if (!user || !user.password_hash) return null;
-
-        const valid = await bcrypt.compare(password, user.password_hash as string);
-        if (!valid) return null;
-
-        await sql`UPDATE users SET last_login_at = now() WHERE id = ${user.id}`;
-
-        return {
-          id: user.id as string,
-          email: user.email as string,
-          name: user.full_name as string,
-          role: user.role as string,
-        };
-      },
+    CognitoProvider({
+      clientId: process.env.COGNITO_CLIENT_ID!,
+      clientSecret: process.env.COGNITO_CLIENT_SECRET!,
+      issuer: process.env.COGNITO_ISSUER!,
+      // Cognito federating to Microsoft (OIDC) includes a nonce in the returned
+      // ID token. Adding "nonce" to checks makes NextAuth send a nonce in the
+      // authorization request so Cognito echoes it back correctly.
+      checks: ["nonce"],
     }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as { role?: string }).role;
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "cognito") {
+        const email =
+          user.email ?? (profile as { email?: string } | undefined)?.email;
+        if (!email) return false;
+
+        const fullName =
+          (profile as { name?: string } | undefined)?.name ?? null;
+
+        // Auto-provision first-time org employees; preserve any existing full_name set by admin.
+        // RETURNING is_active acts as an app-level kill switch — an admin can set is_active = false
+        // in the DB to block a specific user without touching their Cognito account.
+        const rows = await sql<Pick<UserProfile, "is_active">[]>`
+          INSERT INTO users (email, full_name, role, is_active)
+          VALUES (${email}, ${fullName}, 'member', true)
+          ON CONFLICT (email) DO UPDATE SET
+            full_name = COALESCE(users.full_name, EXCLUDED.full_name)
+          RETURNING is_active
+        `;
+
+        return rows[0]?.is_active === true;
       }
+      return true;
+    },
+
+    async jwt({ token, user, account, profile }) {
+      // Only runs on initial OAuth sign-in (when account is present).
+      // signIn callback has already upserted the row, so this is guaranteed to hit.
+      if (account?.provider === "cognito") {
+        const email =
+          user?.email ?? (profile as { email?: string } | undefined)?.email;
+
+        if (email) {
+          const rows = await sql<Pick<UserProfile, "id">[]>`
+            UPDATE users SET last_login_at = now()
+            WHERE email = ${email}
+            RETURNING id
+          `;
+          if (rows[0]) token.id = rows[0].id;
+        }
+      }
+
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         (session.user as { id?: string }).id = token.id as string;
-        (session.user as { role?: string }).role = token.role as string;
       }
       return session;
     },
   },
 
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
 
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
 };

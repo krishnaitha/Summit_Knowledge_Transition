@@ -1,8 +1,7 @@
 export const appEnv = {
-  appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'Summit KT Portal',
-  appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+  appName: process.env.NEXT_PUBLIC_APP_NAME ?? "Summit KT Portal",
+  appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
   databaseUrl: process.env.DATABASE_URL,
-  nextauthSecret: process.env.NEXTAUTH_SECRET,
   r2AccountId: process.env.R2_ACCOUNT_ID,
   r2BucketName: process.env.R2_BUCKET_NAME,
   groqApiKey: process.env.GROQ_API_KEY,

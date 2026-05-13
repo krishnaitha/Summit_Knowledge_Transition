@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, ChevronRight, FileText, Users } from 'lucide-react';
+import { BarChart3, BookOpen, ChevronRight, FileText, Users } from 'lucide-react';
 
 import { approveRetakeRequestAction, rejectRetakeRequestAction, sendProjectAnnouncementAction } from '@/app/actions/admin';
 import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
@@ -15,7 +15,8 @@ import { getProjectAnnouncements, getProjectById, getProjectDocuments, getProjec
 import { formatDate } from '@/lib/utils';
 
 export default async function AdminProjectDetailPage({ params }: { params: { id: string } }) {
-  const { userId } = await requireProjectAdmin(params.id);
+  const { userId, profile } = await requireProjectAdmin(params.id);
+  const isSuperAdmin = profile?.role === 'admin';
 
   const [project, documents, members, sets, retakeRequests, announcements] = await Promise.all([
     getProjectById(params.id),
@@ -57,6 +58,14 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
               Members
             </Button>
           </Link>
+          {isSuperAdmin && (
+            <Link href={`/admin/projects/${params.id}/analytics`}>
+              <Button size="sm" variant="secondary">
+                <BarChart3 className="h-3.5 w-3.5" />
+                Analytics
+              </Button>
+            </Link>
+          )}
           <Link href={`/admin/projects/${params.id}/quiz`}>
             <Button size="sm" variant="secondary">
               <BookOpen className="h-3.5 w-3.5" />

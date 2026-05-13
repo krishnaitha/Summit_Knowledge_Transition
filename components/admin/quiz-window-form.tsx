@@ -8,8 +8,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function toDatetimeLocal(iso: string | null | undefined): string {
   if (!iso) return '';
-  // Trim to "YYYY-MM-DDTHH:MM" for the datetime-local input
-  return iso.slice(0, 16);
+  // Convert to string if needed, then trim to "YYYY-MM-DDTHH:MM" for the datetime-local input
+  const isoStr = typeof iso === 'string' ? iso : String(iso);
+  return isoStr.slice(0, 16);
+}
+
+function formatDateTime(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const date = new Date(iso);
+  return date.toLocaleString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
 }
 
 export function QuizWindowForm({
@@ -70,9 +85,9 @@ export function QuizWindowForm({
           </Button>
           {(currentOpenAt || currentCloseAt) && (
             <p className="w-full text-xs text-slate-400">
-              {currentOpenAt ? `Opens ${new Date(currentOpenAt).toLocaleString()}` : 'No open restriction'}
+              {currentOpenAt ? `Opens ${formatDateTime(currentOpenAt)}` : 'No open restriction'}
               {' · '}
-              {currentCloseAt ? `Closes ${new Date(currentCloseAt).toLocaleString()}` : 'No close restriction'}
+              {currentCloseAt ? `Closes ${formatDateTime(currentCloseAt)}` : 'No close restriction'}
             </p>
           )}
         </form>

@@ -165,8 +165,13 @@ export interface ActivityRecord {
 
 export interface ProjectDashboardCard extends ProjectRecord {
   documentCount: number;
+  docsViewedCount: number;
+  isNewDocs: boolean;
   quizStatus: 'Not Started' | 'In Progress' | 'Completed';
   quizScoreLabel: string | null;
+  quizPercentage: number | null;
+  quizPassed: boolean | null;
+  quizCloseAt: string | null;
 }
 
 export interface RagTraceRecord {

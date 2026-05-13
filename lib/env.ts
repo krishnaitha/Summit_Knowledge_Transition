@@ -12,6 +12,8 @@ export const appEnv = {
   groqQuizApiKey: process.env.GROQ_API_KEY_QUIZ,
   // Copilot proxy configuration
   copilotProxyToken: process.env.COPILOT_PROXY_TOKEN,
+  copilotBaseUrl: process.env.COPILOT_BASE_URL ?? 'https://models.github.ai/inference/chat/completions',
+  copilotModel: process.env.COPILOT_MODEL ?? 'openai/gpt-4.1-mini',
 };
 
 export function isDatabaseConfigured() {

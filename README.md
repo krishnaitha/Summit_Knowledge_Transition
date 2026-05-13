@@ -10,8 +10,8 @@ An enterprise knowledge-transfer portal built with Next.js 14, PostgreSQL, NextA
 | Database | PostgreSQL (local) with pgvector + pgcrypto |
 | Auth | NextAuth.js v4 — credentials (email + bcrypt password), JWT sessions |
 | Storage | Cloudflare R2 (S3-compatible object storage) |
-| AI Chat | Groq `llama-3.3-70b-versatile` |
-| AI Quiz Generation | Groq `llama-3.1-8b-instant` |
+| AI Chat | Groq `llama-3.3-70b-versatile` (default) or GitHub Models via `LLM_PROVIDER=copilot` |
+| AI Quiz Generation | Groq `llama-3.1-8b-instant` (default) or GitHub Models via `LLM_PROVIDER=copilot` |
 | Embeddings | `@xenova/transformers` · `Xenova/all-MiniLM-L6-v2` (384-dim, runs locally) |
 | Email | Resend |
 | Styling | Tailwind CSS |
@@ -67,6 +67,12 @@ R2_BUCKET_NAME=summit-documents
 
 # Groq — from console.groq.com
 GROQ_API_KEY=gsk_...
+
+# Optional: switch provider to GitHub Models
+# LLM_PROVIDER=copilot
+# COPILOT_PROXY_TOKEN=your_token_here
+# COPILOT_BASE_URL=https://models.github.ai/inference/chat/completions
+# COPILOT_MODEL=openai/gpt-4.1-mini
 
 # App
 NEXT_PUBLIC_APP_NAME=Summit KT Portal
@@ -212,4 +218,5 @@ See [docs/WORKER_SETUP.md](docs/WORKER_SETUP.md) for production deployment optio
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) — system design, data model, API surface, security
+- [LLM Provider Setup](docs/LLM_PROVIDER_SETUP.md) — Groq and GitHub Models configuration, troubleshooting, and behavior
 - [Worker Setup](docs/WORKER_SETUP.md) — background job worker for dev and production

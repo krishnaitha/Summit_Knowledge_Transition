@@ -1,11 +1,11 @@
 # LLM Provider Setup Guide
 
-Summit KT Portal supports switchable LLM providers: **Groq** (default) and **Copilot Proxy** (token-based).
+Summit KT Portal supports switchable LLM providers: **Groq** (default) and **GitHub Models** (using a Copilot-compatible token).
 
 ## Overview
 
 - **Groq (Default)**: Free tier with generous limits, ideal for development and self-hosted deployments
-- **Copilot Proxy**: Uses GitHub Copilot token for authentication, requires Copilot subscription
+- **GitHub Models**: Uses a GitHub token with `models:read` permission
 
 ## Groq Setup (Default)
 
@@ -35,16 +35,18 @@ npm run dev
 # Chat and quiz generation will use Groq
 ```
 
-## Copilot Proxy Setup
+## GitHub Models Setup
 
-### 1. Generate Copilot Proxy Token
+### 1. Generate GitHub Models Token
 
-The Copilot proxy token is a special authentication token for the GitHub Copilot API.
+This integration uses GitHub Models inference API (not the deprecated `/copilot/chat/completions` path).
+You need a token with `models:read` permission.
 
-**Option A: Using GitHub CLI (Recommended)**
+**Option A: Using GitHub CLI**
 
 ```bash
-gh auth token --scope github_copilot_chat
+gh auth refresh -h github.com -s models:read
+gh auth token
 ```
 
 Copy the returned token.
@@ -54,7 +56,7 @@ Copy the returned token.
 1. Go to [https://github.com/settings/tokens](https://github.com/settings/tokens)
 2. Click **Generate new token (classic)**
 3. Name it `copilot-proxy-token`
-4. Select scopes: `github_copilot_chat`
+4. Select scopes: `models:read`
 5. Generate and copy the token
 
 ### 2. Configure Environment
@@ -62,11 +64,15 @@ Copy the returned token.
 Add to `.env.local`:
 
 ```bash
-# Switch to Copilot proxy
+# Switch to GitHub Models
 LLM_PROVIDER=copilot
 
-# Set the Copilot proxy token
+# Set the token used for GitHub Models inference
 COPILOT_PROXY_TOKEN=your_token_here
+
+# Optional override (defaults are already set in code)
+# COPILOT_BASE_URL=https://models.github.ai/inference/chat/completions
+# COPILOT_MODEL=openai/gpt-4.1-mini
 
 # Keep Groq configured as fallback (optional but recommended)
 GROQ_API_KEY=gsk_your_groq_key_here
@@ -76,12 +82,15 @@ GROQ_API_KEY=gsk_your_groq_key_here
 
 ```bash
 npm run dev
-# Chat and quiz generation will use Copilot Proxy
+# Chat and quiz generation will use GitHub Models
 ```
 
 Check logs to confirm provider in use:
 - Groq: You'll see Groq model names (llama-3.3-70b-versatile, llama-3.1-8b-instant)
-- Copilot: You'll see "Copilot Proxy" in responses and logs
+- Copilot provider: You'll see provider/model metadata associated with configured GitHub Models values
+
+If you see `404 Not Found`, verify your endpoint is `https://models.github.ai/inference/chat/completions`.
+If you see `401/403`, verify the token has `models:read` permission.
 
 ## Provider Switching
 
@@ -90,7 +99,7 @@ Check logs to confirm provider in use:
 Update the environment variable and restart the development server:
 
 ```bash
-# Switch from Groq to Copilot
+# Switch from Groq to GitHub Models
 export LLM_PROVIDER=copilot
 export COPILOT_PROXY_TOKEN=your_token
 npm run dev
@@ -117,10 +126,10 @@ Add to project settings under Environment Variables
 
 ## Provider Differences
 
-| Feature | Groq | Copilot Proxy |
+| Feature | Groq | GitHub Models (LLM_PROVIDER=copilot) |
 |---------|------|---------------|
 | Rate Limits | 131K TPM free tier | Depends on GitHub tier |
-| Models | llama-3.3-70b, llama-3.1-8b | Claude-based (via proxy) |
+| Models | llama-3.3-70b, llama-3.1-8b | Configurable via `COPILOT_MODEL` (default: `openai/gpt-4.1-mini`) |
 | Streaming | ✅ Full streaming support | ⚠️ Buffered responses |
 | Chat | ✅ | ✅ |
 | Quiz Generation | ✅ (optimized) | ✅ |
@@ -154,7 +163,7 @@ Add to project settings under Environment Variables
 - Solution: Use `GROQ_API_KEY_QUIZ` for separate quiz generation quotas
 - Wait 60+ seconds before retrying
 
-**From Copilot**:
+**From GitHub Models**:
 - Depends on GitHub Copilot plan
 - Solution: Check GitHub Copilot usage dashboard
 - Implement exponential backoff (already built in)
@@ -163,7 +172,17 @@ Add to project settings under Environment Variables
 
 **Groq**: May be rate limited. Check if first attempt shows "waiting for rate limit reset" message.
 
-**Copilot**: Responses are buffered (not streamed) by design. Slight latency compared to Groq streaming.
+**GitHub Models provider**: Responses are buffered (not streamed) by design. Slight latency compared to Groq token streaming.
+
+### Status Message Framing
+
+The chat API stream interleaves status updates and content text.
+
+- Status messages are framed with NUL delimiters: `\x00<status>\x00`
+- UI parser treats text inside NUL frames as transient status
+- Non-framed bytes are appended to assistant response content
+
+This framing avoids collisions where status text can be mistaken as model output when chunks arrive partially.
 
 ## Architecture
 
@@ -178,7 +197,7 @@ app/api/jobs/worker/route.ts
 lib/llm/index.ts (Provider Router)
     ↓
     ├→ Groq? → lib/groq/chat.ts → Groq API
-    └→ Copilot? → lib/llm/copilot.ts → GitHub Copilot Proxy API
+    └→ Copilot provider? → lib/llm/copilot.ts → GitHub Models Inference API
     ↓
 Normalized Response
     ↓

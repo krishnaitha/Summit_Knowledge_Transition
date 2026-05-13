@@ -8,7 +8,6 @@ import { sleep } from '@/lib/utils';
  * Uses GitHub Copilot proxy with a token for chat completions
  */
 
-const COPILOT_PROXY_URL = 'https://api.github.com/copilot/chat/completions';
 const REQUEST_TIMEOUT = 120_000; // 2 minutes
 
 interface CopilotMessage {
@@ -28,7 +27,7 @@ interface CopilotChatRequest {
 interface CopilotChatResponse {
   choices: Array<{
     message: {
-      content: string;
+      content: unknown;
     };
     finish_reason: string;
   }>;
@@ -37,6 +36,34 @@ interface CopilotChatResponse {
     completion_tokens: number;
     total_tokens: number;
   };
+}
+
+function normalizeCopilotContent(content: unknown): string {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === 'string') return part;
+        if (part && typeof part === 'object') {
+          const record = part as Record<string, unknown>;
+          if (typeof record.text === 'string') return record.text;
+          if (record.type === 'text' && typeof record.content === 'string') return record.content;
+        }
+        return '';
+      })
+      .join('');
+  }
+
+  if (content && typeof content === 'object') {
+    const record = content as Record<string, unknown>;
+    if (typeof record.text === 'string') return record.text;
+    if (typeof record.content === 'string') return record.content;
+  }
+
+  return '';
 }
 
 function isRateLimitError(error: unknown): boolean {
@@ -67,21 +94,27 @@ export async function createCopilotChatCompletion(
 
   while (attempts < maxAttempts) {
     try {
-      const response = await fetch(COPILOT_PROXY_URL, {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
+      const response = await fetch(appEnv.copilotBaseUrl, {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
         },
         body: JSON.stringify({
-          model: 'gpt-4',
+          model: appEnv.copilotModel,
           messages: args.messages,
           temperature: args.temperature ?? 0.7,
           max_tokens: args.max_tokens ?? 2000,
           top_p: args.top_p ?? 1,
         } as CopilotChatRequest),
       });
+      clearTimeout(timeout);
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Unknown error');
@@ -98,6 +131,13 @@ export async function createCopilotChatCompletion(
           throw new Error(`Copilot proxy authentication failed: ${errorText}`);
         }
 
+        if (response.status === 404) {
+          throw new Error(
+            `Copilot endpoint not found (404). Check COPILOT_BASE_URL and token scope (models:read). ` +
+            `Current URL: ${appEnv.copilotBaseUrl}. Response: ${errorText}`,
+          );
+        }
+
         throw new Error(`Copilot proxy error (${response.status}): ${errorText}`);
       }
 
@@ -111,7 +151,7 @@ export async function createCopilotChatCompletion(
         choices: data.choices.map((choice) => ({
           message: {
             role: 'assistant' as const,
-            content: choice.message.content,
+            content: normalizeCopilotContent(choice.message.content),
           },
           finish_reason: choice.finish_reason,
         })),

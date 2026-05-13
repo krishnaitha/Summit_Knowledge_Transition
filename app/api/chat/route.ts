@@ -282,6 +282,7 @@ export async function POST(request: Request) {
     const stream = new ReadableStream({
       async start(controller) {
         const enqueue = (text: string) => controller.enqueue(new TextEncoder().encode(text));
+        const enqueueStatus = (message: string) => enqueue(`\x00${message}\x00`);
         const tGenStart = Date.now();
 
         let generated = '';
@@ -302,7 +303,7 @@ export async function POST(request: Request) {
                   { role: 'user', content: body.message },
                 ],
               },
-              (statusMessage) => enqueue(`\x00${statusMessage}`),
+              (statusMessage) => enqueueStatus(statusMessage),
             );
 
             const { text, usage: streamUsage, modelUsed: model } = await streamGroqText(completion, (token) => {
@@ -323,12 +324,16 @@ export async function POST(request: Request) {
                   { role: 'user', content: body.message },
                 ],
               },
-              (statusMessage) => enqueue(`\x00${statusMessage}`),
+              (statusMessage) => enqueueStatus(statusMessage),
             );
 
             generated = result.choices[0]?.message.content ?? '';
             usage = result.usage ?? null;
             modelUsed = getCurrentLlmProvider();
+
+            if (!generated.trim()) {
+              generated = 'I could not generate a response for that request. Please try rephrasing your question.';
+            }
 
             // Stream the response character by character for consistency
             for (const char of generated) {
@@ -336,7 +341,7 @@ export async function POST(request: Request) {
             }
           }
         } catch (err) {
-          enqueue(`\x00Failed to reach the AI. Please try again.${err instanceof Error ? ` (${err.message})` : ''}`);
+          enqueueStatus(`Failed to reach the AI. Please try again.${err instanceof Error ? ` (${err.message})` : ''}`);
           controller.close();
           return;
         }

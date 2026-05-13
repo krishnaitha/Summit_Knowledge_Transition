@@ -38,7 +38,7 @@ export async function getProfileById(userId: string) {
   return rows[0] ?? null;
 }
 
-export async function getAssignedProjects(userId: string) {
+export async function getAssignedProjects(userId: string, lastLoginAt?: string | null) {
   const rows = await sql<{ project_id: string }[]>`
     SELECT project_id FROM project_members WHERE user_id = ${userId}
   `;
@@ -46,11 +46,26 @@ export async function getAssignedProjects(userId: string) {
 
   if (!projectIds.length) return [] as ProjectDashboardCard[];
 
-  const [projects, documents, attempts] = await Promise.all([
+  const [projects, documents, attempts, viewedDocs, newDocRows] = await Promise.all([
     sql<ProjectRecord[]>`SELECT * FROM projects WHERE id = ANY(${projectIds}) ORDER BY created_at DESC`,
     sql<{ project_id: string }[]>`SELECT project_id FROM documents WHERE project_id = ANY(${projectIds})`,
     sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE user_id = ${userId}`,
+    sql<{ project_id: string; c: string }[]>`
+      SELECT project_id, COUNT(DISTINCT (metadata->>'documentId')) AS c
+      FROM activity_log
+      WHERE user_id = ${userId} AND action = 'document_viewed' AND project_id = ANY(${projectIds})
+      GROUP BY project_id
+    `,
+    lastLoginAt
+      ? sql<{ project_id: string }[]>`
+          SELECT DISTINCT project_id FROM documents
+          WHERE project_id = ANY(${projectIds}) AND uploaded_at > ${lastLoginAt}
+        `
+      : Promise.resolve([] as { project_id: string }[]),
   ]);
+
+  const viewedMap = new Map(viewedDocs.map((v) => [v.project_id, Number(v.c)]));
+  const newDocProjects = new Set(newDocRows.map((n) => n.project_id));
 
   return projects
     .filter((project) => project.is_active)
@@ -61,11 +76,17 @@ export async function getAssignedProjects(userId: string) {
       return {
         ...project,
         documentCount: projectDocuments,
+        docsViewedCount: viewedMap.get(project.id) ?? 0,
+        isNewDocs: newDocProjects.has(project.id),
+        quizCloseAt: project.quiz_close_at ?? null,
         quizStatus: attempt?.status === 'submitted' ? 'Completed' : attempt?.status === 'in_progress' ? 'In Progress' : 'Not Started',
         quizScoreLabel:
           attempt?.status === 'submitted' && attempt.score != null && attempt.total_marks != null
             ? `${attempt.score}/${attempt.total_marks}`
             : null,
+        quizPercentage:
+          attempt?.status === 'submitted' && attempt.percentage != null ? Number(attempt.percentage) : null,
+        quizPassed: attempt?.status === 'submitted' && attempt.passed != null ? attempt.passed : null,
       } satisfies ProjectDashboardCard;
     });
 }
@@ -377,6 +398,86 @@ export async function logActivity({
     INSERT INTO activity_log (user_id, project_id, action, metadata)
     VALUES (${userId}, ${projectId ?? null}, ${action}, ${metadata ? sql.json(metadata) : null})
   `;
+}
+
+export async function getMemberDashboardStats(userId: string) {
+  const rows = await sql<{ project_id: string }[]>`
+    SELECT project_id FROM project_members WHERE user_id = ${userId}
+  `;
+  const projectIds = rows.map((r) => r.project_id);
+
+  if (!projectIds.length) {
+    return {
+      totalProjects: 0,
+      completedQuizzes: 0,
+      inProgressQuizzes: 0,
+      pendingQuizProjects: 0,
+      totalDocs: 0,
+      recentActivity: [] as Array<{ action: string; projectName: string | null; createdAt: string }>,
+      recentBookmarks: [] as Array<{ projectName: string; content: string; createdAt: string }>,
+    };
+  }
+
+  const [docRows, attemptRows, activityRows, bookmarkRows] = await Promise.all([
+    sql<{ c: string }[]>`SELECT COUNT(*) as c FROM documents WHERE project_id = ANY(${projectIds})`,
+    sql<{ status: string }[]>`SELECT status FROM quiz_attempts WHERE user_id = ${userId} AND project_id = ANY(${projectIds})`,
+    sql<{ action: string; project_id: string | null; created_at: string }[]>`
+      SELECT al.action, al.project_id, al.created_at
+      FROM activity_log al
+      WHERE al.user_id = ${userId}
+      ORDER BY al.created_at DESC
+      LIMIT 8
+    `,
+    sql<{ project_name: string; content: string; created_at: string }[]>`
+      SELECT p.name AS project_name, cm.content, cb.created_at
+      FROM chat_bookmarks cb
+      JOIN chat_messages cm ON cm.id = cb.message_id
+      JOIN projects p ON p.id = cb.project_id
+      WHERE cb.user_id = ${userId}
+      ORDER BY cb.created_at DESC
+      LIMIT 3
+    `,
+  ]);
+
+  const projectNames = projectIds.length
+    ? await sql<{ id: string; name: string }[]>`SELECT id, name FROM projects WHERE id = ANY(${projectIds})`
+    : [];
+  const nameMap = new Map(projectNames.map((p) => [p.id, p.name]));
+
+  const completedCount = attemptRows.filter((a) => a.status === 'submitted').length;
+  const inProgressCount = attemptRows.filter((a) => a.status === 'in_progress').length;
+
+  return {
+    totalProjects: projectIds.length,
+    completedQuizzes: completedCount,
+    inProgressQuizzes: inProgressCount,
+    pendingQuizProjects: Math.max(0, projectIds.length - completedCount - inProgressCount),
+    totalDocs: Number(docRows[0]?.c ?? 0),
+    recentActivity: activityRows.map((a) => ({
+      action: a.action,
+      projectName: a.project_id ? (nameMap.get(a.project_id) ?? null) : null,
+      createdAt: a.created_at,
+    })),
+    recentBookmarks: bookmarkRows.map((b) => ({
+      projectName: b.project_name,
+      content: b.content,
+      createdAt: b.created_at,
+    })),
+  };
+}
+
+export async function getMemberNotificationCount(userId: string): Promise<number> {
+  const rows = await sql<{ c: string }[]>`
+    SELECT COUNT(*) AS c
+    FROM project_members pm
+    JOIN projects p ON p.id = pm.project_id AND p.is_active = true
+    WHERE pm.user_id = ${userId}
+      AND NOT EXISTS (
+        SELECT 1 FROM quiz_attempts qa
+        WHERE qa.user_id = pm.user_id AND qa.project_id = pm.project_id AND qa.status = 'submitted'
+      )
+  `;
+  return Number(rows[0]?.c ?? 0);
 }
 
 export async function getObservabilityMetrics(projectId: string): Promise<ObservabilityMetrics> {

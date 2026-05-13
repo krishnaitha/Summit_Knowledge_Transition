@@ -4,6 +4,50 @@ import { createReadStream } from 'fs';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
+function resolveSafeUploadPath(storedPath: string): string {
+  if (!storedPath || typeof storedPath !== 'string') {
+    throw new Error('Invalid file path');
+  }
+
+  let normalized = storedPath.trim();
+
+  // Backward compatibility: some records may store full URLs.
+  if (normalized.startsWith('http://') || normalized.startsWith('https://')) {
+    try {
+      normalized = new URL(normalized).pathname;
+    } catch {
+      throw new Error('Invalid file path');
+    }
+  }
+
+  normalized = normalized.replace(/\\/g, '/');
+
+  if (normalized.startsWith('/public/')) {
+    normalized = normalized.slice('/public/'.length);
+  }
+
+  if (normalized.startsWith('/')) {
+    normalized = normalized.slice(1);
+  }
+
+  const uploadsIndex = normalized.indexOf('uploads/');
+  if (uploadsIndex === -1) {
+    throw new Error('Invalid file path');
+  }
+
+  normalized = normalized.slice(uploadsIndex);
+
+  const uploadsDir = path.resolve(UPLOAD_DIR);
+  const resolvedPath = path.resolve(path.join(process.cwd(), 'public', normalized));
+  const safePrefix = `${uploadsDir}${path.sep}`;
+
+  if (resolvedPath !== uploadsDir && !resolvedPath.startsWith(safePrefix)) {
+    throw new Error('Invalid file path');
+  }
+
+  return resolvedPath;
+}
+
 /**
  * Ensure upload directory exists
  */
@@ -37,16 +81,7 @@ export async function uploadFile(fileName: string, buffer: Buffer): Promise<stri
  * @returns Buffer
  */
 export async function downloadFile(filePath: string): Promise<Buffer> {
-  const fullPath = path.join(process.cwd(), 'public', filePath);
-
-  // Security: prevent directory traversal
-  const resolvedPath = path.resolve(fullPath);
-  const uploadsDir = path.resolve(path.join(process.cwd(), 'public', 'uploads'));
-
-  if (!resolvedPath.startsWith(uploadsDir)) {
-    throw new Error('Invalid file path');
-  }
-
+  const resolvedPath = resolveSafeUploadPath(filePath);
   return await fs.readFile(resolvedPath);
 }
 
@@ -56,16 +91,7 @@ export async function downloadFile(filePath: string): Promise<Buffer> {
  * @returns ReadStream
  */
 export function getFileStream(filePath: string) {
-  const fullPath = path.join(process.cwd(), 'public', filePath);
-
-  // Security: prevent directory traversal
-  const resolvedPath = path.resolve(fullPath);
-  const uploadsDir = path.resolve(path.join(process.cwd(), 'public', 'uploads'));
-
-  if (!resolvedPath.startsWith(uploadsDir)) {
-    throw new Error('Invalid file path');
-  }
-
+  const resolvedPath = resolveSafeUploadPath(filePath);
   return createReadStream(resolvedPath);
 }
 
@@ -74,15 +100,7 @@ export function getFileStream(filePath: string) {
  * @param filePath - Relative path from DB
  */
 export async function deleteFile(filePath: string): Promise<void> {
-  const fullPath = path.join(process.cwd(), 'public', filePath);
-
-  // Security: prevent directory traversal
-  const resolvedPath = path.resolve(fullPath);
-  const uploadsDir = path.resolve(path.join(process.cwd(), 'public', 'uploads'));
-
-  if (!resolvedPath.startsWith(uploadsDir)) {
-    throw new Error('Invalid file path');
-  }
+  const resolvedPath = resolveSafeUploadPath(filePath);
 
   try {
     await fs.unlink(resolvedPath);
@@ -99,10 +117,10 @@ export async function deleteFile(filePath: string): Promise<void> {
  * @param filePath - Relative path from DB
  */
 export async function getFileInfo(filePath: string): Promise<{ size: number; exists: boolean }> {
-  const fullPath = path.join(process.cwd(), 'public', filePath);
+  const resolvedPath = resolveSafeUploadPath(filePath);
 
   try {
-    const stats = await fs.stat(fullPath);
+    const stats = await fs.stat(resolvedPath);
     return { size: stats.size, exists: true };
   } catch {
     return { size: 0, exists: false };

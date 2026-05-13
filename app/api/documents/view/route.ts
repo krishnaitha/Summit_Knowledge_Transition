@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
+import { Readable } from 'stream';
 
 import { getCurrentUserContext } from '@/lib/auth';
 import { logActivity, userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
-import { getFileStream } from '@/lib/storage/local';
+import { getFileInfo, getFileStream } from '@/lib/storage/local';
+import { downloadFromR2 } from '@/lib/storage/r2';
+
+function toWebStream(stream: NodeJS.ReadableStream) {
+  return Readable.toWeb(stream) as ReadableStream<Uint8Array>;
+}
 
 export async function GET(request: Request) {
   try {
@@ -37,8 +43,22 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Get file stream from local storage
-    const fileStream = getFileStream(document.file_url);
+    const localInfo = await getFileInfo(document.file_url).catch(() => ({ exists: false, size: 0 }));
+
+    let fileStream: NodeJS.ReadableStream;
+
+    if (localInfo.exists) {
+      fileStream = getFileStream(document.file_url);
+    } else {
+      try {
+        // Legacy records still use the original R2 object key.
+        fileStream = await downloadFromR2(document.file_url);
+      } catch {
+        // If the DB points at a legacy key but the local copy exists under a generated name,
+        // fall back to the local path resolver as a last resort.
+        fileStream = getFileStream(document.file_url);
+      }
+    }
 
     await logActivity({
       userId,
@@ -67,7 +87,7 @@ export async function GET(request: Request) {
       ? `attachment; filename="${encodeURIComponent(document.file_name)}"`
       : 'inline';
 
-    return new NextResponse(fileStream, {
+    return new NextResponse(toWebStream(fileStream), {
       headers: {
         'Content-Type': mimeType,
         'Content-Disposition': contentDisposition,
@@ -75,6 +95,8 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed';
+    const status = message === 'Document not found' ? 404 : message === 'Forbidden' ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

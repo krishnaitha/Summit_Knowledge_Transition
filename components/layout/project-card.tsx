@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FileText, MessageSquare, BookOpen, ArrowRight, Clock, Sparkles } from 'lucide-react';
+import { FileText, MessageSquare, BookOpen, ArrowRight, Clock, Sparkles, Files } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -120,6 +120,12 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
             <Button size="sm" variant="secondary">
               <BookOpen className="h-3.5 w-3.5" />
               {project.quizStatus === 'In Progress' ? 'Resume Quiz' : 'Take Quiz'}
+            </Button>
+          </Link>
+          <Link href={`/projects/${project.id}#documents`}>
+            <Button size="sm" variant="secondary">
+              <Files className="h-3.5 w-3.5" />
+              Documents
             </Button>
           </Link>
           <Link href={`/projects/${project.id}`} className="ml-auto">

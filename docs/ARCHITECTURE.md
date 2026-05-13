@@ -1,9 +1,8 @@
-# Summit KT Portal — Architecture & Feature Analysis
+# Summit KT Portal — Architecture
 
-> **Version:** 0.2.0  
-> **Stack:** Next.js 14 · PostgreSQL · NextAuth.js v4 · Local File Storage · Groq · @xenova/transformers · Resend · Tailwind CSS  
-> **Purpose:** Enterprise knowledge-transfer portal for structured team transitions  
-> **Data Compliance:** All KT documents stored locally — no external cloud storage
+> **Version:** 1.0.0  
+> **Stack:** Next.js 14 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS  
+> **Purpose:** Enterprise knowledge-transfer portal for structured team transitions
 
 ---
 
@@ -13,18 +12,689 @@
 2. [High-Level Architecture](#2-high-level-architecture)
 3. [Application Layer Structure](#3-application-layer-structure)
 4. [Data Architecture](#4-data-architecture)
-5. [Core Feature Flows](#5-core-feature-flows)
-   - 5.1 Authentication & Authorization
-   - 5.2 Document Ingestion (RAG Pipeline)
-   - 5.3 AI-Grounded Chat
-   - 5.4 Quiz Generation & Delivery
-   - 5.5 Quiz Re-enable Request Flow
-   - 5.6 Background Job Queue
-6. [Component Hierarchy](#6-component-hierarchy)
-7. [API Surface](#7-api-surface)
-8. [Security Model](#8-security-model)
-9. [Known Gaps](#9-known-gaps)
-10. [Good-to-Have Features](#10-good-to-have-features)
+5. [Authentication & Authorization Flow](#5-authentication--authorization-flow)
+6. [Document Ingestion Pipeline](#6-document-ingestion-pipeline)
+7. [RAG AI Chat Pipeline](#7-rag-ai-chat-pipeline)
+8. [Quiz Generation & Delivery Flow](#8-quiz-generation--delivery-flow)
+9. [Background Job Queue](#9-background-job-queue)
+10. [Role-Based Access Control Model](#10-role-based-access-control-model)
+11. [API Surface](#11-api-surface)
+12. [Component Hierarchy](#12-component-hierarchy)
+13. [Security Model](#13-security-model)
+14. [Deployment Topology](#14-deployment-topology)
+
+---
+
+## 1. System Overview
+
+Summit KT Portal is a **multi-role, multi-project knowledge-transfer platform**. It enables organisations to manage the entire KT lifecycle:
+
+- Admins **publish** KT documents and configure readiness quizzes
+- Members **read** documents, **converse** with an AI assistant grounded in those documents, and **complete** structured readiness assessments
+- Project Admins **manage** their assigned project without gaining broader system privileges
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                        SUMMIT KT PORTAL                          │
+│                                                                  │
+│  SUPER ADMIN           PROJECT ADMIN          MEMBER             │
+│  ───────────           ─────────────          ──────             │
+│  Create & manage       Manage assigned        View assigned      │
+│  all projects          project only           projects           │
+│                                                                  │
+│  Upload & process      Upload docs            Chat with AI       │
+│  KT documents          Invite members         assistant          │
+│                                                                  │
+│  Generate AI quizzes   Manage quiz            Take readiness     │
+│                        sets                   quiz               │
+│                                                                  │
+│  View analytics &      View project           Bookmark AI        │
+│  activity (all)        members                answers            │
+│                                                                  │
+│  Manage all users      Approve/reject         Request quiz       │
+│                        retake requests        re-enable          │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. High-Level Architecture
+
+```mermaid
+graph TB
+    subgraph Client["Browser / Client"]
+        UI["Next.js 14 React Server Components"]
+    end
+
+    subgraph AppServer["Application Server (Next.js)"]
+        Pages["Page Components<br/>(admin / member)"]
+        Actions["Server Actions<br/>(app/actions/)"]
+        API["API Routes<br/>(app/api/)"]
+        Auth["NextAuth.js v4<br/>JWT · httpOnly Cookie"]
+        RAG["RAG Engine<br/>(lib/rag/)"]
+        Embed["Embedding Model<br/>@xenova/transformers<br/>all-MiniLM-L6-v2 · 384-dim"]
+    end
+
+    subgraph Storage["Persistence Layer"]
+        PG["PostgreSQL 13+<br/>pgvector · pgcrypto"]
+        FS["Local Filesystem<br/>public/uploads/"]
+        R2["Cloudflare R2<br/>(optional)"]
+    end
+
+    subgraph External["External Services"]
+        Groq["Groq Cloud<br/>llama-3.3-70b-versatile<br/>llama-3.1-8b-instant"]
+        SG["SendGrid<br/>Email delivery"]
+    end
+
+    subgraph Worker["Background Worker (separate process)"]
+        WProc["worker/index.mjs<br/>Polls every 1s"]
+        DocProc["Document Processor<br/>(parse → chunk → embed → store)"]
+        QuizGen["Quiz Generator<br/>(select chunks → LLM → insert questions)"]
+    end
+
+    UI -->|RSC / fetch| Pages
+    Pages --> Actions
+    Pages --> API
+    API --> Auth
+    Auth --> PG
+    Actions --> PG
+    RAG --> Embed
+    RAG --> PG
+    API --> RAG
+    API --> Groq
+    API --> FS
+    API --> R2
+    API --> SG
+    WProc -->|POST /api/jobs/worker| API
+    WProc --> DocProc
+    WProc --> QuizGen
+    DocProc --> FS
+    DocProc --> R2
+    DocProc --> Embed
+    DocProc --> PG
+    QuizGen --> PG
+    QuizGen --> Groq
+```
+
+---
+
+## 3. Application Layer Structure
+
+```mermaid
+graph LR
+    subgraph Routes["App Router Routes"]
+        Login["/login"]
+        Register["/register"]
+        ForgotPw["/forgot-password"]
+        AcceptInvite["/auth/accept-invite"]
+        ResetPw["/auth/reset-password"]
+
+        subgraph AdminRoutes["(admin) — requireAdmin / requireAnyAdmin"]
+            AdminDash["/admin/dashboard<br/>⚠️ super-admin only"]
+            AdminProjects["/admin/projects"]
+            AdminUsers["/admin/users<br/>⚠️ super-admin only"]
+            ProjectDetail["/admin/projects/[id]"]
+            ProjectDocs["/admin/projects/[id]/documents"]
+            ProjectMembers["/admin/projects/[id]/members"]
+            ProjectQuiz["/admin/projects/[id]/quiz"]
+        end
+
+        subgraph MemberRoutes["(member) — requireMember"]
+            MemberDash["/dashboard"]
+            MemberProjects["/projects/[id]"]
+            Chat["/projects/[id]/chat"]
+            Quiz["/projects/[id]/quiz"]
+            Bookmarks["/projects/[id]/bookmarks"]
+        end
+    end
+
+    subgraph APIRoutes["API Routes"]
+        AuthAPI["/api/auth/*"]
+        ChatAPI["/api/chat"]
+        DocsAPI["/api/documents/*"]
+        QuizAPI["/api/quiz/*"]
+        BookmarksAPI["/api/bookmarks"]
+        JobsAPI["/api/jobs/worker"]
+        AdminAPI["/api/admin/*"]
+    end
+```
+
+---
+
+## 4. Data Architecture
+
+### 4.1 Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    USERS {
+        uuid id PK
+        text email UK
+        text full_name
+        user_role role
+        text password_hash
+        timestamptz created_at
+        timestamptz last_login_at
+        boolean is_active
+    }
+
+    PROJECTS {
+        uuid id PK
+        text name
+        text description
+        uuid created_by FK
+        boolean is_active
+        integer pass_threshold
+        timestamptz quiz_open_at
+        timestamptz quiz_close_at
+    }
+
+    PROJECT_MEMBERS {
+        uuid id PK
+        uuid project_id FK
+        uuid user_id FK
+        text role
+        timestamptz assigned_at
+    }
+
+    DOCUMENTS {
+        uuid id PK
+        uuid project_id FK
+        text file_name
+        text file_url
+        text file_type
+        uuid uploaded_by FK
+        integer chunk_count
+        boolean is_required
+        text classification
+        integer pii_detections
+    }
+
+    DOCUMENT_CHUNKS {
+        uuid id PK
+        uuid document_id FK
+        uuid project_id FK
+        text content
+        vector_384 embedding
+        integer chunk_index
+    }
+
+    QUIZ_SETS {
+        uuid id PK
+        uuid project_id FK
+        text set_name
+        integer set_number
+        boolean is_active
+        text category
+    }
+
+    QUIZ_QUESTIONS {
+        uuid id PK
+        uuid set_id FK
+        text question_text
+        text option_a
+        text option_b
+        text option_c
+        text option_d
+        quiz_option correct_answer
+        text question_type
+        text explanation
+    }
+
+    QUIZ_ATTEMPTS {
+        uuid id PK
+        uuid user_id FK
+        uuid project_id FK
+        uuid set_id FK
+        quiz_attempt_status status
+        integer score
+        integer total_questions
+        timestamptz started_at
+        timestamptz submitted_at
+    }
+
+    QUIZ_ANSWERS {
+        uuid id PK
+        uuid attempt_id FK
+        uuid question_id FK
+        quiz_option selected_answer
+        boolean is_correct
+    }
+
+    CHAT_SESSIONS {
+        uuid id PK
+        uuid user_id FK
+        uuid project_id FK
+        integer message_count
+        timestamptz last_message_at
+    }
+
+    CHAT_MESSAGES {
+        uuid id PK
+        uuid session_id FK
+        chat_role role
+        text content
+        jsonb sources
+    }
+
+    CHAT_BOOKMARKS {
+        uuid id PK
+        uuid user_id FK
+        uuid project_id FK
+        uuid message_id FK
+    }
+
+    PROCESSING_JOBS {
+        uuid id PK
+        text type
+        jsonb payload
+        text status
+        text error
+        integer attempts
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    USERS ||--o{ PROJECT_MEMBERS : "member of"
+    PROJECTS ||--o{ PROJECT_MEMBERS : "has"
+    PROJECTS ||--o{ DOCUMENTS : "contains"
+    DOCUMENTS ||--o{ DOCUMENT_CHUNKS : "split into"
+    PROJECTS ||--o{ QUIZ_SETS : "has"
+    QUIZ_SETS ||--o{ QUIZ_QUESTIONS : "contains"
+    USERS ||--o{ QUIZ_ATTEMPTS : "takes"
+    PROJECTS ||--o{ QUIZ_ATTEMPTS : "for"
+    QUIZ_SETS ||--o{ QUIZ_ATTEMPTS : "uses"
+    QUIZ_ATTEMPTS ||--o{ QUIZ_ANSWERS : "records"
+    QUIZ_QUESTIONS ||--o{ QUIZ_ANSWERS : "answered by"
+    USERS ||--o{ CHAT_SESSIONS : "starts"
+    PROJECTS ||--o{ CHAT_SESSIONS : "scoped to"
+    CHAT_SESSIONS ||--o{ CHAT_MESSAGES : "contains"
+    USERS ||--o{ CHAT_BOOKMARKS : "saves"
+    CHAT_MESSAGES ||--o{ CHAT_BOOKMARKS : "bookmarked in"
+```
+
+### 4.2 Key Indexes
+
+| Table | Index | Purpose |
+|---|---|---|
+| `document_chunks` | `USING ivfflat (embedding vector_cosine_ops)` | Fast ANN cosine similarity search |
+| `document_chunks` | `(project_id)` | Filter chunks by project |
+| `quiz_attempts` | `(user_id, project_id)` | Look up a member's attempt per project |
+| `project_members` | `(project_id, role)` | Filter project admins efficiently |
+| `processing_jobs` | `(status, created_at)` | Worker job queue polling |
+
+---
+
+## 5. Authentication & Authorization Flow
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant NextJS as Next.js App
+    participant NextAuth
+    participant DB as PostgreSQL
+
+    Browser->>NextJS: POST /api/auth/signin (email, password)
+    NextJS->>NextAuth: credentials authorize()
+    NextAuth->>DB: SELECT user WHERE email = ? AND is_active = true
+    DB-->>NextAuth: user row (id, role, full_name)
+    NextAuth->>NextAuth: bcrypt.compare(password, hash)
+    alt Password valid
+        NextAuth->>NextAuth: Create JWT { id, role, full_name }
+        NextAuth-->>Browser: Set-Cookie: next-auth.session-token (httpOnly)
+        Browser->>NextJS: GET /dashboard
+        NextJS->>NextAuth: getServerSession()
+        NextAuth-->>NextJS: { user: { id, role } }
+        NextJS->>NextJS: requireMember() — check role
+        NextJS-->>Browser: Render member dashboard
+    else Password invalid or user inactive
+        NextAuth-->>Browser: 401 / redirect to /login?error=…
+    end
+```
+
+### Route Guards
+
+| Guard function | Where used | Logic |
+|---|---|---|
+| `requireMember()` | All member pages | Session exists + any role |
+| `requireAdmin()` | Super-admin pages (dashboard, users, analytics) | `role === 'admin'` |
+| `requireAnyAdmin()` | Admin layout | `role === 'admin'` OR is a project admin of any project |
+| `requireProjectAdmin(projectId)` | Project detail/members/quiz pages | `role === 'admin'` OR `project_members.role = 'admin'` for that project |
+
+---
+
+## 6. Document Ingestion Pipeline
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant AppServer as Next.js App
+    participant Storage as Local FS / R2
+    participant DB as PostgreSQL
+    participant Worker
+    participant Embedder as @xenova/transformers
+
+    Admin->>AppServer: POST /api/documents/upload (multipart file)
+    AppServer->>AppServer: Validate type (PDF/DOCX/CSV/TXT), size limit
+    AppServer->>Storage: Store file → /public/uploads/{uuid}.ext
+    AppServer->>DB: INSERT document (file_name, file_url, project_id, status=uploaded)
+    AppServer-->>Admin: { documentId, fileUrl }
+
+    Admin->>AppServer: POST /api/documents/process { documentId }
+    AppServer->>DB: INSERT processing_jobs (type='document_process', payload={documentId})
+    AppServer-->>Admin: { jobId, status:'queued' }
+
+    loop Every 1 second
+        Worker->>AppServer: POST /api/jobs/worker (WORKER_SECRET header)
+        AppServer->>DB: SELECT job FOR UPDATE SKIP LOCKED WHERE status='pending'
+        DB-->>AppServer: job row
+        AppServer-->>Worker: job payload
+    end
+
+    Worker->>Storage: Download file
+    Worker->>Worker: Parse text (pdf-parse / mammoth / csv-parse)
+    Worker->>Worker: PII scan (email, phone, SSN regex patterns)
+    Worker->>Worker: Classify content (public / internal / confidential)
+    Worker->>Worker: Split into 500-word overlapping chunks
+    loop Per chunk
+        Worker->>Embedder: encode(chunkText) → Float32Array[384]
+        Worker->>DB: INSERT document_chunks (content, embedding, chunk_index)
+    end
+    Worker->>DB: UPDATE document SET chunk_count = N, status = 'processed'
+    Worker->>DB: UPDATE processing_jobs SET status = 'completed'
+```
+
+---
+
+## 7. RAG AI Chat Pipeline
+
+```mermaid
+sequenceDiagram
+    participant Member
+    participant AppServer as Next.js App
+    participant Embedder as @xenova/transformers
+    participant DB as PostgreSQL (pgvector)
+    participant LLM as Groq / GitHub Models
+
+    Member->>AppServer: POST /api/chat { sessionId, message }
+    AppServer->>AppServer: requireMember() + project access check
+    AppServer->>Embedder: encode(userMessage) → queryVector[384]
+    AppServer->>DB: SELECT content, doc_name<br/>FROM document_chunks<br/>WHERE project_id = ?<br/>ORDER BY embedding <=> queryVector<br/>LIMIT 5
+    DB-->>AppServer: top-5 relevant chunks with source metadata
+    AppServer->>AppServer: Build grounding prompt:<br/>"Answer ONLY from provided context..<br/>Context: [chunk1] [chunk2]…"
+    AppServer->>LLM: Streaming chat completion request
+    LLM-->>AppServer: SSE stream of tokens
+    AppServer-->>Member: Stream response (ReadableStream)
+    AppServer->>DB: INSERT chat_messages (role='assistant', content, sources=[{docName, chunkId}])
+    AppServer->>DB: UPDATE chat_sessions (message_count++, last_message_at)
+```
+
+---
+
+## 8. Quiz Generation & Delivery Flow
+
+### Generation
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant AppServer as Next.js App
+    participant DB as PostgreSQL
+    participant Worker
+    participant LLM as Groq
+
+    Admin->>AppServer: POST /api/admin/quiz/generate<br/>{ projectId, category, sets, questionsPerSet }
+    AppServer->>DB: INSERT processing_jobs (type='quiz_generate', payload)
+    AppServer-->>Admin: { jobId }
+
+    Worker->>AppServer: Poll /api/jobs/worker
+    AppServer-->>Worker: quiz_generate job
+
+    Worker->>DB: SELECT content FROM document_chunks<br/>WHERE project_id = ? LIMIT 30
+    loop Per set (1..N)
+        Worker->>LLM: Generate 10 questions from chunk subset<br/>(scenario-based MCQ + true/false)
+        LLM-->>Worker: JSON array of question objects
+        Worker->>DB: INSERT quiz_set + quiz_questions
+    end
+    Worker->>DB: UPDATE job status='completed'
+```
+
+### Delivery
+
+```mermaid
+sequenceDiagram
+    participant Member
+    participant AppServer as Next.js App
+    participant DB as PostgreSQL
+
+    Member->>AppServer: GET /projects/[id]/quiz
+    AppServer->>DB: SELECT quiz_attempt WHERE user_id=? AND project_id=?
+    alt No existing attempt
+        AppServer->>DB: SELECT quiz_set (active, assigned to member)
+        AppServer->>DB: INSERT quiz_attempt (status='in_progress')
+        AppServer->>DB: SELECT quiz_questions (shuffled)
+        AppServer-->>Member: Render quiz questions
+    else Attempt in_progress
+        AppServer->>DB: SELECT remaining answers
+        AppServer-->>Member: Render quiz (resume from last answered)
+    else Attempt submitted
+        AppServer-->>Member: Show result summary + coaching plan
+    end
+
+    loop Per question answered
+        Member->>AppServer: POST /api/quiz/answer { attemptId, questionId, answer }
+        AppServer->>DB: INSERT quiz_answers + check is_correct
+    end
+
+    Member->>AppServer: POST /api/quiz/submit { attemptId }
+    AppServer->>DB: UPDATE quiz_attempt status='submitted', score=N
+    AppServer->>DB: INSERT quiz_coaching_plans (weak sections, recommendations)
+    AppServer-->>Member: Redirect to result summary
+```
+
+---
+
+## 9. Background Job Queue
+
+```mermaid
+stateDiagram-v2
+    [*] --> pending : Job created
+    pending --> running : Worker claims (FOR UPDATE SKIP LOCKED)
+    running --> completed : Processing succeeded
+    running --> failed : Error thrown (attempts >= 3)
+    running --> pending : Stuck > 10 min → auto-reset
+    failed --> [*]
+    completed --> [*]
+```
+
+**Job types:**
+
+| Type | Payload | Processor |
+|---|---|---|
+| `document_process` | `{ documentId }` | Parse → embed → store chunks |
+| `quiz_generate` | `{ projectId, sets, questionsPerSet, category }` | Select chunks → Groq → insert questions |
+
+**Concurrency model:** Multiple worker instances can run safely. `FOR UPDATE SKIP LOCKED` prevents two workers from claiming the same job.
+
+---
+
+## 10. Role-Based Access Control Model
+
+```mermaid
+graph TD
+    User["Authenticated User"]
+
+    User --> RoleCheck{Check role}
+    RoleCheck -->|role = admin| SuperAdmin["Super Admin"]
+    RoleCheck -->|role = member| MemberCheck{Project member check}
+
+    MemberCheck -->|project_members.role = admin| ProjectAdmin["Project Admin"]
+    MemberCheck -->|project_members.role = member| Member["Member"]
+
+    SuperAdmin --> AllAdmin["✅ All admin pages<br/>✅ Dashboard<br/>✅ All projects<br/>✅ Users table<br/>✅ Analytics<br/>✅ All project admin pages"]
+
+    ProjectAdmin --> ProjectAdminAccess["✅ /admin/projects/[id] (their project only)<br/>✅ /admin/projects/[id]/members<br/>✅ /admin/projects/[id]/quiz<br/>✅ /admin/projects/[id]/documents<br/>❌ Dashboard<br/>❌ Users table<br/>❌ Other projects"]
+
+    Member --> MemberAccess["✅ /dashboard<br/>✅ /projects/[id] (assigned only)<br/>✅ /projects/[id]/chat<br/>✅ /projects/[id]/quiz<br/>✅ /projects/[id]/bookmarks<br/>❌ Any /admin/* routes"]
+```
+
+---
+
+## 11. API Surface
+
+### Authentication
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/auth/[...nextauth]` | — | NextAuth sign-in/sign-out handler |
+| `POST` | `/api/auth/register` | — | Self-registration (rate-limited) |
+| `POST` | `/api/auth/forgot-password` | — | Send password reset email |
+| `POST` | `/api/auth/reset-password` | Token | Apply new password |
+
+### Chat
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/chat?sessionId=…` | Member | Fetch message history |
+| `POST` | `/api/chat` | Member | Stream RAG chat response |
+
+### Documents
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/documents/upload` | Admin | Upload file to storage |
+| `POST` | `/api/documents/process` | Admin | Queue document processing job |
+| `GET` | `/api/documents/view?documentId=…` | Member | Get signed file URL |
+
+### Quiz
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/quiz?projectId=…` | Member | Get assigned questions |
+| `POST` | `/api/quiz/answer` | Member | Save a single answer |
+| `POST` | `/api/quiz/submit` | Member | Submit attempt |
+
+### Bookmarks
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/bookmarks?projectId=…` | Member | List bookmarks |
+| `POST` | `/api/bookmarks` | Member | Toggle bookmark on a message |
+
+### Admin
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/admin/users` | Super Admin | List all users |
+| `POST` | `/api/admin/invite` | Super Admin | Send invite email |
+| `POST` | `/api/admin/quiz/generate` | Project Admin+ | Queue quiz generation |
+| `POST` | `/api/admin/retake` | Project Admin+ | Approve/reject retake request |
+
+### Worker
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/jobs/worker` | `WORKER_SECRET` header | Claim and process next pending job |
+
+---
+
+## 12. Component Hierarchy
+
+```
+app/
+└── layout.tsx                     Root layout (fonts, globals)
+    ├── (auth)/login/page.tsx
+    │   └── LoginForm
+    ├── (member)/layout.tsx
+    │   ├── Navbar
+    │   ├── MemberSidebar / MemberMobileSidebar
+    │   └── [member pages]
+    │       ├── dashboard/page.tsx
+    │       │   └── ProjectCard (×N)
+    │       └── projects/[id]/
+    │           ├── page.tsx        (ProjectOverview + document list)
+    │           ├── chat/           ChatInterface
+    │           │   ├── MessageBubble (×N)
+    │           │   │   └── BookmarkButton
+    │           │   └── SourceTag (×N)
+    │           └── quiz/           QuizExperience
+    │               ├── QuestionView
+    │               └── ResultSummary
+    └── (admin)/layout.tsx
+        ├── Navbar
+        ├── AdminSidebar / AdminMobileSidebar  (filtered by isSuperAdmin)
+        └── [admin pages]
+            ├── admin/dashboard/page.tsx
+            │   ├── StatsCard (×6)
+            │   └── ActivityFeed
+            ├── admin/users/page.tsx
+            │   └── UsersTable
+            │       ├── UserFiltersPanel
+            │       ├── UserDetailDrawer
+            │       └── BulkActionToolbar
+            └── admin/projects/[id]/page.tsx
+                ├── DocumentUploadPanel
+                ├── RetakeRequestsCard
+                ├── QuizSetsPanel
+                └── QuizGeneratorForm
+```
+
+---
+
+## 13. Security Model
+
+| Concern | Mitigation |
+|---|---|
+| **Password storage** | bcrypt with cost factor 12 |
+| **Session tokens** | JWT in `httpOnly` + `Secure` + `SameSite=Lax` cookie; not accessible to JS |
+| **Route protection** | Server-side role guards on every page and action before data fetch |
+| **Project isolation** | `requireProjectAdmin(projectId)` checks both global role and per-project membership row |
+| **CSRF** | NextAuth.js handles CSRF token validation on all form submissions |
+| **Rate limiting** | In-memory rate limiter on `/api/auth/register`, `/api/auth/forgot-password` |
+| **SQL injection** | All queries use `postgres.js` tagged-template literals (parameterised by default) |
+| **File upload** | MIME type and extension allowlist; file size limit enforced server-side |
+| **PII detection** | Regex scan on every uploaded document before embedding — flags email, phone, SSN patterns |
+| **SSRF** | Worker secret (`WORKER_SECRET`) validates all polling requests |
+| **Input sanitisation** | `lib/security.ts` sanitises free-text inputs before DB writes |
+| **Document access** | Signed/gated `/api/documents/view` — members can only access documents in their assigned projects |
+
+---
+
+## 14. Deployment Topology
+
+### Development
+
+```
+localhost:3000    ← Next.js dev server (npm run dev)
+localhost:5433    ← PostgreSQL 13
+worker process    ← node worker/index.mjs (separate terminal)
+```
+
+### Production (single server)
+
+```mermaid
+graph LR
+    Internet["Internet / Reverse Proxy<br/>(nginx / Caddy)"]
+    NextApp["Next.js App<br/>pm2 / node<br/>:3000"]
+    Worker["Worker Process<br/>pm2<br/>node worker/index.mjs"]
+    PG["PostgreSQL<br/>:5432"]
+    Storage["Storage<br/>Local FS or R2"]
+    SendGrid["SendGrid API"]
+    Groq["Groq API"]
+
+    Internet -->|HTTPS| NextApp
+    NextApp --> PG
+    NextApp --> Storage
+    NextApp --> SendGrid
+    NextApp --> Groq
+    Worker -->|HTTP internal| NextApp
+    Worker --> PG
+    Worker --> Storage
+    Worker --> Groq
+```
+
+See [SELF_HOSTED_DEPLOYMENT.md](SELF_HOSTED_DEPLOYMENT.md) for full server setup, nginx config, PM2 ecosystem, and environment variable management.
+
 
 ---
 

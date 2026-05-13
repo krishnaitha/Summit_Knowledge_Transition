@@ -24,6 +24,10 @@ interface QuizResult {
   percentage: number;
   disqualified?: boolean;
   disqualifyReason?: string | null;
+  coachingPlan?: {
+    weakSections: Array<{ section: string; score: number; total: number; percentage: number }>;
+    recommendations: Array<{ section: string; focus: string; documents: Array<{ id: string; name: string }> }>;
+  };
 }
 
 type Phase = 'start' | 'in_section' | 'section_done' | 'submitting' | 'submitted';
@@ -45,6 +49,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [result, setResult] = useState<QuizResult | null>(lockedAttempt ?? null);
   const [error, setError] = useState<string | null>(null);
+  const [missingRequiredDocs, setMissingRequiredDocs] = useState<Array<{ id: string; file_name: string }>>([]);
   const [isPending, startTransition] = useTransition();
 
   // Start screen
@@ -184,6 +189,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
     if (!confirmed) { setCheckboxWarning(true); return; }
     setCheckboxWarning(false);
     setError(null);
+    setMissingRequiredDocs([]);
     startTransition(async () => {
       try {
         const res = await fetch('/api/quiz/start', {
@@ -195,6 +201,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
         if (!res.ok) {
           if (data.attempt) { setResult(data.attempt); return; }
           setError(data.error ?? 'Unable to start quiz.');
+          setMissingRequiredDocs(Array.isArray(data.requiredDocsPending) ? data.requiredDocsPending : []);
           return;
         }
         if (!data.sections?.[0]?.questions?.length) {
@@ -246,6 +253,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
             percentage={result.percentage}
             disqualified={result.disqualified}
             disqualifyReason={result.disqualifyReason}
+            coachingPlan={result.coachingPlan}
           />
         )}
         <div className="flex flex-wrap items-center gap-3">
@@ -253,6 +261,7 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
           <RetakeRequestButton
             projectId={projectId}
             hasPendingRequest={hasPendingRetakeRequest}
+            canRequestRetake={(result?.score ?? lockedAttempt?.score ?? 0) === 0}
           />
         </div>
       </div>
@@ -357,9 +366,29 @@ export function QuizExperience({ projectId, projectName, lockedAttempt, hasPendi
             </div>
           )}
           {error && (
-            <div className="flex items-center gap-2 rounded-xl bg-rose-50 px-4 py-2.5 text-sm text-rose-700">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
+            <div className="space-y-2 rounded-xl bg-rose-50 px-4 py-2.5 text-sm text-rose-700">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {error}
+              </div>
+              {missingRequiredDocs.length > 0 && (
+                <div className="rounded-lg border border-rose-200 bg-white/80 p-3">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rose-800">Read these first</p>
+                  <div className="space-y-1">
+                    {missingRequiredDocs.map((doc) => (
+                      <a
+                        key={doc.id}
+                        href={`/api/documents/view?documentId=${doc.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-rose-700 underline-offset-2 hover:underline"
+                      >
+                        {doc.file_name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

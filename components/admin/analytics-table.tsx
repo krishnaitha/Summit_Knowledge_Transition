@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 import { toCsv } from '@/lib/utils';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 export function AnalyticsTable({
   title,
@@ -40,43 +40,53 @@ export function AnalyticsTable({
     URL.revokeObjectURL(link.href);
   };
 
+  const hasRows = rows.length > 0;
+
   return (
     <Card>
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <CardTitle>{title}</CardTitle>
-        <div className="flex gap-3">
-          <input
-            className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm"
-            onChange={(event) => setFilter(event.target.value)}
-            placeholder="Filter rows"
-            value={filter}
-          />
-          <Button onClick={exportCsv} type="button" variant="secondary">
-            Export CSV
-          </Button>
-        </div>
+        {hasRows && (
+          <div className="flex gap-3">
+            <input
+              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm"
+              onChange={(event) => setFilter(event.target.value)}
+              placeholder="Filter rows"
+              value={filter}
+            />
+            <Button onClick={exportCsv} type="button" variant="secondary">
+              Export CSV
+            </Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="overflow-x-auto">
-        <Table>
-          <THead>
-            <TR>
-              {columns.map((column) => (
-                <TH key={column}>{column}</TH>
-              ))}
-            </TR>
-          </THead>
-          <TBody>
-            {pageRows.map((row, rowIndex) => (
-              <TR key={rowIndex}>
+        {!hasRows ? (
+          <div className="rounded-xl border border-dashed border-slate-200 px-6 py-10 text-center text-sm text-slate-500">
+            No data available yet for this section.
+          </div>
+        ) : (
+          <Table>
+            <THead>
+              <TR>
                 {columns.map((column) => (
-                  <TD key={column}>{String(row[column])}</TD>
+                  <TH key={column}>{column}</TH>
                 ))}
               </TR>
-            ))}
-          </TBody>
-        </Table>
+            </THead>
+            <TBody>
+              {pageRows.map((row, rowIndex) => (
+                <TR key={rowIndex}>
+                  {columns.map((column) => (
+                    <TD key={column}>{String(row[column])}</TD>
+                  ))}
+                </TR>
+              ))}
+            </TBody>
+          </Table>
+        )}
 
-        {totalPages > 1 && (
+        {hasRows && totalPages > 1 && (
           <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
             <p className="text-xs text-slate-400">
               {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredRows.length)} of {filteredRows.length}

@@ -4,12 +4,12 @@ import { FolderKanban, LayoutDashboard, Users } from 'lucide-react';
 
 import { MobileSidebar } from './mobile-sidebar';
 
-const items = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
-  { href: '/admin/users', label: 'Users', icon: Users },
-];
+export function AdminMobileSidebar({ isSuperAdmin = true }: { isSuperAdmin?: boolean }) {
+  const items = [
+    ...(isSuperAdmin ? [{ href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard }] : []),
+    { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+    ...(isSuperAdmin ? [{ href: '/admin/users', label: 'Users', icon: Users }] : []),
+  ];
 
-export function AdminMobileSidebar() {
-  return <MobileSidebar items={items} sectionLabel="Admin" />;
+  return <MobileSidebar items={items} sectionLabel={isSuperAdmin ? 'Admin' : 'Project Admin'} />;
 }

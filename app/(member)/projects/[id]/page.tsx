@@ -22,6 +22,7 @@ export default async function ProjectOverviewPage({ params }: { params: { id: st
     getProjectDocuments(params.id),
     getQuizAttemptForProject(profile!.id, params.id),
   ]);
+  const requiredCount = documents.filter((d) => d.is_required).length;
 
   return (
     <div className="space-y-6">
@@ -53,10 +54,15 @@ export default async function ProjectOverviewPage({ params }: { params: { id: st
           <Link href={`/projects/${params.id}/bookmarks`}>
             <Button variant="secondary">Bookmarks</Button>
           </Link>
+          {requiredCount > 0 && (
+            <p className="self-center text-xs font-medium text-amber-700">
+              {requiredCount} required doc{requiredCount === 1 ? '' : 's'} must be read before quiz unlock.
+            </p>
+          )}
         </CardContent>
       </Card>
 
-      <Card>
+      <Card id="documents">
         <CardHeader>
           <CardTitle>KT documents</CardTitle>
         </CardHeader>
@@ -66,7 +72,10 @@ export default async function ProjectOverviewPage({ params }: { params: { id: st
               documents.map((document) => (
                 <div key={document.id} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                   <div>
-                    <p className="font-medium text-slate-900">{document.file_name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-slate-900">{document.file_name}</p>
+                      {document.is_required && <Badge variant="warning">Required</Badge>}
+                    </div>
                     <p className="text-xs text-slate-500">Uploaded {formatDate(document.uploaded_at, true)} • {document.chunk_count} chunks</p>
                   </div>
                   <a

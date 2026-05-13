@@ -85,8 +85,19 @@ create table if not exists project_members (
   id         uuid        primary key default gen_random_uuid(),
   project_id uuid        not null references projects(id) on delete cascade,
   user_id    uuid        not null references users(id) on delete cascade,
+  role       text        not null default 'member' check (role in ('member', 'admin')),
   assigned_at timestamptz not null default now(),
   unique(project_id, user_id)
+);
+
+-- Project announcements
+create table if not exists project_announcements (
+  id         uuid        primary key default gen_random_uuid(),
+  project_id uuid        not null references projects(id) on delete cascade,
+  title      text        not null,
+  message    text        not null,
+  sent_by    uuid        references users(id) on delete set null,
+  created_at timestamptz not null default now()
 );
 
 -- Documents
@@ -102,9 +113,35 @@ create table if not exists documents (
   -- 004: governance
   pii_detections integer     not null default 0,
   classification text        not null default 'public',
+  is_required    boolean     not null default false,
   scan_flags     text[]      not null default '{}',
   constraint documents_classification_check
     check (classification in ('public', 'internal', 'confidential'))
+);
+
+-- Per-attempt coaching generated after submission
+create table if not exists quiz_coaching_plans (
+  id               uuid        primary key default gen_random_uuid(),
+  attempt_id       uuid        not null unique references quiz_attempts(id) on delete cascade,
+  user_id          uuid        not null references users(id) on delete cascade,
+  project_id       uuid        not null references projects(id) on delete cascade,
+  weak_sections    jsonb       not null default '[]',
+  recommendations  jsonb       not null default '[]',
+  created_at       timestamptz not null default now()
+);
+
+-- Member feedback on AI answers
+create table if not exists chat_answer_feedback (
+  id          uuid        primary key default gen_random_uuid(),
+  user_id     uuid        not null references users(id) on delete cascade,
+  project_id  uuid        not null references projects(id) on delete cascade,
+  message_id  uuid        not null references chat_messages(id) on delete cascade,
+  rating      text        not null check (rating in ('up', 'down')),
+  reason_tag  text,
+  comment     text,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  unique(user_id, message_id)
 );
 
 -- Document chunks (vector embeddings)
@@ -272,6 +309,18 @@ create index if not exists chat_bookmarks_user_project_idx
 -- Rate-limit queries (lib/rate-limit.ts)
 create index if not exists activity_log_rate_limit_idx
   on activity_log (user_id, action, created_at desc);
+
+create index if not exists project_announcements_project_created_idx
+  on project_announcements (project_id, created_at desc);
+
+create index if not exists documents_required_idx
+  on documents (project_id, is_required);
+
+create index if not exists coaching_project_user_idx
+  on quiz_coaching_plans (project_id, user_id, created_at desc);
+
+create index if not exists chat_feedback_project_rating_idx
+  on chat_answer_feedback (project_id, rating, created_at desc);
 
 -- Processing jobs by status
 create index if not exists processing_jobs_status_created_at

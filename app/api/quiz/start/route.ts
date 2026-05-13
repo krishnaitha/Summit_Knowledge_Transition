@@ -48,6 +48,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const requiredDocs = await sql<{ id: string; file_name: string }[]>`
+      SELECT id, file_name
+      FROM documents
+      WHERE project_id = ${projectId} AND is_required = true
+      ORDER BY uploaded_at DESC
+    `;
+
+    if (requiredDocs.length > 0) {
+      const requiredIds = requiredDocs.map((d) => d.id);
+      const viewedRows = await sql<{ document_id: string }[]>`
+        SELECT DISTINCT metadata->>'documentId' AS document_id
+        FROM activity_log
+        WHERE user_id = ${userId}
+          AND project_id = ${projectId}
+          AND action = 'document_viewed'
+          AND metadata->>'documentId' IS NOT NULL
+          AND metadata->>'documentId' = ANY(${requiredIds})
+      `;
+
+      const viewedSet = new Set(viewedRows.map((r) => r.document_id));
+      const missingRequiredDocs = requiredDocs.filter((d) => !viewedSet.has(d.id));
+
+      if (missingRequiredDocs.length > 0) {
+        return NextResponse.json(
+          {
+            error: 'Read all required documents before starting the quiz.',
+            requiredDocsPending: missingRequiredDocs,
+          },
+          { status: 403 },
+        );
+      }
+    }
+
     // Rate limit: max 5 quiz starts per hour
     const rateCheck = await checkRateLimit(userId, 'quiz_started', 5, 3600);
     if (!rateCheck.allowed) {

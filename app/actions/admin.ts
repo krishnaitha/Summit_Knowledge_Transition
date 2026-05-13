@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import sql from '@/lib/db';
 import { computeSectionScores } from '@/lib/quiz/scoring';
 import type { AssignedQuestion, QuizOptionKey } from '@/lib/types/database';
+import { requireAdmin } from '@/lib/auth';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { r2, R2_BUCKET } from '@/lib/storage/r2';
 
@@ -52,6 +53,24 @@ export async function deleteDocumentAction(formData: FormData) {
   await sql`DELETE FROM document_chunks WHERE document_id = ${documentId}`;
 
   revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
+export async function toggleDocumentRequiredAction(formData: FormData) {
+  const projectId = String(formData.get('project_id') ?? '');
+  const documentId = String(formData.get('document_id') ?? '');
+  const nextState = String(formData.get('next_required') ?? 'false') === 'true';
+
+  if (!projectId || !documentId) return;
+
+  await sql`
+    UPDATE documents
+    SET is_required = ${nextState}
+    WHERE id = ${documentId} AND project_id = ${projectId}
+  `;
+
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}/quiz`);
 }
 
 export async function inviteProjectMemberAction(formData: FormData) {
@@ -115,12 +134,53 @@ export async function inviteProjectMemberAction(formData: FormData) {
   revalidatePath(`/admin/projects/${projectId}/members`);
 }
 
+export async function sendProjectAnnouncementAction(formData: FormData) {
+  const { profile } = await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const title = String(formData.get('title') ?? '').trim();
+  const message = String(formData.get('message') ?? '').trim();
+
+  if (!projectId || !title || !message) return;
+
+  await sql`
+    INSERT INTO project_announcements (project_id, title, message, sent_by)
+    VALUES (${projectId}, ${title.slice(0, 140)}, ${message.slice(0, 2000)}, ${profile?.id ?? null})
+  `;
+
+  await sql`
+    INSERT INTO activity_log (user_id, project_id, action, metadata)
+    VALUES (
+      ${profile?.id ?? null},
+      ${projectId},
+      'admin_announcement_sent',
+      ${sql.json({ title: title.slice(0, 140) })}
+    )
+  `;
+
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath('/dashboard');
+}
+
 export async function removeProjectMemberAction(formData: FormData) {
   const userId = String(formData.get('user_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
 
   await sql`
     DELETE FROM project_members WHERE project_id = ${projectId} AND user_id = ${userId}
+  `;
+  revalidatePath(`/admin/projects/${projectId}/members`);
+}
+
+export async function updateProjectMemberRoleAction(formData: FormData) {
+  const userId = String(formData.get('user_id') ?? '');
+  const projectId = String(formData.get('project_id') ?? '');
+  const role = String(formData.get('role') ?? 'member');
+
+  if (!userId || !projectId || !['admin', 'member'].includes(role)) return;
+
+  await sql`
+    UPDATE project_members SET role = ${role} WHERE project_id = ${projectId} AND user_id = ${userId}
   `;
   revalidatePath(`/admin/projects/${projectId}/members`);
 }
@@ -352,6 +412,49 @@ export async function toggleUserActiveAction(formData: FormData) {
 
   await sql`UPDATE users SET is_active = ${nextState} WHERE id = ${userId}`;
   revalidatePath('/admin/users');
+}
+
+export async function bulkToggleUserActiveAction(formData: FormData) {
+  const userIds = String(formData.get('user_ids') ?? '').split(',').filter(Boolean);
+  const nextState = String(formData.get('next_state') ?? 'true') === 'true';
+
+  if (userIds.length === 0) return;
+
+  for (const userId of userIds) {
+    await sql`UPDATE users SET is_active = ${nextState} WHERE id = ${userId}`;
+  }
+  revalidatePath('/admin/users');
+}
+
+export async function bulkUpdateUserRoleAction(formData: FormData) {
+  const userIds = String(formData.get('user_ids') ?? '').split(',').filter(Boolean);
+  const role = String(formData.get('role') ?? 'member');
+
+  if (userIds.length === 0) return;
+
+  for (const userId of userIds) {
+    await sql`UPDATE users SET role = ${role} WHERE id = ${userId}`;
+  }
+  revalidatePath('/admin/users');
+}
+
+export async function bulkAssignToProjectAction(formData: FormData) {
+  const userIds = String(formData.get('user_ids') ?? '').split(',').filter(Boolean);
+  const projectId = String(formData.get('project_id') ?? '');
+
+  if (userIds.length === 0 || !projectId) return;
+
+  // Insert project members, ignoring conflicts
+  for (const userId of userIds) {
+    await sql`
+      INSERT INTO project_members (project_id, user_id)
+      VALUES (${projectId}, ${userId})
+      ON CONFLICT (project_id, user_id) DO NOTHING
+    `;
+  }
+  
+  revalidatePath('/admin/users');
+  revalidatePath(`/admin/projects/${projectId}/members`);
 }
 
 export async function approveRetakeRequestAction(formData: FormData) {

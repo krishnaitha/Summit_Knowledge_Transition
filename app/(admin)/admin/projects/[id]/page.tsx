@@ -1,25 +1,29 @@
 import Link from 'next/link';
-import { BarChart3, BookOpen, ChevronRight, FileText, MessageSquare, Users } from 'lucide-react';
+import { BookOpen, ChevronRight, FileText, Users } from 'lucide-react';
 
-import { approveRetakeRequestAction, rejectRetakeRequestAction } from '@/app/actions/admin';
+import { approveRetakeRequestAction, rejectRetakeRequestAction, sendProjectAnnouncementAction } from '@/app/actions/admin';
 import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
 import { RetakeRequestsCard } from '@/components/admin/retake-requests-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { requireAdmin } from '@/lib/auth';
-import { getProjectById, getProjectDocuments, getProjectMembers, getProjectQuizSets, getRetakeRequestsForProject } from '@/lib/data';
+import { SubmitButton } from '@/components/ui/submit-button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { requireProjectAdmin } from '@/lib/auth';
+import { getProjectAnnouncements, getProjectById, getProjectDocuments, getProjectMembers, getProjectQuizSets, getRetakeRequestsForProject } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
 export default async function AdminProjectDetailPage({ params }: { params: { id: string } }) {
-  const { userId } = await requireAdmin();
+  const { userId } = await requireProjectAdmin(params.id);
 
-  const [project, documents, members, sets, retakeRequests] = await Promise.all([
+  const [project, documents, members, sets, retakeRequests, announcements] = await Promise.all([
     getProjectById(params.id),
     getProjectDocuments(params.id),
     getProjectMembers(params.id),
     getProjectQuizSets(params.id),
     getRetakeRequestsForProject(params.id),
+    getProjectAnnouncements(params.id, 6),
   ]);
 
   const recentDocs = documents.slice(0, 5);
@@ -47,12 +51,6 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/admin/projects/${params.id}/chat`}>
-            <Button size="sm" variant="secondary">
-              <MessageSquare className="h-3.5 w-3.5" />
-              Chat
-            </Button>
-          </Link>
           <Link href={`/admin/projects/${params.id}/members`}>
             <Button size="sm" variant="secondary">
               <Users className="h-3.5 w-3.5" />
@@ -63,12 +61,6 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
             <Button size="sm" variant="secondary">
               <BookOpen className="h-3.5 w-3.5" />
               Quiz
-            </Button>
-          </Link>
-          <Link href={`/admin/projects/${params.id}/analytics`}>
-            <Button size="sm" variant="secondary">
-              <BarChart3 className="h-3.5 w-3.5" />
-              Analytics
             </Button>
           </Link>
         </div>
@@ -138,6 +130,43 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
                   No documents yet. Upload KT materials using the panel on the left.
                 </p>
               </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Send announcement</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form action={sendProjectAnnouncementAction} className="space-y-3">
+              <input name="project_id" type="hidden" value={params.id} />
+              <Input name="title" placeholder="Subject (e.g., Quiz deadline updated)" required maxLength={140} />
+              <Textarea name="message" placeholder="Message for all project members" required rows={5} maxLength={2000} />
+              <SubmitButton loadingText="Sending…">Send to all members</SubmitButton>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent announcements</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {announcements.length ? (
+              announcements.map((item) => (
+                <div key={item.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="text-sm font-semibold text-slate-900">{item.title}</p>
+                  <p className="mt-1 text-sm text-slate-600">{item.message}</p>
+                  <p className="mt-2 text-xs text-slate-400">
+                    {formatDate(item.created_at, true)}{item.sender_name ? ` · ${item.sender_name}` : ''}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500">No announcements sent yet.</p>
             )}
           </CardContent>
         </Card>

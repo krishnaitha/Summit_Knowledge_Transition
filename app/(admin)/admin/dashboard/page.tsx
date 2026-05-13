@@ -1,12 +1,15 @@
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Activity, CheckCircle2, FileText, MessageSquare, RefreshCw, Users } from 'lucide-react';
 
 import { ActivityFeed } from '@/components/admin/activity-feed';
 import { StatsCard } from '@/components/admin/stats-card';
 import { getAdminDashboardStats } from '@/lib/data';
+import { requireAdmin } from '@/lib/auth';
 import { formatPercent } from '@/lib/utils';
 
 export default async function AdminDashboardPage() {
+  await requireAdmin();
   const stats = await getAdminDashboardStats();
 
   return (

@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
 import sql from '@/lib/db';
+import { sendEmail } from '@/lib/email-sendgrid';
 
 export async function POST(request: Request) {
   try {
@@ -30,24 +31,17 @@ export async function POST(request: Request) {
       const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
       const resetLink = `${appUrl}/auth/reset-password?token=${token}`;
 
-      if (process.env.RESEND_API_KEY) {
-        const { Resend } = await import('resend');
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        const from = process.env.RESEND_FROM_EMAIL ?? 'notifications@summit.app';
-
-        await resend.emails.send({
-          from,
-          to: email,
-          subject: 'Reset your Summit KT Portal password',
-          html: `
-            <p>Hi,</p>
-            <p>We received a request to reset your password for Summit KT Portal.</p>
-            <p>Click the link below to set a new password. This link expires in 1 hour.</p>
-            <p><a href="${resetLink}">${resetLink}</a></p>
-            <p>If you didn't request this, you can safely ignore this email.</p>
-          `,
-        }).catch(() => { /* non-fatal */ });
-      }
+      await sendEmail(
+        email,
+        'Reset your Summit KT Portal password',
+        `
+          <p>Hi,</p>
+          <p>We received a request to reset your password for Summit KT Portal.</p>
+          <p>Click the link below to set a new password. This link expires in 1 hour.</p>
+          <p><a href="${resetLink}">${resetLink}</a></p>
+          <p>If you didn't request this, you can safely ignore this email.</p>
+        `,
+      );
     }
 
     return NextResponse.json({ success: true });

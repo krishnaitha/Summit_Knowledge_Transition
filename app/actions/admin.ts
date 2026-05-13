@@ -86,7 +86,7 @@ export async function inviteProjectMemberAction(formData: FormData) {
 
   // Check if user already exists
   const existing = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
-  let userId = existing[0]?.id as string | undefined;
+  const userId = existing[0]?.id as string | undefined;
 
   if (!userId) {
     // Create invite token and send email

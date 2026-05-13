@@ -1,14 +1,13 @@
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
-import type { ChatCompletion } from 'groq-sdk/resources/chat/completions';
 
-import { createQuizCompletion } from '@/lib/llm';
+import sql from '@/lib/db';
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
-import sql from '@/lib/db';
-import { sleep } from '@/lib/utils';
-import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
+import { createQuizCompletion } from '@/lib/llm';
 import { downloadFile } from '@/lib/storage/local';
+import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
+import { sleep } from '@/lib/utils';
 
 // ─── Quiz generation helpers ────────────────────────────────────────────────────
 
@@ -102,13 +101,19 @@ Question type rules:
 Return ONLY a JSON object. No markdown fences. No commentary outside the JSON.`;
 }
 
-function buildUserPrompt(context: string, category: Category, setIndex: number, totalSets: number): string {
+function buildUserPrompt(
+  context: string,
+  category: Category,
+  setIndex: number,
+  totalSets: number,
+): string {
   const label = category === 'functional' ? 'Functional' : 'Technical';
-  const topicHint = setIndex === 0
-    ? 'Cover the foundational concepts introduced early in the documents.'
-    : setIndex === totalSets - 1
-    ? 'Cover advanced, edge-case, and exception-handling aspects from the documents.'
-    : `Cover mid-level concepts from the documents. This is set ${setIndex + 1} of ${totalSets} — do NOT repeat topics or question patterns from the other sets.`;
+  const topicHint =
+    setIndex === 0
+      ? 'Cover the foundational concepts introduced early in the documents.'
+      : setIndex === totalSets - 1
+        ? 'Cover advanced, edge-case, and exception-handling aspects from the documents.'
+        : `Cover mid-level concepts from the documents. This is set ${setIndex + 1} of ${totalSets} — do NOT repeat topics or question patterns from the other sets.`;
 
   return `You are generating Set ${setIndex + 1} of ${totalSets} for a ${label} quiz.
 ${topicHint}
@@ -154,7 +159,11 @@ Generate 10 questions now.`;
 
 function parseQuestions(raw: string): RawQuestion[] {
   try {
-    const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    const cleaned = raw
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```\s*$/i, '')
+      .trim();
     const parsed = JSON.parse(cleaned);
     const list: RawQuestion[] = Array.isArray(parsed) ? parsed : (parsed.questions ?? []);
     return list
@@ -167,7 +176,8 @@ function parseQuestions(raw: string): RawQuestion[] {
       })
       .map((q) => ({
         ...q,
-        question_type: String(q.question_type ?? '').toLowerCase() === 'true_false' ? 'true_false' : 'mcq',
+        question_type:
+          String(q.question_type ?? '').toLowerCase() === 'true_false' ? 'true_false' : 'mcq',
         correct_option: String(q.correct_option).toUpperCase(),
       }));
   } catch {
@@ -214,7 +224,7 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   const existingSets = await sql`
     SELECT set_number FROM quiz_sets WHERE project_id = ${projectId} ORDER BY set_number DESC LIMIT 1
   `;
-  const startSetNumber = (Number(existingSets[0]?.set_number ?? 0)) + 1;
+  const startSetNumber = Number(existingSets[0]?.set_number ?? 0) + 1;
   const categoryLabel = category === 'functional' ? 'Functional' : 'Technical';
   const systemPrompt = buildSystemPrompt(category);
 
@@ -280,7 +290,9 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   }
 
   if (createdSets === 0) {
-    throw new Error('No sets were created. The AI may have returned unusable output — please try again.');
+    throw new Error(
+      'No sets were created. The AI may have returned unusable output — please try again.',
+    );
   }
 
   revalidatePath(`/admin/projects/${projectId}/quiz`);

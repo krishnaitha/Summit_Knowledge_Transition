@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { ChevronDown, Mail, Calendar, BarChart3, X } from 'lucide-react';
+import { BarChart3, Calendar, Mail, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import type { UserProfile, ActivityRecord } from '@/lib/types/database';
+import type { ActivityRecord, UserProfile } from '@/lib/types/database';
 import { formatDate } from '@/lib/utils';
 
 interface UserDetailDrawerProps {
@@ -29,13 +27,7 @@ export function UserDetailDrawer({
   projectCount,
   quizStats,
 }: UserDetailDrawerProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !isOpen || !user) return null;
+  if (!isOpen || !user) return null;
 
   const recentActivity = activity.filter((a) => a.user_id === user.id).slice(0, 8);
 
@@ -53,13 +45,13 @@ export function UserDetailDrawer({
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 z-50 h-screen w-full max-w-md overflow-y-auto bg-white shadow-xl transition-transform">
+      <div className="fixed top-0 right-0 z-50 h-screen w-full max-w-md overflow-y-auto bg-white shadow-xl transition-transform">
         {/* Header */}
-        <div className="sticky top-0 border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <h2 className="text-lg font-semibold text-slate-900">User Details</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-slate-400 transition-colors hover:text-slate-600"
             aria-label="Close drawer"
           >
             <X className="h-5 w-5" />
@@ -92,7 +84,9 @@ export function UserDetailDrawer({
                 <Calendar className="h-4 w-4 text-slate-600" />
               </div>
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Created</p>
+                <p className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                  Created
+                </p>
                 <p className="text-sm font-medium text-slate-900">{formatDate(user.created_at)}</p>
               </div>
             </div>
@@ -101,7 +95,9 @@ export function UserDetailDrawer({
                 <Calendar className="h-4 w-4 text-slate-600" />
               </div>
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Last Login</p>
+                <p className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                  Last Login
+                </p>
                 <p className="text-sm font-medium text-slate-900">
                   {user.last_login_at ? formatDate(user.last_login_at) : 'Never'}
                 </p>
@@ -111,27 +107,27 @@ export function UserDetailDrawer({
 
           {/* Activity Stats */}
           <div className="space-y-3 border-t border-slate-100 pt-4">
-            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
               <BarChart3 className="h-4 w-4" />
               Activity Stats
             </h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-slate-50 p-3">
-                <p className="text-xs text-slate-500 uppercase tracking-wide">Projects</p>
+                <p className="text-xs tracking-wide text-slate-500 uppercase">Projects</p>
                 <p className="text-xl font-semibold text-slate-900">{projectCount}</p>
               </div>
               <div className="rounded-lg bg-slate-50 p-3">
-                <p className="text-xs text-slate-500 uppercase tracking-wide">Activities</p>
+                <p className="text-xs tracking-wide text-slate-500 uppercase">Activities</p>
                 <p className="text-xl font-semibold text-slate-900">{activity.length}</p>
               </div>
               {quizStats && (
                 <>
                   <div className="rounded-lg bg-green-50 p-3">
-                    <p className="text-xs text-green-600 uppercase tracking-wide">Completed</p>
+                    <p className="text-xs tracking-wide text-green-600 uppercase">Completed</p>
                     <p className="text-xl font-semibold text-green-900">{quizStats.completed}</p>
                   </div>
                   <div className="rounded-lg bg-amber-50 p-3">
-                    <p className="text-xs text-amber-600 uppercase tracking-wide">In Progress</p>
+                    <p className="text-xs tracking-wide text-amber-600 uppercase">In Progress</p>
                     <p className="text-xl font-semibold text-amber-900">{quizStats.inProgress}</p>
                   </div>
                 </>
@@ -145,10 +141,7 @@ export function UserDetailDrawer({
               <h3 className="text-sm font-semibold text-slate-900">Recent Activity</h3>
               <div className="space-y-2">
                 {recentActivity.map((act) => (
-                  <div
-                    key={act.id}
-                    className="rounded-lg bg-slate-50 p-3 text-sm"
-                  >
+                  <div key={act.id} className="rounded-lg bg-slate-50 p-3 text-sm">
                     <p className="font-medium text-slate-900 capitalize">
                       {act.action.replace(/_/g, ' ')}
                     </p>

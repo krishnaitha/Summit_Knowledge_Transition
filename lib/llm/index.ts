@@ -1,5 +1,10 @@
 import 'server-only';
 
+import type {
+  CompletionCreateParams,
+  ChatCompletion as GroqChatCompletion,
+} from 'groq-sdk/resources/chat/completions';
+
 import { appEnv, isLlmConfigured } from '@/lib/env';
 import {
   createGroqChatCompletion as groqCreate,
@@ -60,14 +65,14 @@ export async function createChatCompletion(
     top_p: args.top_p,
   };
 
-  const groqResponse = (await groqCreate(groqArgs, onStatus)) as any;
+  const groqResponse = (await groqCreate(groqArgs, onStatus)) as GroqChatCompletion;
 
   // Normalize response to unified format
   return {
-    choices: groqResponse.choices.map((choice: any) => ({
+    choices: groqResponse.choices.map((choice) => ({
       message: {
-        content: choice.message?.content || '',
-        role: choice.message?.role || 'assistant',
+        content: choice.message.content ?? '',
+        role: choice.message.role,
       },
       finish_reason: choice.finish_reason,
     })),
@@ -84,7 +89,11 @@ export async function createQuizCompletion(args: {
   temperature?: number;
   max_tokens?: number;
   top_p?: number;
-  response_format?: { type: 'json_object' };
+  response_format?:
+    | CompletionCreateParams.ResponseFormatText
+    | CompletionCreateParams.ResponseFormatJsonSchema
+    | CompletionCreateParams.ResponseFormatJsonObject
+    | null;
 }): Promise<UnifiedChatCompletion> {
   if (!isLlmConfigured()) {
     const provider = appEnv.llmProvider;
@@ -95,19 +104,23 @@ export async function createQuizCompletion(args: {
 
   if (appEnv.llmProvider === 'copilot') {
     // Copilot proxy - use regular completion for quiz generation
-    const { response_format: _rf, ...copilotArgs } = args;
-    return await createCopilotChatCompletion(copilotArgs);
+    return await createCopilotChatCompletion({
+      messages: args.messages,
+      temperature: args.temperature,
+      max_tokens: args.max_tokens,
+      top_p: args.top_p,
+    });
   }
 
   // Default to Groq - use quiz-optimized client
-  const groqResponse = (await groqQuizCreate(args)) as any;
+  const groqResponse = (await groqQuizCreate(args)) as GroqChatCompletion;
 
   // Normalize response to unified format
   return {
-    choices: groqResponse.choices.map((choice: any) => ({
+    choices: groqResponse.choices.map((choice) => ({
       message: {
-        content: choice.message?.content || '',
-        role: choice.message?.role || 'assistant',
+        content: choice.message.content ?? '',
+        role: choice.message.role,
       },
       finish_reason: choice.finish_reason,
     })),

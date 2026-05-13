@@ -1,7 +1,7 @@
 'use client';
 
-import { useTransition } from 'react';
 import { Check, RefreshCw, X } from 'lucide-react';
+import { useTransition } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -73,12 +73,8 @@ function RequestRow({
             <Badge variant="danger">Rejected</Badge>
           )}
         </div>
-        <p className="text-xs text-slate-500">
-          Requested {formatDate(req.created_at as string)}
-        </p>
-        {req.reason && (
-          <p className="text-xs text-slate-600 italic">"{req.reason}"</p>
-        )}
+        <p className="text-xs text-slate-500">Requested {formatDate(req.created_at as string)}</p>
+        {req.reason && <p className="text-xs text-slate-600 italic">&quot;{req.reason}&quot;</p>}
       </div>
 
       {req.status === 'pending' && (
@@ -157,7 +153,9 @@ export function RetakeRequestsCard({
             {resolved.length > 0 && (
               <div className="space-y-2">
                 {pending.length > 0 && (
-                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400 pt-2">Resolved</p>
+                  <p className="pt-2 text-xs font-medium tracking-wider text-slate-400 uppercase">
+                    Resolved
+                  </p>
                 )}
                 {resolved.map((req) => (
                   <RequestRow

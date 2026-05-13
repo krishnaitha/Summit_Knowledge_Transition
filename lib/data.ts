@@ -146,14 +146,16 @@ export async function getProjectAnnouncements(projectId: string, limit = 5) {
 }
 
 export async function getProjectMembers(projectId: string) {
-  const rows = await sql<Array<any>>`
+  const rows = await sql`
     SELECT pm.assigned_at, pm.role as project_role, u.*
     FROM project_members pm
     JOIN users u ON u.id = pm.user_id
     WHERE pm.project_id = ${projectId}
     ORDER BY pm.assigned_at ASC
   `;
-  return rows as Array<UserProfile & { assigned_at: string; project_role: 'admin' | 'member' }>;
+  return rows as unknown as Array<
+    UserProfile & { assigned_at: string; project_role: 'admin' | 'member' }
+  >;
 }
 
 export async function getQuizAttemptForProject(userId: string, projectId: string) {

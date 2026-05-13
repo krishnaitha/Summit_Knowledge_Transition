@@ -9,7 +9,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./postgres/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
-      - ./postgres/migrations/credentials_auth.sql:/docker-entrypoint-initdb.d/02_credentials_auth.sql:ro
+      - ./postgres/migrations/add_password_reset_tokens.sql:/docker-entrypoint-initdb.d/02_add_password_reset_tokens.sql:ro
       - ./postgres/migrations/add_quiz_retake_requests.sql:/docker-entrypoint-initdb.d/03_add_quiz_retake_requests.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d summitkt"]

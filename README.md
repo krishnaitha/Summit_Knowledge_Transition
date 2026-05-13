@@ -31,7 +31,7 @@ Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admi
 
 | Layer           | Technology                                                                             |
 | --------------- | -------------------------------------------------------------------------------------- |
-| Framework       | Next.js 14 App Router + TypeScript                                                     |
+| Framework       | Next.js 16 App Router + TypeScript                                                     |
 | Database        | PostgreSQL 13+ with `pgvector` + `pgcrypto`                                            |
 | Auth            | NextAuth.js v4 — email/password (bcrypt), JWT sessions, httpOnly cookies               |
 | Storage         | Local filesystem (`public/uploads/`) or Cloudflare R2 (S3-compatible)                  |
@@ -201,6 +201,88 @@ See [docs/WORKER_SETUP.md](docs/WORKER_SETUP.md) for production deployment optio
 | `npm run worker`    | Start background job worker           |
 | `npm run lint`      | ESLint                                |
 | `npm run typecheck` | TypeScript type check                 |
+
+---
+
+## Docker Setup
+
+The quickest way to run the full stack (PostgreSQL + pgvector, Next.js app, background worker) locally is with Docker Compose.
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine + Compose plugin)
+
+### 1. Create `.env.local`
+
+The compose file reads secrets from `.env.local`. At minimum you need:
+
+```env
+# NextAuth
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=replace-with-openssl-rand-base64-32
+
+# AI provider (choose one)
+GROQ_API_KEY=gsk_...
+# LLM_PROVIDER=copilot
+# COPILOT_PROXY_TOKEN=...
+# COPILOT_BASE_URL=https://models.github.ai/inference/chat/completions
+# COPILOT_MODEL=openai/gpt-4.1-mini
+
+# Storage
+STORAGE_PROVIDER=local
+
+# Worker auth
+WORKER_SECRET=replace-with-a-random-string
+
+# Public
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_NAME=Summit KT Portal
+```
+
+> `DATABASE_URL` and `DATABASE_SSL` are injected by the compose file — do **not** add them to `.env.local`.
+
+### 2. Build and start
+
+```bash
+docker compose up --build
+```
+
+This starts three services:
+
+| Service  | Description                                                 | Port       |
+| -------- | ----------------------------------------------------------- | ---------- |
+| `db`     | PostgreSQL 17 + pgvector — schema auto-applied on first run | (internal) |
+| `app`    | Next.js 16 production server                                | `3000`     |
+| `worker` | Background job processor (document embedding + quiz gen)    | (internal) |
+
+The `db` service mounts the following SQL files into `docker-entrypoint-initdb.d/` (runs once on first volume creation):
+
+| Order | File                                                | Contents                                      |
+| ----- | --------------------------------------------------- | --------------------------------------------- |
+| 01    | `postgres/schema.sql`                               | Full base schema (tables, indexes, functions) |
+| 02    | `postgres/migrations/add_password_reset_tokens.sql` | Password-reset flow table                     |
+| 03    | `postgres/migrations/add_quiz_retake_requests.sql`  | Quiz retake requests table                    |
+
+### 3. Create the first admin user
+
+Once the app is running, register an account at [http://localhost:3000/register](http://localhost:3000/register), then promote it to admin:
+
+```bash
+docker compose exec db psql -U postgres -d summitkt -c \
+  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com';"
+```
+
+### 4. Stopping and resetting
+
+```bash
+# Stop without removing data
+docker compose down
+
+# Stop and wipe all data (DB volume + uploads)
+docker compose down -v
+```
+
+> **Note:** The `docker-entrypoint-initdb.d/` scripts only run when the DB volume is first created. To re-apply migrations after a schema change, run `docker compose down -v` first.
 
 ---
 

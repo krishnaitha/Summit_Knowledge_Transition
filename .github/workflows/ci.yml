@@ -1,0 +1,107 @@
+# CI — Lint, Type Check, Tests, Build
+#
+# Triggers on PRs targeting `main` or `dev`, and supports manual dispatch.
+#
+# To make these checks MANDATORY before merging:
+#   GitHub repo → Settings → Branches → Add branch protection rule
+#   → "Require status checks to pass before merging"
+#   → Add: "Lint", "Type Check", "Tests", "Build"
+#
+# Required repository secret for the Build job:
+#   NEXTAUTH_SECRET  — any random string (e.g. openssl rand -hex 32)
+
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npm run typecheck
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npx vitest run
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          # next-auth requires a secret at build time
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          # DATABASE_URL is accessed at runtime only; omit to skip DB at build
+          DATABASE_URL: ''

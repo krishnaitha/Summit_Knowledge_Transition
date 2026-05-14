@@ -10,7 +10,8 @@
     "format": "prettier --write app components lib worker",
     "typecheck": "tsc --noEmit",
     "worker": "node worker/index.mjs",
-    "test": "vitest"
+    "test": "vitest",
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",
@@ -51,7 +52,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^16.4.0",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
@@ -59,5 +62,14 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.6"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
   }
 }

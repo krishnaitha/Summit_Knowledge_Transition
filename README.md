@@ -8,39 +8,39 @@ Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admi
 
 ## Feature Highlights
 
-| Feature | Description |
-|---|---|
-| **Multi-project workspace** | Unlimited projects, each with their own docs, members, quizzes and analytics |
-| **Project-level admin role** | Promote members to project admin — they manage their project without super-admin access |
-| **RAG AI chat** | Members ask questions; answers are grounded strictly in the uploaded KT documents |
-| **AI quiz generation** | Groq LLM generates scenario-based MCQ + true/false sets from document chunks |
-| **Quiz windows** | Enforce open/close dates per project; quiz auto-submits on window close |
-| **Anti-cheat guard** | Tab-switch detection with configurable threshold; quiz auto-submits on violation |
-| **Quiz retake requests** | Members submit a request; admins approve/reject with one click |
-| **AI coaching plans** | Post-quiz coaching report generated per attempt, highlighting weak areas |
-| **AI answer bookmarks** | Members save AI answers for later reference |
-| **Admin announcements** | Project-scoped announcements shown on the member dashboard |
-| **Document governance** | PII detection, document classification (public/internal/confidential), required-doc gating |
-| **Background worker** | Async document processing and quiz generation — no HTTP timeouts |
-| **Email flows** | Invite links, password reset, quiz window notifications via SendGrid |
-| **CSV export** | Export user data from the admin Users table |
+| Feature                      | Description                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------ |
+| **Multi-project workspace**  | Unlimited projects, each with their own docs, members, quizzes and analytics               |
+| **Project-level admin role** | Promote members to project admin — they manage their project without super-admin access    |
+| **RAG AI chat**              | Members ask questions; answers are grounded strictly in the uploaded KT documents          |
+| **AI quiz generation**       | Groq LLM generates scenario-based MCQ + true/false sets from document chunks               |
+| **Quiz windows**             | Enforce open/close dates per project; quiz auto-submits on window close                    |
+| **Anti-cheat guard**         | Tab-switch detection with configurable threshold; quiz auto-submits on violation           |
+| **Quiz retake requests**     | Members submit a request; admins approve/reject with one click                             |
+| **AI coaching plans**        | Post-quiz coaching report generated per attempt, highlighting weak areas                   |
+| **AI answer bookmarks**      | Members save AI answers for later reference                                                |
+| **Admin announcements**      | Project-scoped announcements shown on the member dashboard                                 |
+| **Document governance**      | PII detection, document classification (public/internal/confidential), required-doc gating |
+| **Background worker**        | Async document processing and quiz generation — no HTTP timeouts                           |
+| **Email flows**              | Invite links, password reset, quiz window notifications via SendGrid                       |
+| **CSV export**               | Export user data from the admin Users table                                                |
 
 ---
 
 ## Technology Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 App Router + TypeScript |
-| Database | PostgreSQL 13+ with `pgvector` + `pgcrypto` |
-| Auth | NextAuth.js v4 — email/password (bcrypt), JWT sessions, httpOnly cookies |
-| Storage | Local filesystem (`public/uploads/`) or Cloudflare R2 (S3-compatible) |
-| AI Chat | Groq `llama-3.3-70b-versatile` (default) or GitHub Models (`LLM_PROVIDER=copilot`) |
-| AI Quiz Gen | Groq `llama-3.1-8b-instant` (default) or GitHub Models |
-| Embeddings | `@xenova/transformers` · `Xenova/all-MiniLM-L6-v2` · 384-dim · runs locally in Node.js |
-| Email | SendGrid (via `@sendgrid/mail`) |
-| Styling | Tailwind CSS v3 |
-| Background Jobs | Standalone Node.js worker (`worker/index.mjs`) |
+| Layer           | Technology                                                                             |
+| --------------- | -------------------------------------------------------------------------------------- |
+| Framework       | Next.js 14 App Router + TypeScript                                                     |
+| Database        | PostgreSQL 13+ with `pgvector` + `pgcrypto`                                            |
+| Auth            | NextAuth.js v4 — email/password (bcrypt), JWT sessions, httpOnly cookies               |
+| Storage         | Local filesystem (`public/uploads/`) or Cloudflare R2 (S3-compatible)                  |
+| AI Chat         | Groq `llama-3.3-70b-versatile` (default) or GitHub Models (`LLM_PROVIDER=copilot`)     |
+| AI Quiz Gen     | Groq `llama-3.1-8b-instant` (default) or GitHub Models                                 |
+| Embeddings      | `@xenova/transformers` · `Xenova/all-MiniLM-L6-v2` · 384-dim · runs locally in Node.js |
+| Email           | SendGrid (via `@sendgrid/mail`)                                                        |
+| Styling         | Tailwind CSS v3                                                                        |
+| Background Jobs | Standalone Node.js worker (`worker/index.mjs`)                                         |
 
 ---
 
@@ -49,10 +49,10 @@ Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admi
 ### 1. Prerequisites
 
 | Requirement | Minimum version |
-|---|---|
-| Node.js | 18.x LTS |
-| PostgreSQL | 13+ |
-| npm | 9+ |
+| ----------- | --------------- |
+| Node.js     | 18.x LTS        |
+| PostgreSQL  | 13+             |
+| npm         | 9+              |
 
 ### 2. Install dependencies
 
@@ -103,6 +103,16 @@ DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/Summit_KT
 NEXTAUTH_URL=http://localhost:3000
 # Generate with: openssl rand -base64 32
 NEXTAUTH_SECRET=your-secret-here
+
+# ── Auth provider ─────────────────────────────────────────────────────────────
+# 'credentials' (default) — email + password, self-registration, invite flow, password reset
+# 'cognito'               — AWS Cognito SSO / OIDC; users auto-provisioned on first login
+AUTH_PROVIDER=credentials
+
+# AWS Cognito — required only when AUTH_PROVIDER=cognito
+# COGNITO_CLIENT_ID=your-cognito-app-client-id
+# COGNITO_CLIENT_SECRET=your-cognito-app-client-secret
+# COGNITO_ISSUER=https://cognito-idp.<region>.amazonaws.com/<user-pool-id>
 
 # ── AI Provider (choose one) ──────────────────────────────────────────────────
 # Option A: Groq (default) — https://console.groq.com
@@ -172,6 +182,7 @@ INTERNAL_APP_URL=http://localhost:3000 WORKER_SECRET=your-secret npm run worker
 ```
 
 Expected output:
+
 ```
 [worker] Started — polling http://localhost:3000/api/jobs/worker every 1000ms
 ```
@@ -182,14 +193,14 @@ See [docs/WORKER_SETUP.md](docs/WORKER_SETUP.md) for production deployment optio
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start Next.js dev server (hot reload) |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run worker` | Start background job worker |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript type check |
+| Command             | Description                           |
+| ------------------- | ------------------------------------- |
+| `npm run dev`       | Start Next.js dev server (hot reload) |
+| `npm run build`     | Production build                      |
+| `npm run start`     | Start production server               |
+| `npm run worker`    | Start background job worker           |
+| `npm run lint`      | ESLint                                |
+| `npm run typecheck` | TypeScript type check                 |
 
 ---
 
@@ -276,11 +287,11 @@ summit-kt-portal/
 
 ## Roles and Access Control
 
-| Role | Access |
-|---|---|
-| **Super Admin** | Full access to all pages: global dashboard, all projects, all users, analytics, user management |
+| Role              | Access                                                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Super Admin**   | Full access to all pages: global dashboard, all projects, all users, analytics, user management                  |
 | **Project Admin** | Access to their assigned project's admin pages only: documents, members, quiz. No global dashboard or Users page |
-| **Member** | Access to assigned projects only: chat, quiz, documents, bookmarks |
+| **Member**        | Access to assigned projects only: chat, quiz, documents, bookmarks                                               |
 
 Project admin access is stored per-row in `project_members.role`. A member can be admin of one project and a regular member of another.
 
@@ -290,13 +301,22 @@ Project admin access is stored per-row in `project_members.role`. A member can b
 
 ### Authentication & Sessions
 
-Users authenticate with email + bcrypt password. Sessions are JWT-based via NextAuth.js stored in an `httpOnly` cookie. Three invitation flows exist:
+The active auth strategy is controlled by the `AUTH_PROVIDER` environment variable (defaults to `credentials`).
+
+| `AUTH_PROVIDER` | Strategy                | User provisioning               |
+| --------------- | ----------------------- | ------------------------------- |
+| `credentials`   | Email + bcrypt password | Self-register or admin invite   |
+| `cognito`       | AWS Cognito SSO / OIDC  | Auto-provisioned on first login |
+
+Sessions are JWT-based via NextAuth.js stored in an `httpOnly` cookie. With `credentials`, three flows exist:
 
 1. **Admin invite** — admin sends a token link; recipient sets a password on first visit
 2. **Self-register** — anyone can register at `/register`; accounts are `member` role by default
 3. **Password reset** — SendGrid email with a time-limited token link
 
-The `is_active` flag controls login access. Admins can lock/unlock accounts from the Users table.
+When `AUTH_PROVIDER=cognito`, the `/register`, `/forgot-password`, invite, and reset API routes return `404` — Cognito manages the full identity lifecycle. The login page auto-redirects to the Cognito hosted UI.
+
+The `is_active` flag controls login access regardless of provider. Admins can lock/unlock accounts from the Users table.
 
 ### Document Processing Pipeline
 
@@ -343,14 +363,14 @@ The worker polls `POST /api/jobs/worker` every second. Jobs are claimed with `FO
 
 ## Documentation
 
-| Document | Description |
-|---|---|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Full system architecture, data model, sequence diagrams, API surface, security model |
-| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | Step-by-step guides for super admins, project admins, and members |
-| [docs/WORKER_SETUP.md](docs/WORKER_SETUP.md) | Background worker setup for dev and production (PM2, systemd) |
-| [docs/LLM_PROVIDER_SETUP.md](docs/LLM_PROVIDER_SETUP.md) | Configuring Groq and GitHub Models, troubleshooting |
-| [docs/LOCAL_STORAGE.md](docs/LOCAL_STORAGE.md) | Local filesystem storage configuration |
-| [docs/SELF_HOSTED_DEPLOYMENT.md](docs/SELF_HOSTED_DEPLOYMENT.md) | Full self-hosted production deployment guide |
+| Document                                                         | Description                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)                     | Full system architecture, data model, sequence diagrams, API surface, security model |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md)                         | Step-by-step guides for super admins, project admins, and members                    |
+| [docs/WORKER_SETUP.md](docs/WORKER_SETUP.md)                     | Background worker setup for dev and production (PM2, systemd)                        |
+| [docs/LLM_PROVIDER_SETUP.md](docs/LLM_PROVIDER_SETUP.md)         | Configuring Groq and GitHub Models, troubleshooting                                  |
+| [docs/LOCAL_STORAGE.md](docs/LOCAL_STORAGE.md)                   | Local filesystem storage configuration                                               |
+| [docs/SELF_HOSTED_DEPLOYMENT.md](docs/SELF_HOSTED_DEPLOYMENT.md) | Full self-hosted production deployment guide                                         |
 
 ---
 
@@ -363,4 +383,3 @@ The worker polls `POST /api/jobs/worker` every second. Jobs are claimed with `FO
 - Rate limiting is applied to auth endpoints
 - SSRF prevention on external URL inputs
 - PII detection runs on every uploaded document before embedding
-

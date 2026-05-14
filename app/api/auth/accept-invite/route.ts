@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
 
-import sql from '@/lib/db';
+import { requireCredentialsProvider } from "@/lib/auth/guard";
+import sql from "@/lib/db";
 
 export async function POST(request: Request) {
+  const guard = requireCredentialsProvider();
+  if (guard) return guard;
+
   try {
     const body = (await request.json()) as {
       token: string;
@@ -14,7 +18,7 @@ export async function POST(request: Request) {
     const { token, fullName, password } = body;
 
     if (!token || !fullName?.trim() || !password || password.length < 8) {
-      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
     // Look up and claim the token atomically
@@ -25,10 +29,17 @@ export async function POST(request: Request) {
     `;
 
     if (!rows.length) {
-      return NextResponse.json({ error: 'Invalid or expired invitation link.' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or expired invitation link." },
+        { status: 400 },
+      );
     }
 
-    const { email, role, project_id: projectId } = rows[0] as {
+    const {
+      email,
+      role,
+      project_id: projectId,
+    } = rows[0] as {
       email: string;
       role: string;
       project_id: string | null;
@@ -62,7 +73,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to accept invite' },
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to accept invite",
+      },
       { status: 500 },
     );
   }

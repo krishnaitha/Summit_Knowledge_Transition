@@ -1,14 +1,15 @@
-export type UserRole = 'admin' | 'member';
-export type ProjectMemberRole = 'admin' | 'member';
-export type MessageRole = 'user' | 'assistant';
-export type QuizAttemptStatus = 'in_progress' | 'submitted';
-export type QuizOptionKey = 'A' | 'B' | 'C' | 'D';
+export type UserRole = "admin" | "member";
+export type ProjectMemberRole = "admin" | "member";
+export type MessageRole = "user" | "assistant";
+export type QuizAttemptStatus = "in_progress" | "submitted";
+export type QuizOptionKey = "A" | "B" | "C" | "D";
 
 export interface UserProfile {
   id: string;
   email: string;
   full_name: string | null;
   role: UserRole;
+  auth_provider?: string;
   created_at: string;
   last_login_at: string | null;
   is_active?: boolean | null;
@@ -50,7 +51,7 @@ export interface DocumentRecord {
   uploaded_at: string;
   chunk_count: number;
   pii_detections: number;
-  classification: 'confidential' | 'internal' | 'public';
+  classification: "confidential" | "internal" | "public";
   is_required: boolean;
   scan_flags: string[];
 }
@@ -60,8 +61,17 @@ export interface QuizCoachingPlanRecord {
   attempt_id: string;
   user_id: string;
   project_id: string;
-  weak_sections: Array<{ section: string; score: number; total: number; percentage: number }>;
-  recommendations: Array<{ section: string; focus: string; documents: Array<{ id: string; name: string }> }>;
+  weak_sections: Array<{
+    section: string;
+    score: number;
+    total: number;
+    percentage: number;
+  }>;
+  recommendations: Array<{
+    section: string;
+    focus: string;
+    documents: Array<{ id: string; name: string }>;
+  }>;
   created_at: string;
 }
 
@@ -70,7 +80,7 @@ export interface ChatAnswerFeedbackRecord {
   user_id: string;
   project_id: string;
   message_id: string;
-  rating: 'up' | 'down';
+  rating: "up" | "down";
   reason_tag: string | null;
   comment: string | null;
   created_at: string;
@@ -100,7 +110,12 @@ export interface ChatMessageRecord {
   session_id: string;
   role: MessageRole;
   content: string;
-  sources: Array<{ documentId?: string; documentName: string; chunkId?: string; similarity?: number }> | null;
+  sources: Array<{
+    documentId?: string;
+    documentName: string;
+    chunkId?: string;
+    similarity?: number;
+  }> | null;
   created_at: string;
 }
 
@@ -114,7 +129,7 @@ export interface QuizSetRecord {
   category: string;
 }
 
-export type QuizQuestionType = 'mcq' | 'true_false';
+export type QuizQuestionType = "mcq" | "true_false";
 
 export interface QuizQuestionRecord {
   id: string;
@@ -177,8 +192,8 @@ export interface ChatBookmarkRecord {
   created_at: string;
 }
 
-export type ProcessingJobType = 'document_process' | 'quiz_generate';
-export type ProcessingJobStatus = 'pending' | 'running' | 'done' | 'failed';
+export type ProcessingJobType = "document_process" | "quiz_generate";
+export type ProcessingJobStatus = "pending" | "running" | "done" | "failed";
 
 export interface ProcessingJobRecord {
   id: string;
@@ -205,7 +220,7 @@ export interface ProjectDashboardCard extends ProjectRecord {
   documentCount: number;
   docsViewedCount: number;
   isNewDocs: boolean;
-  quizStatus: 'Not Started' | 'In Progress' | 'Completed';
+  quizStatus: "Not Started" | "In Progress" | "Completed";
   quizScoreLabel: string | null;
   quizPercentage: number | null;
   quizPassed: boolean | null;

@@ -1,5 +1,13 @@
 import Link from 'next/link';
-import { FileText, MessageSquare, BookOpen, ArrowRight, Clock, Sparkles, Files } from 'lucide-react';
+import {
+  FileText,
+  MessageSquare,
+  BookOpen,
+  ArrowRight,
+  Clock,
+  Sparkles,
+  Files,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,7 +20,11 @@ function daysUntil(dateStr: string): number {
 
 export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
   const statusVariant =
-    project.quizStatus === 'Completed' ? 'success' : project.quizStatus === 'In Progress' ? 'warning' : 'neutral';
+    project.quizStatus === 'Completed'
+      ? 'success'
+      : project.quizStatus === 'In Progress'
+        ? 'warning'
+        : 'neutral';
 
   // Deadline badge
   let deadlineBadge: React.ReactNode = null;
@@ -28,7 +40,9 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
             : 'bg-slate-100 text-slate-600';
     const deadlineLabel = days < 0 ? 'Overdue' : days === 0 ? 'Due today' : `${days}d left`;
     deadlineBadge = (
-      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${deadlineClass}`}>
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${deadlineClass}`}
+      >
         <Clock className="h-3 w-3" />
         {deadlineLabel}
       </span>
@@ -67,7 +81,9 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
             <div className="mb-2 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 shrink-0 text-slate-400" />
-                <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Docs reviewed</p>
+                <p className="text-[11px] font-medium tracking-wider text-slate-400 uppercase">
+                  Docs reviewed
+                </p>
               </div>
               <p className="text-xs font-semibold text-slate-700">
                 {project.docsViewedCount}/{project.documentCount}
@@ -77,7 +93,9 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
                 <div
                   className="h-full rounded-full bg-blue-500 transition-all"
-                  style={{ width: `${Math.min(100, Math.round((project.docsViewedCount / project.documentCount) * 100))}%` }}
+                  style={{
+                    width: `${Math.min(100, Math.round((project.docsViewedCount / project.documentCount) * 100))}%`,
+                  }}
                 />
               </div>
             )}
@@ -88,14 +106,20 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
             <div className="mb-2 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4 shrink-0 text-slate-400" />
-                <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Quiz</p>
+                <p className="text-[11px] font-medium tracking-wider text-slate-400 uppercase">
+                  Quiz
+                </p>
               </div>
               {project.quizPercentage != null ? (
-                <p className={`text-xs font-semibold ${project.quizPassed ? 'text-emerald-600' : 'text-red-600'}`}>
+                <p
+                  className={`text-xs font-semibold ${project.quizPassed ? 'text-emerald-600' : 'text-red-600'}`}
+                >
                   {Math.round(project.quizPercentage)}% · {project.quizPassed ? 'Passed' : 'Failed'}
                 </p>
               ) : (
-                <p className="text-xs font-semibold text-slate-500">{project.quizScoreLabel ?? '—'}</p>
+                <p className="text-xs font-semibold text-slate-500">
+                  {project.quizScoreLabel ?? '—'}
+                </p>
               )}
             </div>
             {project.quizPercentage != null && (

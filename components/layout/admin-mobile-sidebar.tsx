@@ -1,13 +1,23 @@
 'use client';
 
-import { FolderKanban, LayoutDashboard, Users } from 'lucide-react';
+import { BellRing, FolderKanban, LayoutDashboard, Search, Users } from 'lucide-react';
 
 import { MobileSidebar } from './mobile-sidebar';
 
-export function AdminMobileSidebar({ isSuperAdmin = true }: { isSuperAdmin?: boolean }) {
+export function AdminMobileSidebar({
+  isSuperAdmin = true,
+  openThreadCount = 0,
+}: {
+  isSuperAdmin?: boolean;
+  openThreadCount?: number;
+}) {
   const items = [
-    ...(isSuperAdmin ? [{ href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard }] : []),
+    ...(isSuperAdmin
+      ? [{ href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
+      : []),
     { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+    { href: '/admin/search', label: 'Search Docs', icon: Search },
+    { href: '/admin/threads', label: 'Threads', icon: BellRing, badge: openThreadCount },
     ...(isSuperAdmin ? [{ href: '/admin/users', label: 'Users', icon: Users }] : []),
   ];
 

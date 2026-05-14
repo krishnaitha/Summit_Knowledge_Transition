@@ -38,7 +38,10 @@ export async function updateProjectSettingsAction(formData: FormData) {
 
   if (!projectId || !name) return;
 
-  const passThreshold = Math.min(100, Math.max(0, Number.isFinite(passThresholdRaw) ? passThresholdRaw : 60));
+  const passThreshold = Math.min(
+    100,
+    Math.max(0, Number.isFinite(passThresholdRaw) ? passThresholdRaw : 60),
+  );
 
   await sql`
     UPDATE projects
@@ -225,7 +228,7 @@ export async function updateProjectMemberRoleAction(formData: FormData) {
   revalidateTag(`project-members:${projectId}`, 'max');
 }
 
-const MAX_QUIZ_RESETS = 2;
+const MAX_QUIZ_RESETS = 5;
 
 export async function resetQuizAttemptAction(formData: FormData) {
   const attemptId = String(formData.get('attempt_id') ?? '');
@@ -244,13 +247,62 @@ export async function resetQuizAttemptAction(formData: FormData) {
     ? (JSON.parse(sectionsJson) as string[])
     : null;
 
-  if (sectionsToReset && sectionsToReset.length > 0) {
-    const attemptRows = await sql`
-      SELECT assigned_questions, answers_given, quiz_set_id
-      FROM quiz_attempts WHERE id = ${attemptId} LIMIT 1
-    `;
-    const attempt = attemptRows[0];
+  const attemptRows = await sql<
+    {
+      id: string;
+      user_id: string;
+      project_id: string;
+      quiz_set_id: string;
+      assigned_questions: AssignedQuestion[];
+      answers_given: Record<string, QuizOptionKey> | null;
+      score: number | null;
+      total_marks: number | null;
+      percentage: number | null;
+      passed: boolean | null;
+      submitted_at: string | null;
+      status: 'in_progress' | 'submitted';
+    }[]
+  >`
+    SELECT id, user_id, project_id, quiz_set_id, assigned_questions, answers_given,
+           score, total_marks, percentage, passed, submitted_at, status
+    FROM quiz_attempts
+    WHERE id = ${attemptId}
+    LIMIT 1
+  `;
+  const attempt = attemptRows[0];
 
+  if (attempt && attempt.status === 'submitted') {
+    await sql`
+      INSERT INTO quiz_attempt_history (
+        original_attempt_id,
+        user_id,
+        project_id,
+        quiz_set_id,
+        score,
+        total_marks,
+        percentage,
+        passed,
+        submitted_at,
+        reset_by,
+        reset_reason
+      )
+      VALUES (
+        ${attempt.id},
+        ${attempt.user_id},
+        ${attempt.project_id},
+        ${attempt.quiz_set_id},
+        ${attempt.score},
+        ${attempt.total_marks},
+        ${attempt.percentage},
+        ${attempt.passed},
+        ${attempt.submitted_at},
+        ${resetBy},
+        ${reason}
+      )
+    `;
+  }
+
+  if (sectionsToReset && sectionsToReset.length > 0) {
     if (attempt) {
       const assignedQs = (attempt.assigned_questions ?? []) as AssignedQuestion[];
       const answersGiven = (attempt.answers_given ?? {}) as Record<string, QuizOptionKey>;

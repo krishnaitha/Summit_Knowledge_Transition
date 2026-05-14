@@ -126,9 +126,61 @@ create table if not exists document_chunks (
   document_id uuid        not null references documents(id) on delete cascade,
   project_id  uuid        not null references projects(id) on delete cascade,
   content     text        not null,
+  search_vector tsvector,
   embedding   vector(384),
   chunk_index integer     not null,
   created_at  timestamptz not null default now()
+);
+
+create table if not exists document_threads (
+  id          uuid        primary key default gen_random_uuid(),
+  project_id  uuid        not null references projects(id) on delete cascade,
+  document_id uuid        not null references documents(id) on delete cascade,
+  created_by  uuid        references users(id) on delete set null,
+  title       text        not null,
+  page_number integer,
+  status      text        not null default 'open' check (status in ('open', 'resolved')),
+  resolved_by uuid        references users(id) on delete set null,
+  resolved_at timestamptz,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  constraint document_threads_page_number_check
+    check (page_number is null or page_number > 0)
+);
+
+create table if not exists document_thread_comments (
+  id         uuid        primary key default gen_random_uuid(),
+  thread_id  uuid        not null references document_threads(id) on delete cascade,
+  author_id  uuid        references users(id) on delete set null,
+  body       text        not null,
+  is_answer  boolean     not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists flashcards (
+  id              uuid        primary key default gen_random_uuid(),
+  project_id      uuid        not null references projects(id) on delete cascade,
+  source_chunk_id uuid        references document_chunks(id) on delete set null,
+  question        text        not null,
+  answer          text        not null,
+  difficulty      text        not null default 'medium' check (difficulty in ('easy', 'medium', 'hard')),
+  created_by      uuid        references users(id) on delete set null,
+  created_at      timestamptz not null default now()
+);
+
+create table if not exists flashcard_progress (
+  id               uuid         primary key default gen_random_uuid(),
+  user_id          uuid         not null references users(id) on delete cascade,
+  flashcard_id     uuid         not null references flashcards(id) on delete cascade,
+  interval_days    integer      not null default 1,
+  ease_factor      numeric(4,2) not null default 2.50,
+  repetitions      integer      not null default 0,
+  due_at           timestamptz  not null default now(),
+  last_reviewed_at timestamptz,
+  created_at       timestamptz  not null default now(),
+  updated_at       timestamptz  not null default now(),
+  unique(user_id, flashcard_id)
 );
 
 -- Chat sessions
@@ -223,6 +275,22 @@ create table if not exists quiz_attempts (
   carried_sections    jsonb
 );
 
+create table if not exists quiz_attempt_history (
+  id                  uuid        primary key default gen_random_uuid(),
+  original_attempt_id uuid,
+  user_id             uuid        not null references users(id) on delete cascade,
+  project_id          uuid        not null references projects(id) on delete cascade,
+  quiz_set_id         uuid        references quiz_sets(id) on delete set null,
+  score               integer,
+  total_marks         integer,
+  percentage          numeric(5,2),
+  passed              boolean,
+  submitted_at        timestamptz,
+  reset_at            timestamptz not null default now(),
+  reset_by            uuid        references users(id) on delete set null,
+  reset_reason        text        not null default 'Reset by admin'
+);
+
 -- Per-attempt coaching generated after submission
 create table if not exists quiz_coaching_plans (
   id               uuid        primary key default gen_random_uuid(),
@@ -303,6 +371,9 @@ create unique index if not exists quiz_attempts_one_per_user_project_submitted
   on quiz_attempts (user_id, project_id)
   where status = 'submitted';
 
+create index if not exists quiz_attempt_history_user_project_reset_idx
+  on quiz_attempt_history (user_id, project_id, reset_at desc);
+
 -- Chat bookmarks lookup
 create index if not exists chat_bookmarks_user_project_idx
   on chat_bookmarks(user_id, project_id);
@@ -316,6 +387,27 @@ create index if not exists project_announcements_project_created_idx
 
 create index if not exists documents_required_idx
   on documents (project_id, is_required);
+
+create index if not exists document_chunks_search_vector_idx
+  on document_chunks using gin (search_vector);
+
+create index if not exists document_threads_document_status_updated_idx
+  on document_threads (document_id, status, updated_at desc);
+
+create index if not exists document_threads_project_updated_idx
+  on document_threads (project_id, updated_at desc);
+
+create index if not exists document_thread_comments_thread_created_idx
+  on document_thread_comments (thread_id, created_at asc);
+
+create index if not exists flashcards_project_created_idx
+  on flashcards (project_id, created_at desc);
+
+create index if not exists flashcards_project_chunk_idx
+  on flashcards (project_id, source_chunk_id);
+
+create index if not exists flashcard_progress_user_due_idx
+  on flashcard_progress (user_id, due_at asc);
 
 create index if not exists coaching_project_user_idx
   on quiz_coaching_plans (project_id, user_id, created_at desc);
@@ -348,6 +440,20 @@ create index if not exists rag_traces_slow
 -- ---------------------------------------------------------------------------
 
 -- Vector similarity search for RAG
+create or replace function document_chunks_search_vector_update()
+returns trigger as $$
+begin
+  new.search_vector := to_tsvector('english', coalesce(new.content, ''));
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists trg_document_chunks_search_vector_update on document_chunks;
+
+create trigger trg_document_chunks_search_vector_update
+before insert or update of content on document_chunks
+for each row execute function document_chunks_search_vector_update();
+
 create or replace function match_document_chunks(
   query_embedding vector(384),
   filter_project_id uuid,

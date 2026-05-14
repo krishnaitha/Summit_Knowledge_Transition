@@ -1,4 +1,12 @@
-import { Activity, CheckCircle2, FileText, MessageSquare, RefreshCw, Users } from 'lucide-react';
+import {
+  Activity,
+  BellRing,
+  CheckCircle2,
+  FileText,
+  MessageSquare,
+  RefreshCw,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import { ActivityFeed } from '@/components/admin/activity-feed';
@@ -46,6 +54,24 @@ export default async function AdminDashboardPage() {
           label="Chatbot messages"
           value={stats.totalMessages}
         />
+        {stats.openThreads > 0 ? (
+          <Link href="/admin/projects" className="block transition hover:opacity-90">
+            <StatsCard
+              icon={BellRing}
+              hint="Open document discussion threads"
+              label="Open threads"
+              value={stats.openThreads}
+              accent
+            />
+          </Link>
+        ) : (
+          <StatsCard
+            icon={BellRing}
+            hint="No open document threads"
+            label="Open threads"
+            value={0}
+          />
+        )}
         <StatsCard
           icon={CheckCircle2}
           hint="Submitted attempts across all projects"

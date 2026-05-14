@@ -57,6 +57,69 @@ export interface DocumentRecord {
   scan_flags: string[];
 }
 
+export interface DocumentSearchResult {
+  chunk_id: string;
+  document_id: string;
+  file_name: string;
+  snippet: string;
+  rank: number;
+}
+
+export interface AccessibleDocumentSearchResult extends DocumentSearchResult {
+  project_id: string;
+  project_name: string;
+}
+
+export type DocumentThreadStatus = 'open' | 'resolved';
+
+export interface DocumentThreadRecord {
+  id: string;
+  project_id: string;
+  document_id: string;
+  created_by: string | null;
+  title: string;
+  page_number: number | null;
+  status: DocumentThreadStatus;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DocumentThreadCommentRecord {
+  id: string;
+  thread_id: string;
+  author_id: string | null;
+  body: string;
+  is_answer: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FlashcardRecord {
+  id: string;
+  project_id: string;
+  source_chunk_id: string | null;
+  question: string;
+  answer: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface FlashcardProgressRecord {
+  id: string;
+  user_id: string;
+  flashcard_id: string;
+  interval_days: number;
+  ease_factor: number;
+  repetitions: number;
+  due_at: string;
+  last_reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface QuizCoachingPlanRecord {
   id: string;
   attempt_id: string;
@@ -163,6 +226,22 @@ export interface QuizAttemptRecord {
   carried_sections: Record<string, { score: number; total: number }> | null;
 }
 
+export interface QuizAttemptHistoryRecord {
+  id: string;
+  original_attempt_id: string | null;
+  user_id: string;
+  project_id: string;
+  quiz_set_id: string | null;
+  score: number | null;
+  total_marks: number | null;
+  percentage: number | null;
+  passed: boolean | null;
+  submitted_at: string | null;
+  reset_at: string;
+  reset_by: string | null;
+  reset_reason: string;
+}
+
 export interface AssignedQuestionOption {
   key: QuizOptionKey;
   text: string;
@@ -221,6 +300,7 @@ export interface ProjectDashboardCard extends ProjectRecord {
   documentCount: number;
   docsViewedCount: number;
   isNewDocs: boolean;
+  openThreadCount: number;
   quizStatus: 'Not Started' | 'In Progress' | 'Completed';
   quizScoreLabel: string | null;
   quizPercentage: number | null;

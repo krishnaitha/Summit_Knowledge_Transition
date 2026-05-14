@@ -258,6 +258,19 @@ export async function POST(request: Request) {
         metadata: { cached: true },
       });
 
+      if (maxSimilarity < HALLUCINATION_THRESHOLD) {
+        await logActivity({
+          userId,
+          projectId: body.projectId,
+          action: 'knowledge_gap',
+          metadata: {
+            query: body.message,
+            maxSimilarity,
+            reason: 'low_confidence_match',
+          },
+        });
+      }
+
       writeRagTrace({
         project_id: body.projectId,
         user_id: userId,
@@ -399,6 +412,19 @@ export async function POST(request: Request) {
           action: 'chatbot_message',
           metadata: { cached: false },
         });
+
+        if (maxSimilarity < HALLUCINATION_THRESHOLD) {
+          await logActivity({
+            userId,
+            projectId: body.projectId,
+            action: 'knowledge_gap',
+            metadata: {
+              query: body.message,
+              maxSimilarity,
+              reason: 'low_confidence_match',
+            },
+          });
+        }
 
         controller.close();
 

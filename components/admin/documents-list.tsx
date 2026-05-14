@@ -44,12 +44,15 @@ export function DocumentsList({
           <CardTitle>Uploaded documents</CardTitle>
           {documents.length > PAGE_SIZE && (
             <div className="relative w-full sm:w-64">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 className="pl-9"
                 placeholder="Filter by file name…"
                 value={filter}
-                onChange={(e) => { setFilter(e.target.value); setPage(0); }}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                  setPage(0);
+                }}
               />
             </div>
           )}
@@ -75,17 +78,17 @@ export function DocumentsList({
                           : 'success'
                     }
                   >
-                    {document.classification.charAt(0).toUpperCase() + document.classification.slice(1)}
+                    {document.classification.charAt(0).toUpperCase() +
+                      document.classification.slice(1)}
                   </Badge>
                   {document.pii_detections > 0 && (
                     <Badge variant="danger">PII &middot; {document.pii_detections}</Badge>
                   )}
-                  {document.is_required && (
-                    <Badge variant="warning">Required before quiz</Badge>
-                  )}
+                  {document.is_required && <Badge variant="warning">Required before quiz</Badge>}
                 </div>
                 <p className="mt-1 text-sm text-slate-500">
-                  Uploaded {formatDate(document.uploaded_at, true)} &bull; {document.chunk_count} chunks
+                  Uploaded {formatDate(document.uploaded_at, true)} &bull; {document.chunk_count}{' '}
+                  chunks
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -102,13 +105,22 @@ export function DocumentsList({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button type="button" variant="secondary">View</Button>
+                  <Button type="button" variant="secondary">
+                    View
+                  </Button>
+                </a>
+                <a href={`/admin/projects/${projectId}/documents/${document.id}/threads`}>
+                  <Button type="button" variant="secondary">
+                    Threads
+                  </Button>
                 </a>
                 <form action={deleteDocumentAction}>
                   <input name="project_id" type="hidden" value={projectId} />
                   <input name="document_id" type="hidden" value={document.id} />
                   <input name="file_url" type="hidden" value={document.file_url} />
-                  <SubmitButton variant="danger" loadingText="Deleting…">Delete</SubmitButton>
+                  <SubmitButton variant="danger" loadingText="Deleting…">
+                    Delete
+                  </SubmitButton>
                 </form>
               </div>
             </div>

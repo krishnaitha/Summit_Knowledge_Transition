@@ -1,6 +1,7 @@
 import 'server-only';
 
 import type {
+  AccessibleDocumentSearchResult,
   ActivityRecord,
   AssignedQuestion,
   ChatAnswerFeedbackRecord,
@@ -8,11 +9,16 @@ import type {
   ChatMessageRecord,
   ChatSessionRecord,
   DocumentRecord,
+  DocumentSearchResult,
+  DocumentThreadCommentRecord,
+  DocumentThreadRecord,
+  FlashcardRecord,
   Json,
   ProjectAnnouncementRecord,
   ProjectDashboardCard,
   ProjectRecord,
   QuizAttemptRecord,
+  QuizAttemptHistoryRecord,
   QuizCoachingPlanRecord,
   QuizOptionKey,
   QuizQuestionRecord,
@@ -42,6 +48,49 @@ import sql from '@/lib/db';
 import { computeSectionScores } from '@/lib/quiz/scoring';
 import { formatDate } from '@/lib/utils';
 
+export interface DocumentThreadCommentView extends DocumentThreadCommentRecord {
+  author_name: string | null;
+  author_email: string | null;
+  author_global_role: UserProfile['role'] | null;
+  author_project_role: 'admin' | 'member' | null;
+}
+
+export interface DocumentThreadView extends DocumentThreadRecord {
+  creator_name: string | null;
+  creator_email: string | null;
+  comment_count: number;
+  comments: DocumentThreadCommentView[];
+}
+
+export interface FlashcardView extends FlashcardRecord {
+  document_id: string | null;
+  document_name: string | null;
+  chunk_index: number | null;
+  snippet: string | null;
+  due_at: string;
+  repetitions: number;
+  interval_days: number;
+  ease_factor: number;
+  last_reviewed_at: string | null;
+  is_due: boolean;
+}
+
+export interface InteractiveStudyGuide {
+  weakSections: Array<{ section: string; score: number; total: number; percentage: number }>;
+  recommendations: Array<{
+    section: string;
+    focus: string;
+    documents: Array<{ id: string; name: string }>;
+    chunkReferences: Array<{
+      chunkId: string;
+      documentId: string;
+      documentName: string;
+      chunkIndex: number;
+      snippet: string;
+    }>;
+  }>;
+}
+
 export async function getProfileById(userId: string) {
   const rows = await sql<UserProfile[]>`SELECT * FROM users WHERE id = ${userId} LIMIT 1`;
   return rows[0] ?? null;
@@ -55,30 +104,39 @@ export async function getAssignedProjects(userId: string, lastLoginAt?: string |
 
   if (!projectIds.length) return [] as ProjectDashboardCard[];
 
-  const [projects, documents, attempts, viewedDocs, newDocRows] = await Promise.all([
-    sql<
-      ProjectRecord[]
-    >`SELECT * FROM projects WHERE id = ANY(${projectIds}) ORDER BY created_at DESC`,
-    sql<
-      { project_id: string }[]
-    >`SELECT project_id FROM documents WHERE project_id = ANY(${projectIds})`,
-    sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE user_id = ${userId}`,
-    sql<{ project_id: string; c: string }[]>`
+  const [projects, documents, attempts, viewedDocs, newDocRows, openThreadRows] = await Promise.all(
+    [
+      sql<
+        ProjectRecord[]
+      >`SELECT * FROM projects WHERE id = ANY(${projectIds}) ORDER BY created_at DESC`,
+      sql<
+        { project_id: string }[]
+      >`SELECT project_id FROM documents WHERE project_id = ANY(${projectIds})`,
+      sql<QuizAttemptRecord[]>`SELECT * FROM quiz_attempts WHERE user_id = ${userId}`,
+      sql<{ project_id: string; c: string }[]>`
       SELECT project_id, COUNT(DISTINCT (metadata->>'documentId')) AS c
       FROM activity_log
       WHERE user_id = ${userId} AND action = 'document_viewed' AND project_id = ANY(${projectIds})
       GROUP BY project_id
     `,
-    lastLoginAt
-      ? sql<{ project_id: string }[]>`
+      lastLoginAt
+        ? sql<{ project_id: string }[]>`
           SELECT DISTINCT project_id FROM documents
           WHERE project_id = ANY(${projectIds}) AND uploaded_at > ${lastLoginAt}
         `
-      : Promise.resolve([] as { project_id: string }[]),
-  ]);
+        : Promise.resolve([] as { project_id: string }[]),
+      sql<{ project_id: string; c: string }[]>`
+      SELECT project_id, COUNT(*) AS c
+      FROM document_threads
+      WHERE project_id = ANY(${projectIds}) AND status = 'open'
+      GROUP BY project_id
+    `,
+    ],
+  );
 
   const viewedMap = new Map(viewedDocs.map((v) => [v.project_id, Number(v.c)]));
   const newDocProjects = new Set(newDocRows.map((n) => n.project_id));
+  const openThreadMap = new Map(openThreadRows.map((r) => [r.project_id, Number(r.c)]));
 
   return projects
     .filter((project) => project.is_active)
@@ -91,6 +149,7 @@ export async function getAssignedProjects(userId: string, lastLoginAt?: string |
         documentCount: projectDocuments,
         docsViewedCount: viewedMap.get(project.id) ?? 0,
         isNewDocs: newDocProjects.has(project.id),
+        openThreadCount: openThreadMap.get(project.id) ?? 0,
         quizCloseAt: project.quiz_close_at ?? null,
         quizStatus:
           attempt?.status === 'submitted'
@@ -120,6 +179,417 @@ export async function getProjectById(projectId: string) {
 export async function getProjectDocuments(projectId: string) {
   return sql<DocumentRecord[]>`
     SELECT * FROM documents WHERE project_id = ${projectId} ORDER BY uploaded_at DESC
+  `;
+}
+
+export async function getProjectFlashcardsForUser(projectId: string, userId: string, limit = 40) {
+  const safeLimit = Math.min(Math.max(limit, 1), 100);
+
+  return sql<FlashcardView[]>`
+    SELECT
+      f.*,
+      d.id AS document_id,
+      d.file_name AS document_name,
+      dc.chunk_index,
+      CASE WHEN dc.content IS NOT NULL THEN LEFT(dc.content, 280) ELSE NULL END AS snippet,
+      COALESCE(fp.due_at, now()) AS due_at,
+      COALESCE(fp.repetitions, 0) AS repetitions,
+      COALESCE(fp.interval_days, 1) AS interval_days,
+      COALESCE(fp.ease_factor, 2.5) AS ease_factor,
+      fp.last_reviewed_at,
+      COALESCE(fp.due_at, now()) <= now() AS is_due
+    FROM flashcards f
+    LEFT JOIN flashcard_progress fp
+      ON fp.flashcard_id = f.id AND fp.user_id = ${userId}
+    LEFT JOIN document_chunks dc ON dc.id = f.source_chunk_id
+    LEFT JOIN documents d ON d.id = dc.document_id
+    WHERE f.project_id = ${projectId}
+    ORDER BY COALESCE(fp.due_at, now()) ASC, f.created_at DESC
+    LIMIT ${safeLimit}
+  `;
+}
+
+export async function getInteractiveStudyGuide(
+  userId: string,
+  projectId: string,
+): Promise<InteractiveStudyGuide | null> {
+  const plan = await getLatestCoachingPlan(userId, projectId);
+
+  if (!plan) {
+    return null;
+  }
+
+  const recommendations = plan.recommendations ?? [];
+  if (!recommendations.length) {
+    return {
+      weakSections: plan.weak_sections ?? [],
+      recommendations: [],
+    };
+  }
+
+  const docIds = [...new Set(recommendations.flatMap((r) => (r.documents ?? []).map((d) => d.id)))];
+
+  const chunkRows = docIds.length
+    ? await sql<
+        {
+          chunk_id: string;
+          document_id: string;
+          document_name: string;
+          chunk_index: number;
+          content: string;
+        }[]
+      >`
+        SELECT
+          dc.id AS chunk_id,
+          dc.document_id,
+          d.file_name AS document_name,
+          dc.chunk_index,
+          dc.content
+        FROM document_chunks dc
+        JOIN documents d ON d.id = dc.document_id
+        WHERE dc.project_id = ${projectId} AND dc.document_id = ANY(${docIds})
+        ORDER BY dc.chunk_index ASC
+        LIMIT 1200
+      `
+    : await sql<
+        {
+          chunk_id: string;
+          document_id: string;
+          document_name: string;
+          chunk_index: number;
+          content: string;
+        }[]
+      >`
+        SELECT
+          dc.id AS chunk_id,
+          dc.document_id,
+          d.file_name AS document_name,
+          dc.chunk_index,
+          dc.content
+        FROM document_chunks dc
+        JOIN documents d ON d.id = dc.document_id
+        WHERE dc.project_id = ${projectId}
+        ORDER BY dc.chunk_index ASC
+        LIMIT 1200
+      `;
+
+  const enrichedRecommendations = recommendations.map((recommendation) => {
+    const words = `${recommendation.section} ${recommendation.focus}`
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((token) => token.length >= 3);
+
+    const candidateDocIds = new Set((recommendation.documents ?? []).map((doc) => doc.id));
+
+    const scoredChunks = chunkRows
+      .filter((chunk) => candidateDocIds.size === 0 || candidateDocIds.has(chunk.document_id))
+      .map((chunk) => {
+        const lower = chunk.content.toLowerCase();
+        const score = words.reduce((acc, word) => (lower.includes(word) ? acc + 1 : acc), 0);
+        return { chunk, score };
+      })
+      .sort((a, b) => b.score - a.score || a.chunk.chunk_index - b.chunk.chunk_index)
+      .slice(0, 5)
+      .map((item) => ({
+        chunkId: item.chunk.chunk_id,
+        documentId: item.chunk.document_id,
+        documentName: item.chunk.document_name,
+        chunkIndex: item.chunk.chunk_index,
+        snippet: item.chunk.content.slice(0, 280),
+      }));
+
+    return {
+      ...recommendation,
+      chunkReferences: scoredChunks,
+    };
+  });
+
+  return {
+    weakSections: plan.weak_sections ?? [],
+    recommendations: enrichedRecommendations,
+  };
+}
+
+export async function getDocumentById(documentId: string) {
+  const rows = await sql<DocumentRecord[]>`
+    SELECT * FROM documents WHERE id = ${documentId} LIMIT 1
+  `;
+  return rows[0] ?? null;
+}
+
+export async function getDocumentThreads(projectId: string, documentId: string) {
+  const threadRows = await sql<
+    (DocumentThreadRecord & {
+      creator_name: string | null;
+      creator_email: string | null;
+      comment_count: string;
+    })[]
+  >`
+    SELECT
+      t.*,
+      u.full_name as creator_name,
+      u.email as creator_email,
+      COALESCE(c.comment_count, 0)::text as comment_count
+    FROM document_threads t
+    LEFT JOIN users u ON u.id = t.created_by
+    LEFT JOIN (
+      SELECT thread_id, COUNT(*) as comment_count
+      FROM document_thread_comments
+      GROUP BY thread_id
+    ) c ON c.thread_id = t.id
+    WHERE t.project_id = ${projectId} AND t.document_id = ${documentId}
+    ORDER BY t.status ASC, t.updated_at DESC
+  `;
+
+  if (!threadRows.length) {
+    return [] as DocumentThreadView[];
+  }
+
+  const threadIds = threadRows.map((thread) => thread.id);
+  const commentRows = await sql<
+    (DocumentThreadCommentRecord & {
+      author_name: string | null;
+      author_email: string | null;
+      author_global_role: UserProfile['role'] | null;
+      author_project_role: 'admin' | 'member' | null;
+    })[]
+  >`
+    SELECT
+      c.*,
+      u.full_name as author_name,
+      u.email as author_email,
+      u.role as author_global_role,
+      pm.role as author_project_role
+    FROM document_thread_comments c
+    LEFT JOIN users u ON u.id = c.author_id
+    LEFT JOIN project_members pm ON pm.user_id = c.author_id AND pm.project_id = ${projectId}
+    WHERE c.thread_id = ANY(${threadIds})
+    ORDER BY c.created_at ASC
+  `;
+
+  const commentsByThread = new Map<string, DocumentThreadCommentView[]>();
+  for (const comment of commentRows) {
+    const next: DocumentThreadCommentView = {
+      ...comment,
+      author_name: comment.author_name,
+      author_email: comment.author_email,
+      author_global_role: comment.author_global_role,
+      author_project_role: comment.author_project_role,
+    };
+    const current = commentsByThread.get(comment.thread_id) ?? [];
+    current.push(next);
+    commentsByThread.set(comment.thread_id, current);
+  }
+
+  return threadRows.map((thread) => ({
+    ...thread,
+    comment_count: Number(thread.comment_count ?? 0),
+    comments: commentsByThread.get(thread.id) ?? [],
+  }));
+}
+
+async function hasDocumentChunkSearchVector() {
+  const rows = await sql<{ has_search_vector: boolean }[]>`
+    SELECT EXISTS (
+      SELECT 1
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'document_chunks'
+        AND column_name = 'search_vector'
+    ) AS has_search_vector
+  `;
+
+  return rows[0]?.has_search_vector ?? false;
+}
+
+export async function searchProjectDocumentChunks(projectId: string, query: string, limit = 12) {
+  const normalizedQuery = query.trim();
+
+  if (normalizedQuery.length < 2) {
+    return [] as DocumentSearchResult[];
+  }
+
+  const cappedLimit = Math.min(Math.max(limit, 1), 30);
+  const hasSearchVector = await hasDocumentChunkSearchVector();
+
+  if (!hasSearchVector) {
+    return sql<DocumentSearchResult[]>`
+      WITH q AS (
+        SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+      )
+      SELECT
+        dc.id AS chunk_id,
+        d.id AS document_id,
+        d.file_name,
+        ts_headline(
+          'english',
+          dc.content,
+          q.ts_query,
+          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+        ) AS snippet,
+        ts_rank_cd(to_tsvector('english', dc.content), q.ts_query) AS rank
+      FROM document_chunks dc
+      JOIN documents d ON d.id = dc.document_id
+      CROSS JOIN q
+      WHERE dc.project_id = ${projectId}
+        AND to_tsvector('english', dc.content) @@ q.ts_query
+      ORDER BY rank DESC, d.file_name ASC
+      LIMIT ${cappedLimit}
+    `;
+  }
+
+  return sql<DocumentSearchResult[]>`
+    WITH q AS (
+      SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+    )
+    SELECT
+      dc.id AS chunk_id,
+      d.id AS document_id,
+      d.file_name,
+      ts_headline(
+        'english',
+        dc.content,
+        q.ts_query,
+        'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+      ) AS snippet,
+      ts_rank_cd(dc.search_vector, q.ts_query) AS rank
+    FROM document_chunks dc
+    JOIN documents d ON d.id = dc.document_id
+    CROSS JOIN q
+    WHERE dc.project_id = ${projectId}
+      AND dc.search_vector @@ q.ts_query
+    ORDER BY rank DESC, d.file_name ASC
+    LIMIT ${cappedLimit}
+  `;
+}
+
+export async function searchAccessibleDocumentChunks(
+  userId: string,
+  role: UserProfile['role'] | null | undefined,
+  query: string,
+  limit = 20,
+) {
+  const normalizedQuery = query.trim();
+
+  if (normalizedQuery.length < 2) {
+    return [] as AccessibleDocumentSearchResult[];
+  }
+
+  const cappedLimit = Math.min(Math.max(limit, 1), 50);
+  const hasSearchVector = await hasDocumentChunkSearchVector();
+
+  if (role === 'admin') {
+    if (!hasSearchVector) {
+      return sql<AccessibleDocumentSearchResult[]>`
+        WITH q AS (
+          SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+        )
+        SELECT
+          dc.project_id,
+          p.name AS project_name,
+          dc.id AS chunk_id,
+          d.id AS document_id,
+          d.file_name,
+          ts_headline(
+            'english',
+            dc.content,
+            q.ts_query,
+            'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+          ) AS snippet,
+          ts_rank_cd(to_tsvector('english', dc.content), q.ts_query) AS rank
+        FROM document_chunks dc
+        JOIN documents d ON d.id = dc.document_id
+        JOIN projects p ON p.id = dc.project_id
+        CROSS JOIN q
+        WHERE to_tsvector('english', dc.content) @@ q.ts_query
+        ORDER BY rank DESC, p.name ASC, d.file_name ASC
+        LIMIT ${cappedLimit}
+      `;
+    }
+
+    return sql<AccessibleDocumentSearchResult[]>`
+      WITH q AS (
+        SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+      )
+      SELECT
+        dc.project_id,
+        p.name AS project_name,
+        dc.id AS chunk_id,
+        d.id AS document_id,
+        d.file_name,
+        ts_headline(
+          'english',
+          dc.content,
+          q.ts_query,
+          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+        ) AS snippet,
+        ts_rank_cd(dc.search_vector, q.ts_query) AS rank
+      FROM document_chunks dc
+      JOIN documents d ON d.id = dc.document_id
+      JOIN projects p ON p.id = dc.project_id
+      CROSS JOIN q
+      WHERE dc.search_vector @@ q.ts_query
+      ORDER BY rank DESC, p.name ASC, d.file_name ASC
+      LIMIT ${cappedLimit}
+    `;
+  }
+
+  if (!hasSearchVector) {
+    return sql<AccessibleDocumentSearchResult[]>`
+      WITH q AS (
+        SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+      )
+      SELECT
+        dc.project_id,
+        p.name AS project_name,
+        dc.id AS chunk_id,
+        d.id AS document_id,
+        d.file_name,
+        ts_headline(
+          'english',
+          dc.content,
+          q.ts_query,
+          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+        ) AS snippet,
+        ts_rank_cd(to_tsvector('english', dc.content), q.ts_query) AS rank
+      FROM document_chunks dc
+      JOIN documents d ON d.id = dc.document_id
+      JOIN projects p ON p.id = dc.project_id
+      JOIN project_members pm ON pm.project_id = dc.project_id
+      CROSS JOIN q
+      WHERE pm.user_id = ${userId}
+        AND to_tsvector('english', dc.content) @@ q.ts_query
+      ORDER BY rank DESC, p.name ASC, d.file_name ASC
+      LIMIT ${cappedLimit}
+    `;
+  }
+
+  return sql<AccessibleDocumentSearchResult[]>`
+    WITH q AS (
+      SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+    )
+    SELECT
+      dc.project_id,
+      p.name AS project_name,
+      dc.id AS chunk_id,
+      d.id AS document_id,
+      d.file_name,
+      ts_headline(
+        'english',
+        dc.content,
+        q.ts_query,
+        'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+      ) AS snippet,
+      ts_rank_cd(dc.search_vector, q.ts_query) AS rank
+    FROM document_chunks dc
+    JOIN documents d ON d.id = dc.document_id
+    JOIN projects p ON p.id = dc.project_id
+    JOIN project_members pm ON pm.project_id = dc.project_id
+    CROSS JOIN q
+    WHERE pm.user_id = ${userId}
+      AND dc.search_vector @@ q.ts_query
+    ORDER BY rank DESC, p.name ASC, d.file_name ASC
+    LIMIT ${cappedLimit}
   `;
 }
 
@@ -168,6 +638,14 @@ export async function getQuizAttemptForProject(userId: string, projectId: string
   return rows[0] ?? null;
 }
 
+export async function getQuizAttemptHistoryForProject(userId: string, projectId: string) {
+  return sql<QuizAttemptHistoryRecord[]>`
+    SELECT * FROM quiz_attempt_history
+    WHERE user_id = ${userId} AND project_id = ${projectId}
+    ORDER BY reset_at DESC
+  `;
+}
+
 export async function getProjectChatSessions(userId: string, projectId: string) {
   return sql<ChatSessionRecord[]>`
     SELECT * FROM chat_sessions
@@ -208,6 +686,7 @@ export async function getAdminDashboardStats() {
     completedQuizzesRows,
     totalAttemptsRows,
     pendingRetakeRows,
+    openThreadRows,
     recentActivityRows,
   ] = await Promise.all([
     sql`SELECT COUNT(*) as c FROM users`,
@@ -217,6 +696,7 @@ export async function getAdminDashboardStats() {
     sql`SELECT COUNT(*) as c FROM quiz_attempts WHERE status = 'submitted'`,
     sql`SELECT COUNT(*) as c FROM quiz_attempts`,
     sql`SELECT COUNT(*) as c FROM quiz_retake_requests WHERE status = 'pending'`,
+    sql`SELECT COUNT(*) as c FROM document_threads WHERE status = 'open'`,
     sql`
       SELECT al.*, u.full_name as user_full_name, u.email as user_email
       FROM activity_log al
@@ -233,6 +713,7 @@ export async function getAdminDashboardStats() {
   const completedQuizzes = Number(completedQuizzesRows[0]?.c ?? 0);
   const totalAttempts = Number(totalAttemptsRows[0]?.c ?? 0);
   const pendingRetakeRequests = Number(pendingRetakeRows[0]?.c ?? 0);
+  const openThreads = Number(openThreadRows[0]?.c ?? 0);
 
   const enrichedActivity = recentActivityRows.map((item) => {
     const rawName = item.user_full_name as string | null;
@@ -250,6 +731,7 @@ export async function getAdminDashboardStats() {
     totalDocuments,
     quizCompletionRate: totalAttempts ? Math.round((completedQuizzes / totalAttempts) * 100) : 0,
     pendingRetakeRequests,
+    openThreads,
     recentActivity: enrichedActivity,
   };
 }
@@ -357,39 +839,52 @@ export async function getProjectAnalytics(projectId: string) {
   const memberIds = memberRows.map((m) => m.user_id);
   const memberAssignedAt = new Map(memberRows.map((m) => [m.user_id, m.assigned_at]));
 
-  const [sessions, attempts, users, quizSets, resets, gapLogs, allAttempts, feedbackRows] =
-    await Promise.all([
-      sql<ChatSessionRecord[]>`SELECT * FROM chat_sessions WHERE project_id = ${projectId}`,
-      sql<
-        QuizAttemptRecord[]
-      >`SELECT * FROM quiz_attempts WHERE project_id = ${projectId} AND status = 'submitted'`,
-      sql<UserProfile[]>`SELECT * FROM users`,
-      sql<
-        { id: string; set_name: string }[]
-      >`SELECT id, set_name FROM quiz_sets WHERE project_id = ${projectId}`,
-      sql<{ user_id: string }[]>`SELECT user_id FROM quiz_resets WHERE project_id = ${projectId}`,
-      sql<{ metadata: Record<string, unknown>; created_at: string; user_id: string | null }[]>`
+  const [
+    sessions,
+    attempts,
+    attemptHistory,
+    users,
+    quizSets,
+    resets,
+    gapLogs,
+    allAttempts,
+    feedbackRows,
+  ] = await Promise.all([
+    sql<ChatSessionRecord[]>`SELECT * FROM chat_sessions WHERE project_id = ${projectId}`,
+    sql<
+      QuizAttemptRecord[]
+    >`SELECT * FROM quiz_attempts WHERE project_id = ${projectId} AND status = 'submitted'`,
+    sql<QuizAttemptHistoryRecord[]>`
+        SELECT * FROM quiz_attempt_history
+        WHERE project_id = ${projectId}
+      `,
+    sql<UserProfile[]>`SELECT * FROM users`,
+    sql<
+      { id: string; set_name: string }[]
+    >`SELECT id, set_name FROM quiz_sets WHERE project_id = ${projectId}`,
+    sql<{ user_id: string }[]>`SELECT user_id FROM quiz_resets WHERE project_id = ${projectId}`,
+    sql<{ metadata: Record<string, unknown>; created_at: string; user_id: string | null }[]>`
       SELECT metadata, created_at, user_id
       FROM activity_log
       WHERE project_id = ${projectId} AND action = 'knowledge_gap'
       ORDER BY created_at DESC
       LIMIT 50
     `,
-      sql<
-        {
-          user_id: string;
-          status: string;
-          started_at: string;
-          submitted_at: string | null;
-          assigned_questions: AssignedQuestion[];
-          answers_given: Record<string, QuizOptionKey> | null;
-        }[]
-      >`
+    sql<
+      {
+        user_id: string;
+        status: string;
+        started_at: string;
+        submitted_at: string | null;
+        assigned_questions: AssignedQuestion[];
+        answers_given: Record<string, QuizOptionKey> | null;
+      }[]
+    >`
       SELECT user_id, status, started_at, submitted_at, assigned_questions, answers_given
       FROM quiz_attempts
       WHERE project_id = ${projectId}
     `,
-      sql<(ChatAnswerFeedbackRecord & { user_name: string | null; user_email: string | null })[]>`
+    sql<(ChatAnswerFeedbackRecord & { user_name: string | null; user_email: string | null })[]>`
       SELECT f.*, u.full_name as user_name, u.email as user_email
       FROM chat_answer_feedback f
       LEFT JOIN users u ON u.id = f.user_id
@@ -397,7 +892,7 @@ export async function getProjectAnalytics(projectId: string) {
       ORDER BY f.created_at DESC
       LIMIT 200
     `,
-    ]);
+  ]);
 
   const resetCounts = new Map<string, number>();
   resets.forEach((r) => {
@@ -422,7 +917,7 @@ export async function getProjectAnalytics(projectId: string) {
     lastActive: formatDate(session.last_message_at ?? session.started_at, true),
   }));
 
-  const quizResults = attempts.map((attempt) => {
+  const latestQuizResults = attempts.map((attempt) => {
     const user = userIndex.get(attempt.user_id);
     const assignedQs = (attempt.assigned_questions ?? []) as Array<{ section?: string }>;
     const sectionSet = [
@@ -445,16 +940,40 @@ export async function getProjectAnalytics(projectId: string) {
     return {
       attemptId: attempt.id,
       userId: attempt.user_id,
+      attemptType: 'latest' as const,
       member: resolveDisplayName(attempt.user_id),
       email: user?.email ?? '—',
       score: `${attempt.score ?? 0} / ${attempt.total_marks ?? 0}`,
       percentage: `${attempt.percentage ?? 0}%`,
       setTaken: sectionLabel,
       submittedAt: formatDate(attempt.submitted_at, true),
+      submittedAtRaw: attempt.submitted_at,
       resetCount: resetCounts.get(attempt.user_id) ?? 0,
       sectionScores,
     };
   });
+
+  const historicalQuizResults = attemptHistory.map((attempt) => {
+    const user = userIndex.get(attempt.user_id);
+    return {
+      attemptId: attempt.id,
+      userId: attempt.user_id,
+      attemptType: 'previous' as const,
+      member: resolveDisplayName(attempt.user_id),
+      email: user?.email ?? '—',
+      score: `${attempt.score ?? 0} / ${attempt.total_marks ?? 0}`,
+      percentage: `${attempt.percentage ?? 0}%`,
+      setTaken: attempt.quiz_set_id ? (setIndex.get(attempt.quiz_set_id) ?? 'Unknown') : 'Unknown',
+      submittedAt: formatDate(attempt.submitted_at ?? attempt.reset_at, true),
+      submittedAtRaw: attempt.submitted_at ?? attempt.reset_at,
+      resetCount: resetCounts.get(attempt.user_id) ?? 0,
+      sectionScores: {},
+    };
+  });
+
+  const quizResults = [...latestQuizResults, ...historicalQuizResults].sort(
+    (a, b) => new Date(b.submittedAtRaw ?? 0).getTime() - new Date(a.submittedAtRaw ?? 0).getTime(),
+  );
 
   const loginActivity = memberIds.map((userId) => {
     const user = userIndex.get(userId);
@@ -774,6 +1293,112 @@ export async function getMemberNotificationCount(userId: string): Promise<number
   ]);
 
   return Number(quizRows[0]?.c ?? 0) + Number(announcementRows[0]?.c ?? 0);
+}
+
+export async function getOpenThreadNotificationCount(
+  userId: string,
+  role: UserProfile['role'] | null | undefined,
+): Promise<number> {
+  if (role === 'admin') {
+    const rows = await sql<{ c: string }[]>`
+      SELECT COUNT(*) AS c
+      FROM document_threads
+      WHERE status = 'open'
+    `;
+    return Number(rows[0]?.c ?? 0);
+  }
+
+  const rows = await sql<{ c: string }[]>`
+    SELECT COUNT(*) AS c
+    FROM document_threads t
+    JOIN project_members pm ON pm.project_id = t.project_id
+    WHERE pm.user_id = ${userId}
+      AND t.status = 'open'
+  `;
+  return Number(rows[0]?.c ?? 0);
+}
+
+export async function getOpenThreadsForUser(
+  userId: string,
+  role: UserProfile['role'] | null | undefined,
+  statusFilter: 'open' | 'resolved' | 'all' = 'open',
+) {
+  const statusCondition = statusFilter === 'all' ? sql`TRUE` : sql`t.status = ${statusFilter}`;
+
+  if (role === 'admin') {
+    return sql<
+      {
+        thread_id: string;
+        project_id: string;
+        project_name: string;
+        document_id: string;
+        document_name: string;
+        title: string;
+        page_number: number | null;
+        updated_at: string;
+        comment_count: string;
+      }[]
+    >`
+      SELECT
+        t.id AS thread_id,
+        t.project_id,
+        p.name AS project_name,
+        t.document_id,
+        d.file_name AS document_name,
+        t.title,
+        t.page_number,
+        t.updated_at,
+        COALESCE(c.comment_count, 0)::text AS comment_count
+      FROM document_threads t
+      JOIN projects p ON p.id = t.project_id
+      JOIN documents d ON d.id = t.document_id
+      LEFT JOIN (
+        SELECT thread_id, COUNT(*) AS comment_count
+        FROM document_thread_comments
+        GROUP BY thread_id
+      ) c ON c.thread_id = t.id
+      WHERE ${statusCondition}
+      ORDER BY t.updated_at DESC
+      LIMIT 200
+    `;
+  }
+
+  return sql<
+    {
+      thread_id: string;
+      project_id: string;
+      project_name: string;
+      document_id: string;
+      document_name: string;
+      title: string;
+      page_number: number | null;
+      updated_at: string;
+      comment_count: string;
+    }[]
+  >`
+    SELECT
+      t.id AS thread_id,
+      t.project_id,
+      p.name AS project_name,
+      t.document_id,
+      d.file_name AS document_name,
+      t.title,
+      t.page_number,
+      t.updated_at,
+      COALESCE(c.comment_count, 0)::text AS comment_count
+    FROM document_threads t
+    JOIN project_members pm ON pm.project_id = t.project_id AND pm.user_id = ${userId}
+    JOIN projects p ON p.id = t.project_id
+    JOIN documents d ON d.id = t.document_id
+    LEFT JOIN (
+      SELECT thread_id, COUNT(*) AS comment_count
+      FROM document_thread_comments
+      GROUP BY thread_id
+    ) c ON c.thread_id = t.id
+    WHERE ${statusCondition}
+    ORDER BY t.updated_at DESC
+    LIMIT 200
+  `;
 }
 
 export async function getObservabilityMetrics(projectId: string): Promise<ObservabilityMetrics> {

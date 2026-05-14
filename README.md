@@ -39,7 +39,7 @@ Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admi
 | AI Quiz Gen     | Groq `llama-3.1-8b-instant` (default) or GitHub Models                                 |
 | Embeddings      | `@xenova/transformers` · `Xenova/all-MiniLM-L6-v2` · 384-dim · runs locally in Node.js |
 | Email           | SendGrid (via `@sendgrid/mail`)                                                        |
-| Styling         | Tailwind CSS v3                                                                        |
+| Styling         | Tailwind CSS v4                                                                        |
 | Background Jobs | Standalone Node.js worker (`worker/index.mjs`)                                         |
 
 ---
@@ -50,7 +50,7 @@ Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admi
 
 | Requirement | Minimum version |
 | ----------- | --------------- |
-| Node.js     | 18.x LTS        |
+| Node.js     | 22.x LTS        |
 | PostgreSQL  | 13+             |
 | npm         | 9+              |
 

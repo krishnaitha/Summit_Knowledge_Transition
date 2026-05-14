@@ -27,6 +27,33 @@ export async function createProjectAction(formData: FormData) {
   revalidatePath("/admin/projects");
 }
 
+export async function updateProjectSettingsAction(formData: FormData) {
+  await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const name = String(formData.get('name') ?? '').trim();
+  const description = String(formData.get('description') ?? '').trim();
+  const passThresholdRaw = Number(formData.get('pass_threshold') ?? 60);
+
+  if (!projectId || !name) return;
+
+  const passThreshold = Math.min(100, Math.max(0, Number.isFinite(passThresholdRaw) ? passThresholdRaw : 60));
+
+  await sql`
+    UPDATE projects
+    SET
+      name = ${name.slice(0, 140)},
+      description = ${description ? description.slice(0, 5000) : null},
+      pass_threshold = ${passThreshold}
+    WHERE id = ${projectId}
+  `;
+
+  revalidatePath('/admin/projects');
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}/quiz`);
+}
+
 export async function toggleProjectStatusAction(formData: FormData) {
   const projectId = String(formData.get("project_id") ?? "");
   const nextState = String(formData.get("next_state") ?? "true") === "true";

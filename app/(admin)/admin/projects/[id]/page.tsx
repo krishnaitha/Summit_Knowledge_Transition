@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { BarChart3, BookOpen, ChevronRight, FileText, Users } from 'lucide-react';
+import { BarChart3, BookOpen, ChevronRight, FileText, MessageSquare, Settings2, Users } from 'lucide-react';
 
-import { approveRetakeRequestAction, rejectRetakeRequestAction, sendProjectAnnouncementAction } from '@/app/actions/admin';
+import { approveRetakeRequestAction, rejectRetakeRequestAction, sendProjectAnnouncementAction, updateProjectSettingsAction } from '@/app/actions/admin';
 import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
 import { RetakeRequestsCard } from '@/components/admin/retake-requests-card';
 import { Badge } from '@/components/ui/badge';
@@ -59,6 +59,14 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
             </Button>
           </Link>
           {isSuperAdmin && (
+            <Link href={`/admin/projects/${params.id}/chat`}>
+              <Button size="sm" variant="secondary">
+                <MessageSquare className="h-3.5 w-3.5" />
+                Chat
+              </Button>
+            </Link>
+          )}
+          {isSuperAdmin && (
             <Link href={`/admin/projects/${params.id}/analytics`}>
               <Button size="sm" variant="secondary">
                 <BarChart3 className="h-3.5 w-3.5" />
@@ -91,6 +99,53 @@ export default async function AdminProjectDetailPage({ params }: { params: { id:
           </Card>
         ))}
       </div>
+
+      {isSuperAdmin && (
+        <details className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5">
+            <div className="flex items-center gap-2 text-base font-semibold text-slate-900">
+              <Settings2 className="h-4 w-4" />
+              Edit project settings
+            </div>
+            <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700">
+              Open
+            </span>
+          </summary>
+          <div className="border-t border-slate-100 p-5">
+            <form action={updateProjectSettingsAction} className="grid gap-3">
+              <input type="hidden" name="project_id" value={params.id} />
+              <div className="grid gap-3 md:grid-cols-[1fr_180px]">
+                <Input
+                  name="name"
+                  defaultValue={project?.name ?? ''}
+                  placeholder="Project name"
+                  maxLength={140}
+                  required
+                />
+                <Input
+                  name="pass_threshold"
+                  type="number"
+                  min={0}
+                  max={100}
+                  defaultValue={String(project?.pass_threshold ?? 60)}
+                  placeholder="Pass threshold %"
+                  required
+                />
+              </div>
+              <Textarea
+                name="description"
+                defaultValue={project?.description ?? ''}
+                placeholder="Project description"
+                rows={4}
+                maxLength={5000}
+              />
+              <div>
+                <SubmitButton loadingText="Saving…">Save project settings</SubmitButton>
+              </div>
+            </form>
+          </div>
+        </details>
+      )}
 
       {/* Upload + Recent docs */}
       <div className="grid gap-6 xl:grid-cols-[1fr_1.1fr]">

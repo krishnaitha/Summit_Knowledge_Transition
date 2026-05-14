@@ -7,7 +7,8 @@ import { QuizWindowForm } from '@/components/admin/quiz-window-form';
 import { requireAdmin } from '@/lib/auth';
 import { getObservabilityMetrics, getProjectAnalytics, getProjectById } from '@/lib/data';
 
-export default async function ProjectAnalyticsPage({ params }: { params: { id: string } }) {
+export default async function ProjectAnalyticsPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [{ profile }, project, analytics, observability] = await Promise.all([
     requireAdmin(),
     getProjectById(params.id),

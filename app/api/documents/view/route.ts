@@ -8,7 +8,7 @@ import { getFileInfo, getFileStream } from '@/lib/storage/local';
 import { downloadFromR2 } from '@/lib/storage/r2';
 
 function toWebStream(stream: NodeJS.ReadableStream) {
-  return Readable.toWeb(stream) as ReadableStream<Uint8Array>;
+  return Readable.toWeb(stream as Readable) as ReadableStream<Uint8Array>;
 }
 
 export async function GET(request: Request) {
@@ -43,7 +43,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const localInfo = await getFileInfo(document.file_url).catch(() => ({ exists: false, size: 0 }));
+    const localInfo = await getFileInfo(document.file_url).catch(() => ({
+      exists: false,
+      size: 0,
+    }));
 
     let fileStream: NodeJS.ReadableStream;
 
@@ -69,13 +72,13 @@ export async function GET(request: Request) {
 
     const fileExt = document.file_name.split('.').pop()?.toLowerCase() ?? '';
     const mimeTypes: Record<string, string> = {
-      'pdf': 'application/pdf',
-      'txt': 'text/plain',
-      'csv': 'text/csv',
-      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'doc': 'application/msword',
-      'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'xls': 'application/vnd.ms-excel',
+      pdf: 'application/pdf',
+      txt: 'text/plain',
+      csv: 'text/csv',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      doc: 'application/msword',
+      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      xls: 'application/vnd.ms-excel',
     };
 
     const mimeType = mimeTypes[fileExt] || 'application/octet-stream';

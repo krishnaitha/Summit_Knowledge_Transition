@@ -1,9 +1,16 @@
 import 'server-only';
 
-import { appEnv, assertEnv, isLlmConfigured } from '@/lib/env';
-import type Groq from 'groq-sdk';
-import { createGroqChatCompletion as groqCreate, createGroqQuizCompletion as groqQuizCreate } from '@/lib/groq/chat';
-import { createCopilotChatCompletion, type CopilotChatResponse } from '@/lib/llm/copilot';
+import type {
+  CompletionCreateParams,
+  ChatCompletion as GroqChatCompletion,
+} from 'groq-sdk/resources/chat/completions';
+
+import { appEnv, isLlmConfigured } from '@/lib/env';
+import {
+  createGroqChatCompletion as groqCreate,
+  createGroqQuizCompletion as groqQuizCreate,
+} from '@/lib/groq/chat';
+import { createCopilotChatCompletion } from '@/lib/llm/copilot';
 
 /**
  * Unified LLM provider abstraction
@@ -41,7 +48,7 @@ export async function createChatCompletion(
     const provider = appEnv.llmProvider;
     throw new Error(
       `${provider === 'copilot' ? 'Copilot proxy' : 'Groq'} is not configured. ` +
-      `Add required environment variables and set LLM_PROVIDER="${provider}".`,
+        `Add required environment variables and set LLM_PROVIDER="${provider}".`,
     );
   }
 
@@ -58,14 +65,14 @@ export async function createChatCompletion(
     top_p: args.top_p,
   };
 
-  const groqResponse = (await groqCreate(groqArgs, onStatus)) as any;
+  const groqResponse = (await groqCreate(groqArgs, onStatus)) as GroqChatCompletion;
 
   // Normalize response to unified format
   return {
-    choices: groqResponse.choices.map((choice: any) => ({
+    choices: groqResponse.choices.map((choice) => ({
       message: {
-        content: choice.message?.content || '',
-        role: choice.message?.role || 'assistant',
+        content: choice.message.content ?? '',
+        role: choice.message.role,
       },
       finish_reason: choice.finish_reason,
     })),
@@ -77,15 +84,17 @@ export async function createChatCompletion(
  * Create a quiz completion (used during quiz generation)
  * This is optimized for quiz generation tasks
  */
-export async function createQuizCompletion(
-  args: {
-    messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
-    temperature?: number;
-    max_tokens?: number;
-    top_p?: number;
-    response_format?: { type: string };
-  },
-): Promise<UnifiedChatCompletion> {
+export async function createQuizCompletion(args: {
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+  temperature?: number;
+  max_tokens?: number;
+  top_p?: number;
+  response_format?:
+    | CompletionCreateParams.ResponseFormatText
+    | CompletionCreateParams.ResponseFormatJsonSchema
+    | CompletionCreateParams.ResponseFormatJsonObject
+    | null;
+}): Promise<UnifiedChatCompletion> {
   if (!isLlmConfigured()) {
     const provider = appEnv.llmProvider;
     throw new Error(
@@ -95,18 +104,23 @@ export async function createQuizCompletion(
 
   if (appEnv.llmProvider === 'copilot') {
     // Copilot proxy - use regular completion for quiz generation
-    return await createCopilotChatCompletion(args);
+    return await createCopilotChatCompletion({
+      messages: args.messages,
+      temperature: args.temperature,
+      max_tokens: args.max_tokens,
+      top_p: args.top_p,
+    });
   }
 
   // Default to Groq - use quiz-optimized client
-  const groqResponse = (await groqQuizCreate(args)) as any;
+  const groqResponse = (await groqQuizCreate(args)) as GroqChatCompletion;
 
   // Normalize response to unified format
   return {
-    choices: groqResponse.choices.map((choice: any) => ({
+    choices: groqResponse.choices.map((choice) => ({
       message: {
-        content: choice.message?.content || '',
-        role: choice.message?.role || 'assistant',
+        content: choice.message.content ?? '',
+        role: choice.message.role,
       },
       finish_reason: choice.finish_reason,
     })),

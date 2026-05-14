@@ -5,7 +5,8 @@ import { ChatInterface } from '@/components/chat/chat-interface';
 import { requireAdmin } from '@/lib/auth';
 import { getChatMessages, getProjectById, getProjectChatSessions } from '@/lib/data';
 
-export default async function AdminProjectChatPage({ params }: { params: { id: string } }) {
+export default async function AdminProjectChatPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { profile } = await requireAdmin();
 
   const [project, sessions] = await Promise.all([

@@ -23,11 +23,11 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 // Magic bytes for binary formats
 const MAGIC: Record<string, number[]> = {
-  pdf:  [0x25, 0x50, 0x44, 0x46],       // %PDF
-  docx: [0x50, 0x4b, 0x03, 0x04],       // PK.. (ZIP-based Office Open XML)
-  xlsx: [0x50, 0x4b, 0x03, 0x04],       // PK.. (ZIP-based Office Open XML)
-  pptx: [0x50, 0x4b, 0x03, 0x04],       // PK.. (ZIP-based Office Open XML)
-  ppt:  [0xd0, 0xcf, 0x11, 0xe0],       // OLE2 compound document
+  pdf: [0x25, 0x50, 0x44, 0x46], // %PDF
+  docx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP-based Office Open XML)
+  xlsx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP-based Office Open XML)
+  pptx: [0x50, 0x4b, 0x03, 0x04], // PK.. (ZIP-based Office Open XML)
+  ppt: [0xd0, 0xcf, 0x11, 0xe0], // OLE2 compound document
 };
 
 /**
@@ -50,7 +50,7 @@ export async function validateUploadedFile(file: File): Promise<string | null> {
   }
 
   if (MAGIC[ext]) {
-    const header = new Uint8Array(await file.arrayBuffer().then((buf) => buf.slice(0, 4)));
+    const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
     const valid = MAGIC[ext].every((byte, i) => header[i] === byte);
     if (!valid) {
       return `File "${file.name}" does not appear to be a valid ${ext.toUpperCase()} file.`;

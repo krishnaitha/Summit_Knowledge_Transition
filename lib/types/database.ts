@@ -1,8 +1,9 @@
-export type UserRole = "admin" | "member";
-export type ProjectMemberRole = "admin" | "member";
-export type MessageRole = "user" | "assistant";
-export type QuizAttemptStatus = "in_progress" | "submitted";
-export type QuizOptionKey = "A" | "B" | "C" | "D";
+export type UserRole = 'admin' | 'member';
+export type ProjectMemberRole = 'admin' | 'member';
+export type MessageRole = 'user' | 'assistant';
+export type QuizAttemptStatus = 'in_progress' | 'submitted';
+export type QuizOptionKey = 'A' | 'B' | 'C' | 'D';
+export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 
 export interface UserProfile {
   id: string;
@@ -51,7 +52,7 @@ export interface DocumentRecord {
   uploaded_at: string;
   chunk_count: number;
   pii_detections: number;
-  classification: "confidential" | "internal" | "public";
+  classification: 'confidential' | 'internal' | 'public';
   is_required: boolean;
   scan_flags: string[];
 }
@@ -80,7 +81,7 @@ export interface ChatAnswerFeedbackRecord {
   user_id: string;
   project_id: string;
   message_id: string;
-  rating: "up" | "down";
+  rating: 'up' | 'down';
   reason_tag: string | null;
   comment: string | null;
   created_at: string;
@@ -129,7 +130,7 @@ export interface QuizSetRecord {
   category: string;
 }
 
-export type QuizQuestionType = "mcq" | "true_false";
+export type QuizQuestionType = 'mcq' | 'true_false';
 
 export interface QuizQuestionRecord {
   id: string;
@@ -192,8 +193,8 @@ export interface ChatBookmarkRecord {
   created_at: string;
 }
 
-export type ProcessingJobType = "document_process" | "quiz_generate";
-export type ProcessingJobStatus = "pending" | "running" | "done" | "failed";
+export type ProcessingJobType = 'document_process' | 'quiz_generate';
+export type ProcessingJobStatus = 'pending' | 'running' | 'done' | 'failed';
 
 export interface ProcessingJobRecord {
   id: string;
@@ -220,7 +221,7 @@ export interface ProjectDashboardCard extends ProjectRecord {
   documentCount: number;
   docsViewedCount: number;
   isNewDocs: boolean;
-  quizStatus: "Not Started" | "In Progress" | "Completed";
+  quizStatus: 'Not Started' | 'In Progress' | 'Completed';
   quizScoreLabel: string | null;
   quizPercentage: number | null;
   quizPassed: boolean | null;

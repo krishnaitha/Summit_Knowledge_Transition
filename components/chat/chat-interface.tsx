@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
 import { Plus, Search } from 'lucide-react';
+import { useMemo, useState, useTransition } from 'react';
 
 import { MessageBubble, type ChatBubbleMessage } from '@/components/chat/message-bubble';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,9 @@ export function ChatInterface({
   const [sessionId, setSessionId] = useState<string | null>(initialSessionId ?? null);
   const [sessions, setSessions] = useState(initialSessions);
   const [messages, setMessages] = useState(initialMessages);
-  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(() => new Set(initialBookmarkedIds));
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(
+    () => new Set(initialBookmarkedIds),
+  );
   const [draft, setDraft] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -54,7 +56,12 @@ export function ChatInterface({
 
       if (response.ok) {
         const data = (await response.json()) as {
-          messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; sources: Array<{ documentName: string; similarity?: number }> | null }>;
+          messages: Array<{
+            id: string;
+            role: 'user' | 'assistant';
+            content: string;
+            sources: Array<{ documentName: string; similarity?: number }> | null;
+          }>;
           bookmarkedMessageIds: string[];
         };
         setMessages(
@@ -114,7 +121,9 @@ export function ChatInterface({
 
       const createdSessionId = response.headers.get('x-session-id');
       const sourcesHeader = response.headers.get('x-sources');
-      const sources = sourcesHeader ? (JSON.parse(sourcesHeader) as Array<{ documentName: string; similarity?: number }>) : [];
+      const sources = sourcesHeader
+        ? (JSON.parse(sourcesHeader) as Array<{ documentName: string; similarity?: number }>)
+        : [];
 
       if (createdSessionId && !sessions.some((item) => item.id === createdSessionId)) {
         setSessions((current) => [{ id: createdSessionId, label: 'New chat' }, ...current]);
@@ -215,7 +224,9 @@ export function ChatInterface({
       <Card className="flex min-h-[70vh] flex-col overflow-hidden border border-white/40">
         <div className="border-b border-slate-100 px-6 py-5">
           <p className="text-lg font-semibold text-slate-950">Ask Summit AI</p>
-          <p className="text-sm text-slate-500">Answers stay grounded in this project's KT documents.</p>
+          <p className="text-sm text-slate-500">
+            Answers stay grounded in this project&apos;s KT documents.
+          </p>
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">
           {messages.length ? (
@@ -230,10 +241,13 @@ export function ChatInterface({
           ) : (
             <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center">
               <Search className="mx-auto h-8 w-8 text-slate-400" />
-              <p className="mt-4 text-sm text-slate-500">Ask about runbooks, dependencies, handover tasks, environments, or support procedures.</p>
+              <p className="mt-4 text-sm text-slate-500">
+                Ask about runbooks, dependencies, handover tasks, environments, or support
+                procedures.
+              </p>
             </div>
           )}
-          {status ? <p className="text-sm font-medium text-accent-700">{status}</p> : null}
+          {status ? <p className="text-accent-700 text-sm font-medium">{status}</p> : null}
         </div>
         <div className="border-t border-slate-100 p-4">
           <div className="flex gap-3">

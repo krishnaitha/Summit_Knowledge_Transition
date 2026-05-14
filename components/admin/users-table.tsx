@@ -1,23 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Search, Download, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { 
-  toggleUserActiveAction, 
-  updateUserRoleAction,
+import {
+  bulkAssignToProjectAction,
   bulkToggleUserActiveAction,
   bulkUpdateUserRoleAction,
-  bulkAssignToProjectAction,
+  toggleUserActiveAction,
+  updateUserRoleAction,
 } from '@/app/actions/admin';
+import { UserDetailDrawer } from '@/components/admin/user-detail-drawer';
+import { UserFiltersPanel, type UserFilters } from '@/components/admin/user-filters';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { UserDetailDrawer } from '@/components/admin/user-detail-drawer';
-import { UserFiltersPanel, type UserFilters } from '@/components/admin/user-filters';
-import { generateUsersCsv, downloadCsv } from '@/lib/export';
-import type { UserProfile, ProjectRecord, ActivityRecord } from '@/lib/types/database';
+import { downloadCsv, generateUsersCsv } from '@/lib/export';
+import type { ActivityRecord, ProjectRecord, UserProfile } from '@/lib/types/database';
 import { formatDate } from '@/lib/utils';
 
 const PAGE_SIZE = 10;
@@ -35,10 +35,12 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [userProjectCounts, setUserProjectCounts] = useState<Map<string, number>>(new Map());
-  const [userQuizStats, setUserQuizStats] = useState<Map<string, { completed: number; inProgress: number; notStarted: number }>>(
+  const [userQuizStats, setUserQuizStats] = useState<
+    Map<string, { completed: number; inProgress: number; notStarted: number }>
+  >(new Map());
+  const [userActivityCache, setUserActivityCache] = useState<Map<string, ActivityRecord[]>>(
     new Map(),
   );
-  const [userActivityCache, setUserActivityCache] = useState<Map<string, ActivityRecord[]>>(new Map());
   const [appliedFilters, setAppliedFilters] = useState<UserFilters>({
     lastLoginWindow: 'any',
   });
@@ -49,7 +51,10 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
   useEffect(() => {
     const fetchUserData = async () => {
       const projectCounts = new Map<string, number>();
-      const quizStats = new Map<string, { completed: number; inProgress: number; notStarted: number }>();
+      const quizStats = new Map<
+        string,
+        { completed: number; inProgress: number; notStarted: number }
+      >();
       const activityCache = new Map<string, ActivityRecord[]>();
 
       // This would normally be fetched from the server
@@ -190,7 +195,7 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
       {/* Header with search and controls */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:w-72">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             className="pl-9"
             placeholder="Filter by name or email…"
@@ -222,7 +227,7 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
 
       {/* Bulk Actions Toolbar */}
       {selectedIds.size > 0 && (
-        <div className="rounded-lg border border-slate-200 bg-accent-50 p-4">
+        <div className="bg-accent-50 rounded-lg border border-slate-200 p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-medium text-slate-900">
               {selectedIds.size} user{selectedIds.size !== 1 ? 's' : ''} selected
@@ -231,7 +236,7 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
               <select
                 value={bulkActionType}
                 onChange={(e) => setBulkActionType(e.target.value)}
-                className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200"
+                className="focus:border-accent-500 focus:ring-accent-200 h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:ring-2"
               >
                 <option value="">— Select action —</option>
                 <option value="lock">Lock users</option>
@@ -245,7 +250,7 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
                 <select
                   value={bulkProjectId}
                   onChange={(e) => setBulkProjectId(e.target.value)}
-                  className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200"
+                  className="focus:border-accent-500 focus:ring-accent-200 h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:ring-2"
                 >
                   <option value="">— Select project —</option>
                   {projects
@@ -260,7 +265,9 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
 
               <Button
                 onClick={handleBulkAction}
-                disabled={!bulkActionType || (bulkActionType === 'assign-project' && !bulkProjectId)}
+                disabled={
+                  !bulkActionType || (bulkActionType === 'assign-project' && !bulkProjectId)
+                }
                 className="flex items-center gap-2"
               >
                 Apply
@@ -288,7 +295,7 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
                 type="checkbox"
                 checked={selectedIds.size === filtered.length && filtered.length > 0}
                 onChange={(e) => handleSelectAll(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-accent-600 focus:ring-2 focus:ring-accent-500"
+                className="text-accent-600 focus:ring-accent-500 h-4 w-4 rounded border-slate-300 focus:ring-2"
               />
               <label className="text-sm font-medium text-slate-600">
                 Select all {filtered.length} users on this page
@@ -306,11 +313,11 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
                   type="checkbox"
                   checked={selectedIds.has(user.id)}
                   onChange={(e) => handleSelectUser(user.id, e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-accent-600 focus:ring-2 focus:ring-accent-500"
+                  className="text-accent-600 focus:ring-accent-500 mt-1 h-4 w-4 rounded border-slate-300 focus:ring-2"
                 />
                 <div
                   onClick={() => setSelectedUser(user)}
-                  className="flex-1 cursor-pointer hover:opacity-75 transition-opacity"
+                  className="flex-1 cursor-pointer transition-opacity hover:opacity-75"
                 >
                   <div className="flex items-center gap-3">
                     <p className="font-semibold text-slate-900">{user.full_name ?? user.email}</p>
@@ -329,7 +336,11 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
               <div className="flex flex-wrap gap-3">
                 <form action={updateUserRoleAction}>
                   <input name="user_id" type="hidden" value={user.id} />
-                  <input name="role" type="hidden" value={user.role === 'admin' ? 'member' : 'admin'} />
+                  <input
+                    name="role"
+                    type="hidden"
+                    value={user.role === 'admin' ? 'member' : 'admin'}
+                  />
                   <SubmitButton variant="secondary" loadingText="Updating…">
                     {user.role === 'admin' ? 'Demote to member' : 'Promote to admin'}
                   </SubmitButton>
@@ -337,7 +348,10 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
                 <form action={toggleUserActiveAction}>
                   <input name="user_id" type="hidden" value={user.id} />
                   <input name="next_state" type="hidden" value={String(user.is_active === false)} />
-                  <SubmitButton variant={user.is_active === false ? 'primary' : 'danger'} loadingText="Updating…">
+                  <SubmitButton
+                    variant={user.is_active === false ? 'primary' : 'danger'}
+                    loadingText="Updating…"
+                  >
                     {user.is_active === false ? 'Unlock user' : 'Lock user'}
                   </SubmitButton>
                 </form>
@@ -388,4 +402,3 @@ export function UsersTable({ users, projects, activity }: EnhancedUsersTableProp
     </div>
   );
 }
-

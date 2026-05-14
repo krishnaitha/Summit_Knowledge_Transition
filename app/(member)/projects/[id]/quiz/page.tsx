@@ -15,7 +15,8 @@ function formatWindowDate(iso: string) {
   });
 }
 
-export default async function ProjectQuizPage({ params }: { params: { id: string } }) {
+export default async function ProjectQuizPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { profile } = await requireMember();
   const canAccess = await userHasProjectAccess(profile!.id, profile?.role, params.id);
 

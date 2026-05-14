@@ -1,0 +1,53 @@
+services:
+
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: summitkt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./postgres/migrations/add_password_reset_tokens.sql:/docker-entrypoint-initdb.d/02_add_password_reset_tokens.sql:ro
+      - ./postgres/migrations/add_quiz_retake_requests.sql:/docker-entrypoint-initdb.d/03_add_quiz_retake_requests.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d summitkt"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      target: runner
+    env_file: .env.local
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/summitkt
+      DATABASE_SSL: disable
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      target: worker
+    env_file: .env.local
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/summitkt
+      DATABASE_SSL: disable
+      INTERNAL_APP_URL: http://app:3000
+    volumes:
+      - uploads_data:/app/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  uploads_data:

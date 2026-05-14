@@ -2,19 +2,18 @@ import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
 import { getProjectById, logActivity, userHasProjectAccess } from '@/lib/data';
-import { buildKtPrompt } from '@/lib/groq/chat';
-import { streamGroqText } from '@/lib/groq/streaming';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
-import { validateOrigin } from '@/lib/security';
 import sql from '@/lib/db';
-import type { RagTraceRecord } from '@/lib/types/database';
+import { buildKtPrompt, createGroqChatCompletion } from '@/lib/groq/chat';
+import { streamGroqText } from '@/lib/groq/streaming';
 import { createChatCompletion, getCurrentLlmProvider } from '@/lib/llm';
-import { createGroqChatCompletion } from '@/lib/groq/chat';
+import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { validateOrigin } from '@/lib/security';
+import type { ChatMessageRecord, RagTraceRecord } from '@/lib/types/database';
 
 const answerCache = new Map<string, string>();
 
-const NO_MATCH_THRESHOLD = 0.20;
+const NO_MATCH_THRESHOLD = 0.2;
 const HALLUCINATION_THRESHOLD = 0.35;
 const NOT_FOUND_MSG =
   'I could not find enough information in the KT documents to answer this question. ' +
@@ -66,7 +65,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Session not found' }, { status: 404 });
   }
 
-  const messages = await sql`
+  const messages = await sql<ChatMessageRecord[]>`
     SELECT * FROM chat_messages WHERE session_id = ${sessionId} ORDER BY created_at ASC
   `;
 
@@ -74,7 +73,11 @@ export async function GET(request: Request) {
   const normalizedMessages = messages.map((m) => {
     let sources = m.sources;
     if (typeof sources === 'string') {
-      try { sources = JSON.parse(sources); } catch { sources = null; }
+      try {
+        sources = JSON.parse(sources);
+      } catch {
+        sources = null;
+      }
     }
     return { ...m, sources: Array.isArray(sources) ? sources : null };
   });
@@ -114,10 +117,13 @@ export async function POST(request: Request) {
     // Rate limit: 30 chat messages per hour per user
     const rateCheck = await checkRateLimit(userId, 'chatbot_message', 30, 3600);
     if (!rateCheck.allowed) {
-      return NextResponse.json({ error: 'Message limit reached. Please try again later.' }, { status: 429 });
+      return NextResponse.json(
+        { error: 'Message limit reached. Please try again later.' },
+        { status: 429 },
+      );
     }
 
-    const canAccess = await userHasProjectAccess(userId, profile?.role as string | undefined, body.projectId);
+    const canAccess = await userHasProjectAccess(userId, profile?.role, body.projectId);
 
     if (!canAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -235,7 +241,8 @@ export async function POST(request: Request) {
         VALUES (${sessionId}, 'assistant', ${cachedAnswer}, ${sql.json(sources)})
       `;
 
-      const countRows = await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
+      const countRows =
+        await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
       const count = Number(countRows[0]?.c ?? 0);
 
       await sql`
@@ -244,7 +251,12 @@ export async function POST(request: Request) {
         WHERE id = ${sessionId}
       `;
 
-      await logActivity({ userId, projectId: body.projectId, action: 'chatbot_message', metadata: { cached: true } });
+      await logActivity({
+        userId,
+        projectId: body.projectId,
+        action: 'chatbot_message',
+        metadata: { cached: true },
+      });
 
       writeRagTrace({
         project_id: body.projectId,
@@ -286,27 +298,38 @@ export async function POST(request: Request) {
         const tGenStart = Date.now();
 
         let generated = '';
-        let usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | null = null;
+        let usage: {
+          prompt_tokens: number;
+          completion_tokens: number;
+          total_tokens: number;
+        } | null = null;
         let modelUsed: string | null = null;
 
         try {
           // For Groq, use streaming; for Copilot, buffer the full response
           if (getCurrentLlmProvider() === 'Groq') {
-            const completion = await createGroqChatCompletion(
+            // stream_options is a valid Groq API field not yet typed in groq-sdk;
+            // Object.assign avoids the excess-property check.
+            const groqArgs = Object.assign(
               {
-                stream: true,
+                stream: true as const,
                 max_tokens: 1024,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                stream_options: { include_usage: true } as any,
                 messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: body.message },
+                  { role: 'system' as const, content: systemPrompt },
+                  { role: 'user' as const, content: body.message },
                 ],
               },
-              (statusMessage) => enqueueStatus(statusMessage),
+              { stream_options: { include_usage: true } },
+            );
+            const completion = await createGroqChatCompletion(groqArgs, (statusMessage) =>
+              enqueueStatus(statusMessage),
             );
 
-            const { text, usage: streamUsage, modelUsed: model } = await streamGroqText(completion, (token) => {
+            const {
+              text,
+              usage: streamUsage,
+              modelUsed: model,
+            } = await streamGroqText(completion, (token) => {
               generated += token;
               enqueue(token);
             });
@@ -332,7 +355,8 @@ export async function POST(request: Request) {
             modelUsed = getCurrentLlmProvider();
 
             if (!generated.trim()) {
-              generated = 'I could not generate a response for that request. Please try rephrasing your question.';
+              generated =
+                'I could not generate a response for that request. Please try rephrasing your question.';
             }
 
             // Stream the response character by character for consistency
@@ -341,7 +365,9 @@ export async function POST(request: Request) {
             }
           }
         } catch (err) {
-          enqueueStatus(`Failed to reach the AI. Please try again.${err instanceof Error ? ` (${err.message})` : ''}`);
+          enqueueStatus(
+            `Failed to reach the AI. Please try again.${err instanceof Error ? ` (${err.message})` : ''}`,
+          );
           controller.close();
           return;
         }
@@ -357,7 +383,8 @@ export async function POST(request: Request) {
         `;
         const assistantMsgId = (assistantMsgRows[0]?.id as string) ?? null;
 
-        const countRows = await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
+        const countRows =
+          await sql`SELECT COUNT(*) as c FROM chat_messages WHERE session_id = ${sessionId}`;
         const count = Number(countRows[0]?.c ?? 0);
 
         await sql`
@@ -366,7 +393,12 @@ export async function POST(request: Request) {
           WHERE id = ${sessionId}
         `;
 
-        await logActivity({ userId, projectId: body.projectId, action: 'chatbot_message', metadata: { cached: false } });
+        await logActivity({
+          userId,
+          projectId: body.projectId,
+          action: 'chatbot_message',
+          metadata: { cached: false },
+        });
 
         controller.close();
 
@@ -402,6 +434,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Chat failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Chat failed' },
+      { status: 500 },
+    );
   }
 }

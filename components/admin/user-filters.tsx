@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ProjectRecord } from '@/lib/types/database';
+import { ChevronDown } from 'lucide-react';
 
 export interface UserFilters {
   role?: 'admin' | 'member';
@@ -32,15 +31,11 @@ export function UserFiltersPanel({
   return (
     <div className="relative">
       {/* Toggle Button */}
-      <Button
-        variant="secondary"
-        onClick={onToggle}
-        className="flex items-center gap-2"
-      >
+      <Button variant="secondary" onClick={onToggle} className="flex items-center gap-2">
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         Filters
         {activeCount > 0 && (
-          <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent-500 text-xs font-semibold text-white">
+          <span className="bg-accent-500 ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold text-white">
             {activeCount}
           </span>
         )}
@@ -48,7 +43,7 @@ export function UserFiltersPanel({
 
       {/* Filters Panel */}
       {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
+        <div className="absolute top-full left-0 z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
           <div className="space-y-4">
             {/* Role Filter */}
             <div className="space-y-2">
@@ -61,7 +56,7 @@ export function UserFiltersPanel({
                     role: (e.target.value as 'admin' | 'member') || undefined,
                   })
                 }
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200"
+                className="focus:border-accent-500 focus:ring-accent-200 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2"
               >
                 <option value="">— All roles —</option>
                 <option value="admin">Admin</option>
@@ -80,7 +75,7 @@ export function UserFiltersPanel({
                     status: (e.target.value as 'active' | 'locked') || undefined,
                   })
                 }
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200"
+                className="focus:border-accent-500 focus:ring-accent-200 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2"
               >
                 <option value="">— All statuses —</option>
                 <option value="active">Active</option>
@@ -100,7 +95,7 @@ export function UserFiltersPanel({
                       projectId: e.target.value || undefined,
                     })
                   }
-                  className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200"
+                  className="focus:border-accent-500 focus:ring-accent-200 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2"
                 >
                   <option value="">— All projects —</option>
                   {projects.map((p) => (
@@ -120,10 +115,10 @@ export function UserFiltersPanel({
                 onChange={(e) =>
                   onFiltersChange({
                     ...filters,
-                    lastLoginWindow: (e.target.value as any) || 'any',
+                    lastLoginWindow: (e.target.value as UserFilters['lastLoginWindow']) || 'any',
                   })
                 }
-                className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200"
+                className="focus:border-accent-500 focus:ring-accent-200 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm outline-none focus:ring-2"
               >
                 <option value="any">— Any time —</option>
                 <option value="today">Today</option>
@@ -144,7 +139,7 @@ export function UserFiltersPanel({
                     lastLoginWindow: undefined,
                   })
                 }
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
               >
                 Clear all filters
               </button>

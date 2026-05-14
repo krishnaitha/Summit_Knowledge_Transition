@@ -1,6 +1,6 @@
+import { createReadStream } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
-import { createReadStream } from 'fs';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
@@ -106,9 +106,7 @@ export async function deleteFile(filePath: string): Promise<void> {
     await fs.unlink(resolvedPath);
   } catch (error) {
     // File may already be deleted, ignore
-    if ((error as any).code !== 'ENOENT') {
-      throw error;
-    }
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
   }
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,14 +22,17 @@ export function AnalyticsTable({
   const columns = useMemo(() => Object.keys(rows[0] ?? {}), [rows]);
 
   const filteredRows = useMemo(() => {
-    setPage(1);
     if (!filter) return rows;
-    return rows.filter((row) => Object.values(row).some((value) => String(value).toLowerCase().includes(filter.toLowerCase())));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return rows.filter((row) =>
+      Object.values(row).some((value) =>
+        String(value).toLowerCase().includes(filter.toLowerCase()),
+      ),
+    );
   }, [filter, rows]);
 
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
-  const pageRows = filteredRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const clampedPage = Math.min(page, totalPages);
+  const pageRows = filteredRows.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE);
 
   const exportCsv = () => {
     const blob = new Blob([toCsv(filteredRows)], { type: 'text/csv;charset=utf-8' });
@@ -89,14 +92,27 @@ export function AnalyticsTable({
         {hasRows && totalPages > 1 && (
           <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
             <p className="text-xs text-slate-400">
-              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredRows.length)} of {filteredRows.length}
+              {(clampedPage - 1) * PAGE_SIZE + 1}–
+              {Math.min(clampedPage * PAGE_SIZE, filteredRows.length)} of {filteredRows.length}
             </p>
             <div className="flex items-center gap-1">
-              <Button size="sm" variant="secondary" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
                 <ChevronLeft className="h-3.5 w-3.5" />
               </Button>
-              <span className="px-2 text-xs text-slate-600">{page} / {totalPages}</span>
-              <Button size="sm" variant="secondary" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
+              <span className="px-2 text-xs text-slate-600">
+                {page} / {totalPages}
+              </span>
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
                 <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>

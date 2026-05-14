@@ -3,11 +3,12 @@ import { redirect } from 'next/navigation';
 import { ResetPasswordForm } from '@/components/auth/reset-password-form';
 import sql from '@/lib/db';
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: { token?: string };
-}) {
+export default async function ResetPasswordPage(
+  props: {
+    searchParams: Promise<{ token?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const token = searchParams.token ?? '';
 
   if (!token) redirect('/forgot-password');

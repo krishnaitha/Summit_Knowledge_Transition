@@ -1,8 +1,10 @@
 # Summit KT Portal — Architecture
 
-> **Version:** 1.0.0  
-> **Stack:** Next.js 14 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS  
+> **Version:** 1.1.0  
+> **Stack:** Next.js 16 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS  
 > **Purpose:** Enterprise knowledge-transfer portal for structured team transitions
+
+> **May 2026 Addendum:** Document threads, open-thread triage queues, chunk full-text search, interactive study mode, flashcards with spaced repetition, and quiz attempt history retention are now part of the production architecture.
 
 ---
 
@@ -315,13 +317,13 @@ erDiagram
 
 ### 4.2 Key Indexes
 
-| Table | Index | Purpose |
-|---|---|---|
-| `document_chunks` | `USING ivfflat (embedding vector_cosine_ops)` | Fast ANN cosine similarity search |
-| `document_chunks` | `(project_id)` | Filter chunks by project |
-| `quiz_attempts` | `(user_id, project_id)` | Look up a member's attempt per project |
-| `project_members` | `(project_id, role)` | Filter project admins efficiently |
-| `processing_jobs` | `(status, created_at)` | Worker job queue polling |
+| Table             | Index                                         | Purpose                                |
+| ----------------- | --------------------------------------------- | -------------------------------------- |
+| `document_chunks` | `USING ivfflat (embedding vector_cosine_ops)` | Fast ANN cosine similarity search      |
+| `document_chunks` | `(project_id)`                                | Filter chunks by project               |
+| `quiz_attempts`   | `(user_id, project_id)`                       | Look up a member's attempt per project |
+| `project_members` | `(project_id, role)`                          | Filter project admins efficiently      |
+| `processing_jobs` | `(status, created_at)`                        | Worker job queue polling               |
 
 ---
 
@@ -354,12 +356,12 @@ sequenceDiagram
 
 ### Route Guards
 
-| Guard function | Where used | Logic |
-|---|---|---|
-| `requireMember()` | All member pages | Session exists + any role |
-| `requireAdmin()` | Super-admin pages (dashboard, users, analytics) | `role === 'admin'` |
-| `requireAnyAdmin()` | Admin layout | `role === 'admin'` OR is a project admin of any project |
-| `requireProjectAdmin(projectId)` | Project detail/members/quiz pages | `role === 'admin'` OR `project_members.role = 'admin'` for that project |
+| Guard function                   | Where used                                      | Logic                                                                   |
+| -------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------- |
+| `requireMember()`                | All member pages                                | Session exists + any role                                               |
+| `requireAdmin()`                 | Super-admin pages (dashboard, users, analytics) | `role === 'admin'`                                                      |
+| `requireAnyAdmin()`              | Admin layout                                    | `role === 'admin'` OR is a project admin of any project                 |
+| `requireProjectAdmin(projectId)` | Project detail/members/quiz pages               | `role === 'admin'` OR `project_members.role = 'admin'` for that project |
 
 ---
 
@@ -509,10 +511,10 @@ stateDiagram-v2
 
 **Job types:**
 
-| Type | Payload | Processor |
-|---|---|---|
-| `document_process` | `{ documentId }` | Parse → embed → store chunks |
-| `quiz_generate` | `{ projectId, sets, questionsPerSet, category }` | Select chunks → Groq → insert questions |
+| Type               | Payload                                          | Processor                               |
+| ------------------ | ------------------------------------------------ | --------------------------------------- |
+| `document_process` | `{ documentId }`                                 | Parse → embed → store chunks            |
+| `quiz_generate`    | `{ projectId, sets, questionsPerSet, category }` | Select chunks → Groq → insert questions |
 
 **Concurrency model:** Multiple worker instances can run safely. `FOR UPDATE SKIP LOCKED` prevents two workers from claiming the same job.
 
@@ -544,56 +546,56 @@ graph TD
 
 ### Authentication
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/[...nextauth]` | — | NextAuth sign-in/sign-out handler |
-| `POST` | `/api/auth/register` | — | Self-registration (rate-limited) |
-| `POST` | `/api/auth/forgot-password` | — | Send password reset email |
-| `POST` | `/api/auth/reset-password` | Token | Apply new password |
+| Method | Endpoint                    | Auth  | Description                       |
+| ------ | --------------------------- | ----- | --------------------------------- |
+| `POST` | `/api/auth/[...nextauth]`   | —     | NextAuth sign-in/sign-out handler |
+| `POST` | `/api/auth/register`        | —     | Self-registration (rate-limited)  |
+| `POST` | `/api/auth/forgot-password` | —     | Send password reset email         |
+| `POST` | `/api/auth/reset-password`  | Token | Apply new password                |
 
 ### Chat
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/chat?sessionId=…` | Member | Fetch message history |
-| `POST` | `/api/chat` | Member | Stream RAG chat response |
+| Method | Endpoint                | Auth   | Description              |
+| ------ | ----------------------- | ------ | ------------------------ |
+| `GET`  | `/api/chat?sessionId=…` | Member | Fetch message history    |
+| `POST` | `/api/chat`             | Member | Stream RAG chat response |
 
 ### Documents
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/documents/upload` | Admin | Upload file to storage |
-| `POST` | `/api/documents/process` | Admin | Queue document processing job |
-| `GET` | `/api/documents/view?documentId=…` | Member | Get signed file URL |
+| Method | Endpoint                           | Auth   | Description                   |
+| ------ | ---------------------------------- | ------ | ----------------------------- |
+| `POST` | `/api/documents/upload`            | Admin  | Upload file to storage        |
+| `POST` | `/api/documents/process`           | Admin  | Queue document processing job |
+| `GET`  | `/api/documents/view?documentId=…` | Member | Get signed file URL           |
 
 ### Quiz
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/quiz?projectId=…` | Member | Get assigned questions |
-| `POST` | `/api/quiz/answer` | Member | Save a single answer |
-| `POST` | `/api/quiz/submit` | Member | Submit attempt |
+| Method | Endpoint                | Auth   | Description            |
+| ------ | ----------------------- | ------ | ---------------------- |
+| `GET`  | `/api/quiz?projectId=…` | Member | Get assigned questions |
+| `POST` | `/api/quiz/answer`      | Member | Save a single answer   |
+| `POST` | `/api/quiz/submit`      | Member | Submit attempt         |
 
 ### Bookmarks
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/bookmarks?projectId=…` | Member | List bookmarks |
-| `POST` | `/api/bookmarks` | Member | Toggle bookmark on a message |
+| Method | Endpoint                     | Auth   | Description                  |
+| ------ | ---------------------------- | ------ | ---------------------------- |
+| `GET`  | `/api/bookmarks?projectId=…` | Member | List bookmarks               |
+| `POST` | `/api/bookmarks`             | Member | Toggle bookmark on a message |
 
 ### Admin
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/admin/users` | Super Admin | List all users |
-| `POST` | `/api/admin/invite` | Super Admin | Send invite email |
-| `POST` | `/api/admin/quiz/generate` | Project Admin+ | Queue quiz generation |
-| `POST` | `/api/admin/retake` | Project Admin+ | Approve/reject retake request |
+| Method | Endpoint                   | Auth           | Description                   |
+| ------ | -------------------------- | -------------- | ----------------------------- |
+| `GET`  | `/api/admin/users`         | Super Admin    | List all users                |
+| `POST` | `/api/admin/invite`        | Super Admin    | Send invite email             |
+| `POST` | `/api/admin/quiz/generate` | Project Admin+ | Queue quiz generation         |
+| `POST` | `/api/admin/retake`        | Project Admin+ | Approve/reject retake request |
 
 ### Worker
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
+| Method | Endpoint           | Auth                   | Description                        |
+| ------ | ------------------ | ---------------------- | ---------------------------------- |
 | `POST` | `/api/jobs/worker` | `WORKER_SECRET` header | Claim and process next pending job |
 
 ---
@@ -643,20 +645,20 @@ app/
 
 ## 13. Security Model
 
-| Concern | Mitigation |
-|---|---|
-| **Password storage** | bcrypt with cost factor 12 |
-| **Session tokens** | JWT in `httpOnly` + `Secure` + `SameSite=Lax` cookie; not accessible to JS |
-| **Route protection** | Server-side role guards on every page and action before data fetch |
-| **Project isolation** | `requireProjectAdmin(projectId)` checks both global role and per-project membership row |
-| **CSRF** | NextAuth.js handles CSRF token validation on all form submissions |
-| **Rate limiting** | In-memory rate limiter on `/api/auth/register`, `/api/auth/forgot-password` |
-| **SQL injection** | All queries use `postgres.js` tagged-template literals (parameterised by default) |
-| **File upload** | MIME type and extension allowlist; file size limit enforced server-side |
-| **PII detection** | Regex scan on every uploaded document before embedding — flags email, phone, SSN patterns |
-| **SSRF** | Worker secret (`WORKER_SECRET`) validates all polling requests |
-| **Input sanitisation** | `lib/security.ts` sanitises free-text inputs before DB writes |
-| **Document access** | Signed/gated `/api/documents/view` — members can only access documents in their assigned projects |
+| Concern                | Mitigation                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| **Password storage**   | bcrypt with cost factor 12                                                                        |
+| **Session tokens**     | JWT in `httpOnly` + `Secure` + `SameSite=Lax` cookie; not accessible to JS                        |
+| **Route protection**   | Server-side role guards on every page and action before data fetch                                |
+| **Project isolation**  | `requireProjectAdmin(projectId)` checks both global role and per-project membership row           |
+| **CSRF**               | NextAuth.js handles CSRF token validation on all form submissions                                 |
+| **Rate limiting**      | In-memory rate limiter on `/api/auth/register`, `/api/auth/forgot-password`                       |
+| **SQL injection**      | All queries use `postgres.js` tagged-template literals (parameterised by default)                 |
+| **File upload**        | MIME type and extension allowlist; file size limit enforced server-side                           |
+| **PII detection**      | Regex scan on every uploaded document before embedding — flags email, phone, SSN patterns         |
+| **SSRF**               | Worker secret (`WORKER_SECRET`) validates all polling requests                                    |
+| **Input sanitisation** | `lib/security.ts` sanitises free-text inputs before DB writes                                     |
+| **Document access**    | Signed/gated `/api/documents/view` — members can only access documents in their assigned projects |
 
 ---
 
@@ -694,7 +696,6 @@ graph LR
 ```
 
 See [SELF_HOSTED_DEPLOYMENT.md](SELF_HOSTED_DEPLOYMENT.md) for full server setup, nginx config, PM2 ecosystem, and environment variable management.
-
 
 ---
 
@@ -1056,24 +1057,24 @@ summit-kt-portal/
 
 No Row Level Security (RLS). All access control is enforced at the application layer.
 
-| Table | Member Access | Admin Access |
-|---|---|---|
-| users | Own row only | Full |
-| projects | Assigned projects only | Full |
-| project_members | Own memberships | Full |
-| documents | Assigned project docs | Full |
-| document_chunks | Assigned project chunks | Full |
-| chat_sessions | Own sessions | Full |
-| chat_messages | Own session messages | Full |
-| quiz_sets | Assigned projects | Full |
-| quiz_questions | Assigned projects | Full |
-| quiz_attempts | Own attempts | Full |
-| quiz_retake_requests | Own requests (create only) | Full |
-| quiz_resets | — | Full |
-| invite_tokens | — | Full |
-| password_reset_tokens | Own (via token link) | — |
-| processing_jobs | — | Full |
-| activity_log | Own actions | Full |
+| Table                 | Member Access              | Admin Access |
+| --------------------- | -------------------------- | ------------ |
+| users                 | Own row only               | Full         |
+| projects              | Assigned projects only     | Full         |
+| project_members       | Own memberships            | Full         |
+| documents             | Assigned project docs      | Full         |
+| document_chunks       | Assigned project chunks    | Full         |
+| chat_sessions         | Own sessions               | Full         |
+| chat_messages         | Own session messages       | Full         |
+| quiz_sets             | Assigned projects          | Full         |
+| quiz_questions        | Assigned projects          | Full         |
+| quiz_attempts         | Own attempts               | Full         |
+| quiz_retake_requests  | Own requests (create only) | Full         |
+| quiz_resets           | —                          | Full         |
+| invite_tokens         | —                          | Full         |
+| password_reset_tokens | Own (via token link)       | —            |
+| processing_jobs       | —                          | Full         |
+| activity_log          | Own actions                | Full         |
 
 ---
 
@@ -1422,25 +1423,25 @@ app/layout.tsx
 
 ## 7. API Surface
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/api/chat?sessionId=` | Member/Admin | Load chat history for a session |
-| POST | `/api/chat` | Member/Admin | Send message, get streaming response |
-| POST | `/api/documents/upload` | Admin | Upload file to local storage (`public/uploads/`) |
-| POST | `/api/documents/process` | Admin | Queue document_process job; returns `{ jobId }` |
-| GET | `/api/documents/view?documentId=` | Member/Admin | Stream document from local storage |
-| POST | `/api/quiz/generate` | Admin | Queue quiz_generate job; returns `{ jobId }` |
-| POST | `/api/quiz/start` | Member | Begin quiz attempt |
-| POST | `/api/quiz/submit` | Member | Submit answers and receive score |
-| POST | `/api/quiz/request-retake` | Member | Request admin to re-enable quiz |
-| POST | `/api/jobs/worker` | Worker secret | Claim and execute next pending job |
-| GET | `/api/jobs/[id]` | Authenticated | Poll job status (`pending/running/done/failed`) |
-| GET | `/api/admin/analytics?projectId=` | Admin | Per-project chatbot + quiz + login analytics |
-| POST | `/api/admin/invite` | Admin | Invite member by email (token-based) |
-| POST | `/api/auth/register` | Public | Self-register as member |
-| POST | `/api/auth/forgot-password` | Public | Send password reset email |
-| POST | `/api/auth/reset-password` | Public (token) | Apply new password from reset link |
-| GET/POST | `/api/auth/[...nextauth]` | Public | NextAuth.js session handler |
+| Method   | Endpoint                          | Auth           | Description                                      |
+| -------- | --------------------------------- | -------------- | ------------------------------------------------ |
+| GET      | `/api/chat?sessionId=`            | Member/Admin   | Load chat history for a session                  |
+| POST     | `/api/chat`                       | Member/Admin   | Send message, get streaming response             |
+| POST     | `/api/documents/upload`           | Admin          | Upload file to local storage (`public/uploads/`) |
+| POST     | `/api/documents/process`          | Admin          | Queue document_process job; returns `{ jobId }`  |
+| GET      | `/api/documents/view?documentId=` | Member/Admin   | Stream document from local storage               |
+| POST     | `/api/quiz/generate`              | Admin          | Queue quiz_generate job; returns `{ jobId }`     |
+| POST     | `/api/quiz/start`                 | Member         | Begin quiz attempt                               |
+| POST     | `/api/quiz/submit`                | Member         | Submit answers and receive score                 |
+| POST     | `/api/quiz/request-retake`        | Member         | Request admin to re-enable quiz                  |
+| POST     | `/api/jobs/worker`                | Worker secret  | Claim and execute next pending job               |
+| GET      | `/api/jobs/[id]`                  | Authenticated  | Poll job status (`pending/running/done/failed`)  |
+| GET      | `/api/admin/analytics?projectId=` | Admin          | Per-project chatbot + quiz + login analytics     |
+| POST     | `/api/admin/invite`               | Admin          | Invite member by email (token-based)             |
+| POST     | `/api/auth/register`              | Public         | Self-register as member                          |
+| POST     | `/api/auth/forgot-password`       | Public         | Send password reset email                        |
+| POST     | `/api/auth/reset-password`        | Public (token) | Apply new password from reset link               |
+| GET/POST | `/api/auth/[...nextauth]`         | Public         | NextAuth.js session handler                      |
 
 ---
 
@@ -1491,18 +1492,18 @@ app/layout.tsx
 
 ## 9. Known Gaps
 
-| # | Area | Gap | Impact |
-|---|---|---|---|
-| 1 | **Answer Cache** | In-memory `Map` is per-process and lost on restart; shared cache (Redis/KV) not implemented | Cache is useless in multi-instance deployments |
-| 2 | **Embedding Cold Start** | `@xenova/transformers` model downloads on first request (~80MB); no warmup | First chat per cold start can take 30–60s |
-| 3 | **Quiz Anti-Cheat** | Tab-switch detection triggers auto-submit but copy-paste and screen-share prevention are not enforced | Quiz integrity not fully guaranteed |
-| 4 | **Email Required for Reset** | Forgot-password and invite flows require `RESEND_API_KEY`; silently skipped if unset | Users cannot recover accounts without email config |
-| 5 | **Admin Bootstrap** | No seeding UI; first admin must be promoted manually via SQL | Manual DB step required after first signup |
-| 6 | **Document Backup** | Local storage requires manual backup strategy; no automatic replication | Data loss possible if disk fails |
-| 7 | **Pagination** | All data fetches are unbounded | Performance degrades at scale |
-| 8 | **File Validation** | No server-side MIME type check beyond extension | Malicious files can be uploaded |
-| 9 | **File Size Limit** | No size cap on upload endpoint | Storage exhaustion possible |
-| 10 | **Retake Request Notification** | No real-time push (email/webhook) to admin when a retake request is created; admin must check dashboard | Requests may go unnoticed until admin logs in |
+| #   | Area                            | Gap                                                                                                     | Impact                                             |
+| --- | ------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| 1   | **Answer Cache**                | In-memory `Map` is per-process and lost on restart; shared cache (Redis/KV) not implemented             | Cache is useless in multi-instance deployments     |
+| 2   | **Embedding Cold Start**        | `@xenova/transformers` model downloads on first request (~80MB); no warmup                              | First chat per cold start can take 30–60s          |
+| 3   | **Quiz Anti-Cheat**             | Tab-switch detection triggers auto-submit but copy-paste and screen-share prevention are not enforced   | Quiz integrity not fully guaranteed                |
+| 4   | **Email Required for Reset**    | Forgot-password and invite flows require `RESEND_API_KEY`; silently skipped if unset                    | Users cannot recover accounts without email config |
+| 5   | **Admin Bootstrap**             | No seeding UI; first admin must be promoted manually via SQL                                            | Manual DB step required after first signup         |
+| 6   | **Document Backup**             | Local storage requires manual backup strategy; no automatic replication                                 | Data loss possible if disk fails                   |
+| 7   | **Pagination**                  | All data fetches are unbounded                                                                          | Performance degrades at scale                      |
+| 8   | **File Validation**             | No server-side MIME type check beyond extension                                                         | Malicious files can be uploaded                    |
+| 9   | **File Size Limit**             | No size cap on upload endpoint                                                                          | Storage exhaustion possible                        |
+| 10  | **Retake Request Notification** | No real-time push (email/webhook) to admin when a retake request is created; admin must check dashboard | Requests may go unnoticed until admin logs in      |
 
 ---
 
@@ -1510,38 +1511,38 @@ app/layout.tsx
 
 ### 10.1 Knowledge & Learning
 
-| Feature | Description |
-|---|---|
-| **Conversation history** | Multi-session history panel; members can resume previous chats |
-| **Chat bookmarks** | Members can save important AI answers for later reference |
+| Feature                   | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| **Conversation history**  | Multi-session history panel; members can resume previous chats     |
+| **Chat bookmarks**        | Members can save important AI answers for later reference          |
 | **Knowledge gap reports** | Analyse questions with no matching chunks (low-similarity results) |
-| **Document versioning** | Track revisions; re-process on update; keep old chunks for history |
+| **Document versioning**   | Track revisions; re-process on update; keep old chunks for history |
 
 ### 10.2 Quiz & Assessment
 
-| Feature | Description |
-|---|---|
-| **Timed quiz mode** | Configurable per-question or total time limits with countdown |
-| **Manual question editing** | Admin can edit/delete individual AI-generated questions |
-| **Multiple quiz categories** | Support categories beyond functional/technical |
-| **Partial quiz retake** | Retake only failed sections rather than full reset |
-| **Certificate of completion** | Auto-generate PDF certificate when a member passes |
+| Feature                       | Description                                                   |
+| ----------------------------- | ------------------------------------------------------------- |
+| **Timed quiz mode**           | Configurable per-question or total time limits with countdown |
+| **Manual question editing**   | Admin can edit/delete individual AI-generated questions       |
+| **Multiple quiz categories**  | Support categories beyond functional/technical                |
+| **Partial quiz retake**       | Retake only failed sections rather than full reset            |
+| **Certificate of completion** | Auto-generate PDF certificate when a member passes            |
 
 ### 10.3 Analytics & Reporting
 
-| Feature | Description |
-|---|---|
-| **Exportable reports** | CSV/PDF export of quiz results and chatbot usage |
-| **Per-question analytics** | Track which questions are most frequently wrong |
-| **Completion dashboard** | Visual progress bars per project |
-| **Score trend over resets** | Chart score improvement across multiple attempts |
+| Feature                      | Description                                               |
+| ---------------------------- | --------------------------------------------------------- |
+| **Exportable reports**       | CSV/PDF export of quiz results and chatbot usage          |
+| **Per-question analytics**   | Track which questions are most frequently wrong           |
+| **Completion dashboard**     | Visual progress bars per project                          |
+| **Score trend over resets**  | Chart score improvement across multiple attempts          |
 | **Retake request analytics** | Track approval rate, most common reasons, time-to-resolve |
 
 ### 10.4 Infrastructure
 
-| Feature | Description |
-|---|---|
-| **Shared embedding cache** | Replace in-process singleton with persistent cache or external API |
-| **Test suite** | Unit tests for scoring, chunking, shuffling; integration tests for routes |
-| **Real-time retake notifications** | Email admin when a re-enable request is submitted |
-| **SSO / SAML integration** | Enterprise SSO via OAuth providers (Okta, Azure AD) |
+| Feature                            | Description                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| **Shared embedding cache**         | Replace in-process singleton with persistent cache or external API        |
+| **Test suite**                     | Unit tests for scoring, chunking, shuffling; integration tests for routes |
+| **Real-time retake notifications** | Email admin when a re-enable request is submitted                         |
+| **SSO / SAML integration**         | Enterprise SSO via OAuth providers (Okta, Azure AD)                       |

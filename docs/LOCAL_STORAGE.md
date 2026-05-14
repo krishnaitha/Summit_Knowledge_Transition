@@ -9,11 +9,15 @@ Summit KT Portal now uses **local file storage** instead of Cloudflare R2 to ens
 ## Storage Location
 
 All uploaded documents are stored in:
+
 ```
 public/uploads/
 ```
 
+This is the default location. You can override it with `UPLOAD_DIR`.
+
 This directory is:
+
 - ✅ **Excluded from Git** (see `.gitignore`)
 - ✅ **Served locally** without external dependencies
 - ✅ **Accessible only through authenticated API routes**
@@ -24,6 +28,7 @@ This directory is:
 ## File Organization
 
 Files are named with a timestamp + sanitized filename to prevent collisions:
+
 ```
 uploads/
 ├── 1715556000000-project-handbook.pdf
@@ -36,12 +41,14 @@ uploads/
 ## API Changes
 
 ### Before (Cloudflare R2)
+
 ```typescript
 // lib/storage/r2.ts (deprecated)
 await r2.send(new PutObjectCommand({...}))
 ```
 
 ### After (Local Storage)
+
 ```typescript
 // lib/storage/local.ts (new)
 import { uploadFile, downloadFile } from '@/lib/storage/local';
@@ -62,12 +69,14 @@ await deleteFile(path);
 ## Security Considerations
 
 ### ✅ What's Protected
+
 - **Authentication Required**: All document endpoints require user login
 - **Authorization Checked**: Members can only access documents from assigned projects
 - **Access Logs**: Every document view is logged to `activity_log`
 - **Directory Traversal Prevention**: File paths are validated to prevent `../` attacks
 
 ### ⚠️ Your Responsibility
+
 - **Backups**: Set up regular backups of `public/uploads/`
 - **File Cleanup**: Implement manual cleanup for old/deleted documents
 - **Disk Space Monitoring**: Track `/uploads` directory size
@@ -79,15 +88,18 @@ await deleteFile(path);
 ## Production Deployment
 
 ### Option 1: Mounted Volume (Recommended)
+
 For cloud deployments, mount an external persistent volume:
 
 **Docker:**
+
 ```yaml
 volumes:
   - /mnt/data/uploads:/app/public/uploads
 ```
 
 **Docker Compose:**
+
 ```yaml
 services:
   app:
@@ -96,6 +108,7 @@ services:
 ```
 
 ### Option 2: Network-Attached Storage (NAS)
+
 For on-prem or hybrid setups, mount a network share:
 
 ```bash
@@ -104,6 +117,7 @@ mount -t nfs 192.168.1.100:/shared/uploads /app/public/uploads
 ```
 
 ### Option 3: External Storage Backup
+
 Keep a read-only backup copy:
 
 ```bash
@@ -115,12 +129,20 @@ Keep a read-only backup copy:
 
 ## Environment Variables
 
-No new env vars needed for local storage — it uses the filesystem.
+Local storage supports an optional env variable:
 
-To customize the upload directory (advanced):
-```typescript
-// lib/storage/local.ts (line 3)
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'public', 'uploads');
+```bash
+UPLOAD_DIR=/mnt/summit/uploads
+```
+
+Examples:
+
+```bash
+# Windows
+UPLOAD_DIR=D:\\summit-data\\uploads
+
+# Linux / mounted drive
+UPLOAD_DIR=/mnt/summit/uploads
 ```
 
 ---
@@ -140,16 +162,19 @@ If you had existing documents in R2, you must manually download and re-upload th
 ## Monitoring & Maintenance
 
 ### Check Disk Usage
+
 ```bash
 du -sh public/uploads/
 ```
 
 ### List Recent Uploads
+
 ```bash
 ls -lart public/uploads/ | tail -20
 ```
 
 ### Remove Files Older Than 90 Days
+
 ```bash
 find public/uploads/ -type f -mtime +90 -delete
 ```
@@ -158,12 +183,12 @@ find public/uploads/ -type f -mtime +90 -delete
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|---|---|---|
-| `Error: EACCES: permission denied` | File system permissions | Ensure `public/uploads/` is writable by Node.js process |
+| Issue                                      | Cause                     | Solution                                                             |
+| ------------------------------------------ | ------------------------- | -------------------------------------------------------------------- |
+| `Error: EACCES: permission denied`         | File system permissions   | Ensure `public/uploads/` is writable by Node.js process              |
 | `Error: ENOENT: no such file or directory` | Uploads dir doesn't exist | Directory auto-creates on first upload; check parent dir permissions |
-| `Document view returns 500` | File was manually deleted | Re-upload document or check server logs |
-| `Disk full` | No cleanup policy | Implement automated deletion or expand storage |
+| `Document view returns 500`                | File was manually deleted | Re-upload document or check server logs                              |
+| `Disk full`                                | No cleanup policy         | Implement automated deletion or expand storage                       |
 
 ---
 
@@ -185,6 +210,7 @@ If you need to switch to Cloudflare R2 in the future:
 ## Support
 
 For questions or issues with local file storage, refer to:
+
 - [Node.js fs API](https://nodejs.org/api/fs.html)
 - [Next.js Server-Side Code](https://nextjs.org/docs/getting-started/project-structure)
 - Project issue tracker

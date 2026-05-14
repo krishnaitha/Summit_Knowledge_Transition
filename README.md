@@ -8,22 +8,33 @@ Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admi
 
 ## Feature Highlights
 
-| Feature                      | Description                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------ |
-| **Multi-project workspace**  | Unlimited projects, each with their own docs, members, quizzes and analytics               |
-| **Project-level admin role** | Promote members to project admin — they manage their project without super-admin access    |
-| **RAG AI chat**              | Members ask questions; answers are grounded strictly in the uploaded KT documents          |
-| **AI quiz generation**       | Groq LLM generates scenario-based MCQ + true/false sets from document chunks               |
-| **Quiz windows**             | Enforce open/close dates per project; quiz auto-submits on window close                    |
-| **Anti-cheat guard**         | Tab-switch detection with configurable threshold; quiz auto-submits on violation           |
-| **Quiz retake requests**     | Members submit a request; admins approve/reject with one click                             |
-| **AI coaching plans**        | Post-quiz coaching report generated per attempt, highlighting weak areas                   |
-| **AI answer bookmarks**      | Members save AI answers for later reference                                                |
-| **Admin announcements**      | Project-scoped announcements shown on the member dashboard                                 |
-| **Document governance**      | PII detection, document classification (public/internal/confidential), required-doc gating |
-| **Background worker**        | Async document processing and quiz generation — no HTTP timeouts                           |
-| **Email flows**              | Invite links, password reset, quiz window notifications via SendGrid                       |
-| **CSV export**               | Export user data from the admin Users table                                                |
+| Feature                         | Description                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Multi-project workspace**     | Unlimited projects, each with their own docs, members, quizzes and analytics               |
+| **Project-level admin role**    | Promote members to project admin — they manage their project without super-admin access    |
+| **RAG AI chat**                 | Members ask questions; answers are grounded strictly in the uploaded KT documents          |
+| **AI quiz generation**          | Groq LLM generates scenario-based MCQ + true/false sets from document chunks               |
+| **Quiz windows**                | Enforce open/close dates per project; quiz auto-submits on window close                    |
+| **Anti-cheat guard**            | Tab-switch detection with configurable threshold; quiz auto-submits on violation           |
+| **Quiz retake requests**        | Members submit a request; admins approve/reject with one click                             |
+| **AI coaching plans**           | Post-quiz coaching report generated per attempt, highlighting weak areas                   |
+| **AI answer bookmarks**         | Members save AI answers for later reference                                                |
+| **Admin announcements**         | Project-scoped announcements shown on the member dashboard                                 |
+| **Interactive study mode**      | Post-quiz weak-area guide with chunk-level references and direct document links            |
+| **AI flashcards + SRS**         | Project flashcards generated from chunks with spaced-repetition scheduling                 |
+| **Document discussion threads** | Member/admin threaded discussions on document pages with open/resolved states              |
+| **Open-thread triage**          | Dedicated member/admin Open Threads pages, filters, and navbar/sidebar badges              |
+| **Document full-text search**   | Fast chunk search with snippet previews across member and admin project views              |
+| **Attempt history retention**   | Admin resets archive prior submitted scores so latest and previous attempts stay visible   |
+| **Document governance**         | PII detection, document classification (public/internal/confidential), required-doc gating |
+| **Background worker**           | Async document processing and quiz generation — no HTTP timeouts                           |
+| **Email flows**                 | Invite links, password reset, quiz window notifications via SendGrid                       |
+| **CSV export**                  | Export user data from the admin Users table                                                |
+
+Quiz reset policy:
+
+- Up to 5 admin resets per member per project
+- Prior submitted attempts are archived and shown as previous attempts
 
 ---
 
@@ -263,6 +274,13 @@ The `db` service mounts the following SQL files into `docker-entrypoint-initdb.d
 | 02    | `postgres/migrations/add_password_reset_tokens.sql` | Password-reset flow table                     |
 | 03    | `postgres/migrations/add_quiz_retake_requests.sql`  | Quiz retake requests table                    |
 
+Recent incremental migrations in active use:
+
+- `postgres/migrations/015_document_chunks_fts.sql` (document chunk full-text search)
+- `postgres/migrations/016_document_threads.sql` (document discussion threads)
+- `postgres/migrations/017_flashcards_spaced_repetition.sql` (flashcards and spaced repetition)
+- `postgres/migrations/018_quiz_attempt_history.sql` (attempt history retention)
+
 ### 3. Create the first admin user
 
 Once the app is running, register an account at [http://localhost:3000/register](http://localhost:3000/register), then promote it to admin:
@@ -298,16 +316,22 @@ summit-kt-portal/
 │   │       └── projects/[id]/
 │   │           ├── page.tsx      Project overview, announcements, retake requests
 │   │           ├── documents/    Upload, process, and manage KT documents
+│   │           │   └── [documentId]/threads/ Document thread collaboration
 │   │           ├── members/      Invite members, manage roles (member/admin)
 │   │           ├── quiz/         Generate and manage quiz sets
 │   │           └── analytics/    Per-project quiz and chat analytics (super-admin only)
+│   │       └── threads/          Open-thread triage queue with filters
 │   ├── (member)/                 Member routes (role-guarded)
 │   │   ├── dashboard/            Personalised dashboard with projects, bookmarks, activity
 │   │   └── projects/[id]/
 │   │       ├── page.tsx          Project overview + KT document list
+│   │       ├── documents/[documentId]/threads/ Document thread discussion board
 │   │       ├── chat/             RAG AI chat interface
 │   │       ├── quiz/             One-time readiness assessment
+│   │       ├── study/            Interactive weak-area study mode
+│   │       ├── flashcards/       AI-generated flashcards with SRS review
 │   │       └── bookmarks/        Saved AI answers
+│   │   └── threads/              Open-thread queue with filters
 │   ├── (auth)/
 │   │   └── login/                Login page
 │   ├── forgot-password/          Password reset request

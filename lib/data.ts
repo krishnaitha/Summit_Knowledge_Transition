@@ -415,24 +415,65 @@ export async function searchProjectDocumentChunks(projectId: string, query: stri
   if (!hasSearchVector) {
     return sql<DocumentSearchResult[]>`
       WITH q AS (
-        SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+        SELECT
+          plainto_tsquery('english', ${normalizedQuery}) AS ts_query,
+          lower(${normalizedQuery}) AS raw_query
+      ),
+      query_terms AS (
+        SELECT COALESCE(array_agg(cleaned_term), ARRAY[]::text[]) AS terms
+        FROM (
+          SELECT DISTINCT cleaned_term
+          FROM regexp_split_to_table(lower(${normalizedQuery}), '\\s+') AS raw_term(term)
+          CROSS JOIN LATERAL (
+            SELECT NULLIF(regexp_replace(raw_term.term, '[^a-z0-9]+', '', 'g'), '') AS cleaned_term
+          ) cleaned
+          WHERE cleaned_term IS NOT NULL AND char_length(cleaned_term) >= 2
+        ) filtered_terms
       )
       SELECT
         dc.id AS chunk_id,
         d.id AS document_id,
         d.file_name,
-        ts_headline(
-          'english',
-          dc.content,
-          q.ts_query,
-          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
-        ) AS snippet,
-        ts_rank_cd(to_tsvector('english', dc.content), q.ts_query) AS rank
+        CASE
+          WHEN numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query THEN ts_headline(
+            'english',
+            dc.content,
+            q.ts_query,
+            'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+          )
+          ELSE LEFT(dc.content, 280)
+        END AS snippet,
+        (
+          CASE
+            WHEN numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query
+              THEN 100 + ts_rank_cd(to_tsvector('english', dc.content), q.ts_query)
+            WHEN lower(dc.content) LIKE '%' || q.raw_query || '%'
+              THEN 10
+            ELSE 0
+          END
+          + COALESCE((
+            SELECT COUNT(*)::float8
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) LIKE '%' || term_value || '%'
+          ), 0)
+        ) AS rank
       FROM document_chunks dc
       JOIN documents d ON d.id = dc.document_id
       CROSS JOIN q
+      CROSS JOIN query_terms
       WHERE dc.project_id = ${projectId}
-        AND to_tsvector('english', dc.content) @@ q.ts_query
+        AND (
+          (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
+          OR lower(dc.content) LIKE '%' || q.raw_query || '%'
+          OR (
+            COALESCE(array_length(query_terms.terms, 1), 0) > 0
+            AND NOT EXISTS (
+              SELECT 1
+              FROM unnest(query_terms.terms) AS query_term(term_value)
+              WHERE lower(dc.content) NOT LIKE '%' || term_value || '%'
+            )
+          )
+        )
       ORDER BY rank DESC, d.file_name ASC
       LIMIT ${cappedLimit}
     `;
@@ -440,24 +481,65 @@ export async function searchProjectDocumentChunks(projectId: string, query: stri
 
   return sql<DocumentSearchResult[]>`
     WITH q AS (
-      SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+      SELECT
+        plainto_tsquery('english', ${normalizedQuery}) AS ts_query,
+        lower(${normalizedQuery}) AS raw_query
+    ),
+    query_terms AS (
+      SELECT COALESCE(array_agg(cleaned_term), ARRAY[]::text[]) AS terms
+      FROM (
+        SELECT DISTINCT cleaned_term
+        FROM regexp_split_to_table(lower(${normalizedQuery}), '\\s+') AS raw_term(term)
+        CROSS JOIN LATERAL (
+          SELECT NULLIF(regexp_replace(raw_term.term, '[^a-z0-9]+', '', 'g'), '') AS cleaned_term
+        ) cleaned
+        WHERE cleaned_term IS NOT NULL AND char_length(cleaned_term) >= 2
+      ) filtered_terms
     )
     SELECT
       dc.id AS chunk_id,
       d.id AS document_id,
       d.file_name,
-      ts_headline(
-        'english',
-        dc.content,
-        q.ts_query,
-        'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
-      ) AS snippet,
-      ts_rank_cd(dc.search_vector, q.ts_query) AS rank
+      CASE
+        WHEN numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query THEN ts_headline(
+          'english',
+          dc.content,
+          q.ts_query,
+          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+        )
+        ELSE LEFT(dc.content, 280)
+      END AS snippet,
+      (
+        CASE
+          WHEN numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query
+            THEN 100 + ts_rank_cd(dc.search_vector, q.ts_query)
+          WHEN lower(dc.content) LIKE '%' || q.raw_query || '%'
+            THEN 10
+          ELSE 0
+        END
+        + COALESCE((
+          SELECT COUNT(*)::float8
+          FROM unnest(query_terms.terms) AS query_term(term_value)
+          WHERE lower(dc.content) LIKE '%' || term_value || '%'
+        ), 0)
+      ) AS rank
     FROM document_chunks dc
     JOIN documents d ON d.id = dc.document_id
     CROSS JOIN q
+    CROSS JOIN query_terms
     WHERE dc.project_id = ${projectId}
-      AND dc.search_vector @@ q.ts_query
+      AND (
+        (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
+        OR lower(dc.content) LIKE '%' || q.raw_query || '%'
+        OR (
+          COALESCE(array_length(query_terms.terms, 1), 0) > 0
+          AND NOT EXISTS (
+            SELECT 1
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) NOT LIKE '%' || term_value || '%'
+          )
+        )
+      )
     ORDER BY rank DESC, d.file_name ASC
     LIMIT ${cappedLimit}
   `;
@@ -482,7 +564,20 @@ export async function searchAccessibleDocumentChunks(
     if (!hasSearchVector) {
       return sql<AccessibleDocumentSearchResult[]>`
         WITH q AS (
-          SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+          SELECT
+            plainto_tsquery('english', ${normalizedQuery}) AS ts_query,
+            lower(${normalizedQuery}) AS raw_query
+        ),
+        query_terms AS (
+          SELECT COALESCE(array_agg(cleaned_term), ARRAY[]::text[]) AS terms
+          FROM (
+            SELECT DISTINCT cleaned_term
+            FROM regexp_split_to_table(lower(${normalizedQuery}), '\\s+') AS raw_term(term)
+            CROSS JOIN LATERAL (
+              SELECT NULLIF(regexp_replace(raw_term.term, '[^a-z0-9]+', '', 'g'), '') AS cleaned_term
+            ) cleaned
+            WHERE cleaned_term IS NOT NULL AND char_length(cleaned_term) >= 2
+          ) filtered_terms
         )
         SELECT
           dc.project_id,
@@ -490,18 +585,46 @@ export async function searchAccessibleDocumentChunks(
           dc.id AS chunk_id,
           d.id AS document_id,
           d.file_name,
-          ts_headline(
-            'english',
-            dc.content,
-            q.ts_query,
-            'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
-          ) AS snippet,
-          ts_rank_cd(to_tsvector('english', dc.content), q.ts_query) AS rank
+          CASE
+            WHEN numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query THEN ts_headline(
+              'english',
+              dc.content,
+              q.ts_query,
+              'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+            )
+            ELSE LEFT(dc.content, 280)
+          END AS snippet,
+          (
+            CASE
+              WHEN numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query
+                THEN 100 + ts_rank_cd(to_tsvector('english', dc.content), q.ts_query)
+              WHEN lower(dc.content) LIKE '%' || q.raw_query || '%'
+                THEN 10
+              ELSE 0
+            END
+            + COALESCE((
+              SELECT COUNT(*)::float8
+              FROM unnest(query_terms.terms) AS query_term(term_value)
+              WHERE lower(dc.content) LIKE '%' || term_value || '%'
+            ), 0)
+          ) AS rank
         FROM document_chunks dc
         JOIN documents d ON d.id = dc.document_id
         JOIN projects p ON p.id = dc.project_id
         CROSS JOIN q
-        WHERE to_tsvector('english', dc.content) @@ q.ts_query
+        CROSS JOIN query_terms
+        WHERE (
+          (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
+          OR lower(dc.content) LIKE '%' || q.raw_query || '%'
+          OR (
+            COALESCE(array_length(query_terms.terms, 1), 0) > 0
+            AND NOT EXISTS (
+              SELECT 1
+              FROM unnest(query_terms.terms) AS query_term(term_value)
+              WHERE lower(dc.content) NOT LIKE '%' || term_value || '%'
+            )
+          )
+        )
         ORDER BY rank DESC, p.name ASC, d.file_name ASC
         LIMIT ${cappedLimit}
       `;
@@ -509,7 +632,20 @@ export async function searchAccessibleDocumentChunks(
 
     return sql<AccessibleDocumentSearchResult[]>`
       WITH q AS (
-        SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+        SELECT
+          plainto_tsquery('english', ${normalizedQuery}) AS ts_query,
+          lower(${normalizedQuery}) AS raw_query
+      ),
+      query_terms AS (
+        SELECT COALESCE(array_agg(cleaned_term), ARRAY[]::text[]) AS terms
+        FROM (
+          SELECT DISTINCT cleaned_term
+          FROM regexp_split_to_table(lower(${normalizedQuery}), '\\s+') AS raw_term(term)
+          CROSS JOIN LATERAL (
+            SELECT NULLIF(regexp_replace(raw_term.term, '[^a-z0-9]+', '', 'g'), '') AS cleaned_term
+          ) cleaned
+          WHERE cleaned_term IS NOT NULL AND char_length(cleaned_term) >= 2
+        ) filtered_terms
       )
       SELECT
         dc.project_id,
@@ -517,18 +653,46 @@ export async function searchAccessibleDocumentChunks(
         dc.id AS chunk_id,
         d.id AS document_id,
         d.file_name,
-        ts_headline(
-          'english',
-          dc.content,
-          q.ts_query,
-          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
-        ) AS snippet,
-        ts_rank_cd(dc.search_vector, q.ts_query) AS rank
+        CASE
+          WHEN numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query THEN ts_headline(
+            'english',
+            dc.content,
+            q.ts_query,
+            'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+          )
+          ELSE LEFT(dc.content, 280)
+        END AS snippet,
+        (
+          CASE
+            WHEN numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query
+              THEN 100 + ts_rank_cd(dc.search_vector, q.ts_query)
+            WHEN lower(dc.content) LIKE '%' || q.raw_query || '%'
+              THEN 10
+            ELSE 0
+          END
+          + COALESCE((
+            SELECT COUNT(*)::float8
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) LIKE '%' || term_value || '%'
+          ), 0)
+        ) AS rank
       FROM document_chunks dc
       JOIN documents d ON d.id = dc.document_id
       JOIN projects p ON p.id = dc.project_id
       CROSS JOIN q
-      WHERE dc.search_vector @@ q.ts_query
+      CROSS JOIN query_terms
+      WHERE (
+        (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
+        OR lower(dc.content) LIKE '%' || q.raw_query || '%'
+        OR (
+          COALESCE(array_length(query_terms.terms, 1), 0) > 0
+          AND NOT EXISTS (
+            SELECT 1
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) NOT LIKE '%' || term_value || '%'
+          )
+        )
+      )
       ORDER BY rank DESC, p.name ASC, d.file_name ASC
       LIMIT ${cappedLimit}
     `;
@@ -537,7 +701,20 @@ export async function searchAccessibleDocumentChunks(
   if (!hasSearchVector) {
     return sql<AccessibleDocumentSearchResult[]>`
       WITH q AS (
-        SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+        SELECT
+          plainto_tsquery('english', ${normalizedQuery}) AS ts_query,
+          lower(${normalizedQuery}) AS raw_query
+      ),
+      query_terms AS (
+        SELECT COALESCE(array_agg(cleaned_term), ARRAY[]::text[]) AS terms
+        FROM (
+          SELECT DISTINCT cleaned_term
+          FROM regexp_split_to_table(lower(${normalizedQuery}), '\\s+') AS raw_term(term)
+          CROSS JOIN LATERAL (
+            SELECT NULLIF(regexp_replace(raw_term.term, '[^a-z0-9]+', '', 'g'), '') AS cleaned_term
+          ) cleaned
+          WHERE cleaned_term IS NOT NULL AND char_length(cleaned_term) >= 2
+        ) filtered_terms
       )
       SELECT
         dc.project_id,
@@ -545,20 +722,48 @@ export async function searchAccessibleDocumentChunks(
         dc.id AS chunk_id,
         d.id AS document_id,
         d.file_name,
-        ts_headline(
-          'english',
-          dc.content,
-          q.ts_query,
-          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
-        ) AS snippet,
-        ts_rank_cd(to_tsvector('english', dc.content), q.ts_query) AS rank
+        CASE
+          WHEN numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query THEN ts_headline(
+            'english',
+            dc.content,
+            q.ts_query,
+            'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+          )
+          ELSE LEFT(dc.content, 280)
+        END AS snippet,
+        (
+          CASE
+            WHEN numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query
+              THEN 100 + ts_rank_cd(to_tsvector('english', dc.content), q.ts_query)
+            WHEN lower(dc.content) LIKE '%' || q.raw_query || '%'
+              THEN 10
+            ELSE 0
+          END
+          + COALESCE((
+            SELECT COUNT(*)::float8
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) LIKE '%' || term_value || '%'
+          ), 0)
+        ) AS rank
       FROM document_chunks dc
       JOIN documents d ON d.id = dc.document_id
       JOIN projects p ON p.id = dc.project_id
       JOIN project_members pm ON pm.project_id = dc.project_id
       CROSS JOIN q
+      CROSS JOIN query_terms
       WHERE pm.user_id = ${userId}
-        AND to_tsvector('english', dc.content) @@ q.ts_query
+        AND (
+          (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
+          OR lower(dc.content) LIKE '%' || q.raw_query || '%'
+          OR (
+            COALESCE(array_length(query_terms.terms, 1), 0) > 0
+            AND NOT EXISTS (
+              SELECT 1
+              FROM unnest(query_terms.terms) AS query_term(term_value)
+              WHERE lower(dc.content) NOT LIKE '%' || term_value || '%'
+            )
+          )
+        )
       ORDER BY rank DESC, p.name ASC, d.file_name ASC
       LIMIT ${cappedLimit}
     `;
@@ -566,7 +771,20 @@ export async function searchAccessibleDocumentChunks(
 
   return sql<AccessibleDocumentSearchResult[]>`
     WITH q AS (
-      SELECT plainto_tsquery('english', ${normalizedQuery}) AS ts_query
+      SELECT
+        plainto_tsquery('english', ${normalizedQuery}) AS ts_query,
+        lower(${normalizedQuery}) AS raw_query
+    ),
+    query_terms AS (
+      SELECT COALESCE(array_agg(cleaned_term), ARRAY[]::text[]) AS terms
+      FROM (
+        SELECT DISTINCT cleaned_term
+        FROM regexp_split_to_table(lower(${normalizedQuery}), '\\s+') AS raw_term(term)
+        CROSS JOIN LATERAL (
+          SELECT NULLIF(regexp_replace(raw_term.term, '[^a-z0-9]+', '', 'g'), '') AS cleaned_term
+        ) cleaned
+        WHERE cleaned_term IS NOT NULL AND char_length(cleaned_term) >= 2
+      ) filtered_terms
     )
     SELECT
       dc.project_id,
@@ -574,20 +792,48 @@ export async function searchAccessibleDocumentChunks(
       dc.id AS chunk_id,
       d.id AS document_id,
       d.file_name,
-      ts_headline(
-        'english',
-        dc.content,
-        q.ts_query,
-        'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
-      ) AS snippet,
-      ts_rank_cd(dc.search_vector, q.ts_query) AS rank
+      CASE
+        WHEN numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query THEN ts_headline(
+          'english',
+          dc.content,
+          q.ts_query,
+          'StartSel=<<H>>,StopSel=<</H>>,MaxFragments=2,MinWords=6,MaxWords=24,FragmentDelimiter= ... '
+        )
+        ELSE LEFT(dc.content, 280)
+      END AS snippet,
+      (
+        CASE
+          WHEN numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query
+            THEN 100 + ts_rank_cd(dc.search_vector, q.ts_query)
+          WHEN lower(dc.content) LIKE '%' || q.raw_query || '%'
+            THEN 10
+          ELSE 0
+        END
+        + COALESCE((
+          SELECT COUNT(*)::float8
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) LIKE '%' || term_value || '%'
+        ), 0)
+      ) AS rank
     FROM document_chunks dc
     JOIN documents d ON d.id = dc.document_id
     JOIN projects p ON p.id = dc.project_id
     JOIN project_members pm ON pm.project_id = dc.project_id
     CROSS JOIN q
+    CROSS JOIN query_terms
     WHERE pm.user_id = ${userId}
-      AND dc.search_vector @@ q.ts_query
+      AND (
+        (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
+        OR lower(dc.content) LIKE '%' || q.raw_query || '%'
+        OR (
+          COALESCE(array_length(query_terms.terms, 1), 0) > 0
+          AND NOT EXISTS (
+            SELECT 1
+            FROM unnest(query_terms.terms) AS query_term(term_value)
+            WHERE lower(dc.content) NOT LIKE '%' || term_value || '%'
+          )
+        )
+      )
     ORDER BY rank DESC, p.name ASC, d.file_name ASC
     LIMIT ${cappedLimit}
   `;

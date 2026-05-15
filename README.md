@@ -346,19 +346,20 @@ DATABASE_SSL=require
 NEXTAUTH_URL=https://your-app-domain.com
 NEXTAUTH_SECRET=<openssl rand -base64 32>
 
-# Auth provider
-AUTH_PROVIDER=credentials   # or cognito
+# Auth provider — AWS Cognito SSO / OIDC
+AUTH_PROVIDER=cognito
+COGNITO_CLIENT_ID=<your-cognito-app-client-id>
+COGNITO_CLIENT_SECRET=<your-cognito-app-client-secret>
+COGNITO_ISSUER=https://cognito-idp.<region>.amazonaws.com/<user-pool-id>
 
-# AI
-LLM_PROVIDER=groq
-GROQ_API_KEY=gsk_...
+# AI — GitHub Copilot proxy
+LLM_PROVIDER=copilot
+COPILOT_PROXY_TOKEN=<your-copilot-proxy-token>
+COPILOT_BASE_URL=https://api.githubcopilot.com/chat/completions  # default, override if needed
+COPILOT_MODEL=openai/gpt-5-mini                                  # default model
 
-# File storage — use R2/S3 for cloud (not local)
-STORAGE_PROVIDER=r2
-R2_ACCOUNT_ID=...
-R2_ACCESS_KEY_ID=...
-R2_SECRET_ACCESS_KEY=...
-R2_BUCKET_NAME=summit-documents
+# File storage
+STORAGE_PROVIDER=local
 
 # Worker
 WORKER_SECRET=<random secret>
@@ -369,7 +370,7 @@ NEXT_PUBLIC_APP_NAME=Summit KT Portal
 NEXT_PUBLIC_APP_URL=https://your-app-domain.com
 ```
 
-> **File storage:** The default `STORAGE_PROVIDER=local` writes uploads to the container filesystem. On cloud deployments with multiple replicas or ephemeral containers, switch to `STORAGE_PROVIDER=r2` (Cloudflare R2 / S3-compatible). The `lib/storage/r2.ts` driver is already implemented.
+> **File storage:** `STORAGE_PROVIDER=local` writes uploads to the container filesystem — suitable for single-instance deployments where the container has a persistent volume. For multi-replica or ephemeral containers, switch to `STORAGE_PROVIDER=r2` (Cloudflare R2 / S3-compatible). The `lib/storage/r2.ts` driver is already implemented; add `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_BUCKET_NAME` when enabling it.
 
 ---
 

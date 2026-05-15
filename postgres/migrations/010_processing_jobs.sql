@@ -1,7 +1,10 @@
--- Enable pg_cron extension (safe to run multiple times).
--- pg_net is NOT required — jobs are triggered by the standalone worker process
--- (worker/index.mjs) rather than via outbound HTTP from the database.
-create extension if not exists pg_cron;
+-- pg_cron is optional: used only to reset stuck jobs.
+-- Jobs are triggered by the standalone worker process (worker/index.mjs).
+do $$ begin
+  create extension if not exists pg_cron;
+exception when others then
+  raise notice 'pg_cron not available — skipping extension install';
+end $$;
 
 -- Background job queue table
 create table if not exists processing_jobs (
@@ -40,17 +43,22 @@ $$ language sql;
 
 -- pg_cron: reset jobs that have been stuck in 'running' for > 10 minutes
 -- (handles crashed or timed-out worker invocations)
-select cron.schedule(
-  'reset-stuck-jobs',
-  '* * * * *',
-  $$
-    update processing_jobs
-    set    status     = 'pending',
-           started_at = null
-    where  status     = 'running'
-      and  started_at < now() - interval '10 minutes';
-  $$
-);
+-- Wrapped in a DO block so it is skipped gracefully if pg_cron is not installed.
+do $$ begin
+  perform cron.schedule(
+    'reset-stuck-jobs',
+    '* * * * *',
+    $cron$
+      update processing_jobs
+      set    status     = 'pending',
+             started_at = null
+      where  status     = 'running'
+        and  started_at < now() - interval '10 minutes';
+    $cron$
+  );
+exception when others then
+  raise notice 'pg_cron not available — skipping stuck-job reset schedule';
+end $$;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Job triggering — standalone worker process (NOT pg_net)

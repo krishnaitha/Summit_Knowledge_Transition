@@ -73,27 +73,19 @@ npm install
 
 ### 3. Set up PostgreSQL
 
-Create the database and run the full schema file:
+Create the database, then run all migrations with a single command:
 
 ```bash
 createdb Summit_KT
-psql -U postgres -d Summit_KT -f postgres/schema.sql
+npm run db:migrate
 ```
 
-Enable required extensions (run once as a superuser):
+This uses [node-pg-migrate](https://github.com/salsita/node-pg-migrate) to apply all SQL files in `postgres/migrations/` in order. It reads `DATABASE_URL` from `.env.local` automatically. Migrations are tracked in a `pgmigrations` table — re-running is safe and only applies new files.
 
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-```
-
-Then apply all incremental migrations in order:
+To add a future migration, create a numbered SQL file:
 
 ```bash
-# Windows (PowerShell)
-Get-ChildItem postgres/migrations/*.sql | Sort-Object Name | ForEach-Object {
-  & "C:\Program Files\PostgreSQL\13\bin\psql.exe" "postgresql://postgres:yourpassword@localhost:5433/Summit_KT" -f $_.FullName
-}
+# Example: postgres/migrations/018_my_change.sql
 ```
 
 ### 4. Configure environment variables
@@ -204,14 +196,15 @@ See [docs/WORKER_SETUP.md](docs/WORKER_SETUP.md) for production deployment optio
 
 ## Scripts
 
-| Command             | Description                           |
-| ------------------- | ------------------------------------- |
-| `npm run dev`       | Start Next.js dev server (hot reload) |
-| `npm run build`     | Production build                      |
-| `npm run start`     | Start production server               |
-| `npm run worker`    | Start background job worker           |
-| `npm run lint`      | ESLint                                |
-| `npm run typecheck` | TypeScript type check                 |
+| Command              | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| `npm run dev`        | Start Next.js dev server (hot reload)            |
+| `npm run build`      | Production build                                 |
+| `npm run start`      | Start production server                          |
+| `npm run worker`     | Start background job worker                      |
+| `npm run db:migrate` | Apply pending DB migrations (reads `.env.local`) |
+| `npm run lint`       | ESLint                                           |
+| `npm run typecheck`  | TypeScript type check                            |
 
 ---
 
@@ -258,28 +251,22 @@ NEXT_PUBLIC_APP_NAME=Summit KT Portal
 docker compose up --build
 ```
 
-This starts three services:
+This starts four services:
 
-| Service  | Description                                                 | Port       |
-| -------- | ----------------------------------------------------------- | ---------- |
-| `db`     | PostgreSQL 17 + pgvector — schema auto-applied on first run | (internal) |
-| `app`    | Next.js 16 production server                                | `3000`     |
-| `worker` | Background job processor (document embedding + quiz gen)    | (internal) |
+| Service   | Description                                                    | Port       |
+| --------- | -------------------------------------------------------------- | ---------- |
+| `db`      | PostgreSQL 17 + pgvector                                       | (internal) |
+| `migrate` | Runs all pending DB migrations via node-pg-migrate, then exits | (internal) |
+| `app`     | Next.js 16 production server                                   | `3000`     |
+| `worker`  | Background job processor (document embedding + quiz gen)       | (internal) |
 
-The `db` service mounts the following SQL files into `docker-entrypoint-initdb.d/` (runs once on first volume creation):
+`app` and `worker` only start after `migrate` exits successfully. Migrations are applied from `postgres/migrations/` in numeric order (`001_init.sql` → `017_quiz_retake_requests.sql`) and tracked in a `pgmigrations` table — safe to re-run at any time.
 
-| Order | File                                                | Contents                                      |
-| ----- | --------------------------------------------------- | --------------------------------------------- |
-| 01    | `postgres/schema.sql`                               | Full base schema (tables, indexes, functions) |
-| 02    | `postgres/migrations/add_password_reset_tokens.sql` | Password-reset flow table                     |
-| 03    | `postgres/migrations/add_quiz_retake_requests.sql`  | Quiz retake requests table                    |
+To run migrations manually against the local DB (outside Docker):
 
-Recent incremental migrations in active use:
-
-- `postgres/migrations/015_document_chunks_fts.sql` (document chunk full-text search)
-- `postgres/migrations/016_document_threads.sql` (document discussion threads)
-- `postgres/migrations/017_flashcards_spaced_repetition.sql` (flashcards and spaced repetition)
-- `postgres/migrations/018_quiz_attempt_history.sql` (attempt history retention)
+```bash
+npm run db:migrate
+```
 
 ### 3. Create the first admin user
 
@@ -300,7 +287,89 @@ docker compose down
 docker compose down -v
 ```
 
-> **Note:** The `docker-entrypoint-initdb.d/` scripts only run when the DB volume is first created. To re-apply migrations after a schema change, run `docker compose down -v` first.
+---
+
+## Deployment
+
+The app ships as three Docker images built from a single `Dockerfile` using multi-stage targets.
+
+| Image target | What it runs                                                  | When it runs            |
+| ------------ | ------------------------------------------------------------- | ----------------------- |
+| `migrate`    | `node-pg-migrate up` — applies pending migrations, then exits | Once before each deploy |
+| `runner`     | `node server.js` — Next.js app                                | Long-running service    |
+| `worker`     | `node worker/index.mjs` — background job processor            | Long-running service    |
+
+### 1. Build and push images
+
+```bash
+# Replace with your registry (ECR, ACR, Docker Hub, etc.)
+REGISTRY=your-registry/summit
+TAG=v1
+
+docker build --target migrate -t $REGISTRY-migrate:$TAG .
+docker build --target runner  -t $REGISTRY-app:$TAG .
+docker build --target worker  -t $REGISTRY-worker:$TAG .
+
+docker push $REGISTRY-migrate:$TAG
+docker push $REGISTRY-app:$TAG
+docker push $REGISTRY-worker:$TAG
+```
+
+### 2. Run migrations before each deploy
+
+Run the migrate image as a one-off task against your production database **before** rolling out updated app/worker containers:
+
+```bash
+docker run --rm \
+  -e DATABASE_URL=postgresql://<user>:<pass>@<host>:5432/<db> \
+  $REGISTRY-migrate:$TAG
+```
+
+On **AWS ECS**: create a one-off ECS Task using the migrate image. Run it to completion before updating the app/worker ECS Services.
+
+On **Azure Container Apps**: create a Container App Job using the migrate image. Trigger it before deploying the app/worker Container Apps.
+
+### 3. Deploy app and worker
+
+Both are stateless long-running containers. Deploy them with the environment variables below. They do **not** need to talk to each other directly — the worker polls the app's internal API.
+
+### 4. Production environment variables
+
+Set these on both the `app` and `worker` containers:
+
+```env
+# Database (managed PostgreSQL — RDS, Azure Database, etc.)
+DATABASE_URL=postgresql://<user>:<pass>@<host>:5432/<db>
+DATABASE_SSL=require
+
+# NextAuth
+NEXTAUTH_URL=https://your-app-domain.com
+NEXTAUTH_SECRET=<openssl rand -base64 32>
+
+# Auth provider
+AUTH_PROVIDER=credentials   # or cognito
+
+# AI
+LLM_PROVIDER=groq
+GROQ_API_KEY=gsk_...
+
+# File storage — use R2/S3 for cloud (not local)
+STORAGE_PROVIDER=r2
+R2_ACCOUNT_ID=...
+R2_ACCESS_KEY_ID=...
+R2_SECRET_ACCESS_KEY=...
+R2_BUCKET_NAME=summit-documents
+
+# Worker
+WORKER_SECRET=<random secret>
+INTERNAL_APP_URL=http://<app-internal-hostname>:3000
+
+# App
+NEXT_PUBLIC_APP_NAME=Summit KT Portal
+NEXT_PUBLIC_APP_URL=https://your-app-domain.com
+```
+
+> **File storage:** The default `STORAGE_PROVIDER=local` writes uploads to the container filesystem. On cloud deployments with multiple replicas or ephemeral containers, switch to `STORAGE_PROVIDER=r2` (Cloudflare R2 / S3-compatible). The `lib/storage/r2.ts` driver is already implemented.
 
 ---
 

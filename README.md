@@ -1,8 +1,8 @@
-# Summit KT Portal
+# NEX-ELEVATE
 
 > **Enterprise Knowledge-Transfer Portal** — structured, AI-assisted onboarding and readiness assessments for engineering teams.
 
-Summit KT Portal lets your organisation manage knowledge-transfer at scale. Admins publish KT documents, generate AI quizzes, and monitor team readiness. Members read documents, ask questions to a RAG-powered AI assistant, complete assessments, and track their own progress — all from a single web interface.
+NEX-ELEVATE lets your organisation manage knowledge-transfer at scale. Admins publish KT documents, generate AI quizzes, and monitor team readiness. Members read documents, ask questions to a RAG-powered AI assistant, complete assessments, and track their own progress — all from a single web interface.
 
 ---
 
@@ -150,7 +150,7 @@ STORAGE_PROVIDER=local
 # Required for invite links, password reset, and quiz window notifications
 SENDGRID_API_KEY=SG.your-key-here
 SENDGRID_FROM_EMAIL=noreply@yourdomain.com
-SENDGRID_FROM_NAME=Summit KT Portal
+SENDGRID_FROM_NAME=NEX-ELEVATE
 
 # ── Background worker ─────────────────────────────────────────────────────────
 # Must be identical on both the app server and the worker process
@@ -158,7 +158,7 @@ WORKER_SECRET=your-random-secret-here
 INTERNAL_APP_URL=http://localhost:3000
 
 # ── Public app metadata ───────────────────────────────────────────────────────
-NEXT_PUBLIC_APP_NAME=Summit KT Portal
+NEXT_PUBLIC_APP_NAME=NEX-ELEVATE
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
@@ -247,7 +247,7 @@ WORKER_SECRET=replace-with-a-random-string
 
 # Public
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=Summit KT Portal
+NEXT_PUBLIC_APP_NAME=NEX-ELEVATE
 ```
 
 > `DATABASE_URL` and `DATABASE_SSL` are injected by the compose file — do **not** add them to `.env.local`.

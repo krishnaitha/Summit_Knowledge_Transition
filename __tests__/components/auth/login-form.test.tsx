@@ -85,6 +85,6 @@ describe('LoginForm – credentials provider', () => {
 describe('LoginForm – cognito provider', () => {
   it('shows an SSO redirect message by default (no error param)', () => {
     render(<LoginForm provider="cognito" hasForgotPassword={false} hasRegistration={false} />);
-    expect(screen.getByText(/redirecting to sso/i)).toBeDefined();
+    expect(screen.getByText(/redirecting to identity provider/i)).toBeDefined();
   });
 });

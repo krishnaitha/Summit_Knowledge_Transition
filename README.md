@@ -271,30 +271,46 @@ NEXT_PUBLIC_APP_NAME=NexTElevate
 docker compose up --build
 ```
 
-This starts four services:
+This starts the following services:
 
-| Service   | Description                                                    | Port       |
-| --------- | -------------------------------------------------------------- | ---------- |
-| `db`      | PostgreSQL 17 + pgvector                                       | (internal) |
-| `migrate` | Runs all pending DB migrations via node-pg-migrate, then exits | (internal) |
-| `app`     | Next.js 16 production server                                   | `3000`     |
-| `worker`  | Background job processor (document embedding + quiz gen)       | (internal) |
+| Service    | Description                                                        | Port       |
+| ---------- | ------------------------------------------------------------------ | ---------- |
+| `db`       | PostgreSQL 17 + pgvector                                           | (internal) |
+| `migrate`  | Runs all pending DB migrations via node-pg-migrate, then exits     | (internal) |
+| `keycloak` | Keycloak 26 identity provider — realm `next-elevate` auto-imported | `8080`     |
+| `app`      | Next.js 16 production server                                       | `3000`     |
+| `worker`   | Background job processor (document embedding + quiz gen)           | (internal) |
 
-`app` and `worker` only start after `migrate` exits successfully. Migrations are applied from `postgres/migrations/` in numeric order (`001_init.sql` → `017_quiz_retake_requests.sql`) and tracked in a `pgmigrations` table — safe to re-run at any time.
+`app` and `worker` only start after `migrate` exits successfully and Keycloak passes its health check. Migrations are applied from `postgres/migrations/` in numeric order and tracked in a `pgmigrations` table — safe to re-run at any time.
 
-To run migrations manually against the local DB (outside Docker):
+Keycloak auto-configures on first boot:
+
+- Realm: `next-elevate`
+- Client: `next-elevate-app` (secret: `next-elevate-secret`)
+- Demo user: `demo@nexturn.com` / `Demo@1234`
+
+Admin console: [http://localhost:8080](http://localhost:8080) — username `admin`, password `admin`.
+
+### 3. Elevate the demo user to admin
+
+After logging in once with the demo user (so their row is created in the DB), run:
 
 ```bash
-npm run db:migrate
+docker compose run --rm elevate-demo-user
 ```
 
-### 3. Create the first admin user
-
-Once the app is running, register an account at [http://localhost:3000/register](http://localhost:3000/register), then promote it to admin:
+Or directly via psql:
 
 ```bash
-docker compose exec db psql -U postgres -d summitkt -c \
-  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com' AND auth_provider = 'credentials';"
+docker compose exec db psql -U postgres -d next_elevate -c \
+  "UPDATE users SET role = 'admin' WHERE email = 'demo@nexturn.com' AND auth_provider = 'keycloak';"
+```
+
+To promote any other user:
+
+```bash
+docker compose exec db psql -U postgres -d next_elevate -c \
+  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com' AND auth_provider = 'keycloak';"
 ```
 
 ### 4. Stopping and resetting

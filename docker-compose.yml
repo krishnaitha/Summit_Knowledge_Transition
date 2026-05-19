@@ -94,6 +94,23 @@ services:
       keycloak:
         condition: service_healthy
 
+  # ---------------------------------------------------------------------------
+  # One-off helper — not started by default
+  # Elevate the Keycloak demo user to admin (run after first login):
+  #   docker compose run --rm elevate-demo-user
+  # ---------------------------------------------------------------------------
+  elevate-demo-user:
+    profiles: [tools]
+    image: postgres:17-alpine
+    environment:
+      PGPASSWORD: postgres
+    command: >
+      psql -h db -U postgres -d next_elevate
+      -c "UPDATE users SET role = 'admin' WHERE email = 'demo@nexturn.com' AND auth_provider = 'keycloak';"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db_data:
   uploads_data:

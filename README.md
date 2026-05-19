@@ -140,6 +140,8 @@ AUTH_PROVIDER=credentials
 # OIDC_ISSUER=https://your-idp.example.com
 # OIDC_DISPLAY_NAME=OIDC       # Login button label (default: OIDC)
 # OIDC_PROVIDER_ID=oidc        # Internal provider slug stored in DB (default: oidc)
+# OIDC_CHECKS=pkce,state       # Comma-separated: pkce, state, nonce, none (default: pkce,state)
+#                              # Use OIDC_CHECKS=nonce for IdPs that do not support PKCE
 
 # ── AI Provider (choose one) ──────────────────────────────────────────────────
 # Option A: Groq (default) — https://console.groq.com

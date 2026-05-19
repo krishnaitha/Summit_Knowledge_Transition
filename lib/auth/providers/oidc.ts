@@ -10,6 +10,19 @@ import type { AuthProviderDefinition } from './types';
 
 const providerId = process.env.OIDC_PROVIDER_ID ?? 'oidc';
 
+// Accepted values mirror next-auth's OAuthConfig.checks type.
+type OAuthCheck = 'pkce' | 'state' | 'nonce' | 'none';
+const VALID_CHECKS = new Set<string>(['pkce', 'state', 'nonce', 'none']);
+
+function parseChecks(raw: string | undefined): OAuthCheck[] | undefined {
+  if (!raw) return undefined;
+  const parsed = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => VALID_CHECKS.has(s)) as OAuthCheck[];
+  return parsed.length > 0 ? parsed : undefined;
+}
+
 export const oidcProviderDefinition: AuthProviderDefinition = {
   id: 'oidc',
 
@@ -20,6 +33,11 @@ export const oidcProviderDefinition: AuthProviderDefinition = {
       clientId: process.env.OIDC_CLIENT_ID!,
       clientSecret: process.env.OIDC_CLIENT_SECRET!,
       issuer: process.env.OIDC_ISSUER!,
+      // Default: pkce,state (set by KeycloakProvider). Override via OIDC_CHECKS.
+      // Example: OIDC_CHECKS=nonce  — for IdPs that do not support PKCE.
+      ...(parseChecks(process.env.OIDC_CHECKS) && {
+        checks: parseChecks(process.env.OIDC_CHECKS),
+      }),
     }),
   ],
 

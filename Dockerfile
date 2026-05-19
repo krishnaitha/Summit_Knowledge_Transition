@@ -48,6 +48,7 @@ FROM node:22-slim AS migrate
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+RUN npm pkg delete scripts.prepare
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund --omit=dev
 
 COPY postgres/migrations ./postgres/migrations

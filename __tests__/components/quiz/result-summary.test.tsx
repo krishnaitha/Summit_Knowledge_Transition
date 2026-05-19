@@ -15,6 +15,7 @@ describe('ResultSummary – disqualified', () => {
   it('renders the Disqualified heading', () => {
     render(
       <ResultSummary
+        projectId="proj-1"
         score={0}
         totalMarks={10}
         percentage={0}
@@ -28,6 +29,7 @@ describe('ResultSummary – disqualified', () => {
   it('renders the disqualify reason', () => {
     render(
       <ResultSummary
+        projectId="proj-1"
         score={0}
         totalMarks={10}
         percentage={0}
@@ -39,32 +41,36 @@ describe('ResultSummary – disqualified', () => {
   });
 
   it('renders default disqualify reason when none is provided', () => {
-    render(<ResultSummary score={0} totalMarks={10} percentage={0} disqualified />);
+    render(
+      <ResultSummary projectId="proj-1" score={0} totalMarks={10} percentage={0} disqualified />,
+    );
     expect(screen.getByText(/integrity violation/i)).toBeDefined();
   });
 
   it('does not show the score when disqualified', () => {
-    render(<ResultSummary score={8} totalMarks={10} percentage={80} disqualified />);
-    // Score and Quiz submitted heading should NOT appear
-    expect(screen.queryByText(/quiz submitted/i)).toBeNull();
+    render(
+      <ResultSummary projectId="proj-1" score={8} totalMarks={10} percentage={80} disqualified />,
+    );
+    // Score and Quest submitted heading should NOT appear
+    expect(screen.queryByText(/quest submitted/i)).toBeNull();
   });
 });
 
 describe('ResultSummary – normal result', () => {
   it('renders the "Quiz submitted" heading', () => {
-    render(<ResultSummary score={7} totalMarks={10} percentage={70} />);
-    expect(screen.getByText(/quiz submitted/i)).toBeDefined();
+    render(<ResultSummary projectId="proj-1" score={7} totalMarks={10} percentage={70} />);
+    expect(screen.getByText(/quest submitted/i)).toBeDefined();
   });
 
   it('renders the score as numerator/denominator', () => {
-    render(<ResultSummary score={7} totalMarks={10} percentage={70} />);
+    render(<ResultSummary projectId="proj-1" score={7} totalMarks={10} percentage={70} />);
     expect(screen.getByText('7')).toBeDefined();
     // Denominator rendered inside a span inside the score paragraph
     expect(screen.getByText('/10')).toBeDefined();
   });
 
   it('renders the percentage via formatPercent', () => {
-    render(<ResultSummary score={7} totalMarks={10} percentage={70} />);
+    render(<ResultSummary projectId="proj-1" score={7} totalMarks={10} percentage={70} />);
     expect(screen.getByText('70%')).toBeDefined();
   });
 
@@ -79,7 +85,15 @@ describe('ResultSummary – normal result', () => {
         },
       ],
     };
-    render(<ResultSummary score={4} totalMarks={10} percentage={40} coachingPlan={coachingPlan} />);
+    render(
+      <ResultSummary
+        projectId="proj-1"
+        score={4}
+        totalMarks={10}
+        percentage={40}
+        coachingPlan={coachingPlan}
+      />,
+    );
     expect(screen.getByText(/weak-area coaching plan/i)).toBeDefined();
     expect(screen.getByText(/focus on hooks and component lifecycle/i)).toBeDefined();
     expect(screen.getByText('React Basics.pdf')).toBeDefined();
@@ -90,12 +104,20 @@ describe('ResultSummary – normal result', () => {
       weakSections: [],
       recommendations: [],
     };
-    render(<ResultSummary score={8} totalMarks={10} percentage={80} coachingPlan={coachingPlan} />);
+    render(
+      <ResultSummary
+        projectId="proj-1"
+        score={8}
+        totalMarks={10}
+        percentage={80}
+        coachingPlan={coachingPlan}
+      />,
+    );
     expect(screen.queryByText(/weak-area coaching plan/i)).toBeNull();
   });
 
   it('does not render coaching section when coachingPlan is undefined', () => {
-    render(<ResultSummary score={8} totalMarks={10} percentage={80} />);
+    render(<ResultSummary projectId="proj-1" score={8} totalMarks={10} percentage={80} />);
     expect(screen.queryByText(/weak-area coaching plan/i)).toBeNull();
   });
 });

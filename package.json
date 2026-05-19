@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "worker": "node worker/index.mjs",
     "db:migrate": "dotenv -e .env.local -- node-pg-migrate up -m postgres/migrations",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "dependencies": {

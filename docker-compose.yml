@@ -3,13 +3,13 @@ services:
   db:
     image: pgvector/pgvector:pg17
     environment:
-      POSTGRES_DB: summitkt
+      POSTGRES_DB: next_elevate
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d summitkt"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d next_elevate"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -19,10 +19,28 @@ services:
       context: .
       target: migrate
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/summitkt
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/next_elevate
     depends_on:
       db:
         condition: service_healthy
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/9000 && printf 'GET /health/ready HTTP/1.0\\r\\nHost:localhost\\r\\n\\r\\n' >&3 && cat <&3 | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 45s
 
   app:
     build:
@@ -30,15 +48,26 @@ services:
       target: runner
     env_file: .env.local
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/summitkt
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/next_elevate
       DATABASE_SSL: disable
+      AUTH_PROVIDER: oidc
+      OIDC_PROVIDER_ID: keycloak
+      OIDC_CLIENT_ID: next-elevate-app
+      OIDC_CLIENT_SECRET: next-elevate-secret
+      OIDC_ISSUER: http://localhost:8080/realms/next-elevate
+      OIDC_DISPLAY_NAME: Next Elevate
+      NEXTAUTH_URL: http://localhost:3000
     ports:
       - "3000:3000"
     volumes:
       - uploads_data:/app/public/uploads
+    extra_hosts:
+      - "localhost:host-gateway"
     depends_on:
       migrate:
         condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
 
   worker:
     build:
@@ -46,14 +75,24 @@ services:
       target: worker
     env_file: .env.local
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/summitkt
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/next_elevate
       DATABASE_SSL: disable
       INTERNAL_APP_URL: http://app:3000
+      AUTH_PROVIDER: oidc
+      OIDC_PROVIDER_ID: keycloak
+      OIDC_CLIENT_ID: next-elevate-app
+      OIDC_CLIENT_SECRET: next-elevate-secret
+      OIDC_ISSUER: http://localhost:8080/realms/next-elevate
+      OIDC_DISPLAY_NAME: Next Elevate
     volumes:
       - uploads_data:/app/public/uploads
+    extra_hosts:
+      - "localhost:host-gateway"
     depends_on:
       migrate:
         condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
 
 volumes:
   db_data:

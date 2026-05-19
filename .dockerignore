@@ -1,0 +1,39 @@
+# Dependencies — reinstalled inside the image
+
+node_modules
+
+# Next.js build output — rebuilt inside the image
+
+.next
+
+# Local env files — never bake secrets into images
+
+.env\*
+!.env.example
+
+# Dev tooling
+
+.git
+.gitignore
+.husky
+.vscode
+\*.md
+
+# Test artefacts
+
+**tests**
+coverage
+.nyc_output
+vitest.config.mts
+vitest.setup.ts
+
+# Docker files themselves
+
+Dockerfile
+docker-compose\*.yml
+.dockerignore
+
+# OS noise
+
+.DS_Store
+Thumbs.db

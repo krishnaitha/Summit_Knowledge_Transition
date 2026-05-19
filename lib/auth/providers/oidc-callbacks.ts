@@ -5,7 +5,7 @@ import sql from '@/lib/db';
 type Callbacks = NonNullable<NextAuthOptions['callbacks']>;
 
 /**
- * Shared callback logic for all OIDC-based providers (Cognito, Keycloak, generic OIDC).
+ * Shared callback logic for all OIDC-based providers (Cognito, generic OIDC).
  *
  * - signIn: upserts the user row, rejects if inactive or auth_provider mismatch
  * - jwt:    stamps token.id from the DB on first sign-in

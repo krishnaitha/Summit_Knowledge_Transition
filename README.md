@@ -120,19 +120,13 @@ NEXTAUTH_SECRET=your-secret-here
 # ── Auth provider ─────────────────────────────────────────────────────────────
 # 'credentials' (default) — email + password, self-registration, invite flow, password reset
 # 'cognito'               — AWS Cognito OIDC; users auto-provisioned on first login
-# 'keycloak'              — Keycloak OIDC; users auto-provisioned on first login
-# 'oidc'                  — Generic OIDC / OAuth2 (Okta, Azure AD, Auth0, Ping, Dex, etc.)
+# 'oidc'                  — Generic OIDC / OAuth2 (Keycloak, Okta, Azure AD, Auth0, Ping, Dex, etc.)
 AUTH_PROVIDER=credentials
 
 # AWS Cognito — required only when AUTH_PROVIDER=cognito
 # COGNITO_CLIENT_ID=your-cognito-app-client-id
 # COGNITO_CLIENT_SECRET=your-cognito-app-client-secret
 # COGNITO_ISSUER=https://cognito-idp.<region>.amazonaws.com/<user-pool-id>
-
-# Keycloak — required only when AUTH_PROVIDER=keycloak
-# KEYCLOAK_CLIENT_ID=your-keycloak-client-id
-# KEYCLOAK_CLIENT_SECRET=your-keycloak-client-secret
-# KEYCLOAK_ISSUER=https://your-keycloak-server/realms/your-realm
 
 # Generic OIDC — required only when AUTH_PROVIDER=oidc
 # OIDC_CLIENT_ID=your-client-id

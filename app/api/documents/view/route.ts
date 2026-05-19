@@ -86,7 +86,7 @@ export async function GET(request: Request) {
       ? `attachment; filename="${encodeURIComponent(document.file_name)}"`
       : 'inline';
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': mimeType,
         'Content-Disposition': contentDisposition,

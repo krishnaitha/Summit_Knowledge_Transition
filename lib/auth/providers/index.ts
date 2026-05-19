@@ -1,12 +1,14 @@
 import { cognitoProviderDefinition } from './cognito';
 import { credentialsProviderDefinition } from './credentials';
 import { keycloakProviderDefinition } from './keycloak';
+import { oidcProviderDefinition } from './oidc';
 import type { AuthProviderDefinition } from './types';
 
 const registry: Readonly<Record<string, AuthProviderDefinition>> = {
   [cognitoProviderDefinition.id]: cognitoProviderDefinition,
   [credentialsProviderDefinition.id]: credentialsProviderDefinition,
   [keycloakProviderDefinition.id]: keycloakProviderDefinition,
+  [oidcProviderDefinition.id]: oidcProviderDefinition,
 };
 
 export function getAuthProviderDefinition(): AuthProviderDefinition {

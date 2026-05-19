@@ -119,8 +119,9 @@ NEXTAUTH_SECRET=your-secret-here
 
 # ── Auth provider ─────────────────────────────────────────────────────────────
 # 'credentials' (default) — email + password, self-registration, invite flow, password reset
-# 'cognito'               — AWS Cognito SSO / OIDC; users auto-provisioned on first login
-# 'keycloak'              — Keycloak SSO / OIDC; users auto-provisioned on first login
+# 'cognito'               — AWS Cognito OIDC; users auto-provisioned on first login
+# 'keycloak'              — Keycloak OIDC; users auto-provisioned on first login
+# 'oidc'                  — Generic OIDC / OAuth2 (Okta, Azure AD, Auth0, Ping, Dex, etc.)
 AUTH_PROVIDER=credentials
 
 # AWS Cognito — required only when AUTH_PROVIDER=cognito
@@ -132,6 +133,13 @@ AUTH_PROVIDER=credentials
 # KEYCLOAK_CLIENT_ID=your-keycloak-client-id
 # KEYCLOAK_CLIENT_SECRET=your-keycloak-client-secret
 # KEYCLOAK_ISSUER=https://your-keycloak-server/realms/your-realm
+
+# Generic OIDC — required only when AUTH_PROVIDER=oidc
+# OIDC_CLIENT_ID=your-client-id
+# OIDC_CLIENT_SECRET=your-client-secret
+# OIDC_ISSUER=https://your-idp.example.com
+# OIDC_DISPLAY_NAME=OIDC       # Login button label (default: OIDC)
+# OIDC_PROVIDER_ID=oidc        # Internal provider slug stored in DB (default: oidc)
 
 # ── AI Provider (choose one) ──────────────────────────────────────────────────
 # Option A: Groq (default) — https://console.groq.com
@@ -362,7 +370,7 @@ DATABASE_SSL=require
 NEXTAUTH_URL=https://your-app-domain.com
 NEXTAUTH_SECRET=<openssl rand -base64 32>
 
-# Auth provider — AWS Cognito SSO / OIDC
+# Auth provider — AWS Cognito OIDC
 AUTH_PROVIDER=cognito
 COGNITO_CLIENT_ID=<your-cognito-app-client-id>
 COGNITO_CLIENT_SECRET=<your-cognito-app-client-secret>
@@ -498,7 +506,7 @@ The active auth strategy is controlled by the `AUTH_PROVIDER` environment variab
 | `AUTH_PROVIDER` | Strategy                | User provisioning               |
 | --------------- | ----------------------- | ------------------------------- |
 | `credentials`   | Email + bcrypt password | Self-register or admin invite   |
-| `cognito`       | AWS Cognito SSO / OIDC  | Auto-provisioned on first login |
+| `cognito`       | AWS Cognito OIDC        | Auto-provisioned on first login |
 
 Sessions are JWT-based via NextAuth.js stored in an `httpOnly` cookie. With `credentials`, three flows exist:
 

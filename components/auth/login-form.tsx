@@ -13,6 +13,7 @@ interface LoginFormProps {
   provider: AuthProvider;
   hasForgotPassword: boolean;
   hasRegistration: boolean;
+  oidcProviderId?: string;
 }
 
 const COGNITO_ERROR_MESSAGES: Record<string, string> = {
@@ -20,6 +21,46 @@ const COGNITO_ERROR_MESSAGES: Record<string, string> = {
   AccessDenied: 'Your account is not authorised to access this application.',
   Configuration: 'Server configuration error. Contact your administrator.',
 };
+
+const OIDC_ERROR_MESSAGES: Record<string, string> = {
+  OAuthCallback: 'Sign-in failed. Please check your identity provider configuration and try again.',
+  AccessDenied: 'Your account is not authorised to access this application.',
+  Configuration: 'Server configuration error. Contact your administrator.',
+};
+
+function OidcLoginForm({ oidcProviderId }: { oidcProviderId: string }) {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
+  const error = searchParams.get('error');
+
+  useEffect(() => {
+    if (error) return;
+    signIn(oidcProviderId, { callbackUrl });
+  }, [callbackUrl, error, oidcProviderId]);
+
+  return (
+    <div className="w-full rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-black/5">
+      <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
+        <span className="text-sm font-bold text-white">N</span>
+      </div>
+      {error ? (
+        <div className="space-y-4">
+          <p className="text-sm text-red-600">
+            {OIDC_ERROR_MESSAGES[error] ?? 'An unexpected error occurred. Please try again.'}
+          </p>
+          <button
+            onClick={() => signIn(oidcProviderId, { callbackUrl })}
+            className="bg-brand-700 hover:bg-brand-800 w-full rounded-lg px-4 py-2 text-sm font-medium text-white"
+          >
+            Try again
+          </button>
+        </div>
+      ) : (
+        <p className="text-sm text-slate-600">Redirecting to identity provider…</p>
+      )}
+    </div>
+  );
+}
 
 function CognitoLoginForm() {
   const searchParams = useSearchParams();
@@ -167,9 +208,18 @@ function CredentialsLoginForm({
   );
 }
 
-export function LoginForm({ provider, hasForgotPassword, hasRegistration }: LoginFormProps) {
+export function LoginForm({
+  provider,
+  hasForgotPassword,
+  hasRegistration,
+  oidcProviderId,
+}: LoginFormProps) {
   if (provider === 'cognito') {
     return <CognitoLoginForm />;
+  }
+
+  if (provider === 'oidc') {
+    return <OidcLoginForm oidcProviderId={oidcProviderId ?? 'oidc'} />;
   }
 
   return (

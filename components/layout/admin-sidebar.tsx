@@ -1,6 +1,6 @@
 'use client';
 
-import { BellRing, FolderKanban, LayoutDashboard, Search, Users } from 'lucide-react';
+import { BellRing, FolderKanban, LayoutDashboard, Search, Users, Wand2 } from 'lucide-react';
 
 import { Sidebar } from './sidebar';
 
@@ -15,11 +15,12 @@ export function AdminSidebar({
     ...(isSuperAdmin
       ? [{ href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
       : []),
-    { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+    { href: '/admin/projects', label: 'Products', icon: FolderKanban },
+    { href: '/admin/generate-document', label: 'AI Document Generator', icon: Wand2 },
     { href: '/admin/search', label: 'Search Docs', icon: Search },
     { href: '/admin/threads', label: 'Threads', icon: BellRing, badge: openThreadCount },
     ...(isSuperAdmin ? [{ href: '/admin/users', label: 'Users', icon: Users }] : []),
   ];
 
-  return <Sidebar items={items} sectionLabel={isSuperAdmin ? 'Admin' : 'Project Admin'} />;
+  return <Sidebar items={items} sectionLabel={isSuperAdmin ? 'Admin' : 'Product Admin'} />;
 }

@@ -13,7 +13,7 @@ export function MemberSidebar({
 }) {
   const items = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: notificationCount },
-    { href: '/projects', label: 'My Projects', icon: FolderOpen },
+    { href: '/projects', label: 'My Products', icon: FolderOpen },
     { href: '/search', label: 'Search Docs', icon: Search },
     { href: '/threads', label: 'Threads', icon: BellRing, badge: openThreadCount },
   ];

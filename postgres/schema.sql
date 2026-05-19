@@ -101,6 +101,21 @@ create table if not exists project_announcements (
   created_at timestamptz not null default now()
 );
 
+create table if not exists document_connectors (
+  id               uuid        primary key default gen_random_uuid(),
+  project_id       uuid        not null references projects(id) on delete cascade,
+  provider         text        not null check (provider in ('confluence', 'sharepoint')),
+  name             text        not null,
+  config           jsonb        not null default '{}'::jsonb,
+  created_by       uuid        references users(id) on delete set null,
+  is_active        boolean     not null default true,
+  last_synced_at   timestamptz,
+  last_sync_status text        not null default 'idle' check (last_sync_status in ('idle', 'running', 'success', 'failed')),
+  last_sync_error  text,
+  created_at       timestamptz not null default now(),
+  updated_at       timestamptz not null default now()
+);
+
 -- Documents
 create table if not exists documents (
   id             uuid        primary key default gen_random_uuid(),
@@ -116,6 +131,11 @@ create table if not exists documents (
   classification text        not null default 'public',
   is_required    boolean     not null default false,
   scan_flags     text[]      not null default '{}',
+  source_connector_id uuid   references document_connectors(id) on delete set null,
+  source_provider text,
+  source_item_id text,
+  source_url     text,
+  source_synced_at timestamptz,
   constraint documents_classification_check
     check (classification in ('public', 'internal', 'confidential'))
 );

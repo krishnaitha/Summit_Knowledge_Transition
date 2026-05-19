@@ -69,6 +69,11 @@ export function DocumentsList({
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="font-semibold text-slate-900">{document.file_name}</p>
                   <Badge variant="info">{document.file_type.toUpperCase()}</Badge>
+                  {document.source_provider && (
+                    <Badge variant="info">
+                      {document.source_provider === 'confluence' ? 'Confluence' : 'SharePoint'}
+                    </Badge>
+                  )}
                   <Badge
                     variant={
                       document.classification === 'confidential'
@@ -84,12 +89,18 @@ export function DocumentsList({
                   {document.pii_detections > 0 && (
                     <Badge variant="danger">PII &middot; {document.pii_detections}</Badge>
                   )}
-                  {document.is_required && <Badge variant="warning">Required before quiz</Badge>}
+                  {document.is_required && <Badge variant="warning">Required before Quest</Badge>}
                 </div>
                 <p className="mt-1 text-sm text-slate-500">
                   Uploaded {formatDate(document.uploaded_at, true)} &bull; {document.chunk_count}{' '}
                   chunks
                 </p>
+                {document.source_synced_at && document.source_provider && (
+                  <p className="mt-1 text-xs text-slate-400">
+                    Synced from {document.source_provider} on{' '}
+                    {formatDate(document.source_synced_at, true)}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <form action={toggleRequiredAction}>

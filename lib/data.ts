@@ -9,6 +9,7 @@ import type {
   ChatMessageRecord,
   ChatSessionRecord,
   DocumentRecord,
+  DocumentConnectorRecord,
   DocumentSearchResult,
   DocumentThreadCommentRecord,
   DocumentThreadRecord,
@@ -178,8 +179,36 @@ export async function getProjectById(projectId: string) {
 
 export async function getProjectDocuments(projectId: string) {
   return sql<DocumentRecord[]>`
-    SELECT * FROM documents WHERE project_id = ${projectId} ORDER BY uploaded_at DESC
+    SELECT
+      id,
+      project_id,
+      file_name,
+      file_url,
+      file_type,
+      uploaded_by,
+      uploaded_at,
+      chunk_count,
+      pii_detections,
+      classification,
+      is_required,
+      scan_flags
+    FROM documents
+    WHERE project_id = ${projectId}
+    ORDER BY uploaded_at DESC
   `;
+}
+
+export async function getProjectDocumentConnectors(projectId: string) {
+  try {
+    return await sql<DocumentConnectorRecord[]>`
+      SELECT *
+      FROM document_connectors
+      WHERE project_id = ${projectId}
+      ORDER BY created_at DESC
+    `;
+  } catch {
+    return [];
+  }
 }
 
 export async function getProjectFlashcardsForUser(projectId: string, userId: string, limit = 40) {
@@ -1085,6 +1114,11 @@ export async function getProjectAnalytics(projectId: string) {
   const memberIds = memberRows.map((m) => m.user_id);
   const memberAssignedAt = new Map(memberRows.map((m) => [m.user_id, m.assigned_at]));
 
+  const projectRows = await sql<{ name: string }[]>`
+    SELECT name FROM projects WHERE id = ${projectId} LIMIT 1
+  `;
+  const projectName = projectRows[0]?.name ?? 'Unknown Project';
+
   const [
     sessions,
     attempts,
@@ -1108,7 +1142,12 @@ export async function getProjectAnalytics(projectId: string) {
     sql<
       { id: string; set_name: string }[]
     >`SELECT id, set_name FROM quiz_sets WHERE project_id = ${projectId}`,
-    sql<{ user_id: string }[]>`SELECT user_id FROM quiz_resets WHERE project_id = ${projectId}`,
+    sql<{ user_id: string; reason: string; reset_at: string }[]>`
+      SELECT user_id, reason, reset_at
+      FROM quiz_resets
+      WHERE project_id = ${projectId}
+      ORDER BY reset_at DESC
+    `,
     sql<{ metadata: Record<string, unknown>; created_at: string; user_id: string | null }[]>`
       SELECT metadata, created_at, user_id
       FROM activity_log
@@ -1141,8 +1180,12 @@ export async function getProjectAnalytics(projectId: string) {
   ]);
 
   const resetCounts = new Map<string, number>();
+  const latestResetReasonByUser = new Map<string, string>();
   resets.forEach((r) => {
     resetCounts.set(r.user_id, (resetCounts.get(r.user_id) ?? 0) + 1);
+    if (!latestResetReasonByUser.has(r.user_id)) {
+      latestResetReasonByUser.set(r.user_id, r.reason);
+    }
   });
 
   const userIndex = new Map(users.map((u) => [u.id, u]));
@@ -1191,10 +1234,12 @@ export async function getProjectAnalytics(projectId: string) {
       email: user?.email ?? '—',
       score: `${attempt.score ?? 0} / ${attempt.total_marks ?? 0}`,
       percentage: `${attempt.percentage ?? 0}%`,
+      project: projectName,
       setTaken: sectionLabel,
       submittedAt: formatDate(attempt.submitted_at, true),
       submittedAtRaw: attempt.submitted_at,
       resetCount: resetCounts.get(attempt.user_id) ?? 0,
+      resetReason: latestResetReasonByUser.get(attempt.user_id) ?? '—',
       sectionScores,
     };
   });
@@ -1209,10 +1254,12 @@ export async function getProjectAnalytics(projectId: string) {
       email: user?.email ?? '—',
       score: `${attempt.score ?? 0} / ${attempt.total_marks ?? 0}`,
       percentage: `${attempt.percentage ?? 0}%`,
+      project: projectName,
       setTaken: attempt.quiz_set_id ? (setIndex.get(attempt.quiz_set_id) ?? 'Unknown') : 'Unknown',
       submittedAt: formatDate(attempt.submitted_at ?? attempt.reset_at, true),
       submittedAtRaw: attempt.submitted_at ?? attempt.reset_at,
       resetCount: resetCounts.get(attempt.user_id) ?? 0,
+      resetReason: attempt.reset_reason,
       sectionScores: {},
     };
   });
@@ -1748,4 +1795,37 @@ export async function getObservabilityMetrics(projectId: string): Promise<Observ
     possibleHallucinations,
     slowQueries,
   };
+}
+
+export interface KnowledgeGap {
+  query: string;
+  occurrences: number;
+  lastAskedAt: string;
+  projects: string[];
+}
+
+export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const rows = await sql`
+    SELECT
+      MIN(rt.query_text)                                    AS query_text,
+      COUNT(*)::int                                         AS occurrences,
+      MAX(rt.created_at)                                    AS last_asked_at,
+      array_remove(array_agg(DISTINCT p.name), NULL)        AS project_names
+    FROM rag_traces rt
+    LEFT JOIN projects p ON p.id = rt.project_id
+    WHERE rt.answer_refused = true
+      AND rt.created_at >= ${thirtyDaysAgo}
+    GROUP BY lower(trim(rt.query_text))
+    ORDER BY occurrences DESC, last_asked_at DESC
+    LIMIT 10
+  `;
+
+  return rows.map((row) => ({
+    query: row.query_text as string,
+    occurrences: Number(row.occurrences),
+    lastAskedAt: formatDate(row.last_asked_at as string, true),
+    projects: (row.project_names as string[] | null) ?? [],
+  }));
 }

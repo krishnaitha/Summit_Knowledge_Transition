@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const PAGE_SIZE = 5;
 const MAX_RESETS = 5;
 
-type SortKey = 'member' | 'score' | 'percentage' | 'setTaken' | 'submittedAt';
+type SortKey = 'member' | 'score' | 'percentage' | 'project' | 'setTaken' | 'submittedAt';
 type SortDir = 'asc' | 'desc';
 
 export interface QuizResultRow {
@@ -31,10 +31,12 @@ export interface QuizResultRow {
   email: string;
   score: string;
   percentage: string;
+  project: string;
   setTaken: string;
   submittedAt: string;
   submittedAtRaw?: string | null;
   resetCount: number;
+  resetReason?: string;
   sectionScores?: Record<string, { score: number; total: number }>;
 }
 
@@ -65,9 +67,11 @@ function exportToCsv(rows: QuizResultRow[]) {
     'Email',
     'Score',
     'Percentage',
+    'Project',
     'Set Taken',
     'Submitted At',
     'Reset Count',
+    'Reset Reason',
     ...sectionNames.map((s) => `${s.charAt(0).toUpperCase() + s.slice(1)} Score`),
   ];
 
@@ -77,9 +81,11 @@ function exportToCsv(rows: QuizResultRow[]) {
       esc(row.email),
       esc(row.score),
       esc(row.percentage),
+      esc(row.project),
       esc(row.setTaken),
       esc(row.submittedAt),
       String(row.resetCount),
+      esc(row.resetReason ?? '—'),
     ];
     for (const sec of sectionNames) {
       const s = row.sectionScores?.[sec];
@@ -118,6 +124,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
   const [reason, setReason] = useState('');
   const [sectionsToReset, setSectionsToReset] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
+  const [projectFilter, setProjectFilter] = useState('');
 
   function toggleSort(col: SortKey) {
     if (col === sortKey) {
@@ -136,14 +143,24 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
           r.email,
           r.score,
           r.percentage,
+          r.project,
           r.setTaken,
           r.submittedAt,
+          r.resetReason ?? '',
           r.attemptType ?? 'latest',
         ].some((v) => v.toLowerCase().includes(filter.toLowerCase())),
       )
     : rows;
 
-  const sorted = [...filtered].sort((a, b) => {
+  // Extract unique projects and sort alphabetically
+  const uniqueProjects = Array.from(new Set(rows.map((r) => r.project))).sort();
+
+  // Apply both text filter and project filter
+  const projectFiltered = projectFilter
+    ? filtered.filter((r) => r.project === projectFilter)
+    : filtered;
+
+  const sorted = [...projectFiltered].sort((a, b) => {
     if (sortKey === 'submittedAt') {
       const aTs = new Date(a.submittedAtRaw ?? 0).getTime();
       const bTs = new Date(b.submittedAtRaw ?? 0).getTime();
@@ -246,6 +263,23 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                   value={filter}
                 />
               </div>
+              {uniqueProjects.length > 1 && (
+                <select
+                  className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  onChange={(e) => {
+                    setProjectFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  value={projectFilter}
+                >
+                  <option value="">All projects</option>
+                  {uniqueProjects.map((proj) => (
+                    <option key={proj} value={proj}>
+                      {proj}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
         </CardHeader>
@@ -260,7 +294,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              <div>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100">
@@ -275,6 +309,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                       </th>
                       <th className={thCls} onClick={() => toggleSort('percentage')}>
                         % <SortIcon col="percentage" sortKey={sortKey} sortDir={sortDir} />
+                      </th>
+                      <th className={thCls} onClick={() => toggleSort('project')}>
+                        Project <SortIcon col="project" sortKey={sortKey} sortDir={sortDir} />
                       </th>
                       <th className={thCls} onClick={() => toggleSort('setTaken')}>
                         Set taken <SortIcon col="setTaken" sortKey={sortKey} sortDir={sortDir} />
@@ -334,6 +371,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                               {row.percentage}
                             </span>
                           </td>
+                          <td className="py-3 pr-6 text-slate-600">{row.project}</td>
                           <td className="py-3 pr-6 text-slate-600">{row.setTaken}</td>
                           <td className="py-3 pr-6 text-slate-400">{row.submittedAt}</td>
                           <td className="py-3">
@@ -359,6 +397,11 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                               {row.resetCount > 0 && (
                                 <span
                                   className={`text-xs ${atLimit ? 'font-semibold text-rose-500' : 'text-slate-400'}`}
+                                  title={
+                                    row.resetReason
+                                      ? `Last reset reason: ${row.resetReason}`
+                                      : undefined
+                                  }
                                 >
                                   {row.resetCount}/{MAX_RESETS}
                                 </span>

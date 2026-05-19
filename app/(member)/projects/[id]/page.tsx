@@ -113,10 +113,10 @@ export default async function ProjectOverviewPage(props: {
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           <Link href={`/projects/${params.id}/chat`}>
-            <Button>Ask the AI</Button>
+            <Button>Elevate AI</Button>
           </Link>
           <Link href={`/projects/${params.id}/quiz`}>
-            <Button variant="secondary">Take the Quiz</Button>
+            <Button variant="secondary">Take the Quest</Button>
           </Link>
           <Link href={`/projects/${params.id}/bookmarks`}>
             <Button variant="secondary">Bookmarks</Button>

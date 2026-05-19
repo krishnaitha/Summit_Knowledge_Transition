@@ -146,7 +146,13 @@ export default async function AdminProjectDetailPage(props: {
           <Link href={`/admin/projects/${params.id}/quiz`}>
             <Button size="sm" variant="secondary">
               <BookOpen className="h-3.5 w-3.5" />
-              Quiz
+              Quest
+            </Button>
+          </Link>
+          <Link href={`/admin/projects/${params.id}/documents`}>
+            <Button size="sm" variant="secondary">
+              <FileText className="h-3.5 w-3.5" />
+              Documents & connectors
             </Button>
           </Link>
         </div>
@@ -157,7 +163,7 @@ export default async function AdminProjectDetailPage(props: {
         {[
           { label: 'Documents', value: documents.length },
           { label: 'Members', value: members.length },
-          { label: 'Quiz sets', value: sets.length },
+          { label: 'Quest sets', value: sets.length },
           { label: 'Pass threshold', value: `${project?.pass_threshold ?? 60}%` },
         ].map((stat) => (
           <Card key={stat.label}>

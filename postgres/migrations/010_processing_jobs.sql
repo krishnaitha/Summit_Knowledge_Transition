@@ -6,7 +6,7 @@ create extension if not exists pg_cron;
 -- Background job queue table
 create table if not exists processing_jobs (
   id            uuid primary key default gen_random_uuid(),
-  type          text not null check (type in ('document_process', 'quiz_generate')),
+  type          text not null check (type in ('document_process', 'quiz_generate', 'connector_sync')),
   status        text not null default 'pending'
                   check (status in ('pending', 'running', 'done', 'failed')),
   payload       jsonb not null default '{}',

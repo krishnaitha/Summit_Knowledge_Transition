@@ -39,8 +39,8 @@ export function ForgotPasswordForm() {
   return (
     <div className="w-full rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-black/5">
       <div className="mb-6">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-700">
-          <span className="text-sm font-bold text-white">S</span>
+        <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
+          <span className="text-sm font-bold text-white">N</span>
         </div>
         <h2 className="text-xl font-semibold text-slate-900">Reset your password</h2>
         <p className="mt-1 text-sm text-slate-500">
@@ -56,7 +56,7 @@ export function ForgotPasswordForm() {
           </div>
           <Link
             href="/login"
-            className="block text-center text-sm font-medium text-brand-700 hover:underline"
+            className="text-brand-700 block text-center text-sm font-medium hover:underline"
           >
             Back to sign in
           </Link>
@@ -74,7 +74,9 @@ export function ForgotPasswordForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               autoComplete="email"
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSubmit();
+              }}
             />
           </div>
 
@@ -88,7 +90,7 @@ export function ForgotPasswordForm() {
 
           <p className="pt-1 text-center text-sm text-slate-500">
             Remembered it?{' '}
-            <Link href="/login" className="font-medium text-brand-700 hover:underline">
+            <Link href="/login" className="text-brand-700 font-medium hover:underline">
               Sign in
             </Link>
           </p>

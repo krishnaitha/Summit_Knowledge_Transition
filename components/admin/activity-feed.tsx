@@ -1,7 +1,18 @@
-"use client";
+'use client';
 
 import { useMemo, useState } from 'react';
-import { Activity, CheckCircle2, ChevronLeft, ChevronRight, FileText, LogIn, MessageSquare, PlayCircle, Radio, Search } from 'lucide-react';
+import {
+  Activity,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  LogIn,
+  MessageSquare,
+  PlayCircle,
+  Radio,
+  Search,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,19 +21,47 @@ import { formatDate } from '@/lib/utils';
 
 const PAGE_SIZE = 5;
 
-const ACTION_CONFIG: Record<string, { label: string; icon: React.ElementType; dot: string; category: string }> = {
+const ACTION_CONFIG: Record<
+  string,
+  { label: string; icon: React.ElementType; dot: string; category: string }
+> = {
   login: { label: 'Signed in', icon: LogIn, dot: 'bg-brand-400', category: 'auth' },
-  chatbot_message: { label: 'Asked the AI', icon: MessageSquare, dot: 'bg-accent-500', category: 'ai' },
-  knowledge_gap: { label: 'AI could not answer query', icon: MessageSquare, dot: 'bg-rose-400', category: 'ai' },
-  document_viewed: { label: 'Viewed a document', icon: FileText, dot: 'bg-slate-400', category: 'document' },
-  quiz_started: { label: 'Started quiz', icon: PlayCircle, dot: 'bg-amber-400', category: 'quiz' },
-  quiz_submitted: { label: 'Submitted quiz', icon: CheckCircle2, dot: 'bg-emerald-500', category: 'quiz' },
-  admin_announcement_sent: { label: 'Sent admin announcement', icon: Radio, dot: 'bg-indigo-400', category: 'admin' },
+  chatbot_message: {
+    label: 'Asked the AI',
+    icon: MessageSquare,
+    dot: 'bg-accent-500',
+    category: 'ai',
+  },
+  knowledge_gap: {
+    label: 'AI could not answer query',
+    icon: MessageSquare,
+    dot: 'bg-rose-400',
+    category: 'ai',
+  },
+  document_viewed: {
+    label: 'Viewed a document',
+    icon: FileText,
+    dot: 'bg-slate-400',
+    category: 'document',
+  },
+  quiz_started: { label: 'Started Quest', icon: PlayCircle, dot: 'bg-amber-400', category: 'quiz' },
+  quiz_submitted: {
+    label: 'Submitted Quest',
+    icon: CheckCircle2,
+    dot: 'bg-emerald-500',
+    category: 'quiz',
+  },
+  admin_announcement_sent: {
+    label: 'Sent admin announcement',
+    icon: Radio,
+    dot: 'bg-indigo-400',
+    category: 'admin',
+  },
 };
 
 const FILTERS = [
   { key: 'all', label: 'All' },
-  { key: 'quiz', label: 'Quiz' },
+  { key: 'quiz', label: 'Quest' },
   { key: 'document', label: 'Docs' },
   { key: 'ai', label: 'AI' },
   { key: 'auth', label: 'Auth' },
@@ -59,18 +98,20 @@ export function ActivityFeed({
   }, [items]);
 
   const filteredItems = useMemo(() => {
-    const base = activeFilter === 'all'
-      ? enriched
-      : enriched.filter((item) => item.config.category === activeFilter);
+    const base =
+      activeFilter === 'all'
+        ? enriched
+        : enriched.filter((item) => item.config.category === activeFilter);
 
     const q = search.trim().toLowerCase();
     if (!q) return base;
 
-    return base.filter((item) => (
-      (item.userName ?? '').toLowerCase().includes(q) ||
-      item.config.label.toLowerCase().includes(q) ||
-      item.action.toLowerCase().includes(q)
-    ));
+    return base.filter(
+      (item) =>
+        (item.userName ?? '').toLowerCase().includes(q) ||
+        item.config.label.toLowerCase().includes(q) ||
+        item.action.toLowerCase().includes(q),
+    );
   }, [activeFilter, enriched, search]);
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
@@ -133,9 +174,9 @@ export function ActivityFeed({
             );
           })}
           <div className="relative ml-auto w-full sm:w-72">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
             <input
-              className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-8 pr-3 text-sm"
+              className="h-9 w-full rounded-xl border border-slate-200 bg-white pr-3 pl-8 text-sm"
               placeholder="Search by member name or action"
               value={search}
               onChange={(event) => {
@@ -151,20 +192,29 @@ export function ActivityFeed({
           <div className="space-y-4">
             {groupedItems.map(([groupLabel, groupItems]) => (
               <div key={groupLabel} className="space-y-1.5">
-                <p className="px-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{groupLabel}</p>
+                <p className="px-3 text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">
+                  {groupLabel}
+                </p>
                 {groupItems.map((item) => {
                   const Icon = item.config.icon;
                   return (
-                    <div key={item.id} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50">
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50"
+                    >
                       <div className={`h-2 w-2 shrink-0 rounded-full ${item.config.dot}`} />
                       <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                       <div className="flex min-w-0 flex-1 items-baseline gap-2 overflow-hidden">
-                        <p className="shrink-0 text-sm font-medium text-slate-800">{item.config.label}</p>
+                        <p className="shrink-0 text-sm font-medium text-slate-800">
+                          {item.config.label}
+                        </p>
                         {item.userName && (
                           <p className="truncate text-sm text-slate-500">· {item.userName}</p>
                         )}
                       </div>
-                      <p className="shrink-0 text-xs text-slate-400">{formatDate(item.created_at, true)}</p>
+                      <p className="shrink-0 text-xs text-slate-400">
+                        {formatDate(item.created_at, true)}
+                      </p>
                     </div>
                   );
                 })}
@@ -174,14 +224,29 @@ export function ActivityFeed({
             {totalPages > 1 && (
               <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-3">
                 <p className="text-xs text-slate-400">
-                  {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredItems.length)} of {filteredItems.length}
+                  {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredItems.length)} of{' '}
+                  {filteredItems.length}
                 </p>
                 <div className="flex items-center gap-1">
-                  <Button size="sm" type="button" variant="secondary" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+                  <Button
+                    size="sm"
+                    type="button"
+                    variant="secondary"
+                    disabled={page === 1}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
                     <ChevronLeft className="h-3.5 w-3.5" />
                   </Button>
-                  <span className="px-2 text-xs text-slate-600">{page} / {totalPages}</span>
-                  <Button size="sm" type="button" variant="secondary" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
+                  <span className="px-2 text-xs text-slate-600">
+                    {page} / {totalPages}
+                  </span>
+                  <Button
+                    size="sm"
+                    type="button"
+                    variant="secondary"
+                    disabled={page === totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
                     <ChevronRight className="h-3.5 w-3.5" />
                   </Button>
                 </div>

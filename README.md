@@ -1,35 +1,45 @@
-# NEX-ELEVATE
+# NexTElevate
 
 > **Enterprise Knowledge-Transfer Portal** — structured, AI-assisted onboarding and readiness assessments for engineering teams.
 
-NEX-ELEVATE lets your organisation manage knowledge-transfer at scale. Admins publish KT documents, generate AI quizzes, and monitor team readiness. Members read documents, ask questions to a RAG-powered AI assistant, complete assessments, and track their own progress — all from a single web interface.
+NexTElevate lets your organisation manage knowledge-transfer at scale. Admins publish KT documents, generate AI Quests, and monitor team readiness. Members read documents, ask questions to a RAG-powered AI assistant, complete assessments, and track their own progress — all from a single web interface.
 
 ---
 
 ## Feature Highlights
 
-| Feature                         | Description                                                                                |
-| ------------------------------- | ------------------------------------------------------------------------------------------ |
-| **Multi-project workspace**     | Unlimited projects, each with their own docs, members, quizzes and analytics               |
-| **Project-level admin role**    | Promote members to project admin — they manage their project without super-admin access    |
-| **RAG AI chat**                 | Members ask questions; answers are grounded strictly in the uploaded KT documents          |
-| **AI quiz generation**          | Groq LLM generates scenario-based MCQ + true/false sets from document chunks               |
-| **Quiz windows**                | Enforce open/close dates per project; quiz auto-submits on window close                    |
-| **Anti-cheat guard**            | Tab-switch detection with configurable threshold; quiz auto-submits on violation           |
-| **Quiz retake requests**        | Members submit a request; admins approve/reject with one click                             |
-| **AI coaching plans**           | Post-quiz coaching report generated per attempt, highlighting weak areas                   |
-| **AI answer bookmarks**         | Members save AI answers for later reference                                                |
-| **Admin announcements**         | Project-scoped announcements shown on the member dashboard                                 |
-| **Interactive study mode**      | Post-quiz weak-area guide with chunk-level references and direct document links            |
-| **AI flashcards + SRS**         | Project flashcards generated from chunks with spaced-repetition scheduling                 |
-| **Document discussion threads** | Member/admin threaded discussions on document pages with open/resolved states              |
-| **Open-thread triage**          | Dedicated member/admin Open Threads pages, filters, and navbar/sidebar badges              |
-| **Document full-text search**   | Fast chunk search with snippet previews across member and admin project views              |
-| **Attempt history retention**   | Admin resets archive prior submitted scores so latest and previous attempts stay visible   |
-| **Document governance**         | PII detection, document classification (public/internal/confidential), required-doc gating |
-| **Background worker**           | Async document processing and quiz generation — no HTTP timeouts                           |
-| **Email flows**                 | Invite links, password reset, quiz window notifications via SendGrid                       |
-| **CSV export**                  | Export user data from the admin Users table                                                |
+| Feature                          | Description                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Multi-project workspace**      | Unlimited projects, each with their own docs, members, quizzes and analytics               |
+| **Project-level admin role**     | Promote members to project admin — they manage their project without super-admin access    |
+| **RAG AI chat**                  | Members ask questions; answers are grounded strictly in the uploaded KT documents          |
+| **AI quiz generation**           | Groq LLM generates scenario-based MCQ + true/false sets from document chunks               |
+| **Quiz windows**                 | Enforce open/close dates per project; quiz auto-submits on window close                    |
+| **Anti-cheat guard**             | Tab-switch detection with configurable threshold; quiz auto-submits on violation           |
+| **Quiz retake requests**         | Members submit a request; admins approve/reject with one click                             |
+| **AI coaching plans**            | Post-quiz coaching report generated per attempt, highlighting weak areas                   |
+| **AI answer bookmarks**          | Members save AI answers for later reference                                                |
+| **Admin announcements**          | Project-scoped announcements shown on the member dashboard                                 |
+| **Interactive study mode**       | Post-quiz weak-area guide with chunk-level references and direct document links            |
+| **AI flashcards + SRS**          | Project flashcards generated from chunks with spaced-repetition scheduling                 |
+| **Document discussion threads**  | Member/admin threaded discussions on document pages with open/resolved states              |
+| **Open-thread triage**           | Dedicated member/admin Open Threads pages, filters, and navbar/sidebar badges              |
+| **Document full-text search**    | Fast chunk search with snippet previews across member and admin project views              |
+| **External document connectors** | Pull knowledge from Confluence and SharePoint into project documents (with demo fixtures)  |
+| **AI document generator**        | Super Admins and Project Admins can turn transcripts into polished Markdown/TXT documents  |
+| **Attempt history retention**    | Admin resets archive prior submitted scores so latest and previous attempts stay visible   |
+| **Document governance**          | PII detection, document classification (public/internal/confidential), required-doc gating |
+| **Background worker**            | Async document processing and quiz generation — no HTTP timeouts                           |
+| **Email flows**                  | Invite links, password reset, quiz window notifications via SendGrid                       |
+| **CSV export**                   | Export user data from the admin Users table                                                |
+
+### Recent Updates (May 2026)
+
+- Added Confluence and SharePoint connectors for project knowledge ingestion
+- Added AI Document Generator screen at `/admin/generate-document`
+- Enabled AI Document Generator for both Super Admin and Project Admin roles
+- Updated admin/member UI naming from "Projects" to "Products" in primary navigation and headings
+- Widened and centered app shell containers for improved visual balance on large screens
 
 Quiz reset policy:
 
@@ -150,7 +160,7 @@ STORAGE_PROVIDER=local
 # Required for invite links, password reset, and quiz window notifications
 SENDGRID_API_KEY=SG.your-key-here
 SENDGRID_FROM_EMAIL=noreply@yourdomain.com
-SENDGRID_FROM_NAME=NEX-ELEVATE
+SENDGRID_FROM_NAME=NexTElevate
 
 # ── Background worker ─────────────────────────────────────────────────────────
 # Must be identical on both the app server and the worker process
@@ -158,7 +168,7 @@ WORKER_SECRET=your-random-secret-here
 INTERNAL_APP_URL=http://localhost:3000
 
 # ── Public app metadata ───────────────────────────────────────────────────────
-NEXT_PUBLIC_APP_NAME=NEX-ELEVATE
+NEXT_PUBLIC_APP_NAME=NexTElevate
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
@@ -247,7 +257,7 @@ WORKER_SECRET=replace-with-a-random-string
 
 # Public
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=NEX-ELEVATE
+NEXT_PUBLIC_APP_NAME=NexTElevate
 ```
 
 > `DATABASE_URL` and `DATABASE_SSL` are injected by the compose file — do **not** add them to `.env.local`.

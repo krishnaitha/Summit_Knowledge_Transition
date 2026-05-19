@@ -137,13 +137,13 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
           <Link href={`/projects/${project.id}/chat`}>
             <Button size="sm">
               <MessageSquare className="h-3.5 w-3.5" />
-              Ask AI
+              Elevate AI
             </Button>
           </Link>
           <Link href={`/projects/${project.id}/quiz`}>
             <Button size="sm" variant="secondary">
               <BookOpen className="h-3.5 w-3.5" />
-              {project.quizStatus === 'In Progress' ? 'Resume Quiz' : 'Take Quiz'}
+              {project.quizStatus === 'In Progress' ? 'Resume Quest' : 'Take Quest'}
             </Button>
           </Link>
           <Link href={`/projects/${project.id}#documents`}>

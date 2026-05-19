@@ -92,6 +92,140 @@ export async function deleteDocumentAction(formData: FormData) {
   revalidateTag(`project-docs:${projectId}`, 'max');
 }
 
+function buildConnectorConfig(formData: FormData, provider: string) {
+  const isDemo = String(formData.get('demo') ?? '') === 'true';
+
+  if (isDemo && provider === 'confluence') {
+    return {
+      demo: true,
+      base_url: 'https://demo.atlassian.net/wiki',
+      space_key: 'KT',
+      auth_email: 'demo@sample.local',
+      access_token: 'demo-token',
+    };
+  }
+
+  if (isDemo && provider === 'sharepoint') {
+    return {
+      demo: true,
+      site_url: 'https://demo.sharepoint.com/sites/KT',
+      library_path: 'Shared Documents',
+      access_token: 'demo-token',
+    };
+  }
+
+  if (provider === 'confluence') {
+    return {
+      base_url: String(formData.get('confluence_base_url') ?? '').trim(),
+      space_key: String(formData.get('confluence_space_key') ?? '').trim(),
+      auth_email: String(formData.get('confluence_auth_email') ?? '').trim(),
+      access_token: String(formData.get('confluence_access_token') ?? '').trim(),
+    };
+  }
+
+  return {
+    site_url: String(formData.get('sharepoint_site_url') ?? '').trim(),
+    library_path: String(formData.get('sharepoint_library_path') ?? '').trim(),
+    access_token: String(formData.get('sharepoint_access_token') ?? '').trim(),
+  };
+}
+
+async function ensureConnectorSchema() {
+  await sql`
+    create table if not exists document_connectors (
+      id uuid primary key default gen_random_uuid(),
+      project_id uuid not null references projects(id) on delete cascade,
+      provider text not null check (provider in ('confluence', 'sharepoint')),
+      name text not null,
+      config jsonb not null default '{}'::jsonb,
+      created_by uuid references users(id) on delete set null,
+      is_active boolean not null default true,
+      last_synced_at timestamptz,
+      last_sync_status text not null default 'idle' check (last_sync_status in ('idle', 'running', 'success', 'failed')),
+      last_sync_error text,
+      created_at timestamptz not null default now(),
+      updated_at timestamptz not null default now()
+    )
+  `;
+
+  await sql`create index if not exists document_connectors_project_created_at on document_connectors (project_id, created_at desc)`;
+
+  await sql`
+    alter table documents
+      add column if not exists source_connector_id uuid references document_connectors(id) on delete set null,
+      add column if not exists source_provider text check (source_provider in ('confluence', 'sharepoint')),
+      add column if not exists source_item_id text,
+      add column if not exists source_url text,
+      add column if not exists source_synced_at timestamptz
+  `;
+
+  await sql`
+    create unique index if not exists documents_source_connector_item_unique
+      on documents (source_connector_id, source_item_id)
+      where source_connector_id is not null and source_item_id is not null
+  `;
+}
+
+export async function createDocumentConnectorAction(formData: FormData) {
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const provider = String(formData.get('provider') ?? '').trim();
+  const name = String(formData.get('name') ?? '').trim();
+
+  if (!projectId || !name || !['confluence', 'sharepoint'].includes(provider)) return;
+
+  await ensureConnectorSchema();
+  const config = buildConnectorConfig(formData, provider);
+  const { profile } = await requireAdmin();
+
+  const rows = await sql<{ id: string }[]>`
+    INSERT INTO document_connectors (project_id, provider, name, config, created_by)
+    VALUES (${projectId}, ${provider}, ${name.slice(0, 140)}, ${sql.json(config)}, ${profile?.id ?? null})
+    RETURNING id
+  `;
+
+  const connectorId = rows[0]?.id;
+
+  if (connectorId && String(formData.get('demo') ?? '') === 'true') {
+    const { syncDocumentConnector } = await import('@/lib/documents/connectors');
+    await syncDocumentConnector(connectorId);
+  }
+
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
+export async function syncDocumentConnectorAction(formData: FormData) {
+  const { requireAdmin } = await import('@/lib/auth');
+  await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const connectorId = String(formData.get('connector_id') ?? '').trim();
+
+  if (!projectId || !connectorId) return;
+
+  try {
+    await ensureConnectorSchema();
+    const { syncDocumentConnector } = await import('@/lib/documents/connectors');
+    await syncDocumentConnector(connectorId);
+  } catch (error) {
+    console.error('[Sync Connector Error]', error);
+    throw error;
+  }
+
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
+export async function deleteDocumentConnectorAction(formData: FormData) {
+  await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const connectorId = String(formData.get('connector_id') ?? '').trim();
+
+  if (!projectId || !connectorId) return;
+
+  await sql`DELETE FROM document_connectors WHERE id = ${connectorId} AND project_id = ${projectId}`;
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
 export async function toggleDocumentRequiredAction(formData: FormData) {
   const projectId = String(formData.get('project_id') ?? '');
   const documentId = String(formData.get('document_id') ?? '');

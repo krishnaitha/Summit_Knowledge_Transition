@@ -55,6 +55,26 @@ export interface DocumentRecord {
   classification: 'confidential' | 'internal' | 'public';
   is_required: boolean;
   scan_flags: string[];
+  source_connector_id?: string | null;
+  source_provider?: 'confluence' | 'sharepoint' | null;
+  source_item_id?: string | null;
+  source_url?: string | null;
+  source_synced_at?: string | null;
+}
+
+export interface DocumentConnectorRecord {
+  id: string;
+  project_id: string;
+  provider: 'confluence' | 'sharepoint';
+  name: string;
+  config: Record<string, unknown>;
+  created_by: string | null;
+  is_active: boolean;
+  last_synced_at: string | null;
+  last_sync_status: 'idle' | 'running' | 'success' | 'failed';
+  last_sync_error: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DocumentSearchResult {
@@ -272,7 +292,7 @@ export interface ChatBookmarkRecord {
   created_at: string;
 }
 
-export type ProcessingJobType = 'document_process' | 'quiz_generate';
+export type ProcessingJobType = 'document_process' | 'quiz_generate' | 'connector_sync';
 export type ProcessingJobStatus = 'pending' | 'running' | 'done' | 'failed';
 
 export interface ProcessingJobRecord {

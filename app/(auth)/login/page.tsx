@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { BookOpen, FileText, MessageCircle, Sparkles } from 'lucide-react';
 
 import { LoginForm } from '@/components/auth/login-form';
 import { getCurrentUserContext } from '@/lib/auth';
@@ -16,7 +17,7 @@ export default async function LoginPage() {
         {/* Left — brand copy */}
         <div className="flex-1 space-y-6 text-center text-white lg:text-left">
           <p className="text-accent-300 text-xs font-semibold tracking-[0.3em] uppercase">
-            NEX-ELEVATE
+            NexTElevate
           </p>
           <h1 className="text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
             Structured handovers.
@@ -27,12 +28,25 @@ export default async function LoginPage() {
           </h1>
           <p className="max-w-md text-base leading-relaxed text-slate-300">
             Centralise KT documents, get AI-assisted answers scoped to your project, and complete
-            your readiness quiz — all in one controlled workspace.
+            your readiness Quest — all in one controlled workspace.
           </p>
-          <div className="flex flex-wrap justify-center gap-6 pt-2 text-sm text-slate-400 lg:justify-start">
-            <span>📄 Document RAG</span>
-            <span>🤖 Groq AI chat</span>
-            <span>✅ One-time quiz</span>
+          <div className="flex flex-wrap justify-center gap-3 pt-2 lg:justify-start">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-slate-200 backdrop-blur-sm">
+              <FileText className="text-accent-300 h-4 w-4" />
+              Document search
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-slate-200 backdrop-blur-sm">
+              <Sparkles className="text-accent-300 h-4 w-4" />
+              AI chat
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-slate-200 backdrop-blur-sm">
+              <MessageCircle className="text-accent-300 h-4 w-4" />
+              Threaded discussions
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-slate-200 backdrop-blur-sm">
+              <BookOpen className="text-accent-300 h-4 w-4" />
+              Flashcards &amp; study mode
+            </span>
           </div>
         </div>
 

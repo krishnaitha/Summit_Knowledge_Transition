@@ -10,21 +10,22 @@ import {
 import Link from 'next/link';
 
 import { ActivityFeed } from '@/components/admin/activity-feed';
+import { KnowledgeGapsCard } from '@/components/admin/knowledge-gaps-card';
 import { StatsCard } from '@/components/admin/stats-card';
 import { requireAdmin } from '@/lib/auth';
-import { getAdminDashboardStats } from '@/lib/data';
+import { getAdminDashboardStats, getKnowledgeGaps } from '@/lib/data';
 import { formatPercent } from '@/lib/utils';
 
 export default async function AdminDashboardPage() {
   await requireAdmin();
-  const stats = await getAdminDashboardStats();
+  const [stats, gaps] = await Promise.all([getAdminDashboardStats(), getKnowledgeGaps()]);
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold text-slate-950">Admin dashboard</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Monitor usage, completion, and transition progress across Summit projects.
+          Monitor usage, completion, and transition progress across Summit products.
         </p>
       </div>
 
@@ -98,6 +99,8 @@ export default async function AdminDashboardPage() {
           />
         )}
       </div>
+
+      <KnowledgeGapsCard gaps={gaps} />
 
       <ActivityFeed items={stats.recentActivity} />
     </div>

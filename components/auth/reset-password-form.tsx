@@ -45,8 +45,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
   return (
     <div className="w-full rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-black/5">
       <div className="mb-6">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-700">
-          <span className="text-sm font-bold text-white">S</span>
+        <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
+          <span className="text-sm font-bold text-white">N</span>
         </div>
         <h2 className="text-xl font-semibold text-slate-900">Set new password</h2>
         <p className="mt-1 text-sm text-slate-500">Choose a strong password for your account.</p>
@@ -59,7 +59,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           </div>
           <Link
             href="/login"
-            className="block w-full rounded-lg bg-brand-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-brand-800"
+            className="bg-brand-700 hover:bg-brand-800 block w-full rounded-lg px-4 py-2 text-center text-sm font-medium text-white"
           >
             Sign in
           </Link>
@@ -91,7 +91,9 @@ export function ResetPasswordForm({ token }: { token: string }) {
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Repeat your password"
               autoComplete="new-password"
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSubmit();
+              }}
             />
           </div>
 

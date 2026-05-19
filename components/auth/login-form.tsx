@@ -36,7 +36,7 @@ function CognitoLoginForm() {
   return (
     <div className="w-full rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-black/5">
       <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
-        <span className="text-sm font-bold text-white">S</span>
+        <span className="text-sm font-bold text-white">N</span>
       </div>
       {error ? (
         <div className="space-y-4">
@@ -96,9 +96,9 @@ function CredentialsLoginForm({
       {/* Header */}
       <div className="mb-6">
         <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
-          <span className="text-sm font-bold text-white">S</span>
+          <span className="text-sm font-bold text-white">N</span>
         </div>
-        <h2 className="text-xl font-semibold text-slate-900">Sign in to NEX-ELEVATE</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Sign in to NexTElevate</h2>
         <p className="mt-1 text-sm text-slate-500">
           Use your work email to continue to your KT projects.
         </p>

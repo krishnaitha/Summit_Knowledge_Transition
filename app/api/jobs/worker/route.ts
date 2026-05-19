@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 
 import sql from '@/lib/db';
 import { extractTextFromFile } from '@/lib/documents/parse';
+import { syncDocumentConnector } from '@/lib/documents/connectors';
 import { processDocumentRecord } from '@/lib/documents/process';
 import { createQuizCompletion } from '@/lib/llm';
 import { downloadFile } from '@/lib/storage/local';
@@ -299,6 +300,15 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   return { createdSets, createdQuestions };
 }
 
+async function processConnectorSyncJob(payload: Record<string, unknown>) {
+  const connectorId = String(payload.connectorId ?? '');
+  if (!connectorId) {
+    throw new Error('Connector not found');
+  }
+
+  return syncDocumentConnector(connectorId);
+}
+
 // ─── Route handler ──────────────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
@@ -331,6 +341,8 @@ export async function POST(request: Request) {
       result = await processDocumentJob(job.payload as Record<string, unknown>);
     } else if (job.type === 'quiz_generate') {
       result = await processQuizGenerateJob(job.payload as Record<string, unknown>);
+    } else if (job.type === 'connector_sync') {
+      result = await processConnectorSyncJob(job.payload as Record<string, unknown>);
     } else {
       throw new Error(`Unknown job type: ${job.type}`);
     }

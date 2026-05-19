@@ -6,7 +6,7 @@ export default function RegisterPage() {
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:gap-20 lg:px-8">
         <div className="flex-1 space-y-6 text-center text-white lg:text-left">
           <p className="text-accent-300 text-xs font-semibold tracking-[0.3em] uppercase">
-            NEX-ELEVATE
+            NexTElevate
           </p>
           <h1 className="text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
             Join your

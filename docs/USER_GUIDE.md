@@ -18,6 +18,7 @@
    - 2.7 [Managing Users](#27-managing-users)
    - 2.8 [Handling Quiz Retake Requests](#28-handling-quiz-retake-requests)
    - 2.9 [Promoting a Member to Project Admin](#29-promoting-a-member-to-project-admin)
+   - 2.10 [AI Document Generator](#210-ai-document-generator)
 3. [Project Admin Guide](#3-project-admin-guide)
    - 3.1 [What a Project Admin Can Do](#31-what-a-project-admin-can-do)
    - 3.2 [Accessing Your Project](#32-accessing-your-project)
@@ -56,6 +57,8 @@ If you have forgotten your password, click **Forgot password?** on the login pag
 
 ## 2. Super Admin Guide
 
+> **UI terminology note:** The application now uses **Products** as the user-facing label for project workspaces in navigation and page headings.
+
 Super admins have full access to the entire portal — all projects, all users, analytics, and system-wide settings.
 
 ### 2.1 Admin Dashboard
@@ -64,14 +67,14 @@ Super admins have full access to the entire portal — all projects, all users, 
 
 The admin dashboard gives you a real-time snapshot of portal activity:
 
-| Card | What it shows |
-|---|---|
-| **Total users** | All authenticated users registered in the portal |
-| **Active users** | Users who have logged in or taken an action in the last 7 days |
-| **Documents** | Total KT documents uploaded across all projects |
-| **Chatbot messages** | Total AI assistant interactions |
-| **Quiz completion** | Percentage of members who have submitted a quiz attempt |
-| **Quiz re-enable requests** | Pending retake requests — click to go to Projects |
+| Card                        | What it shows                                                  |
+| --------------------------- | -------------------------------------------------------------- |
+| **Total users**             | All authenticated users registered in the portal               |
+| **Active users**            | Users who have logged in or taken an action in the last 7 days |
+| **Documents**               | Total KT documents uploaded across all projects                |
+| **Chatbot messages**        | Total AI assistant interactions                                |
+| **Quiz completion**         | Percentage of members who have submitted a quiz attempt        |
+| **Quiz re-enable requests** | Pending retake requests — click to go to Projects              |
 
 Below the stats cards, the **Activity Feed** shows the 20 most recent events across the entire portal (logins, document views, quiz submissions, chat messages).
 
@@ -138,13 +141,26 @@ Processing extracts text, detects PII, and generates vector embeddings:
 
 Documents are automatically classified during processing:
 
-| Classification | Meaning |
-|---|---|
-| **Public** | No sensitive content detected |
-| **Internal** | Business-sensitive content (detected heuristically) |
+| Classification   | Meaning                                                     |
+| ---------------- | ----------------------------------------------------------- |
+| **Public**       | No sensitive content detected                               |
+| **Internal**     | Business-sensitive content (detected heuristically)         |
 | **Confidential** | PII detected (email addresses, phone numbers, SSN patterns) |
 
 PII detections are counted and shown on the document card. Review confidential documents before distributing.
+
+#### Connect external sources (Confluence / SharePoint)
+
+You can import external documentation directly into a project using connectors.
+
+1. Navigate to **Documents** for a project
+2. In **Document Connectors**, add either:
+   - Confluence connector
+   - SharePoint connector
+3. For quick validation, use sample connector presets
+4. Click **Sync now** to ingest source content into project documents
+
+Imported content is saved as project documents and becomes available for AI chat, search, and quiz generation.
 
 ---
 
@@ -180,6 +196,7 @@ Quiz generation requires at least one **processed** document in the project.
 The generation job is queued. The worker selects up to 30 document chunks, calls Groq once per set, and inserts the questions. This typically takes 15–60 seconds.
 
 Once generated, quiz sets appear in the list. You can:
+
 - **Activate / deactivate** a set (only active sets are assigned to members)
 - **Preview** questions before assigning
 
@@ -226,6 +243,7 @@ The Users table shows all registered users with full-text search, advanced filte
 #### User detail drawer
 
 Click any user row to open their detail drawer showing:
+
 - Account info and last login
 - Project memberships
 - Quiz attempt summary
@@ -262,19 +280,35 @@ Project admins can manage their specific project's documents, members, and quizz
 
 ---
 
+### 2.10 AI Document Generator
+
+**Location:** `/admin/generate-document`
+
+Super admins and project admins can paste a transcript and generate a polished knowledge document using AI.
+
+1. Open **AI Document Generator** from the admin sidebar
+2. Paste transcript content
+3. Optionally provide a document title
+4. Choose export format (`.md` or `.txt`)
+5. Click **Generate Document**
+6. Review and download the generated output
+
+---
+
 ## 3. Project Admin Guide
 
 ### 3.1 What a Project Admin Can Do
 
 A project admin has elevated access **only for their assigned project**:
 
-| Can do | Cannot do |
-|---|---|
-| Upload and process documents | Access other projects |
-| Invite and manage members | View the global admin dashboard |
-| Generate and manage quiz sets | Access the Users management page |
-| Send announcements | View analytics tab |
-| Approve/reject retake requests | Promote anyone to super admin |
+| Can do                         | Cannot do                        |
+| ------------------------------ | -------------------------------- |
+| Upload and process documents   | Access other projects            |
+| Invite and manage members      | View the global admin dashboard  |
+| Generate and manage quiz sets  | Access the Users management page |
+| Use AI Document Generator      | Manage global users/roles        |
+| Send announcements             | View analytics tab               |
+| Approve/reject retake requests | Promote anyone to super admin    |
 
 ### 3.2 Accessing Your Project
 
@@ -284,7 +318,9 @@ After logging in, you arrive at the **Member Dashboard**. The dashboard shows:
 - Clicking **Manage** takes you to your project's admin page at `/admin/projects/[id]`
 
 From there, the sidebar shows:
-- **Projects** — your project list (only your assigned project is accessible)
+
+- **Products** — your project list (only your assigned project is accessible)
+- **AI Document Generator** — transcript-to-document generation tool
 
 ---
 
@@ -299,6 +335,7 @@ Same workflow as the super admin (see [Section 2.3](#23-uploading-and-processing
 **Location:** `/admin/projects/[id]/members`
 
 You can:
+
 - Invite new members by email
 - Promote members to project admin
 - Remove members from the project
@@ -325,13 +362,13 @@ After logging in, you land on your personal dashboard at `/dashboard`.
 
 The dashboard has three main areas:
 
-| Area | Description |
-|---|---|
-| **Welcome banner** | Your name, quick stats (projects, completed, in-progress, docs), and a shortcut to your next action |
-| **Quick command panel** | One-click access to Ask AI and Quiz for your next project |
-| **Assigned projects** | All active projects you have been assigned to, with status badges and progress indicators |
-| **Saved AI answers** | Your most recently bookmarked AI responses |
-| **Recent activity** | Your last 6 actions on the portal |
+| Area                    | Description                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| **Welcome banner**      | Your name, quick stats (projects, completed, in-progress, docs), and a shortcut to your next action |
+| **Quick command panel** | One-click access to Ask AI and Quiz for your next project                                           |
+| **Assigned projects**   | All active projects you have been assigned to, with status badges and progress indicators           |
+| **Saved AI answers**    | Your most recently bookmarked AI responses                                                          |
+| **Recent activity**     | Your last 6 actions on the portal                                                                   |
 
 If you are also a **Project Admin**, you will see a **"Your managed projects"** section with a **Manage** button.
 
@@ -342,6 +379,7 @@ If you are also a **Project Admin**, you will see a **"Your managed projects"** 
 From the **My Projects** sidebar link or the dashboard project cards, you can open any project you have been assigned to.
 
 Each project card shows:
+
 - **Project name** and quiz status badge (Not Started / In Progress / Completed)
 - **Docs reviewed** progress bar — how many of the project's documents you have viewed
 - **Quiz score** progress bar (after submission)
@@ -378,6 +416,7 @@ The AI assistant is grounded in the KT documents for this project. It can only a
 4. Source references appear below the answer — you can see which document and section was used
 
 **Tips for better answers:**
+
 - Ask specific, focused questions ("What is the process for X?")
 - If an answer is incomplete, follow up: "Can you elaborate on the second point?"
 - If the AI says it doesn't have information, check whether the relevant document has been uploaded and processed by your admin
@@ -397,6 +436,7 @@ During a chat session, you can bookmark any assistant response:
 To view all your bookmarks for a project, visit `/projects/[id]/bookmarks`.
 
 Bookmarks show:
+
 - The question you asked
 - The AI's answer
 - The project name and date
@@ -432,12 +472,12 @@ Click **Submit quiz** when you have answered all questions. You will be redirect
 
 After submitting, you see:
 
-| Section | Description |
-|---|---|
-| **Score** | Your raw score and percentage |
-| **Pass / Fail** | Based on the project's pass threshold (default 60%) |
-| **Per-question breakdown** | Which answers were correct and which were wrong |
-| **AI coaching plan** | Automatically generated recommendations highlighting your weak areas and what to study |
+| Section                    | Description                                                                            |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| **Score**                  | Your raw score and percentage                                                          |
+| **Pass / Fail**            | Based on the project's pass threshold (default 60%)                                    |
+| **Per-question breakdown** | Which answers were correct and which were wrong                                        |
+| **AI coaching plan**       | Automatically generated recommendations highlighting your weak areas and what to study |
 
 You can review your results any time from the project overview page.
 
@@ -502,18 +542,18 @@ You are redirected to the login page. Sign in with your new password.
 
 ## 6. Glossary
 
-| Term | Definition |
-|---|---|
-| **KT** | Knowledge Transfer — the process of sharing system, process, and organisational knowledge from one person or team to another |
-| **RAG** | Retrieval-Augmented Generation — the technique used by the AI assistant to ground answers in the uploaded documents |
-| **Quiz window** | A date/time range configured by an admin during which members can take the quiz |
-| **Required document** | A document marked as required by an admin; members must open it before the quiz unlocks |
-| **Quiz set** | One pool of questions generated by AI. A project may have multiple sets; each member is assigned one |
-| **Auto-submit** | Automatic quiz submission triggered by the anti-cheat guard (repeated tab switches) |
-| **Retake request** | A formal request from a member to have their quiz attempt reset so they can retake it |
-| **Coaching plan** | An AI-generated post-quiz report highlighting weak topic areas and recommended study actions |
-| **Super Admin** | A portal-wide administrator with access to all projects, users, analytics, and settings |
-| **Project Admin** | A member promoted to manage a specific project; no access to other projects or global admin features |
-| **Processing** | The background task of extracting text from a document, detecting PII, and generating embeddings for AI search |
-| **Embedding** | A 384-dimension numerical vector representation of text used for semantic similarity search |
-| **Bookmark** | A saved AI assistant answer that appears on the member dashboard for quick reference |
+| Term                  | Definition                                                                                                                   |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **KT**                | Knowledge Transfer — the process of sharing system, process, and organisational knowledge from one person or team to another |
+| **RAG**               | Retrieval-Augmented Generation — the technique used by the AI assistant to ground answers in the uploaded documents          |
+| **Quiz window**       | A date/time range configured by an admin during which members can take the quiz                                              |
+| **Required document** | A document marked as required by an admin; members must open it before the quiz unlocks                                      |
+| **Quiz set**          | One pool of questions generated by AI. A project may have multiple sets; each member is assigned one                         |
+| **Auto-submit**       | Automatic quiz submission triggered by the anti-cheat guard (repeated tab switches)                                          |
+| **Retake request**    | A formal request from a member to have their quiz attempt reset so they can retake it                                        |
+| **Coaching plan**     | An AI-generated post-quiz report highlighting weak topic areas and recommended study actions                                 |
+| **Super Admin**       | A portal-wide administrator with access to all projects, users, analytics, and settings                                      |
+| **Project Admin**     | A member promoted to manage a specific project; no access to other projects or global admin features                         |
+| **Processing**        | The background task of extracting text from a document, detecting PII, and generating embeddings for AI search               |
+| **Embedding**         | A 384-dimension numerical vector representation of text used for semantic similarity search                                  |
+| **Bookmark**          | A saved AI assistant answer that appears on the member dashboard for quick reference                                         |

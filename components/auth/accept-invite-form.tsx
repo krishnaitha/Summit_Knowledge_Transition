@@ -16,9 +16,18 @@ export function AcceptInviteForm({ token, email }: { token: string; email: strin
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = () => {
-    if (!fullName.trim()) { setMessage('Please enter your full name.'); return; }
-    if (password.length < 8) { setMessage('Password must be at least 8 characters.'); return; }
-    if (password !== confirm) { setMessage('Passwords do not match.'); return; }
+    if (!fullName.trim()) {
+      setMessage('Please enter your full name.');
+      return;
+    }
+    if (password.length < 8) {
+      setMessage('Password must be at least 8 characters.');
+      return;
+    }
+    if (password !== confirm) {
+      setMessage('Passwords do not match.');
+      return;
+    }
 
     startTransition(async () => {
       const res = await fetch('/api/auth/accept-invite', {
@@ -47,8 +56,8 @@ export function AcceptInviteForm({ token, email }: { token: string; email: strin
   return (
     <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-black/5">
       <div className="mb-6">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-700">
-          <span className="text-sm font-bold text-white">S</span>
+        <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
+          <span className="text-sm font-bold text-white">N</span>
         </div>
         <h2 className="text-xl font-semibold text-slate-900">Set up your account</h2>
         <p className="mt-1 text-sm text-slate-500">
@@ -58,7 +67,9 @@ export function AcceptInviteForm({ token, email }: { token: string; email: strin
 
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700" htmlFor="fullName">Full name</label>
+          <label className="text-sm font-medium text-slate-700" htmlFor="fullName">
+            Full name
+          </label>
           <Input
             id="fullName"
             type="text"
@@ -70,7 +81,9 @@ export function AcceptInviteForm({ token, email }: { token: string; email: strin
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700" htmlFor="password">Password</label>
+          <label className="text-sm font-medium text-slate-700" htmlFor="password">
+            Password
+          </label>
           <Input
             id="password"
             type="password"
@@ -82,7 +95,9 @@ export function AcceptInviteForm({ token, email }: { token: string; email: strin
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-slate-700" htmlFor="confirm">Confirm password</label>
+          <label className="text-sm font-medium text-slate-700" htmlFor="confirm">
+            Confirm password
+          </label>
           <Input
             id="confirm"
             type="password"
@@ -90,7 +105,9 @@ export function AcceptInviteForm({ token, email }: { token: string; email: strin
             onChange={(e) => setConfirm(e.target.value)}
             placeholder="Re-enter password"
             autoComplete="new-password"
-            onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSubmit();
+            }}
           />
         </div>
 

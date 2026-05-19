@@ -4,7 +4,7 @@
 > **Stack:** Next.js 16 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS  
 > **Purpose:** Enterprise knowledge-transfer portal for structured team transitions
 
-> **May 2026 Addendum:** Document threads, open-thread triage queues, chunk full-text search, interactive study mode, flashcards with spaced repetition, and quiz attempt history retention are now part of the production architecture.
+> **May 2026 Addendum:** Document threads, open-thread triage queues, chunk full-text search, interactive study mode, flashcards with spaced repetition, quiz attempt history retention, external document connectors (Confluence/SharePoint), and transcript-to-document AI generation are now part of the production architecture.
 
 ---
 
@@ -134,6 +134,7 @@ graph LR
         subgraph AdminRoutes["(admin) — requireAdmin / requireAnyAdmin"]
             AdminDash["/admin/dashboard<br/>⚠️ super-admin only"]
             AdminProjects["/admin/projects"]
+            AdminDocGen["/admin/generate-document"]
             AdminUsers["/admin/users<br/>⚠️ super-admin only"]
             ProjectDetail["/admin/projects/[id]"]
             ProjectDocs["/admin/projects/[id]/documents"]
@@ -367,11 +368,14 @@ sequenceDiagram
 
 ## 6. Document Ingestion Pipeline
 
+Document sources now include both direct file uploads and external connectors for Confluence spaces and SharePoint document libraries. Connector sync jobs land in the same processing queue, then reuse the same parsing, chunking, PII scanning, and embedding path as uploaded files.
+
 ```mermaid
 sequenceDiagram
     participant Admin
     participant AppServer as Next.js App
     participant Storage as Local FS / R2
+    participant Connectors as Confluence / SharePoint
     participant DB as PostgreSQL
     participant Worker
     participant Embedder as @xenova/transformers

@@ -16,10 +16,22 @@ export function RegisterForm() {
   const [isPending, startTransition] = useTransition();
 
   const handleRegister = () => {
-    if (!fullName.trim()) { setMessage('Please enter your full name.'); return; }
-    if (!email.trim()) { setMessage('Please enter your email address.'); return; }
-    if (!password || password.length < 8) { setMessage('Password must be at least 8 characters.'); return; }
-    if (password !== confirm) { setMessage('Passwords do not match.'); return; }
+    if (!fullName.trim()) {
+      setMessage('Please enter your full name.');
+      return;
+    }
+    if (!email.trim()) {
+      setMessage('Please enter your email address.');
+      return;
+    }
+    if (!password || password.length < 8) {
+      setMessage('Password must be at least 8 characters.');
+      return;
+    }
+    if (password !== confirm) {
+      setMessage('Passwords do not match.');
+      return;
+    }
 
     startTransition(async () => {
       const res = await fetch('/api/auth/register', {
@@ -43,13 +55,11 @@ export function RegisterForm() {
   return (
     <div className="w-full rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-black/5">
       <div className="mb-6">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-700">
-          <span className="text-sm font-bold text-white">S</span>
+        <div className="bg-brand-700 mb-4 flex h-10 w-10 items-center justify-center rounded-xl">
+          <span className="text-sm font-bold text-white">N</span>
         </div>
         <h2 className="text-xl font-semibold text-slate-900">Create your account</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Register to access your KT workspace.
-        </p>
+        <p className="mt-1 text-sm text-slate-500">Register to access your KT workspace.</p>
       </div>
 
       {isSuccess ? (
@@ -59,7 +69,7 @@ export function RegisterForm() {
           </div>
           <Link
             href="/login"
-            className="block w-full rounded-lg bg-brand-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-brand-800"
+            className="bg-brand-700 hover:bg-brand-800 block w-full rounded-lg px-4 py-2 text-center text-sm font-medium text-white"
           >
             Sign in
           </Link>
@@ -119,7 +129,9 @@ export function RegisterForm() {
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Repeat your password"
               autoComplete="new-password"
-              onKeyDown={(e) => { if (e.key === 'Enter') handleRegister(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleRegister();
+              }}
             />
           </div>
 
@@ -133,7 +145,7 @@ export function RegisterForm() {
 
           <p className="pt-1 text-center text-sm text-slate-500">
             Already have an account?{' '}
-            <Link href="/login" className="font-medium text-brand-700 hover:underline">
+            <Link href="/login" className="text-brand-700 font-medium hover:underline">
               Sign in
             </Link>
           </p>

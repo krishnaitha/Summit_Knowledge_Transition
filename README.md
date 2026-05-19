@@ -179,7 +179,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 Register via `/register`, then promote the account to admin:
 
 ```sql
-UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
+UPDATE users SET role = 'admin' WHERE email = 'your@email.com' AND auth_provider = 'credentials';
 ```
 
 ### 6. Start the dev server
@@ -294,7 +294,7 @@ Once the app is running, register an account at [http://localhost:3000/register]
 
 ```bash
 docker compose exec db psql -U postgres -d summitkt -c \
-  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com';"
+  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com' AND auth_provider = 'credentials';"
 ```
 
 ### 4. Stopping and resetting

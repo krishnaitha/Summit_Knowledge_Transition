@@ -7,9 +7,12 @@ type Callbacks = NonNullable<NextAuthOptions['callbacks']>;
 /**
  * Shared callback logic for all OIDC-based providers (Cognito, generic OIDC).
  *
- * - signIn: upserts the user row, rejects if inactive or auth_provider mismatch
+ * - signIn: upserts the user row per (email, auth_provider) pair, rejects if inactive
  * - jwt:    stamps token.id from the DB on first sign-in
  * - session: surfaces token.id onto session.user
+ *
+ * The same email can exist across multiple providers — each (email, auth_provider)
+ * pair is a distinct identity row.
  *
  * Pass `overrides` to replace any individual callback for provider-specific behaviour.
  */
@@ -22,15 +25,14 @@ export function buildOidcCallbacks(providerId: string, overrides?: Partial<Callb
 
         const fullName = (profile as { name?: string } | undefined)?.name ?? null;
 
-        const rows = await sql<{ is_active: boolean | null; auth_provider: string | null }[]>`
+        const rows = await sql<{ is_active: boolean | null }[]>`
           INSERT INTO users (email, full_name, role, is_active, auth_provider)
           VALUES (${email}, ${fullName}, 'member', true, ${providerId})
-          ON CONFLICT (email) DO UPDATE SET
+          ON CONFLICT (email, auth_provider) DO UPDATE SET
             full_name = COALESCE(users.full_name, EXCLUDED.full_name)
-          RETURNING is_active, auth_provider
+          RETURNING is_active
         `;
 
-        if (rows[0]?.auth_provider !== providerId) return false;
         return rows[0]?.is_active === true;
       }
       return true;
@@ -43,7 +45,7 @@ export function buildOidcCallbacks(providerId: string, overrides?: Partial<Callb
         if (email) {
           const rows = await sql<{ id: string }[]>`
             UPDATE users SET last_login_at = now()
-            WHERE email = ${email}
+            WHERE email = ${email} AND auth_provider = ${providerId}
             RETURNING id
           `;
           if (rows[0]) token.id = rows[0].id;

@@ -165,7 +165,7 @@ create table if not exists document_chunks (
 create table if not exists document_threads (
   id          uuid        primary key default gen_random_uuid(),
   project_id  uuid        not null references projects(id) on delete cascade,
-  document_id uuid        not null references documents(id) on delete cascade,
+  document_id uuid        references documents(id) on delete cascade,
   created_by  uuid        references users(id) on delete set null,
   title       text        not null,
   page_number integer,
@@ -174,6 +174,8 @@ create table if not exists document_threads (
   resolved_at timestamptz,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
+  source      text        not null default 'document' check (source in ('document', 'knowledge_gap')),
+  gap_query   text,
   constraint document_threads_page_number_check
     check (page_number is null or page_number > 0)
 );

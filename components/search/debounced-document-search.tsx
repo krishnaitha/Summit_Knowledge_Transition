@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ interface DebouncedDocumentSearchProps {
 
 export function DebouncedDocumentSearch({
   initialQuery,
-  placeholder = 'Search across all project documents',
+  placeholder = 'Search across all product documents',
   minChars = 2,
   anchorId,
 }: DebouncedDocumentSearchProps) {
@@ -30,19 +30,22 @@ export function DebouncedDocumentSearch({
 
   const normalized = useMemo(() => value.trim(), [value]);
 
-  const navigateWithQuery = (nextQuery: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+  const navigateWithQuery = useCallback(
+    (nextQuery: string) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-    if (nextQuery) {
-      params.set('q', nextQuery);
-    } else {
-      params.delete('q');
-    }
+      if (nextQuery) {
+        params.set('q', nextQuery);
+      } else {
+        params.delete('q');
+      }
 
-    const hash = anchorId ? `#${anchorId}` : '';
-    const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ''}${hash}`, { scroll: false });
-  };
+      const hash = anchorId ? `#${anchorId}` : '';
+      const query = params.toString();
+      router.replace(`${pathname}${query ? `?${query}` : ''}${hash}`, { scroll: false });
+    },
+    [anchorId, pathname, router, searchParams],
+  );
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -57,7 +60,7 @@ export function DebouncedDocumentSearch({
     }, 350);
 
     return () => window.clearTimeout(timeoutId);
-  }, [normalized, minChars]);
+  }, [minChars, navigateWithQuery, normalized]);
 
   const submitSearch: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -77,7 +80,7 @@ export function DebouncedDocumentSearch({
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder={placeholder}
-          aria-label="Search all project documents"
+          aria-label="Search all product documents"
         />
         <div className="flex gap-2">
           <Button type="submit" variant="secondary">

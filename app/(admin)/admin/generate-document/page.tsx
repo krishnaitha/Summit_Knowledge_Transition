@@ -1,5 +1,3 @@
-import { FileText } from 'lucide-react';
-
 import { GenerateDocumentForm } from '@/components/admin/generate-document-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireAnyAdmin } from '@/lib/auth';

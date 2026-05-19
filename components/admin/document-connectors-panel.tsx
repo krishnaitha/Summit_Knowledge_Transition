@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Link2, RefreshCcw, ShieldCheck, Trash2 } from 'lucide-react';
+import { Link2, RefreshCcw, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

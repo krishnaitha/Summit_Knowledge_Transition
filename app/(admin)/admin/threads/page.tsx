@@ -20,7 +20,7 @@ export default async function AdminOpenThreadsPage(props: {
     rawStatus === 'resolved' || rawStatus === 'all' || rawStatus === 'open' ? rawStatus : 'open';
 
   const { profile } = await requireAnyAdmin();
-  const rows = await getOpenThreadsForUser(profile!.id, profile?.role, statusFilter);
+  const rows = await getOpenThreadsForUser(profile!.id, profile?.role, statusFilter, true);
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
@@ -29,7 +29,11 @@ export default async function AdminOpenThreadsPage(props: {
   ).map(([id, name]) => ({ id, name }));
 
   const documentOptions = Array.from(
-    new Map(rows.map((row) => [row.document_id, row.document_name])).entries(),
+    new Map(
+      rows
+        .filter((row) => row.document_id && row.document_name)
+        .map((row) => [row.document_id as string, row.document_name as string]),
+    ).entries(),
   ).map(([id, name]) => ({ id, name }));
 
   const filteredRows = rows.filter((row) => {
@@ -146,7 +150,11 @@ export default async function AdminOpenThreadsPage(props: {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-semibold text-slate-900">{row.title}</p>
                   <Link
-                    href={`/admin/projects/${row.project_id}/documents/${row.document_id}/threads`}
+                    href={
+                      row.source === 'knowledge_gap'
+                        ? `/admin/knowledge-gap-threads/${row.thread_id}`
+                        : `/admin/projects/${row.project_id}/documents/${row.document_id}/threads`
+                    }
                   >
                     <Button size="sm" variant="secondary">
                       Open thread
@@ -154,9 +162,10 @@ export default async function AdminOpenThreadsPage(props: {
                   </Link>
                 </div>
                 <p className="mt-1 text-sm text-slate-600">
-                  {row.project_name} • {row.document_name}
+                  {row.project_name} • {row.document_name ?? 'Knowledge gap discussion'}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
+                  {row.source === 'knowledge_gap' ? 'Knowledge gap • ' : ''}
                   {row.page_number ? `Page ${row.page_number} • ` : ''}
                   {Number(row.comment_count)} comments • Updated {formatDate(row.updated_at, true)}
                 </p>

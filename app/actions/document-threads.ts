@@ -27,12 +27,84 @@ async function canModerateProject(projectId: string) {
   return { allowed: adminProjectIds.includes(projectId), userId } as const;
 }
 
+function revalidateKnowledgeGapThreadPaths(projectId: string, threadId: string) {
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(`/admin/knowledge-gap-threads/${threadId}`);
+  revalidatePath('/admin/threads');
+}
+
 function revalidateThreadPaths(projectId: string, documentId: string) {
   revalidatePath(`/projects/${projectId}`);
   revalidatePath(`/projects/${projectId}/documents/${documentId}/threads`);
   revalidatePath(`/admin/projects/${projectId}`);
   revalidatePath(`/admin/projects/${projectId}/documents`);
   revalidatePath(`/admin/projects/${projectId}/documents/${documentId}/threads`);
+}
+
+let knowledgeGapSchemaReady: Promise<void> | null = null;
+
+async function ensureKnowledgeGapThreadSchema() {
+  if (!knowledgeGapSchemaReady) {
+    knowledgeGapSchemaReady = (async () => {
+      await sql`
+        ALTER TABLE document_threads
+        ALTER COLUMN document_id DROP NOT NULL
+      `;
+
+      await sql`
+        ALTER TABLE document_threads
+        ADD COLUMN IF NOT EXISTS source text NOT NULL DEFAULT 'document'
+      `;
+
+      await sql`
+        ALTER TABLE document_threads
+        ADD COLUMN IF NOT EXISTS gap_query text
+      `;
+
+      await sql`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1
+            FROM pg_constraint
+            WHERE conname = 'document_threads_source_check'
+          ) THEN
+            ALTER TABLE document_threads
+            ADD CONSTRAINT document_threads_source_check
+            CHECK (source IN ('document', 'knowledge_gap'));
+          END IF;
+        END $$
+      `;
+    })().catch((error: unknown) => {
+      knowledgeGapSchemaReady = null;
+      throw error;
+    });
+  }
+
+  await knowledgeGapSchemaReady;
+}
+
+export async function createKnowledgeGapThreadAction(formData: FormData) {
+  const projectId = cleanText(formData.get('project_id'), 64);
+  const gapQuery = cleanText(formData.get('gap_query'), 500);
+
+  if (!projectId || !gapQuery) return;
+
+  const moderation = await canModerateProject(projectId);
+  if (!moderation.allowed || !moderation.userId) return;
+
+  const title = gapQuery.length > 155 ? `${gapQuery.slice(0, 155)}…` : gapQuery;
+
+  await ensureKnowledgeGapThreadSchema();
+
+  await sql`
+    INSERT INTO document_threads (project_id, document_id, created_by, title, source, gap_query)
+    VALUES (${projectId}, NULL, ${moderation.userId}, ${title}, 'knowledge_gap', ${gapQuery})
+  `;
+
+  revalidatePath('/admin/dashboard');
+  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath('/admin/threads');
 }
 
 export async function createDocumentThreadAction(formData: FormData) {
@@ -88,7 +160,7 @@ export async function addDocumentThreadReplyAction(formData: FormData) {
   const body = cleanText(formData.get('body'), 5000);
   const markAsAnswer = String(formData.get('mark_as_answer') ?? 'false') === 'true';
 
-  if (!projectId || !documentId || !threadId || !body) {
+  if (!projectId || !threadId || !body) {
     return;
   }
 
@@ -116,7 +188,11 @@ export async function addDocumentThreadReplyAction(formData: FormData) {
     WHERE id = ${threadId}
   `;
 
-  revalidateThreadPaths(projectId, documentId);
+  if (documentId) {
+    revalidateThreadPaths(projectId, documentId);
+  } else {
+    revalidateKnowledgeGapThreadPaths(projectId, threadId);
+  }
 }
 
 export async function updateDocumentThreadStatusAction(formData: FormData) {
@@ -125,7 +201,7 @@ export async function updateDocumentThreadStatusAction(formData: FormData) {
   const threadId = cleanText(formData.get('thread_id'), 64);
   const nextStatus = cleanText(formData.get('next_status'), 16);
 
-  if (!projectId || !documentId || !threadId || !['open', 'resolved'].includes(nextStatus)) {
+  if (!projectId || !threadId || !['open', 'resolved'].includes(nextStatus)) {
     return;
   }
 
@@ -148,5 +224,9 @@ export async function updateDocumentThreadStatusAction(formData: FormData) {
     `;
   }
 
-  revalidateThreadPaths(projectId, documentId);
+  if (documentId) {
+    revalidateThreadPaths(projectId, documentId);
+  } else {
+    revalidateKnowledgeGapThreadPaths(projectId, threadId);
+  }
 }

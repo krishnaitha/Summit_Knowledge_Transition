@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AnalyticsTable } from '@/components/admin/analytics-table';
 import { ObservabilityPanel } from '@/components/admin/observability-panel';
 import { QuizResultsCard, type QuizResultRow } from '@/components/admin/quiz-results-card';
+import { KnowledgeGapThreadButton } from '@/components/admin/knowledge-gap-thread-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const TAB_ITEMS = [
@@ -45,7 +46,7 @@ function MetricCard({ label, value, hint }: { label: string; value: string; hint
   return (
     <Card>
       <CardContent className="p-5">
-        <p className="text-xs uppercase tracking-wider text-slate-500">{label}</p>
+        <p className="text-xs tracking-wider text-slate-500 uppercase">{label}</p>
         <p className="mt-2 text-3xl font-semibold text-slate-900">{value}</p>
         <p className="mt-2 text-xs text-slate-500">{hint}</p>
       </CardContent>
@@ -68,10 +69,12 @@ export function ProjectAnalyticsTabs({
         <CardHeader className="space-y-3">
           <CardTitle>How to read these analytics</CardTitle>
           <CardDescription>
-            Weak topics by score shows section-level accuracy across submitted quizzes (Correct/Total). Lower score means members need coaching in that topic.
+            Weak topics by score shows section-level accuracy across submitted quizzes
+            (Correct/Total). Lower score means members need coaching in that topic.
           </CardDescription>
           <CardDescription>
-            AI answer feedback summary aggregates member thumbs up and thumbs down feedback with reason tags (for example unclear, inaccurate, or missing detail).
+            AI answer feedback summary aggregates member thumbs up and thumbs down feedback with
+            reason tags (for example unclear, inaccurate, or missing detail).
           </CardDescription>
         </CardHeader>
       </Card>
@@ -152,7 +155,27 @@ export function ProjectAnalyticsTabs({
       {activeTab === 'ai' && (
         <div className="space-y-5">
           <AnalyticsTable rows={analytics.answerFeedback} title="AI answer feedback summary" />
-          <AnalyticsTable rows={analytics.knowledgeGaps} title="Knowledge gaps — unanswered queries" />
+          <AnalyticsTable
+            rows={analytics.knowledgeGaps}
+            title="Knowledge gaps — unanswered queries"
+            rowActions={(row) => {
+              const query = String(row.query ?? '').trim();
+              const projectId = String(row.project_id ?? '').trim();
+              const projectName = String(row.project ?? '').trim();
+
+              if (!query || !projectId) {
+                return null;
+              }
+
+              return (
+                <KnowledgeGapThreadButton
+                  query={query}
+                  projectIds={[projectId]}
+                  projectNames={[projectName || projectId]}
+                />
+              );
+            }}
+          />
         </div>
       )}
 

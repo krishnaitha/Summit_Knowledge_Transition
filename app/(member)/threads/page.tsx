@@ -29,7 +29,11 @@ export default async function MemberOpenThreadsPage(props: {
   ).map(([id, name]) => ({ id, name }));
 
   const documentOptions = Array.from(
-    new Map(rows.map((row) => [row.document_id, row.document_name])).entries(),
+    new Map(
+      rows
+        .filter((row) => row.document_id && row.document_name)
+        .map((row) => [row.document_id as string, row.document_name as string]),
+    ).entries(),
   ).map(([id, name]) => ({ id, name }));
 
   const filteredRows = rows.filter((row) => {

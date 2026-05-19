@@ -1296,11 +1296,21 @@ export async function getProjectAnalytics(projectId: string) {
         confidence: `${(((meta.maxSimilarity as number) ?? 0) * 100).toFixed(0)}%`,
         askedBy: resolveDisplayName(log.user_id ?? ''),
         askedAt: formatDate(log.created_at, true),
+        project_id: projectId,
+        project: projectName,
       };
     })
     .filter(
-      (row): row is { query: string; confidence: string; askedBy: string; askedAt: string } =>
-        row !== null,
+      (
+        row,
+      ): row is {
+        query: string;
+        confidence: string;
+        askedBy: string;
+        askedAt: string;
+        project_id: string;
+        project: string;
+      } => row !== null,
     );
 
   const membersWithSubmitted = new Set(attempts.map((a) => a.user_id));
@@ -1593,6 +1603,44 @@ export async function getMemberNotificationCount(userId: string): Promise<number
   return Number(quizRows[0]?.c ?? 0) + Number(announcementRows[0]?.c ?? 0);
 }
 
+export async function getKnowledgeGapThread(threadId: string) {
+  const rows = await sql<
+    (DocumentThreadRecord & {
+      creator_name: string | null;
+      creator_email: string | null;
+      project_name: string;
+    })[]
+  >`
+    SELECT t.*, u.full_name AS creator_name, u.email AS creator_email, p.name AS project_name
+    FROM document_threads t
+    LEFT JOIN users u ON u.id = t.created_by
+    JOIN projects p ON p.id = t.project_id
+    WHERE t.id = ${threadId} AND t.source = 'knowledge_gap'
+    LIMIT 1
+  `;
+  const thread = rows[0];
+  if (!thread) return null;
+
+  const commentRows = await sql<
+    (DocumentThreadCommentRecord & {
+      author_name: string | null;
+      author_email: string | null;
+      author_global_role: UserProfile['role'] | null;
+      author_project_role: 'admin' | 'member' | null;
+    })[]
+  >`
+    SELECT c.*, u.full_name AS author_name, u.email AS author_email,
+           u.role AS author_global_role, pm.role AS author_project_role
+    FROM document_thread_comments c
+    LEFT JOIN users u ON u.id = c.author_id
+    LEFT JOIN project_members pm ON pm.user_id = c.author_id AND pm.project_id = ${thread.project_id}
+    WHERE c.thread_id = ${threadId}
+    ORDER BY c.created_at ASC
+  `;
+
+  return { ...thread, comments: commentRows };
+}
+
 export async function getOpenThreadNotificationCount(
   userId: string,
   role: UserProfile['role'] | null | undefined,
@@ -1620,8 +1668,10 @@ export async function getOpenThreadsForUser(
   userId: string,
   role: UserProfile['role'] | null | undefined,
   statusFilter: 'open' | 'resolved' | 'all' = 'open',
+  includeKnowledgeGap = false,
 ) {
   const statusCondition = statusFilter === 'all' ? sql`TRUE` : sql`t.status = ${statusFilter}`;
+  const sourceCondition = includeKnowledgeGap ? sql`TRUE` : sql`t.source = 'document'`;
 
   if (role === 'admin') {
     return sql<
@@ -1629,12 +1679,14 @@ export async function getOpenThreadsForUser(
         thread_id: string;
         project_id: string;
         project_name: string;
-        document_id: string;
-        document_name: string;
+        document_id: string | null;
+        document_name: string | null;
         title: string;
         page_number: number | null;
         updated_at: string;
         comment_count: string;
+        source: 'document' | 'knowledge_gap';
+        gap_query: string | null;
       }[]
     >`
       SELECT
@@ -1646,16 +1698,19 @@ export async function getOpenThreadsForUser(
         t.title,
         t.page_number,
         t.updated_at,
-        COALESCE(c.comment_count, 0)::text AS comment_count
+        COALESCE(c.comment_count, 0)::text AS comment_count,
+        t.source,
+        t.gap_query
       FROM document_threads t
       JOIN projects p ON p.id = t.project_id
-      JOIN documents d ON d.id = t.document_id
+      LEFT JOIN documents d ON d.id = t.document_id
       LEFT JOIN (
         SELECT thread_id, COUNT(*) AS comment_count
         FROM document_thread_comments
         GROUP BY thread_id
       ) c ON c.thread_id = t.id
       WHERE ${statusCondition}
+        AND ${sourceCondition}
       ORDER BY t.updated_at DESC
       LIMIT 200
     `;
@@ -1666,12 +1721,14 @@ export async function getOpenThreadsForUser(
       thread_id: string;
       project_id: string;
       project_name: string;
-      document_id: string;
-      document_name: string;
+      document_id: string | null;
+      document_name: string | null;
       title: string;
       page_number: number | null;
       updated_at: string;
       comment_count: string;
+      source: 'document' | 'knowledge_gap';
+      gap_query: string | null;
     }[]
   >`
     SELECT
@@ -1683,17 +1740,20 @@ export async function getOpenThreadsForUser(
       t.title,
       t.page_number,
       t.updated_at,
-      COALESCE(c.comment_count, 0)::text AS comment_count
+      COALESCE(c.comment_count, 0)::text AS comment_count,
+      t.source,
+      t.gap_query
     FROM document_threads t
     JOIN project_members pm ON pm.project_id = t.project_id AND pm.user_id = ${userId}
     JOIN projects p ON p.id = t.project_id
-    JOIN documents d ON d.id = t.document_id
+    LEFT JOIN documents d ON d.id = t.document_id
     LEFT JOIN (
       SELECT thread_id, COUNT(*) AS comment_count
       FROM document_thread_comments
       GROUP BY thread_id
     ) c ON c.thread_id = t.id
     WHERE ${statusCondition}
+      AND ${sourceCondition}
     ORDER BY t.updated_at DESC
     LIMIT 200
   `;
@@ -1807,6 +1867,7 @@ export interface KnowledgeGap {
   occurrences: number;
   lastAskedAt: string;
   projects: string[];
+  projectIds: string[];
 }
 
 export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
@@ -1817,7 +1878,8 @@ export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
       MIN(rt.query_text)                                    AS query_text,
       COUNT(*)::int                                         AS occurrences,
       MAX(rt.created_at)                                    AS last_asked_at,
-      array_remove(array_agg(DISTINCT p.name), NULL)        AS project_names
+      array_remove(array_agg(DISTINCT p.name), NULL)        AS project_names,
+      array_remove(array_agg(DISTINCT p.id::text), NULL)    AS project_ids
     FROM rag_traces rt
     LEFT JOIN projects p ON p.id = rt.project_id
     WHERE rt.answer_refused = true
@@ -1832,5 +1894,6 @@ export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
     occurrences: Number(row.occurrences),
     lastAskedAt: formatDate(row.last_asked_at as string, true),
     projects: (row.project_names as string[] | null) ?? [],
+    projectIds: (row.project_ids as string[] | null) ?? [],
   }));
 }

@@ -136,7 +136,7 @@ export function DocumentThreadsBoard({
                         )}
                         {comment.author_project_role === 'admin' &&
                           comment.author_global_role !== 'admin' && (
-                            <Badge variant="warning">Project Admin</Badge>
+                            <Badge variant="warning">Product Admin</Badge>
                           )}
                         {comment.is_answer && <Badge variant="success">Answer</Badge>}
                         <span>• {formatDate(comment.created_at, true)}</span>

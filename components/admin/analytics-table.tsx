@@ -13,9 +13,11 @@ const PAGE_SIZE = 5;
 export function AnalyticsTable({
   title,
   rows,
+  rowActions,
 }: {
   title: string;
   rows: Array<Record<string, string | number>>;
+  rowActions?: (row: Record<string, string | number>) => React.ReactNode;
 }) {
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -75,6 +77,7 @@ export function AnalyticsTable({
                 {columns.map((column) => (
                   <TH key={column}>{column}</TH>
                 ))}
+                {rowActions ? <TH>Actions</TH> : null}
               </TR>
             </THead>
             <TBody>
@@ -83,6 +86,7 @@ export function AnalyticsTable({
                   {columns.map((column) => (
                     <TD key={column}>{String(row[column])}</TD>
                   ))}
+                  {rowActions ? <TD>{rowActions(row)}</TD> : null}
                 </TR>
               ))}
             </TBody>

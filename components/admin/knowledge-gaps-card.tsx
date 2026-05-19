@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight, FileText } from 'lucide-react';
 
 import type { KnowledgeGap } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KnowledgeGapThreadButton } from '@/components/admin/knowledge-gap-thread-button';
 
 export function KnowledgeGapsCard({ gaps }: { gaps: KnowledgeGap[] }) {
   if (gaps.length === 0) {
@@ -71,15 +72,24 @@ export function KnowledgeGapsCard({ gaps }: { gaps: KnowledgeGap[] }) {
             </div>
 
             {/* Capture link */}
-            <Link
-              href={`/admin/generate-document?context=${encodeURIComponent(gap.query)}`}
-              className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
-              title="Capture knowledge for this topic"
-            >
-              <FileText className="h-3 w-3" />
-              Capture
-              <ArrowRight className="h-3 w-3" />
-            </Link>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <Link
+                href={`/admin/generate-document?context=${encodeURIComponent(gap.query)}`}
+                className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
+                title="Capture knowledge for this topic"
+              >
+                <FileText className="h-3 w-3" />
+                Capture
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+              {gap.projectIds.length > 0 && (
+                <KnowledgeGapThreadButton
+                  query={gap.query}
+                  projectIds={gap.projectIds}
+                  projectNames={gap.projects}
+                />
+              )}
+            </div>
           </div>
         ))}
       </CardContent>

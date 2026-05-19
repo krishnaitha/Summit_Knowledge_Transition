@@ -95,7 +95,7 @@ export type DocumentThreadStatus = 'open' | 'resolved';
 export interface DocumentThreadRecord {
   id: string;
   project_id: string;
-  document_id: string;
+  document_id: string | null;
   created_by: string | null;
   title: string;
   page_number: number | null;
@@ -104,6 +104,8 @@ export interface DocumentThreadRecord {
   resolved_at: string | null;
   created_at: string;
   updated_at: string;
+  source: 'document' | 'knowledge_gap';
+  gap_query: string | null;
 }
 
 export interface DocumentThreadCommentRecord {

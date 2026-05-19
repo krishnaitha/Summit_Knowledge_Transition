@@ -8,9 +8,9 @@ import { requireAdmin } from '@/lib/auth';
 import { getAdminDashboardStats, getAllProjects, getAllUsers } from '@/lib/data';
 
 export default async function AdminUsersPage() {
-  await requireAdmin();
+  const { profile } = await requireAdmin();
   const [users, projects, dashboardStats] = await Promise.all([
-    getAllUsers(),
+    getAllUsers(profile?.auth_provider),
     getAllProjects(),
     getAdminDashboardStats(),
   ]);

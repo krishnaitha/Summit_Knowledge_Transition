@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
 import { BookOpen, FileText, MessageCircle, Sparkles } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 import { LoginForm } from '@/components/auth/login-form';
 import { getCurrentUserContext } from '@/lib/auth';
@@ -56,6 +56,7 @@ export default async function LoginPage() {
             provider={authFeatures.provider}
             hasForgotPassword={authFeatures.hasForgotPassword}
             hasRegistration={authFeatures.hasRegistration}
+            oidcProviderId={authFeatures.oidcProviderId}
           />
         </div>
       </div>

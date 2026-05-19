@@ -119,13 +119,23 @@ NEXTAUTH_SECRET=your-secret-here
 
 # ── Auth provider ─────────────────────────────────────────────────────────────
 # 'credentials' (default) — email + password, self-registration, invite flow, password reset
-# 'cognito'               — AWS Cognito SSO / OIDC; users auto-provisioned on first login
+# 'cognito'               — AWS Cognito OIDC; users auto-provisioned on first login
+# 'oidc'                  — Generic OIDC / OAuth2 (Keycloak, Okta, Azure AD, Auth0, Ping, Dex, etc.)
 AUTH_PROVIDER=credentials
 
 # AWS Cognito — required only when AUTH_PROVIDER=cognito
 # COGNITO_CLIENT_ID=your-cognito-app-client-id
 # COGNITO_CLIENT_SECRET=your-cognito-app-client-secret
 # COGNITO_ISSUER=https://cognito-idp.<region>.amazonaws.com/<user-pool-id>
+
+# Generic OIDC — required only when AUTH_PROVIDER=oidc
+# OIDC_CLIENT_ID=your-client-id
+# OIDC_CLIENT_SECRET=your-client-secret
+# OIDC_ISSUER=https://your-idp.example.com
+# OIDC_DISPLAY_NAME=OIDC       # Login button label (default: OIDC)
+# OIDC_PROVIDER_ID=oidc        # Internal provider slug stored in DB (default: oidc)
+# OIDC_CHECKS=pkce,state       # Comma-separated: pkce, state, nonce, none (default: pkce,state)
+#                              # Use OIDC_CHECKS=nonce for IdPs that do not support PKCE
 
 # ── AI Provider (choose one) ──────────────────────────────────────────────────
 # Option A: Groq (default) — https://console.groq.com
@@ -169,7 +179,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 Register via `/register`, then promote the account to admin:
 
 ```sql
-UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
+UPDATE users SET role = 'admin' WHERE email = 'your@email.com' AND auth_provider = 'credentials';
 ```
 
 ### 6. Start the dev server
@@ -284,7 +294,7 @@ Once the app is running, register an account at [http://localhost:3000/register]
 
 ```bash
 docker compose exec db psql -U postgres -d summitkt -c \
-  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com';"
+  "UPDATE users SET role = 'admin' WHERE email = 'your@email.com' AND auth_provider = 'credentials';"
 ```
 
 ### 4. Stopping and resetting
@@ -356,7 +366,7 @@ DATABASE_SSL=require
 NEXTAUTH_URL=https://your-app-domain.com
 NEXTAUTH_SECRET=<openssl rand -base64 32>
 
-# Auth provider — AWS Cognito SSO / OIDC
+# Auth provider — AWS Cognito OIDC
 AUTH_PROVIDER=cognito
 COGNITO_CLIENT_ID=<your-cognito-app-client-id>
 COGNITO_CLIENT_SECRET=<your-cognito-app-client-secret>
@@ -492,7 +502,7 @@ The active auth strategy is controlled by the `AUTH_PROVIDER` environment variab
 | `AUTH_PROVIDER` | Strategy                | User provisioning               |
 | --------------- | ----------------------- | ------------------------------- |
 | `credentials`   | Email + bcrypt password | Self-register or admin invite   |
-| `cognito`       | AWS Cognito SSO / OIDC  | Auto-provisioned on first login |
+| `cognito`       | AWS Cognito OIDC        | Auto-provisioned on first login |
 
 Sessions are JWT-based via NextAuth.js stored in an `httpOnly` cookie. With `credentials`, three flows exist:
 

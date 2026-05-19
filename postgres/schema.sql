@@ -46,14 +46,15 @@ end $$;
 -- Users (standalone — no auth.users reference)
 create table if not exists users (
   id            uuid        primary key default gen_random_uuid(),
-  email         text        not null unique,
+  email         text        not null,
   full_name     text,
   role          user_role   not null default 'member',
-  password_hash text,                     -- bcrypt hash; null for Cognito/SSO users
-  auth_provider text        not null default 'credentials', -- 'credentials' | 'cognito'
+  password_hash text,                     -- bcrypt hash; null for OIDC/SSO users
+  auth_provider text        not null default 'credentials', -- 'credentials' | 'cognito' | 'oidc' | custom
   created_at    timestamptz not null default now(),
   last_login_at timestamptz,
-  is_active     boolean     not null default true
+  is_active     boolean     not null default true,
+  unique (email, auth_provider)
 );
 
 -- Invite tokens (replaces Supabase auth invite flow)

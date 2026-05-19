@@ -8,8 +8,8 @@ import type {
   ChatBookmarkRecord,
   ChatMessageRecord,
   ChatSessionRecord,
-  DocumentRecord,
   DocumentConnectorRecord,
+  DocumentRecord,
   DocumentSearchResult,
   DocumentThreadCommentRecord,
   DocumentThreadRecord,
@@ -18,8 +18,8 @@ import type {
   ProjectAnnouncementRecord,
   ProjectDashboardCard,
   ProjectRecord,
-  QuizAttemptRecord,
   QuizAttemptHistoryRecord,
+  QuizAttemptRecord,
   QuizCoachingPlanRecord,
   QuizOptionKey,
   QuizQuestionRecord,
@@ -1067,7 +1067,12 @@ export async function getRetakeRequestsForProject(projectId: string) {
   `;
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(authProvider?: string) {
+  if (authProvider) {
+    return sql<
+      UserProfile[]
+    >`SELECT * FROM users WHERE auth_provider = ${authProvider} ORDER BY created_at DESC`;
+  }
   return sql<UserProfile[]>`SELECT * FROM users ORDER BY created_at DESC`;
 }
 

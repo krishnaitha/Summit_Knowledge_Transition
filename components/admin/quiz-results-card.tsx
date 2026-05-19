@@ -1,27 +1,42 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsUpDown, Download, RotateCcw, Search, X } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronsUpDown,
+  Download,
+  RotateCcw,
+  Search,
+  X,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const PAGE_SIZE = 5;
-const MAX_RESETS = 2;
+const MAX_RESETS = 5;
 
-type SortKey = 'member' | 'score' | 'percentage' | 'setTaken' | 'submittedAt';
+type SortKey = 'member' | 'score' | 'percentage' | 'project' | 'setTaken' | 'submittedAt';
 type SortDir = 'asc' | 'desc';
 
 export interface QuizResultRow {
   attemptId: string;
   userId: string;
+  attemptType?: 'latest' | 'previous';
   member: string;
   email: string;
   score: string;
   percentage: string;
+  project: string;
   setTaken: string;
   submittedAt: string;
+  submittedAtRaw?: string | null;
   resetCount: number;
+  resetReason?: string;
   sectionScores?: Record<string, { score: number; total: number }>;
 }
 
@@ -40,12 +55,25 @@ function exportToCsv(rows: QuizResultRow[]) {
   const seen = new Set<string>();
   for (const row of rows) {
     for (const sec of Object.keys(row.sectionScores ?? {})) {
-      if (!seen.has(sec)) { seen.add(sec); sectionNames.push(sec); }
+      if (!seen.has(sec)) {
+        seen.add(sec);
+        sectionNames.push(sec);
+      }
     }
   }
 
-  const headers = ['Member', 'Email', 'Score', 'Percentage', 'Set Taken', 'Submitted At', 'Reset Count',
-    ...sectionNames.map((s) => `${s.charAt(0).toUpperCase() + s.slice(1)} Score`)];
+  const headers = [
+    'Member',
+    'Email',
+    'Score',
+    'Percentage',
+    'Project',
+    'Set Taken',
+    'Submitted At',
+    'Reset Count',
+    'Reset Reason',
+    ...sectionNames.map((s) => `${s.charAt(0).toUpperCase() + s.slice(1)} Score`),
+  ];
 
   const csvRows = rows.map((row) => {
     const base = [
@@ -53,9 +81,11 @@ function exportToCsv(rows: QuizResultRow[]) {
       esc(row.email),
       esc(row.score),
       esc(row.percentage),
+      esc(row.project),
       esc(row.setTaken),
       esc(row.submittedAt),
       String(row.resetCount),
+      esc(row.resetReason ?? '—'),
     ];
     for (const sec of sectionNames) {
       const s = row.sectionScores?.[sec];
@@ -78,9 +108,11 @@ function exportToCsv(rows: QuizResultRow[]) {
 
 function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
   if (col !== sortKey) return <ChevronsUpDown className="ml-1 inline h-3 w-3 text-slate-300" />;
-  return sortDir === 'asc'
-    ? <ChevronUp className="ml-1 inline h-3 w-3 text-brand-600" />
-    : <ChevronDown className="ml-1 inline h-3 w-3 text-brand-600" />;
+  return sortDir === 'asc' ? (
+    <ChevronUp className="text-brand-600 ml-1 inline h-3 w-3" />
+  ) : (
+    <ChevronDown className="text-brand-600 ml-1 inline h-3 w-3" />
+  );
 }
 
 export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizResultsCardProps) {
@@ -92,6 +124,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
   const [reason, setReason] = useState('');
   const [sectionsToReset, setSectionsToReset] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
+  const [projectFilter, setProjectFilter] = useState('');
 
   function toggleSort(col: SortKey) {
     if (col === sortKey) {
@@ -105,13 +138,34 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
 
   const filtered = filter
     ? rows.filter((r) =>
-        [r.member, r.email, r.score, r.percentage, r.setTaken, r.submittedAt].some((v) =>
-          v.toLowerCase().includes(filter.toLowerCase()),
-        ),
+        [
+          r.member,
+          r.email,
+          r.score,
+          r.percentage,
+          r.project,
+          r.setTaken,
+          r.submittedAt,
+          r.resetReason ?? '',
+          r.attemptType ?? 'latest',
+        ].some((v) => v.toLowerCase().includes(filter.toLowerCase())),
       )
     : rows;
 
-  const sorted = [...filtered].sort((a, b) => {
+  // Extract unique projects and sort alphabetically
+  const uniqueProjects = Array.from(new Set(rows.map((r) => r.project))).sort();
+
+  // Apply both text filter and project filter
+  const projectFiltered = projectFilter
+    ? filtered.filter((r) => r.project === projectFilter)
+    : filtered;
+
+  const sorted = [...projectFiltered].sort((a, b) => {
+    if (sortKey === 'submittedAt') {
+      const aTs = new Date(a.submittedAtRaw ?? 0).getTime();
+      const bTs = new Date(b.submittedAtRaw ?? 0).getTime();
+      return sortDir === 'asc' ? aTs - bTs : bTs - aTs;
+    }
     let va = a[sortKey];
     let vb = b[sortKey];
     if (sortKey === 'percentage') {
@@ -169,7 +223,8 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
     });
   }
 
-  const thCls = 'pb-3 pr-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer select-none hover:text-slate-800 whitespace-nowrap';
+  const thCls =
+    'pb-3 pr-6 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer select-none hover:text-slate-800 whitespace-nowrap';
 
   return (
     <>
@@ -179,8 +234,8 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
             <BookOpen className="h-4 w-4 text-slate-400" />
             <CardTitle>Quiz results</CardTitle>
             {rows.length > 0 && (
-              <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700">
-                {rows.length} submitted
+              <span className="bg-brand-50 text-brand-700 rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                {rows.length} records
               </span>
             )}
           </div>
@@ -197,14 +252,34 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                 Export CSV
               </Button>
               <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
                 <input
-                  className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-8 pr-4 text-sm"
-                  onChange={(e) => { setFilter(e.target.value); setPage(1); }}
+                  className="h-9 w-full rounded-xl border border-slate-200 bg-white pr-4 pl-8 text-sm"
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                    setPage(1);
+                  }}
                   placeholder="Filter by name or set…"
                   value={filter}
                 />
               </div>
+              {uniqueProjects.length > 1 && (
+                <select
+                  className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  onChange={(e) => {
+                    setProjectFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  value={projectFilter}
+                >
+                  <option value="">All projects</option>
+                  {uniqueProjects.map((proj) => (
+                    <option key={proj} value={proj}>
+                      {proj}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
         </CardHeader>
@@ -213,16 +288,21 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
             <div className="rounded-xl border border-dashed border-slate-200 px-6 py-10 text-center">
               <BookOpen className="mx-auto h-7 w-7 text-slate-300" />
               <p className="mt-3 text-sm text-slate-400">No quiz submissions yet.</p>
-              <p className="mt-1 text-xs text-slate-400">Results will appear here once members complete their quiz.</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Results will appear here once members complete their quiz.
+              </p>
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              <div>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100">
                       <th className={thCls} onClick={() => toggleSort('member')}>
                         Member <SortIcon col="member" sortKey={sortKey} sortDir={sortDir} />
+                      </th>
+                      <th className="pr-6 pb-3 text-left text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                        Attempt
                       </th>
                       <th className={thCls} onClick={() => toggleSort('score')}>
                         Score <SortIcon col="score" sortKey={sortKey} sortDir={sortDir} />
@@ -230,18 +310,24 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                       <th className={thCls} onClick={() => toggleSort('percentage')}>
                         % <SortIcon col="percentage" sortKey={sortKey} sortDir={sortDir} />
                       </th>
+                      <th className={thCls} onClick={() => toggleSort('project')}>
+                        Project <SortIcon col="project" sortKey={sortKey} sortDir={sortDir} />
+                      </th>
                       <th className={thCls} onClick={() => toggleSort('setTaken')}>
                         Set taken <SortIcon col="setTaken" sortKey={sortKey} sortDir={sortDir} />
                       </th>
                       <th className={thCls} onClick={() => toggleSort('submittedAt')}>
                         Submitted <SortIcon col="submittedAt" sortKey={sortKey} sortDir={sortDir} />
                       </th>
-                      <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                      <th className="pb-3 text-left text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {paginated.map((row) => {
                       const atLimit = row.resetCount >= MAX_RESETS;
+                      const isPrevious = row.attemptType === 'previous';
                       return (
                         <tr key={row.attemptId}>
                           <td className="py-3 pr-6">
@@ -249,28 +335,43 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                             <p className="text-xs text-slate-400">{row.email}</p>
                           </td>
                           <td className="py-3 pr-6">
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                                isPrevious
+                                  ? 'bg-slate-100 text-slate-600'
+                                  : 'bg-blue-50 text-blue-700'
+                              }`}
+                            >
+                              {isPrevious ? 'Previous' : 'Latest'}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-6">
                             <p className="font-semibold text-slate-900">{row.score}</p>
                             {row.sectionScores && Object.keys(row.sectionScores).length > 1 && (
                               <div className="mt-0.5 space-y-0.5">
                                 {Object.entries(row.sectionScores).map(([sec, s]) => (
                                   <p key={sec} className="text-xs text-slate-400">
-                                    {sec.charAt(0).toUpperCase() + sec.slice(1)}: {s.score}/{s.total}
+                                    {sec.charAt(0).toUpperCase() + sec.slice(1)}: {s.score}/
+                                    {s.total}
                                   </p>
                                 ))}
                               </div>
                             )}
                           </td>
                           <td className="py-3 pr-6">
-                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                              parseFloat(row.percentage) >= 70
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : parseFloat(row.percentage) >= 50
-                                ? 'bg-amber-50 text-amber-700'
-                                : 'bg-rose-50 text-rose-700'
-                            }`}>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                                parseFloat(row.percentage) >= 70
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : parseFloat(row.percentage) >= 50
+                                    ? 'bg-amber-50 text-amber-700'
+                                    : 'bg-rose-50 text-rose-700'
+                              }`}
+                            >
                               {row.percentage}
                             </span>
                           </td>
+                          <td className="py-3 pr-6 text-slate-600">{row.project}</td>
                           <td className="py-3 pr-6 text-slate-600">{row.setTaken}</td>
                           <td className="py-3 pr-6 text-slate-400">{row.submittedAt}</td>
                           <td className="py-3">
@@ -279,8 +380,14 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                                 size="sm"
                                 type="button"
                                 variant="secondary"
-                                disabled={atLimit}
-                                title={atLimit ? `Reset limit reached (${MAX_RESETS} resets used)` : undefined}
+                                disabled={isPrevious || atLimit}
+                                title={
+                                  isPrevious
+                                    ? 'Previous attempts are read-only records'
+                                    : atLimit
+                                      ? `Reset limit reached (${MAX_RESETS} resets used)`
+                                      : undefined
+                                }
                                 onClick={() => openResetModal(row)}
                                 className="flex items-center gap-1.5"
                               >
@@ -288,7 +395,14 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                                 Reset
                               </Button>
                               {row.resetCount > 0 && (
-                                <span className={`text-xs ${atLimit ? 'text-rose-500 font-semibold' : 'text-slate-400'}`}>
+                                <span
+                                  className={`text-xs ${atLimit ? 'font-semibold text-rose-500' : 'text-slate-400'}`}
+                                  title={
+                                    row.resetReason
+                                      ? `Last reset reason: ${row.resetReason}`
+                                      : undefined
+                                  }
+                                >
                                   {row.resetCount}/{MAX_RESETS}
                                 </span>
                               )}
@@ -300,7 +414,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                   </tbody>
                 </table>
                 {paginated.length === 0 && (
-                  <p className="py-6 text-center text-sm text-slate-400">No results match your filter.</p>
+                  <p className="py-6 text-center text-sm text-slate-400">
+                    No results match your filter.
+                  </p>
                 )}
               </div>
 
@@ -308,7 +424,8 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
               {totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
                   <p className="text-xs text-slate-400">
-                    {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
+                    {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of{' '}
+                    {sorted.length}
                   </p>
                   <div className="flex items-center gap-1">
                     <Button
@@ -319,7 +436,9 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                     >
                       <ChevronLeft className="h-3.5 w-3.5" />
                     </Button>
-                    <span className="px-2 text-xs text-slate-600">{page} / {totalPages}</span>
+                    <span className="px-2 text-xs text-slate-600">
+                      {page} / {totalPages}
+                    </span>
                     <Button
                       size="sm"
                       variant="secondary"
@@ -346,7 +465,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <form onSubmit={handleResetSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleResetSubmit} className="space-y-4 p-5">
               <input type="hidden" name="attempt_id" value={pendingReset.attemptId} />
               <input type="hidden" name="project_id" value={projectId} />
               <input type="hidden" name="user_id" value={pendingReset.userId} />
@@ -355,13 +474,15 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
               {/* Section selection for partial retake — only shown when there are multiple sections */}
               {pendingReset.sectionScores && Object.keys(pendingReset.sectionScores).length > 1 && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     Sections to reset
-                    <span className="ml-1 text-xs font-normal text-slate-400">(uncheck to carry score forward)</span>
+                    <span className="ml-1 text-xs font-normal text-slate-400">
+                      (uncheck to carry score forward)
+                    </span>
                   </label>
                   <div className="space-y-2">
                     {Object.entries(pendingReset.sectionScores).map(([sec, s]) => (
-                      <label key={sec} className="flex items-center gap-2 cursor-pointer">
+                      <label key={sec} className="flex cursor-pointer items-center gap-2">
                         <input
                           type="checkbox"
                           className="rounded border-slate-300"
@@ -370,19 +491,23 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                         />
                         <span className="text-sm text-slate-700">
                           {sec.charAt(0).toUpperCase() + sec.slice(1)}
-                          <span className="ml-1 text-slate-400 text-xs">({s.score}/{s.total})</span>
+                          <span className="ml-1 text-xs text-slate-400">
+                            ({s.score}/{s.total})
+                          </span>
                         </span>
                       </label>
                     ))}
                   </div>
                   {sectionsToReset.size === 0 && (
-                    <p className="mt-2 text-xs text-amber-600">Select at least one section to reset.</p>
+                    <p className="mt-2 text-xs text-amber-600">
+                      Select at least one section to reset.
+                    </p>
                   )}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
                   Reason for reset <span className="text-rose-500">*</span>
                 </label>
                 <textarea
@@ -392,7 +517,7 @@ export function QuizResultsCard({ projectId, adminId, rows, resetAction }: QuizR
                   required
                   rows={3}
                   placeholder="e.g. Technical issue during submission, admin approved retry…"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-300"
+                  className="focus:ring-brand-300 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:outline-none"
                 />
               </div>
               <div className="flex justify-end gap-2">

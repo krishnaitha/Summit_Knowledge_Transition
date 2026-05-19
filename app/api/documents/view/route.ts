@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
-import { Readable } from 'stream';
 
 import { getCurrentUserContext } from '@/lib/auth';
 import { logActivity, userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
-import { getFileInfo, getFileStream } from '@/lib/storage/local';
+import { downloadFile } from '@/lib/storage/local';
 import { downloadFromR2 } from '@/lib/storage/r2';
 
-function toWebStream(stream: NodeJS.ReadableStream) {
-  return Readable.toWeb(stream as Readable) as ReadableStream<Uint8Array>;
+async function streamToBuffer(stream: NodeJS.ReadableStream) {
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
 }
 
 export async function GET(request: Request) {
@@ -43,23 +46,16 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const localInfo = await getFileInfo(document.file_url).catch(() => ({
-      exists: false,
-      size: 0,
-    }));
+    let fileBuffer: Buffer;
 
-    let fileStream: NodeJS.ReadableStream;
-
-    if (localInfo.exists) {
-      fileStream = getFileStream(document.file_url);
-    } else {
+    try {
+      fileBuffer = await downloadFile(document.file_url);
+    } catch {
       try {
-        // Legacy records still use the original R2 object key.
-        fileStream = await downloadFromR2(document.file_url);
+        const fileStream = await downloadFromR2(document.file_url);
+        fileBuffer = await streamToBuffer(fileStream);
       } catch {
-        // If the DB points at a legacy key but the local copy exists under a generated name,
-        // fall back to the local path resolver as a last resort.
-        fileStream = getFileStream(document.file_url);
+        return NextResponse.json({ error: 'Document file unavailable' }, { status: 404 });
       }
     }
 
@@ -90,7 +86,7 @@ export async function GET(request: Request) {
       ? `attachment; filename="${encodeURIComponent(document.file_name)}"`
       : 'inline';
 
-    return new NextResponse(toWebStream(fileStream), {
+    return new NextResponse(fileBuffer, {
       headers: {
         'Content-Type': mimeType,
         'Content-Disposition': contentDisposition,

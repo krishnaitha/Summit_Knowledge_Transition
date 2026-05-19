@@ -7,13 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatPercent } from '@/lib/utils';
 
 export function ResultSummary({
+  projectId,
   score,
   totalMarks,
   percentage,
   disqualified,
   disqualifyReason,
   coachingPlan,
+  attemptHistory,
 }: {
+  projectId: string;
   score: number;
   totalMarks: number;
   percentage: number;
@@ -21,8 +24,19 @@ export function ResultSummary({
   disqualifyReason?: string | null;
   coachingPlan?: {
     weakSections: Array<{ section: string; score: number; total: number; percentage: number }>;
-    recommendations: Array<{ section: string; focus: string; documents: Array<{ id: string; name: string }> }>;
+    recommendations: Array<{
+      section: string;
+      focus: string;
+      documents: Array<{ id: string; name: string }>;
+    }>;
   };
+  attemptHistory?: Array<{
+    score: number;
+    totalMarks: number;
+    percentage: number;
+    submittedAt: string | null;
+    resetAt: string;
+  }>;
 }) {
   if (disqualified) {
     return (
@@ -41,7 +55,8 @@ export function ResultSummary({
             </p>
           </div>
           <p className="text-sm text-slate-500">
-            This result has been recorded. Please contact your admin if you believe this is an error.
+            This result has been recorded. Please contact your admin if you believe this is an
+            error.
           </p>
         </CardContent>
       </Card>
@@ -53,7 +68,7 @@ export function ResultSummary({
       <CardHeader>
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-          <CardTitle>Quiz submitted</CardTitle>
+          <CardTitle>Quest submitted</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -67,9 +82,45 @@ export function ResultSummary({
         <p className="text-sm text-slate-500">
           Your score has been recorded. Your admin will review the results.
         </p>
+        {attemptHistory && attemptHistory.length > 0 && (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-sm font-semibold text-slate-900">Attempt History</p>
+            <div className="mt-3 space-y-2">
+              <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm">
+                <span className="text-slate-600">Latest attempt</span>
+                <span className="font-semibold text-slate-900">
+                  {score}/{totalMarks} ({percentage.toFixed(1)}%)
+                </span>
+              </div>
+              {attemptHistory.slice(0, 5).map((item, idx) => (
+                <div
+                  key={`${item.resetAt}-${idx}`}
+                  className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm"
+                >
+                  <span className="text-slate-600">Previous attempt {idx + 1}</span>
+                  <span className="font-semibold text-slate-900">
+                    {item.score}/{item.totalMarks} ({item.percentage.toFixed(1)}%)
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {coachingPlan && coachingPlan.recommendations.length > 0 && (
           <div className="space-y-3 rounded-2xl border border-blue-200 bg-blue-50 p-4">
             <p className="text-sm font-semibold text-blue-900">Weak-Area Coaching Plan</p>
+            <div className="flex flex-wrap gap-2">
+              <Link href={`/projects/${projectId}/study`}>
+                <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-800 ring-1 ring-blue-200">
+                  Open Study Mode
+                </span>
+              </Link>
+              <Link href={`/projects/${projectId}/flashcards`}>
+                <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-800 ring-1 ring-blue-200">
+                  Review Flashcards
+                </span>
+              </Link>
+            </div>
             {coachingPlan.recommendations.map((item) => (
               <div key={item.section} className="rounded-xl bg-white/80 p-3">
                 <p className="text-sm font-semibold text-slate-900">

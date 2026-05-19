@@ -64,7 +64,7 @@ describe('ProjectCard', () => {
 
   it('links to the chat page', () => {
     render(<ProjectCard project={baseProject} />);
-    const chatLink = screen.getByRole('link', { name: /ask ai/i }) as HTMLAnchorElement;
+    const chatLink = screen.getByRole('link', { name: /elevate ai/i }) as HTMLAnchorElement;
     expect(chatLink.href).toContain('/projects/proj-1/chat');
   });
 

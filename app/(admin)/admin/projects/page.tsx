@@ -21,20 +21,20 @@ export default async function AdminProjectsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-semibold text-slate-950">Projects</h1>
+        <h1 className="text-3xl font-semibold text-slate-950">Products</h1>
         <p className="mt-2 text-sm text-slate-500">
-          Create projects, control active status, and open each project workspace.
+          Create products, control active status, and open each product workspace.
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Create project</CardTitle>
+          <CardTitle>Create product</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={createProjectAction} className="grid gap-4 lg:grid-cols-2">
             <input name="created_by" type="hidden" value={profile!.id} />
-            <Input name="name" placeholder="Project name" required />
+            <Input name="name" placeholder="Product name" required />
             <Input
               defaultValue="60"
               min={0}
@@ -47,7 +47,7 @@ export default async function AdminProjectsPage() {
               <Textarea name="description" placeholder="Project description" />
             </div>
             <SubmitButton className="lg:w-fit" loadingText="Creating…">
-              Create project
+              Create product
             </SubmitButton>
           </form>
         </CardContent>

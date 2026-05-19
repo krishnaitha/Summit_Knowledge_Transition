@@ -2,7 +2,10 @@ import { createReadStream } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
+const configuredUploadDir = process.env.UPLOAD_DIR?.trim();
+const UPLOAD_DIR = configuredUploadDir
+  ? path.resolve(configuredUploadDir)
+  : path.join(process.cwd(), 'public', 'uploads');
 
 function resolveSafeUploadPath(storedPath: string): string {
   if (!storedPath || typeof storedPath !== 'string') {
@@ -22,23 +25,28 @@ function resolveSafeUploadPath(storedPath: string): string {
 
   normalized = normalized.replace(/\\/g, '/');
 
-  if (normalized.startsWith('/public/')) {
-    normalized = normalized.slice('/public/'.length);
+  if (normalized.startsWith('/public/uploads/')) {
+    normalized = normalized.slice('/public/uploads/'.length);
+  }
+
+  if (normalized.startsWith('/uploads/')) {
+    normalized = normalized.slice('/uploads/'.length);
+  }
+
+  if (normalized.startsWith('uploads/')) {
+    normalized = normalized.slice('uploads/'.length);
   }
 
   if (normalized.startsWith('/')) {
     normalized = normalized.slice(1);
   }
 
-  const uploadsIndex = normalized.indexOf('uploads/');
-  if (uploadsIndex === -1) {
+  if (!normalized) {
     throw new Error('Invalid file path');
   }
 
-  normalized = normalized.slice(uploadsIndex);
-
   const uploadsDir = path.resolve(UPLOAD_DIR);
-  const resolvedPath = path.resolve(path.join(process.cwd(), 'public', normalized));
+  const resolvedPath = path.resolve(path.join(uploadsDir, normalized));
   const safePrefix = `${uploadsDir}${path.sep}`;
 
   if (resolvedPath !== uploadsDir && !resolvedPath.startsWith(safePrefix)) {

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Summit KT Portal',
+  title: 'NexTElevate',
   description: 'Enterprise knowledge transfer portal for team transitions.',
 };
 

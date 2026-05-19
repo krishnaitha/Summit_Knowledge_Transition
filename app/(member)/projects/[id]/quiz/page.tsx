@@ -5,7 +5,13 @@ import { redirect } from 'next/navigation';
 import { QuizExperience } from '@/components/quiz/quiz-experience';
 import { Card, CardContent } from '@/components/ui/card';
 import { requireMember } from '@/lib/auth';
-import { getLatestCoachingPlan, getProjectById, getQuizAttemptForProject, userHasProjectAccess } from '@/lib/data';
+import {
+  getLatestCoachingPlan,
+  getProjectById,
+  getQuizAttemptForProject,
+  getQuizAttemptHistoryForProject,
+  userHasProjectAccess,
+} from '@/lib/data';
 import sql from '@/lib/db';
 
 function formatWindowDate(iso: string) {
@@ -24,9 +30,10 @@ export default async function ProjectQuizPage(props: { params: Promise<{ id: str
     redirect('/dashboard');
   }
 
-  const [project, attempt, pendingRequests, coachingPlan] = await Promise.all([
+  const [project, attempt, attemptHistory, pendingRequests, coachingPlan] = await Promise.all([
     getProjectById(params.id),
     getQuizAttemptForProject(profile!.id, params.id),
+    getQuizAttemptHistoryForProject(profile!.id, params.id),
     sql`SELECT id FROM quiz_retake_requests WHERE user_id = ${profile!.id} AND project_id = ${params.id} AND status = 'pending' LIMIT 1`,
     getLatestCoachingPlan(profile!.id, params.id),
   ]);
@@ -59,9 +66,13 @@ export default async function ProjectQuizPage(props: { params: Promise<{ id: str
   return (
     <div className="space-y-6">
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/dashboard" className="transition hover:text-slate-900">Dashboard</Link>
+        <Link href="/dashboard" className="transition hover:text-slate-900">
+          Dashboard
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">{project?.name ?? 'Project'}</Link>
+        <Link href={`/projects/${params.id}`} className="transition hover:text-slate-900">
+          {project?.name ?? 'Project'}
+        </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-slate-900">Quiz</span>
       </nav>
@@ -77,7 +88,8 @@ export default async function ProjectQuizPage(props: { params: Promise<{ id: str
                 <p className="text-lg font-semibold text-slate-900">Quiz not open yet</p>
                 <p className="text-sm text-slate-500">
                   This quiz opens on <strong>{formatWindowDate(project!.quiz_open_at!)}</strong>.
-                  <br />Please come back then.
+                  <br />
+                  Please come back then.
                 </p>
               </>
             ) : (
@@ -85,14 +97,27 @@ export default async function ProjectQuizPage(props: { params: Promise<{ id: str
                 <p className="text-lg font-semibold text-slate-900">Quiz window has closed</p>
                 <p className="text-sm text-slate-500">
                   The quiz closed on <strong>{formatWindowDate(project!.quiz_close_at!)}</strong>.
-                  <br />Contact your admin if you believe this is an error.
+                  <br />
+                  Contact your admin if you believe this is an error.
                 </p>
               </>
             )}
           </CardContent>
         </Card>
       ) : (
-        <QuizExperience lockedAttempt={lockedAttempt} projectId={params.id} projectName={project?.name ?? 'Project'} hasPendingRetakeRequest={hasPendingRetakeRequest} />
+        <QuizExperience
+          lockedAttempt={lockedAttempt}
+          attemptHistory={attemptHistory.map((item) => ({
+            score: item.score ?? 0,
+            totalMarks: item.total_marks ?? 0,
+            percentage: Number(item.percentage ?? 0),
+            submittedAt: item.submitted_at,
+            resetAt: item.reset_at,
+          }))}
+          projectId={params.id}
+          projectName={project?.name ?? 'Project'}
+          hasPendingRetakeRequest={hasPendingRetakeRequest}
+        />
       )}
     </div>
   );

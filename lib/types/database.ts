@@ -55,6 +55,89 @@ export interface DocumentRecord {
   classification: 'confidential' | 'internal' | 'public';
   is_required: boolean;
   scan_flags: string[];
+  source_connector_id?: string | null;
+  source_provider?: 'confluence' | 'sharepoint' | null;
+  source_item_id?: string | null;
+  source_url?: string | null;
+  source_synced_at?: string | null;
+}
+
+export interface DocumentConnectorRecord {
+  id: string;
+  project_id: string;
+  provider: 'confluence' | 'sharepoint';
+  name: string;
+  config: Record<string, unknown>;
+  created_by: string | null;
+  is_active: boolean;
+  last_synced_at: string | null;
+  last_sync_status: 'idle' | 'running' | 'success' | 'failed';
+  last_sync_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DocumentSearchResult {
+  chunk_id: string;
+  document_id: string;
+  file_name: string;
+  snippet: string;
+  rank: number;
+}
+
+export interface AccessibleDocumentSearchResult extends DocumentSearchResult {
+  project_id: string;
+  project_name: string;
+}
+
+export type DocumentThreadStatus = 'open' | 'resolved';
+
+export interface DocumentThreadRecord {
+  id: string;
+  project_id: string;
+  document_id: string;
+  created_by: string | null;
+  title: string;
+  page_number: number | null;
+  status: DocumentThreadStatus;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DocumentThreadCommentRecord {
+  id: string;
+  thread_id: string;
+  author_id: string | null;
+  body: string;
+  is_answer: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FlashcardRecord {
+  id: string;
+  project_id: string;
+  source_chunk_id: string | null;
+  question: string;
+  answer: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface FlashcardProgressRecord {
+  id: string;
+  user_id: string;
+  flashcard_id: string;
+  interval_days: number;
+  ease_factor: number;
+  repetitions: number;
+  due_at: string;
+  last_reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface QuizCoachingPlanRecord {
@@ -163,6 +246,22 @@ export interface QuizAttemptRecord {
   carried_sections: Record<string, { score: number; total: number }> | null;
 }
 
+export interface QuizAttemptHistoryRecord {
+  id: string;
+  original_attempt_id: string | null;
+  user_id: string;
+  project_id: string;
+  quiz_set_id: string | null;
+  score: number | null;
+  total_marks: number | null;
+  percentage: number | null;
+  passed: boolean | null;
+  submitted_at: string | null;
+  reset_at: string;
+  reset_by: string | null;
+  reset_reason: string;
+}
+
 export interface AssignedQuestionOption {
   key: QuizOptionKey;
   text: string;
@@ -193,7 +292,7 @@ export interface ChatBookmarkRecord {
   created_at: string;
 }
 
-export type ProcessingJobType = 'document_process' | 'quiz_generate';
+export type ProcessingJobType = 'document_process' | 'quiz_generate' | 'connector_sync';
 export type ProcessingJobStatus = 'pending' | 'running' | 'done' | 'failed';
 
 export interface ProcessingJobRecord {
@@ -221,6 +320,7 @@ export interface ProjectDashboardCard extends ProjectRecord {
   documentCount: number;
   docsViewedCount: number;
   isNewDocs: boolean;
+  openThreadCount: number;
   quizStatus: 'Not Started' | 'In Progress' | 'Completed';
   quizScoreLabel: string | null;
   quizPercentage: number | null;

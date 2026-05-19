@@ -10,8 +10,8 @@ export default async function MyProjectsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-950">My Projects</h1>
-        <p className="mt-1 text-sm text-slate-500">Your assigned knowledge transfer projects.</p>
+        <h1 className="text-2xl font-semibold text-slate-950">My Products</h1>
+        <p className="mt-1 text-sm text-slate-500">Your assigned knowledge transfer products.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -19,7 +19,9 @@ export default async function MyProjectsPage() {
           projects.map((project) => <ProjectCard key={project.id} project={project} />)
         ) : (
           <Card>
-            <CardContent className="p-6 text-sm text-slate-500">No active projects are assigned yet.</CardContent>
+            <CardContent className="p-6 text-sm text-slate-500">
+              No active products are assigned yet.
+            </CardContent>
           </Card>
         )}
       </div>

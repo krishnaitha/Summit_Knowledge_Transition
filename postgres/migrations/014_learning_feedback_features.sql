@@ -33,31 +33,4 @@ create index if not exists coaching_project_user_idx
 create index if not exists chat_feedback_project_rating_idx
   on public.chat_answer_feedback (project_id, rating, created_at desc);
 
-alter table public.quiz_coaching_plans enable row level security;
-alter table public.chat_answer_feedback enable row level security;
-
-drop policy if exists "coaching member read" on public.quiz_coaching_plans;
-create policy "coaching member read"
-  on public.quiz_coaching_plans
-  for select
-  using (public.is_admin() or user_id = auth.uid());
-
-drop policy if exists "coaching service write" on public.quiz_coaching_plans;
-create policy "coaching service write"
-  on public.quiz_coaching_plans
-  for all
-  using (public.is_admin())
-  with check (public.is_admin());
-
-drop policy if exists "feedback member read" on public.chat_answer_feedback;
-create policy "feedback member read"
-  on public.chat_answer_feedback
-  for select
-  using (public.is_admin() or user_id = auth.uid());
-
-drop policy if exists "feedback member write" on public.chat_answer_feedback;
-create policy "feedback member write"
-  on public.chat_answer_feedback
-  for all
-  using (public.is_admin() or user_id = auth.uid())
-  with check (public.is_admin() or user_id = auth.uid());
+-- Note: RLS/policies removed — this app uses server-side auth, not Supabase RLS.

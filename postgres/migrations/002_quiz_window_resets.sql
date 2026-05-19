@@ -12,5 +12,4 @@ create table if not exists public.quiz_resets (
   reset_at   timestamptz not null default now()
 );
 
-alter table public.quiz_resets enable row level security;
-create policy "admin all quiz_resets" on public.quiz_resets for all using (public.is_admin()) with check (public.is_admin());
+-- Note: RLS/policies removed — this app uses server-side auth, not Supabase RLS.

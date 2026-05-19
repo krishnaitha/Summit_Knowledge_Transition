@@ -27,6 +27,7 @@ const baseProject: ProjectDashboardCard = {
   quizPercentage: null,
   quizPassed: null,
   quizCloseAt: null,
+  openThreadCount: 0,
 };
 
 describe('ProjectCard', () => {
@@ -70,13 +71,13 @@ describe('ProjectCard', () => {
 
   it('links to the quiz page', () => {
     render(<ProjectCard project={baseProject} />);
-    const quizLink = screen.getByRole('link', { name: /take quiz/i }) as HTMLAnchorElement;
+    const quizLink = screen.getByRole('link', { name: /take quest/i }) as HTMLAnchorElement;
     expect(quizLink.href).toContain('/projects/proj-1/quiz');
   });
 
-  it('shows "Resume Quiz" button label when quiz is In Progress', () => {
+  it('shows "Resume Quest" button label when quiz is In Progress', () => {
     render(<ProjectCard project={{ ...baseProject, quizStatus: 'In Progress' }} />);
-    expect(screen.getByRole('link', { name: /resume quiz/i })).toBeDefined();
+    expect(screen.getByRole('link', { name: /resume quest/i })).toBeDefined();
   });
 
   it('links to the documents section', () => {

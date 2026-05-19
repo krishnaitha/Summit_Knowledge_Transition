@@ -42,3 +42,14 @@ CMD ["node", "server.js"]
 FROM runner AS worker
 
 CMD ["node", "worker/index.mjs"]
+
+# ---- migrate: lightweight database migration runner ----
+FROM node:22-slim AS migrate
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund --omit=dev
+
+COPY postgres/migrations ./postgres/migrations
+
+CMD ["node_modules/.bin/node-pg-migrate", "up", "-m", "postgres/migrations"]

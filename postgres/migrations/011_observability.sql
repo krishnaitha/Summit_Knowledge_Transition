@@ -54,14 +54,7 @@ create index if not exists rag_traces_slow
   on public.rag_traces (project_id, created_at desc)
   where is_slow = true;
 
--- RLS: service role bypasses automatically. Admins can SELECT.
-alter table public.rag_traces enable row level security;
-
-drop policy if exists "rag traces admin read" on public.rag_traces;
-create policy "rag traces admin read"
-  on public.rag_traces
-  for select
-  using (public.is_admin());
+-- Note: RLS/policies removed — this app uses server-side auth, not Supabase RLS.
 
 -- Aggregate summary function: single table scan for all KPI counts.
 -- Called by getObservabilityMetrics() in lib/data.ts.

@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Summit KT Portal — PostgreSQL Schema (standalone, no Supabase)
--- Generated from migrations 001–011
+-- Generated from migrations 001–022
 --
 -- Prerequisites (run once in psql as superuser):
 --   CREATE EXTENSION IF NOT EXISTS vector;
@@ -63,6 +63,15 @@ create table if not exists invite_tokens (
   token      text        not null unique,
   role       user_role   not null default 'member',
   project_id uuid,                         -- optional: auto-assign to project on accept
+  expires_at timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+-- Password reset tokens (021)
+create table if not exists password_reset_tokens (
+  id         uuid        primary key default gen_random_uuid(),
+  email      text        not null,
+  token      text        not null unique,
   expires_at timestamptz not null,
   created_at timestamptz not null default now()
 );
@@ -132,7 +141,7 @@ create table if not exists documents (
   is_required    boolean     not null default false,
   scan_flags     text[]      not null default '{}',
   source_connector_id uuid   references document_connectors(id) on delete set null,
-  source_provider text,
+  source_provider text       check (source_provider in ('confluence', 'sharepoint')),
   source_item_id text,
   source_url     text,
   source_synced_at timestamptz,
@@ -332,6 +341,20 @@ create table if not exists quiz_resets (
   reset_at   timestamptz not null default now()
 );
 
+-- Quiz retake requests (022)
+create table if not exists quiz_retake_requests (
+  id          uuid        primary key default gen_random_uuid(),
+  user_id     uuid        not null references users(id) on delete cascade,
+  project_id  uuid        not null references projects(id) on delete cascade,
+  attempt_id  uuid,
+  reason      text,
+  status      text        not null default 'pending'
+                          check (status in ('pending', 'approved', 'rejected')),
+  created_at  timestamptz not null default now(),
+  resolved_at timestamptz,
+  resolved_by uuid        references users(id)
+);
+
 -- Activity log
 create table if not exists activity_log (
   id         uuid        primary key default gen_random_uuid(),
@@ -345,7 +368,7 @@ create table if not exists activity_log (
 -- Background processing jobs (010)
 create table if not exists processing_jobs (
   id           uuid        primary key default gen_random_uuid(),
-  type         text        not null check (type in ('document_process', 'quiz_generate')),
+  type         text        not null check (type in ('document_process', 'quiz_generate', 'connector_sync')),
   status       text        not null default 'pending'
                              check (status in ('pending', 'running', 'done', 'failed')),
   payload      jsonb       not null default '{}',
@@ -402,8 +425,18 @@ create index if not exists chat_bookmarks_user_project_idx
 create index if not exists activity_log_rate_limit_idx
   on activity_log (user_id, action, created_at desc);
 
+create index if not exists idx_project_members_role
+  on project_members (project_id, role);
+
 create index if not exists project_announcements_project_created_idx
   on project_announcements (project_id, created_at desc);
+
+create index if not exists document_connectors_project_created_at
+  on document_connectors (project_id, created_at desc);
+
+create unique index if not exists documents_source_connector_item_unique
+  on documents (source_connector_id, source_item_id)
+  where source_connector_id is not null and source_item_id is not null;
 
 create index if not exists documents_required_idx
   on documents (project_id, is_required);
@@ -454,6 +487,12 @@ create index if not exists rag_traces_hallucination
 create index if not exists rag_traces_slow
   on rag_traces (project_id, created_at desc)
   where is_slow = true;
+
+create index if not exists quiz_retake_requests_project_idx
+  on quiz_retake_requests (project_id, status);
+
+create index if not exists quiz_retake_requests_user_project_idx
+  on quiz_retake_requests (user_id, project_id, status);
 
 -- ---------------------------------------------------------------------------
 -- Functions

@@ -8,14 +8,21 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
-      - ./postgres/migrations/add_password_reset_tokens.sql:/docker-entrypoint-initdb.d/02_add_password_reset_tokens.sql:ro
-      - ./postgres/migrations/add_quiz_retake_requests.sql:/docker-entrypoint-initdb.d/03_add_quiz_retake_requests.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d summitkt"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  migrate:
+    build:
+      context: .
+      target: migrate
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/summitkt
+    depends_on:
+      db:
+        condition: service_healthy
 
   app:
     build:
@@ -30,8 +37,8 @@ services:
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   worker:
     build:
@@ -45,8 +52,8 @@ services:
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   db_data:

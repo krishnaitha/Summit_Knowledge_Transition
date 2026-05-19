@@ -1,7 +1,6 @@
 'use server';
 
 import { randomUUID } from 'crypto';
-import { revalidateTag } from 'next/cache';
 import {
   AlignmentType,
   Document,
@@ -11,12 +10,13 @@ import {
   Paragraph,
   TextRun,
 } from 'docx';
+import { revalidateTag } from 'next/cache';
 
 import { requireAnyAdmin } from '@/lib/auth';
-import { createGroqChatCompletion } from '@/lib/groq/chat';
-import sql from '@/lib/db';
-import { uploadFile } from '@/lib/storage/local';
 import { userHasProjectAccess } from '@/lib/data';
+import sql from '@/lib/db';
+import { createGroqChatCompletion } from '@/lib/groq/chat';
+import { uploadFile } from '@/lib/storage/local';
 
 const TRANSCRIPT_PROMPT = `You are a technical knowledge management specialist. Transform the transcript below into a comprehensive knowledge-transfer document. Always output in Markdown.
 
@@ -198,7 +198,7 @@ export async function generateDocumentFromTranscriptAction(formData: FormData) {
       max_tokens: 4000,
     });
 
-    const raw = completion.choices[0]?.message?.content || '';
+    const raw = ('choices' in completion ? completion.choices[0]?.message?.content : null) || '';
     if (!raw) throw new Error('Failed to generate document — no content returned');
 
     // Canonical markdown — always used for preview and KB push
@@ -293,7 +293,7 @@ export async function pushToKnowledgeBaseAction(params: {
     },
   }).catch(() => {});
 
-  revalidateTag(`project-docs:${projectId}`);
+  revalidateTag(`project-docs:${projectId}`, {});
 
   return { documentId, jobId };
 }

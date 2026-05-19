@@ -10,7 +10,9 @@
     "format": "prettier --write app components lib worker",
     "typecheck": "tsc --noEmit",
     "worker": "node worker/index.mjs",
-    "test": "vitest",
+    "db:migrate": "dotenv -e .env.local -- node-pg-migrate up -m postgres/migrations",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "dependencies": {
@@ -28,7 +30,9 @@
     "mammoth": "^1.9.1",
     "next": "16.2.6",
     "next-auth": "^4.24.14",
+    "node-pg-migrate": "^8.0.4",
     "pdf-parse": "^1.1.1",
+    "pg": "^8.20.0",
     "postgres": "^3.4.9",
     "react": "19.2.6",
     "react-confetti": "^6.4.0",
@@ -50,6 +54,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.21",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "eslint-config-prettier": "^9.1.0",

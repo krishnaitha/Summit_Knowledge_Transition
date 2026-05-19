@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { requireMember } from '@/lib/auth';
-import { getProjectById, userHasProjectAccess } from '@/lib/data';
+import { userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
 import { createQuizCompletion } from '@/lib/llm';
 import type { Json } from '@/lib/types/database';
@@ -23,7 +23,9 @@ function parseFlashcardsFromModel(raw: string) {
       .trim();
 
     const parsed = JSON.parse(cleaned);
-    const list = Array.isArray(parsed) ? parsed : (parsed.flashcards ?? []);
+    const list = (Array.isArray(parsed) ? parsed : (parsed.flashcards ?? [])) as Array<
+      Record<string, unknown>
+    >;
 
     return list
       .map((item) => ({

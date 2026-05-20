@@ -106,6 +106,7 @@ export interface DocumentThreadRecord {
   updated_at: string;
   source: 'document' | 'knowledge_gap';
   gap_query: string | null;
+  kb_document_id: string | null;
 }
 
 export interface DocumentThreadCommentRecord {

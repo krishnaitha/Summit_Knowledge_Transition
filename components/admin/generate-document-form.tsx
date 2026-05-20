@@ -1,7 +1,7 @@
 'use client';
 
+import { AlertCircle, CheckCircle, Database, Download, FileText, Lightbulb } from 'lucide-react';
 import { useState } from 'react';
-import { FileText, Download, AlertCircle, CheckCircle, Database, Lightbulb } from 'lucide-react';
 
 import {
   generateDocumentFromTranscriptAction,
@@ -15,9 +15,24 @@ type Project = { id: string; name: string };
 interface GenerateDocumentFormProps {
   projects: Project[];
   suggestedContext?: string;
+  /** Full thread Q&A conversation pre-formatted as a transcript */
+  suggestedTranscript?: string;
+  /** Pre-filled document title derived from the thread */
+  suggestedTitle?: string;
+  /** Project to pre-select in the push-to-KB dropdown */
+  preselectedProjectId?: string;
+  /** When set, the push action links the created document back to this thread */
+  sourceThreadId?: string;
 }
 
-export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDocumentFormProps) {
+export function GenerateDocumentForm({
+  projects,
+  suggestedContext,
+  suggestedTranscript,
+  suggestedTitle,
+  preselectedProjectId,
+  sourceThreadId,
+}: GenerateDocumentFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generated, setGenerated] = useState<{
@@ -29,7 +44,7 @@ export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDoc
   } | null>(null);
 
   // Push-to-KB state
-  const [pushProjectId, setPushProjectId] = useState('');
+  const [pushProjectId, setPushProjectId] = useState(preselectedProjectId ?? '');
   const [pushStatus, setPushStatus] = useState<'idle' | 'pushing' | 'pushed' | 'error'>('idle');
   const [pushError, setPushError] = useState<string | null>(null);
 
@@ -102,6 +117,7 @@ export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDoc
         content: generated.content,
         filename: kbFilename,
         projectId: pushProjectId,
+        threadId: sourceThreadId,
       });
       setPushStatus('pushed');
     } catch (err) {
@@ -217,7 +233,20 @@ export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDoc
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {suggestedContext && (
+          {suggestedTranscript ? (
+            <div className="flex gap-3 rounded-lg border border-green-200 bg-green-50 p-3">
+              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+              <div>
+                <p className="text-xs font-semibold text-green-800">
+                  Thread conversation pre-loaded
+                </p>
+                <p className="mt-0.5 text-xs text-green-700">
+                  The Q&amp;A from this knowledge-gap thread has been filled in below. Review and
+                  generate your document.
+                </p>
+              </div>
+            </div>
+          ) : suggestedContext ? (
             <div className="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
               <div>
@@ -227,7 +256,7 @@ export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDoc
                 </p>
               </div>
             </div>
-          )}
+          ) : null}
 
           {error && (
             <div className="flex gap-3 rounded-lg border border-red-200 bg-red-50 p-3">
@@ -246,6 +275,7 @@ export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDoc
               className="mt-2 min-h-80"
               required
               disabled={isLoading}
+              defaultValue={suggestedTranscript}
             />
           </div>
 
@@ -257,7 +287,8 @@ export function GenerateDocumentForm({ projects, suggestedContext }: GenerateDoc
               type="text"
               name="title"
               defaultValue={
-                suggestedContext ? `Knowledge: ${suggestedContext.slice(0, 60)}` : undefined
+                suggestedTitle ??
+                (suggestedContext ? `Knowledge: ${suggestedContext.slice(0, 60)}` : undefined)
               }
               placeholder="e.g., Onboarding Process Documentation"
               className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 transition focus:border-slate-900 focus:outline-none disabled:bg-slate-100"

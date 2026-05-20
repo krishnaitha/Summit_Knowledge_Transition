@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import { MarkdownContent } from '@/components/ui/markdown-content';
-import { appEnv } from '@/lib/env';
+import { clientEnv } from '@/lib/env.client';
 
 /**
  * Rendered for threads that have no bot reply yet.
@@ -49,7 +49,7 @@ export function BotReplyPoller({ threadId }: { threadId: string }) {
   return (
     <div className="rounded-xl border border-violet-200 bg-violet-50 p-3">
       <div className="flex items-center gap-2 text-xs text-slate-500">
-        <span className="font-medium text-violet-700">{appEnv.botName}</span>
+        <span className="font-medium text-violet-700">{clientEnv.botName}</span>
         <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700">
           Bot
         </span>

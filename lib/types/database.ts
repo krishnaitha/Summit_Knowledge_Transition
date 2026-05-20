@@ -115,6 +115,7 @@ export interface DocumentThreadCommentRecord {
   body: string;
   is_answer: boolean;
   is_bot: boolean;
+  sources: Array<{ document_name: string }> | null;
   created_at: string;
   updated_at: string;
 }

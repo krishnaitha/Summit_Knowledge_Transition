@@ -3,10 +3,12 @@ import {
   createDocumentThreadAction,
   updateDocumentThreadStatusAction,
 } from '@/app/actions/document-threads';
+import { BotReplyPoller } from '@/components/documents/bot-reply-poller';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { MarkdownContent } from '@/components/ui/markdown-content';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
 import type { DocumentThreadView } from '@/lib/data';
@@ -130,7 +132,7 @@ export function DocumentThreadsBoard({
                       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                         <span className="font-medium text-slate-700">
                           {comment.is_bot
-                            ? 'KT Bot'
+                            ? 'NextElevate AI'
                             : displayName(comment.author_name, comment.author_email)}
                         </span>
                         {comment.is_bot && <Badge variant="info">Bot</Badge>}
@@ -145,11 +147,33 @@ export function DocumentThreadsBoard({
                         {comment.is_answer && <Badge variant="success">Answer</Badge>}
                         <span>• {formatDate(comment.created_at, true)}</span>
                       </div>
-                      <p className="mt-1 text-sm whitespace-pre-wrap text-slate-700">
-                        {comment.body}
-                      </p>
+                      {comment.is_bot ? (
+                        <>
+                          <MarkdownContent content={comment.body} size="sm" />
+                          {(comment.sources?.length ?? 0) > 0 && (
+                            <div className="mt-2 flex flex-wrap items-center justify-end gap-1.5">
+                              <span className="text-xs text-slate-400">Sources:</span>
+                              {(comment.sources ?? []).map((src) => (
+                                <span
+                                  key={src.document_name}
+                                  className="inline-flex items-center rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-medium text-violet-700"
+                                >
+                                  {src.document_name}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <p className="mt-1 text-sm whitespace-pre-wrap text-slate-700">
+                          {comment.body}
+                        </p>
+                      )}
                     </div>
                   ))}
+                  {thread.status === 'open' && !thread.comments.some((c) => c.is_bot) && (
+                    <BotReplyPoller threadId={thread.id} />
+                  )}
                 </div>
 
                 {thread.status === 'open' && (

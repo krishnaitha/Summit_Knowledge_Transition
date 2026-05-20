@@ -12,6 +12,7 @@ import { MarkdownContent } from '@/components/ui/markdown-content';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
 import type { DocumentThreadView } from '@/lib/data';
+import { appEnv } from '@/lib/env';
 import type { DocumentRecord } from '@/lib/types/database';
 import { formatDate } from '@/lib/utils';
 
@@ -132,7 +133,7 @@ export function DocumentThreadsBoard({
                       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                         <span className="font-medium text-slate-700">
                           {comment.is_bot
-                            ? 'NextElevate AI'
+                            ? appEnv.botName
                             : displayName(comment.author_name, comment.author_email)}
                         </span>
                         {comment.is_bot && <Badge variant="info">Bot</Badge>}

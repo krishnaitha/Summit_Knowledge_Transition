@@ -5,6 +5,7 @@ import sql from '@/lib/db';
 import { syncDocumentConnector } from '@/lib/documents/connectors';
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
+import { appEnv } from '@/lib/env';
 import { createChatCompletion, createQuizCompletion } from '@/lib/llm';
 import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
 import { downloadFile } from '@/lib/storage/local';
@@ -307,7 +308,7 @@ const BOT_NO_MATCH_MSG =
 
 function buildBotReplyPrompt(projectName: string, context: string): string {
   return [
-    `You are NextElevate AI, a knowledge assistant for the ${projectName} knowledge transfer.`,
+    `You are ${appEnv.botName}, a knowledge assistant for the ${projectName} knowledge transfer.`,
     'Answer the question using ONLY the context provided below.',
     '',
     'Formatting rules — follow strictly:',

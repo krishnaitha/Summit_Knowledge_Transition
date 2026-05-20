@@ -10,7 +10,7 @@ import {
   Paragraph,
   TextRun,
 } from 'docx';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { requireAnyAdmin } from '@/lib/auth';
 import { userHasProjectAccess } from '@/lib/data';
@@ -253,10 +253,11 @@ export async function pushToKnowledgeBaseAction(params: {
   content: string;
   filename: string;
   projectId: string;
+  threadId?: string;
 }) {
   const { profile } = await requireAnyAdmin();
 
-  const { content, filename, projectId } = params;
+  const { content, filename, projectId, threadId } = params;
 
   if (!projectId) throw new Error('Select a project first');
   if (!content) throw new Error('No content to push');
@@ -276,6 +277,13 @@ export async function pushToKnowledgeBaseAction(params: {
       ${storagePath}, ${ext}, ${profile!.id}, 0
     )
   `;
+
+  if (threadId) {
+    await sql`
+      UPDATE document_threads SET kb_document_id = ${documentId} WHERE id = ${threadId}
+    `;
+    revalidatePath(`/admin/knowledge-gap-threads/${threadId}`);
+  }
 
   const jobs = await sql`
     INSERT INTO processing_jobs (type, payload)

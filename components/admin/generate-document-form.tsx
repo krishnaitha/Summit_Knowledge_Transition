@@ -15,9 +15,14 @@ type Project = { id: string; name: string };
 interface GenerateDocumentFormProps {
   projects: Project[];
   suggestedContext?: string;
+  /** Full thread Q&A conversation pre-formatted as a transcript */
   suggestedTranscript?: string;
+  /** Pre-filled document title derived from the thread */
   suggestedTitle?: string;
+  /** Project to pre-select in the push-to-KB dropdown */
   preselectedProjectId?: string;
+  /** When set, the push action links the created document back to this thread */
+  sourceThreadId?: string;
 }
 
 export function GenerateDocumentForm({
@@ -26,6 +31,7 @@ export function GenerateDocumentForm({
   suggestedTranscript,
   suggestedTitle,
   preselectedProjectId,
+  sourceThreadId,
 }: GenerateDocumentFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,6 +117,7 @@ export function GenerateDocumentForm({
         content: generated.content,
         filename: kbFilename,
         projectId: pushProjectId,
+        threadId: sourceThreadId,
       });
       setPushStatus('pushed');
     } catch (err) {

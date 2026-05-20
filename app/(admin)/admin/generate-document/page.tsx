@@ -64,6 +64,7 @@ export default async function GenerateDocumentPage(props: {
           suggestedTranscript={suggestedTranscript}
           suggestedTitle={suggestedTitle}
           preselectedProjectId={preselectedProjectId}
+          sourceThreadId={searchParams.threadId}
         />
 
         {/* Info Section */}

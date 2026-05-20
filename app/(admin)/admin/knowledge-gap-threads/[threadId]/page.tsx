@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 import {
@@ -75,16 +75,22 @@ export default async function KnowledgeGapThreadPage(props: {
             </div>
           )}
 
-          {thread.status === 'resolved' && thread.gap_query && (
-            <Link
-              href={`/admin/generate-document?projectId=${thread.project_id}&context=${encodeURIComponent(thread.gap_query)}&threadId=${thread.id}`}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
-            >
-              <FileText className="h-4 w-4" />
-              Capture to Knowledge Base
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          )}
+          {thread.status === 'resolved' &&
+            (thread.kb_document_id ? (
+              <div className="inline-flex items-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+                <CheckCircle className="h-4 w-4" />
+                Captured to Knowledge Base
+              </div>
+            ) : thread.gap_query ? (
+              <Link
+                href={`/admin/generate-document?projectId=${thread.project_id}&context=${encodeURIComponent(thread.gap_query)}&threadId=${thread.id}`}
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
+              >
+                <FileText className="h-4 w-4" />
+                Capture to Knowledge Base
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : null)}
 
           <div className="space-y-3">
             {thread.comments.length ? (

@@ -176,6 +176,7 @@ create table if not exists document_threads (
   updated_at  timestamptz not null default now(),
   source      text        not null default 'document' check (source in ('document', 'knowledge_gap')),
   gap_query   text,
+  kb_document_id uuid references documents(id) on delete set null,
   constraint document_threads_page_number_check
     check (page_number is null or page_number > 0)
 );

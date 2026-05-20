@@ -1868,25 +1868,48 @@ export interface KnowledgeGap {
   lastAskedAt: string;
   projects: string[];
   projectIds: string[];
+  /** Set when a knowledge-gap thread for this query has been resolved. */
+  resolvedThreadId?: string;
 }
 
 export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
+  // Aggregate refused queries first, then lateral-join to find a resolved thread
+  // without risk of multiplying rows from the document_threads join.
   const rows = await sql`
+    WITH gaps AS (
+      SELECT
+        MIN(rt.query_text)                                  AS query_text,
+        COUNT(*)::int                                       AS occurrences,
+        MAX(rt.created_at)                                  AS last_asked_at,
+        array_remove(array_agg(DISTINCT p.name), NULL)      AS project_names,
+        array_remove(array_agg(DISTINCT p.id::text), NULL)  AS project_ids,
+        lower(trim(rt.query_text))                          AS norm_query
+      FROM rag_traces rt
+      LEFT JOIN projects p ON p.id = rt.project_id
+      WHERE rt.answer_refused = true
+        AND rt.created_at >= ${thirtyDaysAgo}
+      GROUP BY lower(trim(rt.query_text))
+      ORDER BY occurrences DESC, last_asked_at DESC
+      LIMIT 10
+    )
     SELECT
-      MIN(rt.query_text)                                    AS query_text,
-      COUNT(*)::int                                         AS occurrences,
-      MAX(rt.created_at)                                    AS last_asked_at,
-      array_remove(array_agg(DISTINCT p.name), NULL)        AS project_names,
-      array_remove(array_agg(DISTINCT p.id::text), NULL)    AS project_ids
-    FROM rag_traces rt
-    LEFT JOIN projects p ON p.id = rt.project_id
-    WHERE rt.answer_refused = true
-      AND rt.created_at >= ${thirtyDaysAgo}
-    GROUP BY lower(trim(rt.query_text))
-    ORDER BY occurrences DESC, last_asked_at DESC
-    LIMIT 10
+      g.query_text,
+      g.occurrences,
+      g.last_asked_at,
+      g.project_names,
+      g.project_ids,
+      dt.id AS resolved_thread_id
+    FROM gaps g
+    LEFT JOIN LATERAL (
+      SELECT id
+      FROM document_threads
+      WHERE lower(trim(gap_query)) = g.norm_query
+        AND source = 'knowledge_gap'
+        AND status  = 'resolved'
+      LIMIT 1
+    ) dt ON true
   `;
 
   return rows.map((row) => ({
@@ -1895,5 +1918,6 @@ export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
     lastAskedAt: formatDate(row.last_asked_at as string, true),
     projects: (row.project_names as string[] | null) ?? [],
     projectIds: (row.project_ids as string[] | null) ?? [],
+    resolvedThreadId: (row.resolved_thread_id as string | null) ?? undefined,
   }));
 }

@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
-import type { DocumentRecord } from '@/lib/types/database';
 import type { DocumentThreadView } from '@/lib/data';
+import type { DocumentRecord } from '@/lib/types/database';
 import { formatDate } from '@/lib/utils';
 
 function displayName(name: string | null, email: string | null) {
@@ -125,16 +125,20 @@ export function DocumentThreadsBoard({
                   {thread.comments.map((comment) => (
                     <div
                       key={comment.id}
-                      className="rounded-xl border border-slate-200 bg-white p-3"
+                      className={`rounded-xl border p-3 ${comment.is_bot ? 'border-violet-200 bg-violet-50' : 'border-slate-200 bg-white'}`}
                     >
                       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                         <span className="font-medium text-slate-700">
-                          {displayName(comment.author_name, comment.author_email)}
+                          {comment.is_bot
+                            ? 'KT Bot'
+                            : displayName(comment.author_name, comment.author_email)}
                         </span>
-                        {comment.author_global_role === 'admin' && (
+                        {comment.is_bot && <Badge variant="info">Bot</Badge>}
+                        {!comment.is_bot && comment.author_global_role === 'admin' && (
                           <Badge variant="danger">Super Admin</Badge>
                         )}
-                        {comment.author_project_role === 'admin' &&
+                        {!comment.is_bot &&
+                          comment.author_project_role === 'admin' &&
                           comment.author_global_role !== 'admin' && (
                             <Badge variant="warning">Product Admin</Badge>
                           )}

@@ -150,6 +150,13 @@ export async function createDocumentThreadAction(formData: FormData) {
     VALUES (${threadId}, ${userId}, ${body}, false)
   `;
 
+  // Enqueue bot reply — worker will retrieve relevant chunks and post an AI answer
+  const query = `${title} ${body}`.slice(0, 1000);
+  await sql`
+    INSERT INTO processing_jobs (type, payload)
+    VALUES ('bot_thread_reply', ${sql.json({ threadId, projectId, documentId, query })})
+  `;
+
   revalidateThreadPaths(projectId, documentId);
 }
 

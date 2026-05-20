@@ -2,10 +2,12 @@ import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import sql from '@/lib/db';
-import { extractTextFromFile } from '@/lib/documents/parse';
 import { syncDocumentConnector } from '@/lib/documents/connectors';
+import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
-import { createQuizCompletion } from '@/lib/llm';
+import { buildKtPrompt } from '@/lib/groq/chat';
+import { createChatCompletion, createQuizCompletion } from '@/lib/llm';
+import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
 import { downloadFile } from '@/lib/storage/local';
 import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
 import { sleep } from '@/lib/utils';
@@ -300,6 +302,64 @@ async function processQuizGenerateJob(payload: Record<string, unknown>) {
   return { createdSets, createdQuestions };
 }
 
+const BOT_NO_MATCH_MSG =
+  "I searched the project's KT documents but couldn't find enough information to answer this question. " +
+  'Consider asking an admin to add relevant documentation.';
+
+async function processBotThreadReplyJob(payload: Record<string, unknown>) {
+  const threadId = String(payload.threadId ?? '');
+  const projectId = String(payload.projectId ?? '');
+  const documentId = String(payload.documentId ?? '');
+  const query = String(payload.query ?? '');
+
+  if (!threadId || !projectId || !query) {
+    throw new Error('bot_thread_reply job missing required fields');
+  }
+
+  const projects = await sql<{ name: string }[]>`
+    SELECT name FROM projects WHERE id = ${projectId} LIMIT 1
+  `;
+  const projectName = projects[0]?.name ?? 'Project';
+
+  const chunks = await retrieveRelevantChunks(projectId, query, 5);
+
+  let answer: string;
+
+  if (!chunks.length || chunks[0].similarity < 0.2) {
+    answer = BOT_NO_MATCH_MSG;
+  } else {
+    const context = chunks.map((c) => `[${c.document_name}]\n${c.content}`).join('\n\n---\n\n');
+    const systemPrompt = buildKtPrompt(projectName, context);
+
+    const completion = await createChatCompletion({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: query },
+      ],
+      temperature: 0.3,
+      max_tokens: 1024,
+    });
+
+    answer = completion.choices[0]?.message.content?.trim() ?? BOT_NO_MATCH_MSG;
+  }
+
+  await sql`
+    INSERT INTO document_thread_comments (thread_id, author_id, body, is_answer, is_bot)
+    VALUES (${threadId}, NULL, ${answer}, true, true)
+  `;
+
+  await sql`
+    UPDATE document_threads SET updated_at = now() WHERE id = ${threadId}
+  `;
+
+  if (documentId) {
+    revalidatePath(`/projects/${projectId}`);
+    revalidatePath(`/projects/${projectId}/documents/${documentId}/threads`);
+  }
+
+  return { threadId, chunkCount: chunks.length };
+}
+
 async function processConnectorSyncJob(payload: Record<string, unknown>) {
   const connectorId = String(payload.connectorId ?? '');
   if (!connectorId) {
@@ -343,6 +403,8 @@ export async function POST(request: Request) {
       result = await processQuizGenerateJob(job.payload as Record<string, unknown>);
     } else if (job.type === 'connector_sync') {
       result = await processConnectorSyncJob(job.payload as Record<string, unknown>);
+    } else if (job.type === 'bot_thread_reply') {
+      result = await processBotThreadReplyJob(job.payload as Record<string, unknown>);
     } else {
       throw new Error(`Unknown job type: ${job.type}`);
     }

@@ -1,9 +1,9 @@
-import crypto from "crypto";
-import { NextResponse } from "next/server";
+import crypto from 'crypto';
+import { NextResponse } from 'next/server';
 
-import { requireCredentialsProvider } from "@/lib/auth/guard";
-import sql from "@/lib/db";
-import { sendEmail } from "@/lib/email-sendgrid";
+import { requireCredentialsProvider } from '@/lib/auth/guard';
+import sql from '@/lib/db';
+import { sendEmail } from '@/lib/email-sendgrid';
 
 export async function POST(request: Request) {
   const guard = requireCredentialsProvider();
@@ -11,23 +11,23 @@ export async function POST(request: Request) {
 
   try {
     const body = (await request.json()) as { email?: string };
-    const email = String(body.email ?? "")
+    const email = String(body.email ?? '')
       .trim()
       .toLowerCase();
 
     if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Always respond with success to avoid leaking whether an email exists
     const users =
-      await sql`SELECT id FROM users WHERE email = ${email} AND is_active = true LIMIT 1`;
+      await sql`SELECT id FROM users WHERE email = ${email} AND is_active = true AND auth_provider = 'credentials' LIMIT 1`;
 
     if (users.length) {
       // Delete any existing reset tokens for this email
       await sql`DELETE FROM password_reset_tokens WHERE email = ${email}`;
 
-      const token = crypto.randomBytes(32).toString("hex");
+      const token = crypto.randomBytes(32).toString('hex');
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
 
       await sql`
@@ -35,12 +35,12 @@ export async function POST(request: Request) {
         VALUES (${email}, ${token}, ${expiresAt})
       `;
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
       const resetLink = `${appUrl}/auth/reset-password?token=${token}`;
 
       await sendEmail(
         email,
-        "Reset your Summit KT Portal password",
+        'Reset your Summit KT Portal password',
         `
           <p>Hi,</p>
           <p>We received a request to reset your password for Summit KT Portal.</p>
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Request failed" },
+      { error: error instanceof Error ? error.message : 'Request failed' },
       { status: 500 },
     );
   }

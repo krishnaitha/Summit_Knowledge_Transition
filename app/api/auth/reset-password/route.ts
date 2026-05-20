@@ -1,8 +1,8 @@
-import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
+import bcrypt from 'bcryptjs';
+import { NextResponse } from 'next/server';
 
-import { requireCredentialsProvider } from "@/lib/auth/guard";
-import sql from "@/lib/db";
+import { requireCredentialsProvider } from '@/lib/auth/guard';
+import sql from '@/lib/db';
 
 export async function POST(request: Request) {
   const guard = requireCredentialsProvider();
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const { token, password } = body;
 
     if (!token || !password || password.length < 8) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
     // Claim token atomically
@@ -29,8 +29,7 @@ export async function POST(request: Request) {
     if (!rows.length) {
       return NextResponse.json(
         {
-          error:
-            "Reset link has expired or already been used. Please request a new one.",
+          error: 'Reset link has expired or already been used. Please request a new one.',
         },
         { status: 400 },
       );
@@ -41,21 +40,18 @@ export async function POST(request: Request) {
 
     const updated = await sql`
       UPDATE users SET password_hash = ${passwordHash}
-      WHERE email = ${email} AND is_active = true
+      WHERE email = ${email} AND is_active = true AND auth_provider = 'credentials'
       RETURNING id
     `;
 
     if (!updated.length) {
-      return NextResponse.json(
-        { error: "Account not found." },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Account not found.' }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Reset failed" },
+      { error: error instanceof Error ? error.message : 'Reset failed' },
       { status: 500 },
     );
   }

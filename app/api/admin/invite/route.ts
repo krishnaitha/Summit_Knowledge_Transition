@@ -2,9 +2,9 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
-import { validateOrigin } from '@/lib/security';
 import sql from '@/lib/db';
 import { sendEmail } from '@/lib/email-sendgrid';
+import { validateOrigin } from '@/lib/security';
 
 export async function POST(request: Request) {
   try {
@@ -32,7 +32,8 @@ export async function POST(request: Request) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
     // If user already exists, assign them directly to the project if provided.
-    const existing = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+    const existing =
+      await sql`SELECT id FROM users WHERE email = ${email} AND auth_provider = 'credentials' LIMIT 1`;
     if (existing.length) {
       const userId = existing[0].id as string;
 
@@ -77,6 +78,9 @@ export async function POST(request: Request) {
       emailError: emailResult.error,
     });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Invite failed' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Invite failed' },
+      { status: 500 },
+    );
   }
 }

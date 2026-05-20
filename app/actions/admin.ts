@@ -254,7 +254,8 @@ export async function inviteProjectMemberAction(formData: FormData) {
   if (!email || !projectId) return;
 
   // Check if user already exists
-  const existing = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+  const existing =
+    await sql`SELECT id FROM users WHERE email = ${email} AND auth_provider = 'credentials' LIMIT 1`;
   const userId = existing[0]?.id as string | undefined;
 
   if (!userId) {
@@ -619,7 +620,8 @@ export async function createDemoUserAction(formData: FormData) {
   const DEMO_PASSWORD = 'Demo@Summit1';
   const DEMO_NAME = 'Demo Member';
 
-  const existing = await sql`SELECT id FROM users WHERE email = ${DEMO_EMAIL} LIMIT 1`;
+  const existing =
+    await sql`SELECT id FROM users WHERE email = ${DEMO_EMAIL} AND auth_provider = 'credentials' LIMIT 1`;
   let userId = existing[0]?.id as string | undefined;
 
   if (!userId) {

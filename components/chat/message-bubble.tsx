@@ -1,6 +1,7 @@
 import { BookmarkButton } from '@/components/chat/bookmark-button';
 import { FeedbackButtons } from '@/components/chat/feedback-buttons';
 import { SourceTag } from '@/components/chat/source-tag';
+import { MarkdownContent } from '@/components/ui/markdown-content';
 import { cn } from '@/lib/utils';
 
 export interface ChatBubbleMessage {
@@ -26,12 +27,25 @@ export function MessageBubble({
 
   return (
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
-      <div className={cn('max-w-3xl rounded-3xl px-5 py-4 shadow-sm', isUser ? 'bg-brand-700 text-white' : 'bg-white text-slate-900')}>
-        <p className="whitespace-pre-wrap text-sm leading-7">{message.content}</p>
+      <div
+        className={cn(
+          'max-w-3xl rounded-3xl px-5 py-4 shadow-sm',
+          isUser ? 'bg-brand-700 text-white' : 'bg-white text-slate-900',
+        )}
+      >
+        {isUser ? (
+          <p className="text-sm leading-7 whitespace-pre-wrap">{message.content}</p>
+        ) : (
+          <MarkdownContent content={message.content} />
+        )}
         {!isUser && Array.isArray(message.sources) && message.sources.length > 0 ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {message.sources.map((source, index) => (
-              <SourceTag key={`${source.documentName}-${index}`} documentName={source.documentName} similarity={source.similarity} />
+              <SourceTag
+                key={`${source.documentName}-${index}`}
+                documentName={source.documentName}
+                similarity={source.similarity}
+              />
             ))}
           </div>
         ) : null}

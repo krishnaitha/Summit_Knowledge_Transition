@@ -3,14 +3,17 @@ import {
   createDocumentThreadAction,
   updateDocumentThreadStatusAction,
 } from '@/app/actions/document-threads';
+import { BotReplyPoller } from '@/components/documents/bot-reply-poller';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { MarkdownContent } from '@/components/ui/markdown-content';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
-import type { DocumentRecord } from '@/lib/types/database';
 import type { DocumentThreadView } from '@/lib/data';
+import { appEnv } from '@/lib/env';
+import type { DocumentRecord } from '@/lib/types/database';
 import { formatDate } from '@/lib/utils';
 
 function displayName(name: string | null, email: string | null) {
@@ -125,27 +128,53 @@ export function DocumentThreadsBoard({
                   {thread.comments.map((comment) => (
                     <div
                       key={comment.id}
-                      className="rounded-xl border border-slate-200 bg-white p-3"
+                      className={`rounded-xl border p-3 ${comment.is_bot ? 'border-violet-200 bg-violet-50' : 'border-slate-200 bg-white'}`}
                     >
                       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                         <span className="font-medium text-slate-700">
-                          {displayName(comment.author_name, comment.author_email)}
+                          {comment.is_bot
+                            ? appEnv.botName
+                            : displayName(comment.author_name, comment.author_email)}
                         </span>
-                        {comment.author_global_role === 'admin' && (
+                        {comment.is_bot && <Badge variant="info">Bot</Badge>}
+                        {!comment.is_bot && comment.author_global_role === 'admin' && (
                           <Badge variant="danger">Super Admin</Badge>
                         )}
-                        {comment.author_project_role === 'admin' &&
+                        {!comment.is_bot &&
+                          comment.author_project_role === 'admin' &&
                           comment.author_global_role !== 'admin' && (
                             <Badge variant="warning">Product Admin</Badge>
                           )}
                         {comment.is_answer && <Badge variant="success">Answer</Badge>}
                         <span>• {formatDate(comment.created_at, true)}</span>
                       </div>
-                      <p className="mt-1 text-sm whitespace-pre-wrap text-slate-700">
-                        {comment.body}
-                      </p>
+                      {comment.is_bot ? (
+                        <>
+                          <MarkdownContent content={comment.body} size="sm" />
+                          {(comment.sources?.length ?? 0) > 0 && (
+                            <div className="mt-2 flex flex-wrap items-center justify-end gap-1.5">
+                              <span className="text-xs text-slate-400">Sources:</span>
+                              {(comment.sources ?? []).map((src) => (
+                                <span
+                                  key={src.document_name}
+                                  className="inline-flex items-center rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-medium text-violet-700"
+                                >
+                                  {src.document_name}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <p className="mt-1 text-sm whitespace-pre-wrap text-slate-700">
+                          {comment.body}
+                        </p>
+                      )}
                     </div>
                   ))}
+                  {thread.status === 'open' && !thread.comments.some((c) => c.is_bot) && (
+                    <BotReplyPoller threadId={thread.id} />
+                  )}
                 </div>
 
                 {thread.status === 'open' && (

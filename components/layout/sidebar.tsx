@@ -1,8 +1,8 @@
 'use client';
 
+import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { LucideIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -20,12 +20,15 @@ export function Sidebar({ items, sectionLabel }: { items: SidebarItem[]; section
     <aside className="hidden w-60 shrink-0 xl:block">
       <div className="glass-panel rounded-2xl p-3">
         {sectionLabel && (
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">{sectionLabel}</p>
+          <p className="mb-2 px-3 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+            {sectionLabel}
+          </p>
         )}
         <nav className="space-y-0.5">
           {items.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            const isActive =
+              pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -42,9 +45,9 @@ export function Sidebar({ items, sectionLabel }: { items: SidebarItem[]; section
                     className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-slate-400')}
                   />
                 )}
-                {item.label}
+                <span className="flex-1 truncate">{item.label}</span>
                 {item.badge != null && item.badge > 0 && (
-                  <span className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                  <span className="ml-auto flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] leading-none font-bold text-white">
                     {item.badge > 9 ? '9+' : item.badge}
                   </span>
                 )}

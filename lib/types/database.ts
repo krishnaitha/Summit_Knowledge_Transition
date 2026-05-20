@@ -114,6 +114,8 @@ export interface DocumentThreadCommentRecord {
   author_id: string | null;
   body: string;
   is_answer: boolean;
+  is_bot: boolean;
+  sources: Array<{ document_name: string }> | null;
   created_at: string;
   updated_at: string;
 }
@@ -294,7 +296,11 @@ export interface ChatBookmarkRecord {
   created_at: string;
 }
 
-export type ProcessingJobType = 'document_process' | 'quiz_generate' | 'connector_sync';
+export type ProcessingJobType =
+  | 'document_process'
+  | 'quiz_generate'
+  | 'connector_sync'
+  | 'bot_thread_reply';
 export type ProcessingJobStatus = 'pending' | 'running' | 'done' | 'failed';
 
 export interface ProcessingJobRecord {

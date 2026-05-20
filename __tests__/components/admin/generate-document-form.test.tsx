@@ -144,4 +144,15 @@ describe('GenerateDocumentForm – structure', () => {
     render(<GenerateDocumentForm projects={PROJECTS} />);
     expect(screen.getByRole('button', { name: /generate document/i })).toBeDefined();
   });
+
+  it('renders correctly when sourceThreadId is provided', () => {
+    render(
+      <GenerateDocumentForm
+        projects={PROJECTS}
+        suggestedTranscript={THREAD_TRANSCRIPT}
+        sourceThreadId="thread-xyz-789"
+      />,
+    );
+    expect(screen.getByRole('button', { name: /generate document/i })).toBeDefined();
+  });
 });

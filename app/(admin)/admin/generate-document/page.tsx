@@ -1,16 +1,51 @@
 import { GenerateDocumentForm } from '@/components/admin/generate-document-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireAnyAdmin } from '@/lib/auth';
-import { getAllProjects } from '@/lib/data';
+import { getAllProjects, getKnowledgeGapThread } from '@/lib/data';
 
 export default async function GenerateDocumentPage(props: {
-  searchParams: Promise<{ context?: string }>;
+  searchParams: Promise<{ context?: string; threadId?: string; projectId?: string }>;
 }) {
   const { profile } = await requireAnyAdmin();
   if (!profile) return null;
 
   const [projects, searchParams] = await Promise.all([getAllProjects(), props.searchParams]);
   const suggestedContext = searchParams.context?.trim() || undefined;
+
+  // If arriving from a knowledge-gap thread, fetch the full conversation and
+  // pre-populate the transcript textarea with the structured Q&A exchange.
+  let suggestedTranscript: string | undefined;
+  let suggestedTitle: string | undefined;
+  let preselectedProjectId: string | undefined = searchParams.projectId?.trim() || undefined;
+
+  if (searchParams.threadId) {
+    const thread = await getKnowledgeGapThread(searchParams.threadId);
+    if (thread) {
+      preselectedProjectId = preselectedProjectId ?? thread.project_id;
+
+      const lines: string[] = [
+        `Knowledge Gap Thread: ${thread.title}`,
+        `Project: ${thread.project_name}`,
+        '',
+        '--- Original Question ---',
+        thread.gap_query ?? thread.title,
+        '',
+        '--- Conversation ---',
+      ];
+
+      for (const comment of thread.comments) {
+        const author = comment.author_name?.trim() || comment.author_email || 'Unknown';
+        const role = comment.is_answer ? ' [Answer]' : '';
+        const bot = comment.is_bot ? ' [AI]' : '';
+        lines.push(`${author}${role}${bot}:`);
+        lines.push(comment.body);
+        lines.push('');
+      }
+
+      suggestedTranscript = lines.join('\n').trim();
+      suggestedTitle = `Knowledge: ${(thread.gap_query ?? thread.title).slice(0, 60)}`;
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -26,6 +61,9 @@ export default async function GenerateDocumentPage(props: {
         <GenerateDocumentForm
           projects={projects.map((p) => ({ id: p.id, name: p.name }))}
           suggestedContext={suggestedContext}
+          suggestedTranscript={suggestedTranscript}
+          suggestedTitle={suggestedTitle}
+          preselectedProjectId={preselectedProjectId}
         />
 
         {/* Info Section */}

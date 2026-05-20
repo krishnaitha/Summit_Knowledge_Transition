@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 import {
   addDocumentThreadReplyAction,
@@ -77,7 +77,7 @@ export default async function KnowledgeGapThreadPage(props: {
 
           {thread.status === 'resolved' && thread.gap_query && (
             <Link
-              href={`/admin/generate-document?projectId=${thread.project_id}&context=${encodeURIComponent(thread.gap_query)}`}
+              href={`/admin/generate-document?projectId=${thread.project_id}&context=${encodeURIComponent(thread.gap_query)}&threadId=${thread.id}`}
               className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
             >
               <FileText className="h-4 w-4" />

@@ -96,6 +96,7 @@ function makeThread(overrides: Partial<DocumentThreadView> = {}): DocumentThread
     creator_email: 'alice@example.com',
     comment_count: 1,
     comments: [baseComment],
+    kb_document_id: null,
     ...overrides,
   };
 }

@@ -34,6 +34,20 @@ const NOT_FOUND_MSG =
   'I could not find enough information in the KT documents to answer this question. ' +
   'This may indicate a gap in the knowledge base — consider asking your admin to add relevant documentation.';
 
+type ResponseStyle = 'default' | 'concise' | 'step_by_step' | 'bullet_list';
+let hasEnsuredChatSessionTitleSchema = false;
+
+async function ensureChatSessionTitleSchema() {
+  if (hasEnsuredChatSessionTitleSchema) return;
+
+  try {
+    await sql`ALTER TABLE chat_sessions ADD COLUMN IF NOT EXISTS title text`;
+    hasEnsuredChatSessionTitleSchema = true;
+  } catch {
+    // Keep chat functional even if schema check fails temporarily.
+  }
+}
+
 function buildMemoryAwarePrompt(projectName: string, context: string, hasDocumentContext: boolean) {
   if (hasDocumentContext) {
     return buildKtPrompt(projectName, context);
@@ -52,7 +66,7 @@ async function ensureSessionForUser(
   userId: string,
   projectId: string,
   existingSessionId?: string | null,
-) {
+): Promise<{ sessionId: string | null; wasCreated: boolean }> {
   if (existingSessionId) {
     const rows = await sql`
       select id
@@ -62,7 +76,7 @@ async function ensureSessionForUser(
     `;
 
     if (rows.length) {
-      return existingSessionId;
+      return { sessionId: existingSessionId, wasCreated: false };
     }
   }
 
@@ -72,7 +86,84 @@ async function ensureSessionForUser(
     returning id
   `;
 
-  return (createdRows[0]?.id as string) ?? null;
+  return {
+    sessionId: (createdRows[0]?.id as string) ?? null,
+    wasCreated: true,
+  };
+}
+
+function deriveSessionTitle(message: string): string | null {
+  const normalized = message.trim().replace(/\s+/g, ' ');
+
+  if (!normalized) return null;
+
+  const lower = normalized.toLowerCase();
+  const nonTitlePhrases = ['yes remember', 'no remember', 'remember yes', 'remember no'];
+  if (nonTitlePhrases.includes(lower)) return null;
+
+  if (lower.startsWith('remember ')) {
+    return null;
+  }
+
+  return normalized.slice(0, 72);
+}
+
+function buildResponsePreferenceInstruction(
+  responseStyle: ResponseStyle,
+  citationsOnly: boolean,
+): string {
+  const instructions: string[] = [];
+
+  if (responseStyle === 'concise') {
+    instructions.push('Keep responses concise and focused.');
+  } else if (responseStyle === 'step_by_step') {
+    instructions.push('Respond in clear step-by-step format.');
+  } else if (responseStyle === 'bullet_list') {
+    instructions.push('Respond primarily as short bullet points.');
+  }
+
+  if (citationsOnly) {
+    instructions.push(
+      'Only include claims that are supported by retrieved source context or relevant user memory. If unsure, say so clearly.',
+    );
+  }
+
+  return instructions.join(' ');
+}
+
+function buildClarifyingQuestionInstruction(clarifyFirst: boolean): string {
+  if (!clarifyFirst) {
+    return '';
+  }
+
+  return [
+    'Clarify-first mode is enabled.',
+    'If the user request is broad, ambiguous, or missing a key detail needed for a high-quality answer, ask exactly one short clarifying question first and stop there.',
+    'If the request is already specific enough, answer directly.',
+    'Do not ask multiple questions at once.',
+  ].join(' ');
+}
+
+function buildStructuredOutputInstruction(message: string): string {
+  const lower = message.toLowerCase();
+  const instructions = [
+    'When a structured format would improve clarity, format the answer in markdown using short headings and compact sections.',
+    'Prefer clear markdown structures such as checklists, tables, numbered timelines, risk matrices, and dependency maps when appropriate to the question.',
+  ];
+
+  if (/(risk|dependency|dependencies)/.test(lower)) {
+    instructions.push(
+      'For risk or dependency questions, prefer a markdown table or a section titled "## Risk Matrix" or "## Dependency Map" if that best fits the answer.',
+    );
+  }
+
+  if (/(timeline|plan|roadmap|sequence|week|onboarding|steps)/.test(lower)) {
+    instructions.push(
+      'For plans or sequences, prefer a numbered timeline or a section titled "## Timeline" or "## Checklist".',
+    );
+  }
+
+  return instructions.join(' ');
 }
 
 async function appendChatTurn(
@@ -189,6 +280,9 @@ export async function POST(request: Request) {
       projectName?: string;
       sessionId?: string | null;
       message: string;
+      responseStyle?: ResponseStyle;
+      citationsOnly?: boolean;
+      clarifyFirst?: boolean;
     };
 
     const { userId, profile } = await getCurrentUserContext();
@@ -196,6 +290,8 @@ export async function POST(request: Request) {
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    await ensureChatSessionTitleSchema();
 
     // Rate limit: 10 messages per 5 minutes (burst) and 30 per hour (sustained)
     const burstCheck = await checkRateLimit(userId, 'chatbot_message', 10, 300);
@@ -222,7 +318,7 @@ export async function POST(request: Request) {
     await ensureUserMemorySchema();
 
     const normalizedMessage = body.message.trim();
-    const memorySessionId = await ensureSessionForUser(
+    const { sessionId: memorySessionId, wasCreated } = await ensureSessionForUser(
       userId,
       body.projectId,
       body.sessionId ?? null,
@@ -230,6 +326,17 @@ export async function POST(request: Request) {
 
     if (!memorySessionId) {
       return NextResponse.json({ error: 'Unable to initialize chat session' }, { status: 500 });
+    }
+
+    if (wasCreated) {
+      const derivedTitle = deriveSessionTitle(normalizedMessage);
+      if (derivedTitle) {
+        await sql`
+          UPDATE chat_sessions
+          SET title = ${derivedTitle}
+          WHERE id = ${memorySessionId} AND user_id = ${userId} AND title IS NULL
+        `;
+      }
     }
 
     const rememberIntent = parseRememberIntent(normalizedMessage);
@@ -415,7 +522,17 @@ export async function POST(request: Request) {
     }));
 
     const context = chunks.map((chunk) => `[${chunk.document_name}] ${chunk.content}`).join('\n\n');
-    const cacheKey = `${body.projectId}:${body.message.trim().toLowerCase()}`;
+    const responseStyle = body.responseStyle ?? 'default';
+    const citationsOnly = body.citationsOnly ?? false;
+    const clarifyFirst = body.clarifyFirst ?? false;
+    const responsePreferenceInstruction = buildResponsePreferenceInstruction(
+      responseStyle,
+      citationsOnly,
+    );
+    const clarifyingQuestionInstruction = buildClarifyingQuestionInstruction(clarifyFirst);
+    const structuredOutputInstruction = buildStructuredOutputInstruction(body.message);
+
+    const cacheKey = `${body.projectId}:${body.message.trim().toLowerCase()}:${responseStyle}:${citationsOnly ? 'citations' : 'normal'}:${clarifyFirst ? 'clarify' : 'direct'}`;
 
     const sessionId = memorySessionId;
 
@@ -503,7 +620,15 @@ export async function POST(request: Request) {
       context,
       chunks.length > 0 && maxSimilarity >= NO_MATCH_THRESHOLD,
     );
-    const systemPrompt = memoryContext ? `${basePrompt}\n\n${memoryContext}` : basePrompt;
+    const systemPrompt = [
+      basePrompt,
+      memoryContext,
+      responsePreferenceInstruction,
+      clarifyingQuestionInstruction,
+      structuredOutputInstruction,
+    ]
+      .filter((part) => part && part.trim().length > 0)
+      .join('\n\n');
 
     const stream = new ReadableStream({
       async start(controller) {

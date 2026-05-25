@@ -167,6 +167,35 @@ async function setConnectorSyncState(
   `;
 }
 
+export async function enqueueDueDocumentConnectorSyncJobs(syncIntervalHours = 24) {
+  const boundedHours = Math.max(1, Math.floor(syncIntervalHours));
+  const intervalLiteral = `${boundedHours} hours`;
+
+  const rows = await sql<{ id: string }[]>`
+    WITH due_connectors AS (
+      SELECT dc.id
+      FROM document_connectors dc
+      WHERE dc.is_active = true
+        AND dc.auto_sync_enabled = true
+        AND dc.last_sync_status <> 'running'
+        AND COALESCE(dc.last_synced_at, dc.updated_at, dc.created_at) <= NOW() - (${intervalLiteral})::interval
+        AND NOT EXISTS (
+          SELECT 1
+          FROM processing_jobs pj
+          WHERE pj.type = 'connector_sync'
+            AND pj.status IN ('pending', 'running')
+            AND pj.payload->>'connectorId' = dc.id::text
+        )
+    )
+    INSERT INTO processing_jobs (type, payload)
+    SELECT 'connector_sync', jsonb_build_object('connectorId', due_connectors.id)
+    FROM due_connectors
+    RETURNING id
+  `;
+
+  return rows.length;
+}
+
 async function upsertImportedDocument(params: {
   connector: DocumentConnectorRecord;
   itemId: string;

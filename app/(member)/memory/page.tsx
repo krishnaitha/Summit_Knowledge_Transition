@@ -10,6 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { requireMember } from '@/lib/auth';
 
+function toConfidenceValue(value: unknown): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.min(1, Math.max(0, parsed));
+}
+
 export default async function MemoryPage() {
   await requireMember();
   const memories = await getUserMemoriesForCurrentUser();
@@ -79,63 +85,65 @@ export default async function MemoryPage() {
 
       <div className="space-y-3">
         {memories.length ? (
-          memories.map((memory) => (
-            <Card key={memory.id}>
-              <CardContent className="space-y-3 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-slate-900">{memory.memory_key}</p>
+          memories.map((memory) => {
+            const confidence = toConfidenceValue(memory.confidence);
+
+            return (
+              <Card key={memory.id}>
+                <CardContent className="space-y-3 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-slate-900">{memory.memory_key}</p>
+                    <p className="text-xs text-slate-500">confidence {confidence.toFixed(2)}</p>
+                  </div>
+                  <p className="text-sm text-slate-700">{memory.memory_value}</p>
                   <p className="text-xs text-slate-500">
-                    confidence {memory.confidence.toFixed(2)}
+                    tags: {(memory.tags ?? []).join(', ') || 'none'}
                   </p>
-                </div>
-                <p className="text-sm text-slate-700">{memory.memory_value}</p>
-                <p className="text-xs text-slate-500">
-                  tags: {(memory.tags ?? []).join(', ') || 'none'}
-                </p>
 
-                <form
-                  action={saveUserMemoryAction}
-                  className="grid gap-2 rounded-lg border border-slate-200 p-3"
-                >
-                  <input type="hidden" name="memory_key" value={memory.memory_key} />
-                  <textarea
-                    name="memory_value"
-                    defaultValue={memory.memory_value}
-                    className="min-h-16 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    required
-                  />
-                  <div className="grid gap-2 md:grid-cols-2">
-                    <input
-                      name="tags"
-                      defaultValue={(memory.tags ?? []).join(', ')}
-                      className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  <form
+                    action={saveUserMemoryAction}
+                    className="grid gap-2 rounded-lg border border-slate-200 p-3"
+                  >
+                    <input type="hidden" name="memory_key" value={memory.memory_key} />
+                    <textarea
+                      name="memory_value"
+                      defaultValue={memory.memory_value}
+                      className="min-h-16 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      required
                     />
-                    <input
-                      name="confidence"
-                      type="number"
-                      step="0.05"
-                      min="0"
-                      max="1"
-                      defaultValue={memory.confidence}
-                      className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    />
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <SubmitButton loadingText="Updating..." size="sm" variant="secondary">
-                      Update
+                    <div className="grid gap-2 md:grid-cols-2">
+                      <input
+                        name="tags"
+                        defaultValue={(memory.tags ?? []).join(', ')}
+                        className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      />
+                      <input
+                        name="confidence"
+                        type="number"
+                        step="0.05"
+                        min="0"
+                        max="1"
+                        defaultValue={confidence}
+                        className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <SubmitButton loadingText="Updating..." size="sm" variant="secondary">
+                        Update
+                      </SubmitButton>
+                    </div>
+                  </form>
+
+                  <form action={deleteUserMemoryAction}>
+                    <input type="hidden" name="memory_id" value={memory.id} />
+                    <SubmitButton loadingText="Deleting..." size="sm" variant="danger">
+                      Delete
                     </SubmitButton>
-                  </div>
-                </form>
-
-                <form action={deleteUserMemoryAction}>
-                  <input type="hidden" name="memory_id" value={memory.id} />
-                  <SubmitButton loadingText="Deleting..." size="sm" variant="danger">
-                    Delete
-                  </SubmitButton>
-                </form>
-              </CardContent>
-            </Card>
-          ))
+                  </form>
+                </CardContent>
+              </Card>
+            );
+          })
         ) : (
           <Card>
             <CardContent className="p-6 text-sm text-slate-500">

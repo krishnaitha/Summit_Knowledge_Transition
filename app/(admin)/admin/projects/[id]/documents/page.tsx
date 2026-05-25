@@ -5,6 +5,7 @@ import {
   createDocumentConnectorAction,
   deleteDocumentConnectorAction,
   syncDocumentConnectorAction,
+  toggleDocumentConnectorAutoSyncAction,
   toggleDocumentRequiredAction,
 } from '@/app/actions/admin';
 import { DocumentConnectorsPanel } from '@/components/admin/document-connectors-panel';
@@ -39,6 +40,7 @@ export default async function ProjectDocumentsPage(props: { params: Promise<{ id
         createAction={createDocumentConnectorAction}
         syncAction={syncDocumentConnectorAction}
         deleteAction={deleteDocumentConnectorAction}
+        toggleAutoSyncAction={toggleDocumentConnectorAutoSyncAction}
       />
       <DocumentUploadPanel projectId={params.id} />
       <DocumentsList

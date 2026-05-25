@@ -10,9 +10,17 @@ import {
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ProjectDashboardCard } from '@/lib/types/database';
+
+const linkButtonClass =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-brand-700 px-3 text-sm font-medium text-white transition hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
+
+const linkButtonSecondaryClass =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-white px-3 text-sm font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
+
+const linkButtonGhostClass =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
 
 function daysUntil(dateStr: string): number {
   return Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -134,29 +142,21 @@ export function ProjectCard({ project }: { project: ProjectDashboardCard }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={`/projects/${project.id}/chat`}>
-            <Button size="sm">
-              <MessageSquare className="h-3.5 w-3.5" />
-              Elevate AI
-            </Button>
+          <Link href={`/projects/${project.id}/chat`} className={linkButtonClass}>
+            <MessageSquare className="h-3.5 w-3.5" />
+            Elevate AI
           </Link>
-          <Link href={`/projects/${project.id}/quiz`}>
-            <Button size="sm" variant="secondary">
-              <BookOpen className="h-3.5 w-3.5" />
-              {project.quizStatus === 'In Progress' ? 'Resume Quest' : 'Take Quest'}
-            </Button>
+          <Link href={`/projects/${project.id}/quiz`} className={linkButtonSecondaryClass}>
+            <BookOpen className="h-3.5 w-3.5" />
+            {project.quizStatus === 'In Progress' ? 'Resume Quest' : 'Take Quest'}
           </Link>
-          <Link href={`/projects/${project.id}#documents`}>
-            <Button size="sm" variant="secondary">
-              <Files className="h-3.5 w-3.5" />
-              Documents
-            </Button>
+          <Link href={`/projects/${project.id}#documents`} className={linkButtonSecondaryClass}>
+            <Files className="h-3.5 w-3.5" />
+            Documents
           </Link>
-          <Link href={`/projects/${project.id}`} className="ml-auto">
-            <Button size="sm" variant="ghost">
-              Open
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Button>
+          <Link href={`/projects/${project.id}`} className={`ml-auto ${linkButtonGhostClass}`}>
+            Open
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </CardContent>

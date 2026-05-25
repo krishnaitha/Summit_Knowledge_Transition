@@ -127,6 +127,7 @@ create table if not exists document_connectors (
   config           jsonb        not null default '{}'::jsonb,
   created_by       uuid        references users(id) on delete set null,
   is_active        boolean     not null default true,
+  auto_sync_enabled boolean    not null default true,
   last_synced_at   timestamptz,
   last_sync_status text        not null default 'idle' check (last_sync_status in ('idle', 'running', 'success', 'failed')),
   last_sync_error  text,
@@ -230,6 +231,7 @@ create table if not exists chat_sessions (
   user_id         uuid        not null references users(id) on delete cascade,
   project_id      uuid        not null references projects(id) on delete cascade,
   started_at      timestamptz not null default now(),
+  title           text,
   message_count   integer     not null default 0,
   last_message_at timestamptz default now()
 );

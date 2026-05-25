@@ -349,6 +349,7 @@ async function ensureConnectorSchema() {
       config jsonb not null default '{}'::jsonb,
       created_by uuid references users(id) on delete set null,
       is_active boolean not null default true,
+      auto_sync_enabled boolean not null default true,
       last_synced_at timestamptz,
       last_sync_status text not null default 'idle' check (last_sync_status in ('idle', 'running', 'success', 'failed')),
       last_sync_error text,
@@ -358,6 +359,11 @@ async function ensureConnectorSchema() {
   `;
 
   await sql`create index if not exists document_connectors_project_created_at on document_connectors (project_id, created_at desc)`;
+
+  await sql`
+    alter table document_connectors
+      add column if not exists auto_sync_enabled boolean not null default true
+  `;
 
   await sql`
     alter table document_connectors
@@ -459,6 +465,27 @@ export async function deleteDocumentConnectorAction(formData: FormData) {
   if (!projectId || !connectorId) return;
 
   await sql`DELETE FROM document_connectors WHERE id = ${connectorId} AND project_id = ${projectId}`;
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
+export async function toggleDocumentConnectorAutoSyncAction(formData: FormData) {
+  await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const connectorId = String(formData.get('connector_id') ?? '').trim();
+  const nextValue = String(formData.get('next_auto_sync_enabled') ?? '').trim();
+
+  if (!projectId || !connectorId || !['true', 'false'].includes(nextValue)) return;
+
+  await ensureConnectorSchema();
+
+  await sql`
+    UPDATE document_connectors
+    SET auto_sync_enabled = ${nextValue === 'true'},
+        updated_at = now()
+    WHERE id = ${connectorId} AND project_id = ${projectId}
+  `;
+
   revalidatePath(`/admin/projects/${projectId}/documents`);
 }
 

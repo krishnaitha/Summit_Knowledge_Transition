@@ -35,11 +35,14 @@ NexTElevate lets your organisation manage knowledge-transfer at scale. Admins pu
 
 ### Recent Updates (May 2026)
 
-- Added Confluence and SharePoint connectors for project knowledge ingestion
-- Added AI Document Generator screen at `/admin/generate-document`
-- Enabled AI Document Generator for both Super Admin and Project Admin roles
-- Updated admin/member UI naming from "Projects" to "Products" in primary navigation and headings
-- Widened and centered app shell containers for improved visual balance on large screens
+- Expanded chat UX with starter prompts, response-style controls, clarify-first mode, and improved structured-answer rendering
+- Added chat session management (auto title, rename, delete) and exports (Markdown/PDF)
+- Improved chat reliability and route responsiveness with navigation race fixes, loading states, and on-demand history loading
+- Added connector auto-sync (daily by default), plus per-connector auto-sync toggle controls
+- Added uploaded-document hover previews and observability table pagination (Top unanswered queries / Possible hallucinations)
+- Added connector sync timing guidance and updated user-facing labels/help text across key pages
+
+For a complete change log, see [docs/RELEASE_NOTES_2026_05.md](docs/RELEASE_NOTES_2026_05.md).
 
 Quiz reset policy:
 

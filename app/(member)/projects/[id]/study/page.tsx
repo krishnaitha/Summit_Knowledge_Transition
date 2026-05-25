@@ -3,10 +3,12 @@ import { ChevronRight } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireMember } from '@/lib/auth';
 import { getInteractiveStudyGuide, getProjectById, userHasProjectAccess } from '@/lib/data';
+
+const linkButtonSecondaryClass =
+  'inline-flex h-11 items-center justify-center rounded-xl bg-white px-4 text-sm font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
 
 export default async function ProjectStudyModePage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -43,8 +45,8 @@ export default async function ProjectStudyModePage(props: { params: Promise<{ id
             Interactive weak-area review based on your latest quiz attempt.
           </p>
         </div>
-        <Link href={`/projects/${params.id}/flashcards`}>
-          <Button variant="secondary">Open Flashcards</Button>
+        <Link href={`/projects/${params.id}/flashcards`} className={linkButtonSecondaryClass}>
+          Open Flashcards
         </Link>
       </div>
 

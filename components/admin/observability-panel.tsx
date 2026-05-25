@@ -1,11 +1,26 @@
-import { Activity, AlertTriangle, CheckCircle, Clock, Search, Zap } from 'lucide-react';
+'use client';
+
+import { useMemo, useState } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Search,
+  Zap,
+} from 'lucide-react';
 
 import { AnalyticsTable } from '@/components/admin/analytics-table';
 import { StatsCard } from '@/components/admin/stats-card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 import type { ObservabilityMetrics } from '@/lib/data';
+
+const OBSERVABILITY_PAGE_SIZE = 8;
 
 export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics }) {
   const {
@@ -27,6 +42,37 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
     'Completion Tokens': row.completionTokens,
     'Total Tokens': row.totalTokens,
   }));
+
+  const [unansweredPage, setUnansweredPage] = useState(0);
+  const [hallucinationPage, setHallucinationPage] = useState(0);
+
+  const unansweredTotalPages = Math.max(
+    1,
+    Math.ceil(topUnansweredQueries.length / OBSERVABILITY_PAGE_SIZE),
+  );
+  const safeUnansweredPage = Math.min(unansweredPage, unansweredTotalPages - 1);
+  const visibleUnanswered = useMemo(
+    () =>
+      topUnansweredQueries.slice(
+        safeUnansweredPage * OBSERVABILITY_PAGE_SIZE,
+        safeUnansweredPage * OBSERVABILITY_PAGE_SIZE + OBSERVABILITY_PAGE_SIZE,
+      ),
+    [safeUnansweredPage, topUnansweredQueries],
+  );
+
+  const hallucinationTotalPages = Math.max(
+    1,
+    Math.ceil(possibleHallucinations.length / OBSERVABILITY_PAGE_SIZE),
+  );
+  const safeHallucinationPage = Math.min(hallucinationPage, hallucinationTotalPages - 1);
+  const visibleHallucinations = useMemo(
+    () =>
+      possibleHallucinations.slice(
+        safeHallucinationPage * OBSERVABILITY_PAGE_SIZE,
+        safeHallucinationPage * OBSERVABILITY_PAGE_SIZE + OBSERVABILITY_PAGE_SIZE,
+      ),
+    [possibleHallucinations, safeHallucinationPage],
+  );
 
   return (
     <div className="space-y-6">
@@ -83,7 +129,9 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
             <CardTitle>Token usage (last 30 days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-slate-400">No token data yet — send some chat messages to see usage.</p>
+            <p className="text-sm text-slate-400">
+              No token data yet — send some chat messages to see usage.
+            </p>
           </CardContent>
         </Card>
       )}
@@ -106,7 +154,7 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
                   </TR>
                 </THead>
                 <TBody>
-                  {topUnansweredQueries.map((row, i) => (
+                  {visibleUnanswered.map((row, i) => (
                     <TR key={i}>
                       <TD className="max-w-xs truncate text-slate-700">{row.query}</TD>
                       <TD>
@@ -118,6 +166,36 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
                   ))}
                 </TBody>
               </Table>
+            )}
+
+            {topUnansweredQueries.length > OBSERVABILITY_PAGE_SIZE && (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-xs text-slate-500">
+                  Page {safeUnansweredPage + 1} of {unansweredTotalPages}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={safeUnansweredPage === 0}
+                    onClick={() => setUnansweredPage((value) => Math.max(0, value - 1))}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={safeUnansweredPage >= unansweredTotalPages - 1}
+                    onClick={() =>
+                      setUnansweredPage((value) => Math.min(unansweredTotalPages - 1, value + 1))
+                    }
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -139,7 +217,7 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
                   </TR>
                 </THead>
                 <TBody>
-                  {possibleHallucinations.map((row, i) => (
+                  {visibleHallucinations.map((row, i) => (
                     <TR key={i}>
                       <TD className="max-w-[180px] truncate text-slate-700">{row.query}</TD>
                       <TD>
@@ -150,6 +228,38 @@ export function ObservabilityPanel({ metrics }: { metrics: ObservabilityMetrics 
                   ))}
                 </TBody>
               </Table>
+            )}
+
+            {possibleHallucinations.length > OBSERVABILITY_PAGE_SIZE && (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-xs text-slate-500">
+                  Page {safeHallucinationPage + 1} of {hallucinationTotalPages}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={safeHallucinationPage === 0}
+                    onClick={() => setHallucinationPage((value) => Math.max(0, value - 1))}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={safeHallucinationPage >= hallucinationTotalPages - 1}
+                    onClick={() =>
+                      setHallucinationPage((value) =>
+                        Math.min(hallucinationTotalPages - 1, value + 1),
+                      )
+                    }
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>

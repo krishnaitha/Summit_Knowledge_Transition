@@ -14,6 +14,12 @@ import { formatDate } from '@/lib/utils';
 
 const PAGE_SIZE = 10;
 
+function toPreviewText(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  return normalized.length > 0 ? normalized : null;
+}
+
 export function DocumentsList({
   documents,
   projectId,
@@ -67,7 +73,17 @@ export function DocumentsList({
             >
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-semibold text-slate-900">{document.file_name}</p>
+                  <div className="group relative">
+                    <p className="cursor-help font-semibold text-slate-900">{document.file_name}</p>
+                    {toPreviewText(document.preview_excerpt) && (
+                      <div className="pointer-events-none absolute top-full left-0 z-20 mt-2 hidden w-[28rem] max-w-[80vw] rounded-xl border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-700 shadow-xl group-hover:block">
+                        <p className="mb-1 text-[11px] font-semibold tracking-wide text-slate-500 uppercase">
+                          Content preview
+                        </p>
+                        <p>{toPreviewText(document.preview_excerpt)}</p>
+                      </div>
+                    )}
+                  </div>
                   <Badge variant="info">{document.file_type.toUpperCase()}</Badge>
                   {document.source_provider && (
                     <Badge variant="info">

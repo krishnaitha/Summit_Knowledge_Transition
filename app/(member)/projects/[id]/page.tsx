@@ -3,7 +3,6 @@ import { ChevronRight } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DebouncedDocumentSearch } from '@/components/search/debounced-document-search';
 import { requireMember } from '@/lib/auth';
@@ -50,6 +49,15 @@ function HighlightedSnippet(props: { snippet: string }) {
     </>
   );
 }
+
+const linkButtonClass =
+  'inline-flex h-11 items-center justify-center rounded-xl bg-brand-700 px-4 text-sm font-medium text-white transition hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
+
+const linkButtonSecondaryClass =
+  'inline-flex h-11 items-center justify-center rounded-xl bg-white px-4 text-sm font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
+
+const linkButtonSecondarySmClass =
+  'inline-flex h-9 items-center justify-center rounded-lg bg-white px-3 text-sm font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
 
 export default async function ProjectOverviewPage(props: {
   params: Promise<{ id: string }>;
@@ -112,20 +120,20 @@ export default async function ProjectOverviewPage(props: {
           </div>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
-          <Link href={`/projects/${params.id}/chat`}>
-            <Button>Elevate AI</Button>
+          <Link href={`/projects/${params.id}/chat`} className={linkButtonClass}>
+            Elevate AI
           </Link>
-          <Link href={`/projects/${params.id}/quiz`}>
-            <Button variant="secondary">Take the Quest</Button>
+          <Link href={`/projects/${params.id}/quiz`} className={linkButtonSecondaryClass}>
+            Take the Quest
           </Link>
-          <Link href={`/projects/${params.id}/bookmarks`}>
-            <Button variant="secondary">Bookmarks</Button>
+          <Link href={`/projects/${params.id}/bookmarks`} className={linkButtonSecondaryClass}>
+            Bookmarks
           </Link>
-          <Link href={`/projects/${params.id}/flashcards`}>
-            <Button variant="secondary">Flashcards</Button>
+          <Link href={`/projects/${params.id}/flashcards`} className={linkButtonSecondaryClass}>
+            Flashcards
           </Link>
-          <Link href={`/projects/${params.id}/study`}>
-            <Button variant="secondary">Study Mode</Button>
+          <Link href={`/projects/${params.id}/study`} className={linkButtonSecondaryClass}>
+            Study Mode
           </Link>
           {requiredCount > 0 && (
             <p className="self-center text-xs font-medium text-amber-700">
@@ -210,10 +218,11 @@ export default async function ProjectOverviewPage(props: {
                     >
                       <Badge variant="info">{document.file_type.toUpperCase()}</Badge>
                     </a>
-                    <Link href={`/projects/${params.id}/documents/${document.id}/threads`}>
-                      <Button variant="secondary" size="sm">
-                        Threads
-                      </Button>
+                    <Link
+                      href={`/projects/${params.id}/documents/${document.id}/threads`}
+                      className={linkButtonSecondarySmClass}
+                    >
+                      Threads
                     </Link>
                   </div>
                 </div>

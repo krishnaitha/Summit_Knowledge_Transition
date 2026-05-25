@@ -31,6 +31,18 @@ All connectors are configured from:
 - search
 - quiz generation
 
+## Sync Schedule
+
+- Manual sync remains available via **Sync now**.
+- Automatic sync runs at least once every 24 hours for active connectors (when worker is running).
+- Auto-sync only enqueues connectors that are due and do not already have a pending/running sync job.
+- Each connector has its own **Enable/Disable auto-sync** toggle in the connector card.
+
+Optional environment variables:
+
+- `CONNECTOR_AUTO_SYNC_INTERVAL_HOURS` (default: `24`)
+- `CONNECTOR_AUTO_SYNC_CHECK_MS` (default: `900000` / 15 minutes)
+
 ## Confluence Setup
 
 ### Required fields

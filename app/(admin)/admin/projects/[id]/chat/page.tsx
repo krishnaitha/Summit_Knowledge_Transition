@@ -3,19 +3,13 @@ import Link from 'next/link';
 
 import { ChatInterface } from '@/components/chat/chat-interface';
 import { requireAdmin } from '@/lib/auth';
-import { getChatMessages, getProjectById, getProjectChatSessions } from '@/lib/data';
+import { getProjectById } from '@/lib/data';
 
 export default async function AdminProjectChatPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const { profile } = await requireAdmin();
+  await requireAdmin();
 
-  const [project, sessions] = await Promise.all([
-    getProjectById(params.id),
-    getProjectChatSessions(profile!.id, params.id),
-  ]);
-
-  const initialSession = sessions[0] ?? null;
-  const messages = initialSession ? await getChatMessages(initialSession.id) : [];
+  const project = await getProjectById(params.id);
 
   return (
     <div className="space-y-6">
@@ -32,17 +26,9 @@ export default async function AdminProjectChatPage(props: { params: Promise<{ id
       </nav>
 
       <ChatInterface
-        initialMessages={messages.map((m) => ({
-          id: m.id,
-          role: m.role,
-          content: m.content,
-          sources: m.sources,
-        }))}
-        initialSessionId={initialSession?.id ?? null}
-        initialSessions={sessions.map((s, i) => ({
-          id: s.id,
-          label: i === 0 ? 'Most recent chat' : `Chat ${i + 1}`,
-        }))}
+        initialMessages={[]}
+        initialSessionId={null}
+        initialSessions={[]}
         projectId={params.id}
         projectName={project?.name ?? 'Project'}
       />

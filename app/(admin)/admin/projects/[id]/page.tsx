@@ -18,7 +18,6 @@ import {
 import { DocumentUploadPanel } from '@/components/admin/document-upload-panel';
 import { RetakeRequestsCard } from '@/components/admin/retake-requests-card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DebouncedDocumentSearch } from '@/components/search/debounced-document-search';
 import { SubmitButton } from '@/components/ui/submit-button';
@@ -35,6 +34,9 @@ import {
   searchProjectDocumentChunks,
 } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
+
+const tabLinkClassName =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-white px-3 text-sm font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
 
 function HighlightedSnippet(props: { snippet: string }) {
   const segments = props.snippet
@@ -121,39 +123,29 @@ export default async function AdminProjectDetailPage(props: {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/admin/projects/${params.id}/members`}>
-            <Button size="sm" variant="secondary">
-              <Users className="h-3.5 w-3.5" />
-              Members
-            </Button>
+          <Link href={`/admin/projects/${params.id}/members`} className={tabLinkClassName}>
+            <Users className="h-3.5 w-3.5" />
+            Members
           </Link>
           {isSuperAdmin && (
-            <Link href={`/admin/projects/${params.id}/chat`}>
-              <Button size="sm" variant="secondary">
-                <MessageSquare className="h-3.5 w-3.5" />
-                Chat
-              </Button>
+            <Link href={`/admin/projects/${params.id}/chat`} className={tabLinkClassName}>
+              <MessageSquare className="h-3.5 w-3.5" />
+              Chat
             </Link>
           )}
           {isSuperAdmin && (
-            <Link href={`/admin/projects/${params.id}/analytics`}>
-              <Button size="sm" variant="secondary">
-                <BarChart3 className="h-3.5 w-3.5" />
-                Analytics
-              </Button>
+            <Link href={`/admin/projects/${params.id}/analytics`} className={tabLinkClassName}>
+              <BarChart3 className="h-3.5 w-3.5" />
+              Analytics
             </Link>
           )}
-          <Link href={`/admin/projects/${params.id}/quiz`}>
-            <Button size="sm" variant="secondary">
-              <BookOpen className="h-3.5 w-3.5" />
-              Quest
-            </Button>
+          <Link href={`/admin/projects/${params.id}/quiz`} className={tabLinkClassName}>
+            <BookOpen className="h-3.5 w-3.5" />
+            Quest
           </Link>
-          <Link href={`/admin/projects/${params.id}/documents`}>
-            <Button size="sm" variant="secondary">
-              <FileText className="h-3.5 w-3.5" />
-              Documents & connectors
-            </Button>
+          <Link href={`/admin/projects/${params.id}/documents`} className={tabLinkClassName}>
+            <FileText className="h-3.5 w-3.5" />
+            Documents & connectors
           </Link>
         </div>
       </div>

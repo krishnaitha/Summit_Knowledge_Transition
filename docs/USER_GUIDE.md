@@ -166,6 +166,13 @@ You can import external documentation directly into a project using connectors.
 
 Imported content is saved as project documents and becomes available for AI chat, search, and quiz generation.
 
+#### Connector sync behavior
+
+- `Sync now` triggers an immediate manual sync.
+- Auto-sync runs in the background in a daily window (24h default) when worker is running.
+- Each connector card includes an `Enable auto-sync` / `Disable auto-sync` toggle.
+- If a connector repeatedly fails, retries may happen sooner than 24 hours until fixed.
+
 For connector-specific credentials, scopes, and setup examples, see [docs/CONNECTOR_SETUP.md](docs/CONNECTOR_SETUP.md).
 
 ---
@@ -409,6 +416,41 @@ Your reading progress is tracked automatically when you open a document.
 ---
 
 ### 4.4 Using the AI Assistant (Chat)
+
+Chat now includes additional productivity controls for both quick asks and structured output.
+
+#### Chat controls
+
+- Starter prompts appear above the input for common onboarding questions.
+- Response style options:
+  - Default
+  - Concise
+  - Step-by-step
+  - Bullet list
+- `With citations only` prioritizes citation-grounded output formatting.
+- `Clarify first` asks a short clarifying question before drafting when the prompt is ambiguous.
+
+#### Memory helper commands
+
+The chat input includes built-in guidance for memory commands:
+
+- `remember key: value`
+- `yes remember`
+- `no remember`
+
+#### Session and export actions
+
+- Create a new chat with `New Chat`.
+- Previous sessions can be loaded on demand with `Load previous sessions`.
+- Session actions include:
+  - Rename
+  - Delete
+  - Export to Markdown
+  - Export to PDF (print view)
+
+#### Pinning answers
+
+- Use `Pin this answer` on assistant responses to save key outputs for later reference.
 
 **Location:** `/projects/[id]/chat`
 

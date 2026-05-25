@@ -17,6 +17,7 @@ type Props = {
   createAction: ConnectorAction;
   syncAction: ConnectorAction;
   deleteAction: ConnectorAction;
+  toggleAutoSyncAction: ConnectorAction;
 };
 
 export function DocumentConnectorsPanel({
@@ -25,6 +26,7 @@ export function DocumentConnectorsPanel({
   createAction,
   syncAction,
   deleteAction,
+  toggleAutoSyncAction,
 }: Props) {
   const [provider, setProvider] = useState<
     'confluence' | 'sharepoint' | 'jira' | 'monday' | 'onedrive' | 'github'
@@ -117,6 +119,15 @@ export function DocumentConnectorsPanel({
               </SubmitButton>
             </form>
           </div>
+        </div>
+
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4">
+          <p className="text-sm font-semibold text-amber-900">Auto-sync timing</p>
+          <p className="mt-1 text-xs text-amber-900/90">
+            Connectors with auto-sync enabled are checked in a 24-hour window (default), while the
+            worker scans for due syncs about every 15 minutes. Manual Sync now always works. If a
+            sync keeps failing, retries can happen sooner than 24 hours.
+          </p>
         </div>
 
         <form
@@ -421,11 +432,27 @@ export function DocumentConnectorsPanel({
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-slate-500">{sourceSummary}</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Auto-sync is {connector.auto_sync_enabled ? 'enabled' : 'disabled'} for this
+                      connector.
+                    </p>
                     {connector.last_sync_error && (
                       <p className="mt-1 text-sm text-rose-600">{connector.last_sync_error}</p>
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
+                    <form action={toggleAutoSyncAction}>
+                      <input type="hidden" name="project_id" value={projectId} />
+                      <input type="hidden" name="connector_id" value={connector.id} />
+                      <input
+                        type="hidden"
+                        name="next_auto_sync_enabled"
+                        value={connector.auto_sync_enabled ? 'false' : 'true'}
+                      />
+                      <SubmitButton variant="secondary" loadingText="Updating...">
+                        {connector.auto_sync_enabled ? 'Disable auto-sync' : 'Enable auto-sync'}
+                      </SubmitButton>
+                    </form>
                     <form action={syncAction}>
                       <input type="hidden" name="project_id" value={projectId} />
                       <input type="hidden" name="connector_id" value={connector.id} />

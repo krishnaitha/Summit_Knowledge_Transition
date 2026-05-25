@@ -3,13 +3,27 @@ import { NextResponse } from 'next/server';
 
 import sql from '@/lib/db';
 import { processBotThreadReply } from '@/lib/documents/bot-reply';
-import { syncDocumentConnector } from '@/lib/documents/connectors';
+import {
+  enqueueDueDocumentConnectorSyncJobs,
+  syncDocumentConnector,
+} from '@/lib/documents/connectors';
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
 import { createQuizCompletion } from '@/lib/llm';
 import { downloadFile } from '@/lib/storage/local';
 import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
 import { sleep } from '@/lib/utils';
+
+const AUTO_SYNC_ENQUEUE_CHECK_MS = Math.max(
+  60_000,
+  Number(process.env.CONNECTOR_AUTO_SYNC_CHECK_MS ?? 15 * 60 * 1000),
+);
+const CONNECTOR_AUTO_SYNC_INTERVAL_HOURS = Math.max(
+  1,
+  Number(process.env.CONNECTOR_AUTO_SYNC_INTERVAL_HOURS ?? 24),
+);
+
+let nextAutoSyncCheckAt = 0;
 
 // ─── Quiz generation helpers ────────────────────────────────────────────────────
 
@@ -334,6 +348,16 @@ export async function POST(request: Request) {
     SET status = 'pending', started_at = NULL
     WHERE status = 'running' AND started_at < NOW() - INTERVAL '10 minutes'
   `;
+
+  if (Date.now() >= nextAutoSyncCheckAt) {
+    try {
+      await enqueueDueDocumentConnectorSyncJobs(CONNECTOR_AUTO_SYNC_INTERVAL_HOURS);
+    } catch (error) {
+      console.error('[worker] Failed to enqueue connector auto-sync jobs:', error);
+    } finally {
+      nextAutoSyncCheckAt = Date.now() + AUTO_SYNC_ENQUEUE_CHECK_MS;
+    }
+  }
 
   // Claim the next pending job atomically (FOR UPDATE SKIP LOCKED)
   const jobs = await sql<ProcessingJobRecord[]>`SELECT * FROM claim_next_pending_job()`;

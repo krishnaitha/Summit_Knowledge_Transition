@@ -16,7 +16,6 @@ import {
 
 import { ProjectCard } from '@/components/layout/project-card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireMember, getProjectAdminIds } from '@/lib/auth';
 import { getAssignedProjects, getMemberDashboardStats } from '@/lib/data';
@@ -33,6 +32,15 @@ const ACTION_LABELS: Record<string, string> = {
 function activityLabel(action: string) {
   return ACTION_LABELS[action] ?? action.replaceAll('_', ' ');
 }
+
+const linkButtonClass =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-brand-700 px-3 text-sm font-medium text-white transition hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
+
+const linkButtonSecondaryClass =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-white px-3 text-sm font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
+
+const linkButtonGhostClass =
+  'inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:ring-offset-2';
 
 export default async function DashboardPage() {
   const { profile } = await requireMember();
@@ -69,17 +77,16 @@ export default async function DashboardPage() {
               </div>
               {nextActionProject && nextActionProject.quizStatus !== 'Completed' && (
                 <div className="flex shrink-0 gap-2">
-                  <Link href={`/projects/${nextActionProject.id}/chat`}>
-                    <Button size="sm" variant="secondary">
-                      <MessageSquare className="h-3.5 w-3.5" />
-                      Elevate AI
-                    </Button>
+                  <Link
+                    href={`/projects/${nextActionProject.id}/chat`}
+                    className={linkButtonSecondaryClass}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Elevate AI
                   </Link>
-                  <Link href={`/projects/${nextActionProject.id}/quiz`}>
-                    <Button size="sm">
-                      <BookOpen className="h-3.5 w-3.5" />
-                      {nextActionProject.quizStatus === 'In Progress' ? 'Resume Quiz' : 'Take Quiz'}
-                    </Button>
+                  <Link href={`/projects/${nextActionProject.id}/quiz`} className={linkButtonClass}>
+                    <BookOpen className="h-3.5 w-3.5" />
+                    {nextActionProject.quizStatus === 'In Progress' ? 'Resume Quiz' : 'Take Quiz'}
                   </Link>
                 </div>
               )}
@@ -150,24 +157,27 @@ export default async function DashboardPage() {
                   <p className="mt-1 text-xs text-slate-500">{nextActionProject.quizStatus}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Link href={`/projects/${nextActionProject.id}/chat`}>
-                    <Button size="sm" variant="secondary" className="w-full justify-center">
-                      <MessageSquare className="h-3.5 w-3.5" />
-                      Elevate AI
-                    </Button>
+                  <Link
+                    href={`/projects/${nextActionProject.id}/chat`}
+                    className={`${linkButtonSecondaryClass} w-full justify-center`}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Elevate AI
                   </Link>
-                  <Link href={`/projects/${nextActionProject.id}/quiz`}>
-                    <Button size="sm" className="w-full justify-center">
-                      <BookOpen className="h-3.5 w-3.5" />
-                      Quiz
-                    </Button>
+                  <Link
+                    href={`/projects/${nextActionProject.id}/quiz`}
+                    className={`${linkButtonClass} w-full justify-center`}
+                  >
+                    <BookOpen className="h-3.5 w-3.5" />
+                    Quiz
                   </Link>
                 </div>
-                <Link href={`/projects/${nextActionProject.id}`}>
-                  <Button size="sm" variant="ghost" className="w-full justify-center">
-                    Open product
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
+                <Link
+                  href={`/projects/${nextActionProject.id}`}
+                  className={`${linkButtonGhostClass} w-full justify-center`}
+                >
+                  Open product
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </>
             ) : (
@@ -236,11 +246,9 @@ export default async function DashboardPage() {
                             {p.documentCount} doc{p.documentCount !== 1 ? 's' : ''}
                           </p>
                         </div>
-                        <Link href={`/admin/projects/${p.id}`}>
-                          <Button size="sm" variant="secondary">
-                            <Settings className="h-3.5 w-3.5" />
-                            Manage
-                          </Button>
+                        <Link href={`/admin/projects/${p.id}`} className={linkButtonSecondaryClass}>
+                          <Settings className="h-3.5 w-3.5" />
+                          Manage
                         </Link>
                       </CardContent>
                     </Card>

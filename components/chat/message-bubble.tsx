@@ -9,6 +9,7 @@ export interface ChatBubbleMessage {
   role: 'user' | 'assistant';
   content: string;
   sources?: Array<{ documentName: string; similarity?: number }> | null;
+  createdAt?: string;
   /** True for messages that were just streamed and have not yet been persisted with a stable DB id. */
   isStreamed?: boolean;
 }
@@ -38,6 +39,11 @@ export function MessageBubble({
         ) : (
           <MarkdownContent content={message.content} />
         )}
+        {message.createdAt ? (
+          <p className="mt-2 text-[11px] text-slate-400">
+            {new Date(message.createdAt).toLocaleString()}
+          </p>
+        ) : null}
         {!isUser && Array.isArray(message.sources) && message.sources.length > 0 ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {message.sources.map((source, index) => (

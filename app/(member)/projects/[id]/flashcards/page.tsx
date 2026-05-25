@@ -110,10 +110,9 @@ export default async function ProjectFlashcardsPage(props: { params: Promise<{ i
                         href={`/api/documents/view?documentId=${card.document_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="text-brand-700 focus:ring-accent-400 inline-flex h-9 items-center justify-center rounded-lg bg-white px-3 text-sm font-medium ring-1 ring-slate-200 transition hover:bg-slate-50 focus:ring-2 focus:ring-offset-2 focus:outline-none"
                       >
-                        <Button type="button" variant="secondary" size="sm">
-                          Open source
-                        </Button>
+                        Open source
                       </a>
                     )}
                     <span className="text-xs text-slate-500">

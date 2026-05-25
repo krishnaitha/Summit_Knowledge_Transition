@@ -60,6 +60,7 @@ export interface DocumentRecord {
   source_item_id?: string | null;
   source_url?: string | null;
   source_synced_at?: string | null;
+  preview_excerpt?: string | null;
 }
 
 export interface DocumentConnectorRecord {
@@ -70,6 +71,7 @@ export interface DocumentConnectorRecord {
   config: Record<string, unknown>;
   created_by: string | null;
   is_active: boolean;
+  auto_sync_enabled: boolean;
   last_synced_at: string | null;
   last_sync_status: 'idle' | 'running' | 'success' | 'failed';
   last_sync_error: string | null;
@@ -190,6 +192,7 @@ export interface ChatSessionRecord {
   user_id: string;
   project_id: string;
   started_at: string;
+  title: string | null;
   message_count: number;
   last_message_at: string | null;
 }

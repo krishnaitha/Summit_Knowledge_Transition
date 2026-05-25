@@ -5,7 +5,6 @@ import {
 } from '@/app/actions/document-threads';
 import { BotReplyPoller } from '@/components/documents/bot-reply-poller';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { MarkdownContent } from '@/components/ui/markdown-content';
@@ -97,10 +96,9 @@ export function DocumentThreadsBoard({
                       href={`/api/documents/view?documentId=${document.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="text-brand-700 focus:ring-accent-400 inline-flex h-9 items-center justify-center rounded-lg bg-white px-3 text-sm font-medium ring-1 ring-slate-200 transition hover:bg-slate-50 focus:ring-2 focus:ring-offset-2 focus:outline-none"
                     >
-                      <Button type="button" variant="secondary" size="sm">
-                        Open document
-                      </Button>
+                      Open document
                     </a>
                     {canModerate && (
                       <form action={updateDocumentThreadStatusAction}>

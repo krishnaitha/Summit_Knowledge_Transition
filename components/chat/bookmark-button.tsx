@@ -23,7 +23,9 @@ export function BookmarkButton({ messageId, projectId, initialIsBookmarked }: Bo
 
     try {
       if (prev) {
-        const res = await fetch(`/api/bookmarks?messageId=${encodeURIComponent(messageId)}`, { method: 'DELETE' });
+        const res = await fetch(`/api/bookmarks?messageId=${encodeURIComponent(messageId)}`, {
+          method: 'DELETE',
+        });
         if (!res.ok) setIsBookmarked(prev);
       } else {
         const res = await fetch('/api/bookmarks', {
@@ -46,13 +48,16 @@ export function BookmarkButton({ messageId, projectId, initialIsBookmarked }: Bo
       onClick={toggle}
       disabled={isLoading}
       className={cn(
-        'rounded-full p-1 transition-colors',
-        isBookmarked ? 'text-amber-500' : 'text-slate-400 hover:text-slate-600',
+        'inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors',
+        isBookmarked
+          ? 'bg-amber-100 text-amber-700'
+          : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
         isLoading && 'opacity-50',
       )}
       aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark this answer'}
     >
       <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
+      <span>{isBookmarked ? 'Pinned' : 'Pin this answer'}</span>
     </button>
   );
 }

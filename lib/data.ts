@@ -182,21 +182,34 @@ export async function getProjectById(projectId: string) {
 export async function getProjectDocuments(projectId: string) {
   return sql<DocumentRecord[]>`
     SELECT
-      id,
-      project_id,
-      file_name,
-      file_url,
-      file_type,
-      uploaded_by,
-      uploaded_at,
-      chunk_count,
-      pii_detections,
-      classification,
-      is_required,
-      scan_flags
-    FROM documents
+      d.id,
+      d.project_id,
+      d.file_name,
+      d.file_url,
+      d.file_type,
+      d.uploaded_by,
+      d.uploaded_at,
+      d.chunk_count,
+      d.pii_detections,
+      d.classification,
+      d.is_required,
+      d.scan_flags,
+      d.source_connector_id,
+      d.source_provider,
+      d.source_item_id,
+      d.source_url,
+      d.source_synced_at,
+      preview.preview_excerpt
+    FROM documents d
+    LEFT JOIN LATERAL (
+      SELECT LEFT(content, 320) AS preview_excerpt
+      FROM document_chunks
+      WHERE document_id = d.id
+      ORDER BY chunk_index ASC
+      LIMIT 1
+    ) preview ON true
     WHERE project_id = ${projectId}
-    ORDER BY uploaded_at DESC
+    ORDER BY d.uploaded_at DESC
   `;
 }
 
@@ -619,7 +632,7 @@ export async function searchAccessibleDocumentChunks(
           ) filtered_terms
         )
         SELECT
-          dc.project_id,
+          d.project_id,
           p.name AS project_name,
           dc.id AS chunk_id,
           d.id AS document_id,
@@ -649,10 +662,10 @@ export async function searchAccessibleDocumentChunks(
           ) AS rank
         FROM document_chunks dc
         JOIN documents d ON d.id = dc.document_id
-        JOIN projects p ON p.id = dc.project_id
+        JOIN projects p ON p.id = d.project_id
         CROSS JOIN q
         CROSS JOIN query_terms
-        WHERE (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
+        WHERE (${projectFilterId}::uuid IS NULL OR d.project_id = ${projectFilterId}::uuid)
           AND (
           (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
           OR lower(dc.content) LIKE '%' || q.raw_query || '%'
@@ -688,7 +701,7 @@ export async function searchAccessibleDocumentChunks(
         ) filtered_terms
       )
       SELECT
-        dc.project_id,
+        d.project_id,
         p.name AS project_name,
         dc.id AS chunk_id,
         d.id AS document_id,
@@ -718,10 +731,10 @@ export async function searchAccessibleDocumentChunks(
         ) AS rank
       FROM document_chunks dc
       JOIN documents d ON d.id = dc.document_id
-      JOIN projects p ON p.id = dc.project_id
+      JOIN projects p ON p.id = d.project_id
       CROSS JOIN q
       CROSS JOIN query_terms
-      WHERE (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
+      WHERE (${projectFilterId}::uuid IS NULL OR d.project_id = ${projectFilterId}::uuid)
         AND (
         (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
         OR lower(dc.content) LIKE '%' || q.raw_query || '%'
@@ -758,7 +771,7 @@ export async function searchAccessibleDocumentChunks(
         ) filtered_terms
       )
       SELECT
-        dc.project_id,
+        d.project_id,
         p.name AS project_name,
         dc.id AS chunk_id,
         d.id AS document_id,
@@ -788,12 +801,12 @@ export async function searchAccessibleDocumentChunks(
         ) AS rank
       FROM document_chunks dc
       JOIN documents d ON d.id = dc.document_id
-      JOIN projects p ON p.id = dc.project_id
-      JOIN project_members pm ON pm.project_id = dc.project_id
+      JOIN projects p ON p.id = d.project_id
+      JOIN project_members pm ON pm.project_id = d.project_id
       CROSS JOIN q
       CROSS JOIN query_terms
       WHERE pm.user_id = ${userId}
-        AND (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
+        AND (${projectFilterId}::uuid IS NULL OR d.project_id = ${projectFilterId}::uuid)
         AND (
           (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
           OR lower(dc.content) LIKE '%' || q.raw_query || '%'
@@ -829,7 +842,7 @@ export async function searchAccessibleDocumentChunks(
       ) filtered_terms
     )
     SELECT
-      dc.project_id,
+      d.project_id,
       p.name AS project_name,
       dc.id AS chunk_id,
       d.id AS document_id,
@@ -859,12 +872,12 @@ export async function searchAccessibleDocumentChunks(
       ) AS rank
     FROM document_chunks dc
     JOIN documents d ON d.id = dc.document_id
-    JOIN projects p ON p.id = dc.project_id
-    JOIN project_members pm ON pm.project_id = dc.project_id
+    JOIN projects p ON p.id = d.project_id
+    JOIN project_members pm ON pm.project_id = d.project_id
     CROSS JOIN q
     CROSS JOIN query_terms
     WHERE pm.user_id = ${userId}
-      AND (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
+      AND (${projectFilterId}::uuid IS NULL OR d.project_id = ${projectFilterId}::uuid)
       AND (
         (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
         OR lower(dc.content) LIKE '%' || q.raw_query || '%'

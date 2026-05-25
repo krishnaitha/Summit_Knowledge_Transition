@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,7 @@ export function DebouncedDocumentSearch({
   const searchParams = useSearchParams();
   const [value, setValue] = useState(initialQuery);
   const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId);
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
     setValue(initialQuery);
@@ -36,6 +37,10 @@ export function DebouncedDocumentSearch({
   useEffect(() => {
     setSelectedProjectId(initialProjectId);
   }, [initialProjectId]);
+
+  useEffect(() => {
+    hasInitializedRef.current = false;
+  }, [initialProjectId, initialQuery, pathname]);
 
   const normalized = useMemo(() => value.trim(), [value]);
 
@@ -63,6 +68,11 @@ export function DebouncedDocumentSearch({
   );
 
   useEffect(() => {
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      return;
+    }
+
     const timeoutId = window.setTimeout(() => {
       if (normalized.length >= minChars) {
         navigateWithQuery(normalized, selectedProjectId);

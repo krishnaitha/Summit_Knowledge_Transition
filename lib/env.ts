@@ -11,7 +11,14 @@ export const appEnv = {
   r2AccountId: process.env.R2_ACCOUNT_ID,
   r2BucketName: process.env.R2_BUCKET_NAME,
   // LLM Provider selection
-  llmProvider: (process.env.LLM_PROVIDER ?? 'groq') as 'groq' | 'copilot',
+  llmProvider: (process.env.LLM_PROVIDER ?? 'groq') as
+    | 'groq'
+    | 'copilot'
+    | 'openai'
+    | 'azure-openai'
+    | 'anthropic'
+    | 'mistral'
+    | 'ollama',
   // Groq configuration
   groqApiKey: process.env.GROQ_API_KEY,
   groqQuizApiKey: process.env.GROQ_API_KEY_QUIZ,
@@ -20,6 +27,26 @@ export const appEnv = {
   copilotBaseUrl:
     process.env.COPILOT_BASE_URL ?? 'https://models.github.ai/inference/chat/completions',
   copilotModel: process.env.COPILOT_MODEL ?? 'openai/gpt-4.1-mini',
+  // OpenAI configuration
+  openAiApiKey: process.env.OPENAI_API_KEY,
+  openAiBaseUrl: process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1/chat/completions',
+  openAiModel: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
+  // Azure OpenAI configuration
+  azureOpenAiApiKey: process.env.AZURE_OPENAI_API_KEY,
+  azureOpenAiEndpoint: process.env.AZURE_OPENAI_ENDPOINT,
+  azureOpenAiDeployment: process.env.AZURE_OPENAI_DEPLOYMENT,
+  azureOpenAiApiVersion: process.env.AZURE_OPENAI_API_VERSION ?? '2024-10-21',
+  // Anthropic configuration
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+  anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL ?? 'https://api.anthropic.com/v1/messages',
+  anthropicModel: process.env.ANTHROPIC_MODEL ?? 'claude-3-5-sonnet-latest',
+  // Mistral configuration
+  mistralApiKey: process.env.MISTRAL_API_KEY,
+  mistralBaseUrl: process.env.MISTRAL_BASE_URL ?? 'https://api.mistral.ai/v1/chat/completions',
+  mistralModel: process.env.MISTRAL_MODEL ?? 'mistral-small-latest',
+  // Ollama configuration (local, keyless by default)
+  ollamaBaseUrl: process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/api/chat',
+  ollamaModel: process.env.OLLAMA_MODEL ?? 'llama3.1:8b',
 };
 
 export function isDatabaseConfigured() {
@@ -38,11 +65,41 @@ export function isCopilotProxyConfigured() {
   return Boolean(appEnv.copilotProxyToken);
 }
 
+export function isOpenAiConfigured() {
+  return Boolean(appEnv.openAiApiKey);
+}
+
+export function isAzureOpenAiConfigured() {
+  return Boolean(
+    appEnv.azureOpenAiApiKey && appEnv.azureOpenAiEndpoint && appEnv.azureOpenAiDeployment,
+  );
+}
+
+export function isAnthropicConfigured() {
+  return Boolean(appEnv.anthropicApiKey);
+}
+
+export function isMistralConfigured() {
+  return Boolean(appEnv.mistralApiKey);
+}
+
+export function isOllamaConfigured() {
+  return Boolean(appEnv.ollamaBaseUrl);
+}
+
 export function isLlmConfigured() {
-  if (appEnv.llmProvider === 'copilot') {
-    return isCopilotProxyConfigured();
+  if (appEnv.llmProvider === 'copilot') return isCopilotProxyConfigured();
+  if (appEnv.llmProvider === 'openai') return isOpenAiConfigured();
+  if (appEnv.llmProvider === 'azure-openai') return isAzureOpenAiConfigured();
+  if (appEnv.llmProvider === 'anthropic') return isAnthropicConfigured();
+  if (appEnv.llmProvider === 'mistral') return isMistralConfigured();
+  if (appEnv.llmProvider === 'ollama') return isOllamaConfigured();
+
+  if (appEnv.llmProvider === 'groq') {
+    return isGroqConfigured();
   }
-  return isGroqConfigured();
+
+  return false;
 }
 
 export function assertEnv(name: keyof typeof appEnv) {

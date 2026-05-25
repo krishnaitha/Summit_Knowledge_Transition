@@ -149,7 +149,7 @@ Documents are automatically classified during processing:
 
 PII detections are counted and shown on the document card. Review confidential documents before distributing.
 
-#### Connect external sources (Confluence / SharePoint)
+#### Connect external sources (Confluence / SharePoint / Jira / Monday / OneDrive / GitHub)
 
 You can import external documentation directly into a project using connectors.
 
@@ -157,10 +157,16 @@ You can import external documentation directly into a project using connectors.
 2. In **Document Connectors**, add either:
    - Confluence connector
    - SharePoint connector
+   - Jira connector
+   - Monday connector
+   - OneDrive connector
+   - GitHub connector
 3. For quick validation, use sample connector presets
 4. Click **Sync now** to ingest source content into project documents
 
 Imported content is saved as project documents and becomes available for AI chat, search, and quiz generation.
+
+For connector-specific credentials, scopes, and setup examples, see [docs/CONNECTOR_SETUP.md](docs/CONNECTOR_SETUP.md).
 
 ---
 

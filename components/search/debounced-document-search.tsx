@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 
 interface DebouncedDocumentSearchProps {
   initialQuery: string;
+  initialProjectId?: string;
+  projectOptions?: Array<{ id: string; name: string }>;
   placeholder?: string;
   minChars?: number;
   anchorId?: string;
@@ -15,6 +17,8 @@ interface DebouncedDocumentSearchProps {
 
 export function DebouncedDocumentSearch({
   initialQuery,
+  initialProjectId = '',
+  projectOptions = [],
   placeholder = 'Search across all product documents',
   minChars = 2,
   anchorId,
@@ -23,21 +27,32 @@ export function DebouncedDocumentSearch({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [value, setValue] = useState(initialQuery);
+  const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId);
 
   useEffect(() => {
     setValue(initialQuery);
   }, [initialQuery]);
 
+  useEffect(() => {
+    setSelectedProjectId(initialProjectId);
+  }, [initialProjectId]);
+
   const normalized = useMemo(() => value.trim(), [value]);
 
   const navigateWithQuery = useCallback(
-    (nextQuery: string) => {
+    (nextQuery: string, nextProjectId: string) => {
       const params = new URLSearchParams(searchParams.toString());
 
       if (nextQuery) {
         params.set('q', nextQuery);
       } else {
         params.delete('q');
+      }
+
+      if (nextProjectId) {
+        params.set('projectId', nextProjectId);
+      } else {
+        params.delete('projectId');
       }
 
       const hash = anchorId ? `#${anchorId}` : '';
@@ -50,32 +65,47 @@ export function DebouncedDocumentSearch({
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       if (normalized.length >= minChars) {
-        navigateWithQuery(normalized);
+        navigateWithQuery(normalized, selectedProjectId);
         return;
       }
 
       if (normalized.length === 0) {
-        navigateWithQuery('');
+        navigateWithQuery('', selectedProjectId);
       }
     }, 350);
 
     return () => window.clearTimeout(timeoutId);
-  }, [minChars, navigateWithQuery, normalized]);
+  }, [minChars, navigateWithQuery, normalized, selectedProjectId]);
 
   const submitSearch: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (normalized.length >= minChars) {
-      navigateWithQuery(normalized);
+      navigateWithQuery(normalized, selectedProjectId);
       return;
     }
 
-    navigateWithQuery('');
+    navigateWithQuery('', selectedProjectId);
   };
 
   return (
     <div className="space-y-2">
       <form className="flex flex-col gap-2 sm:flex-row" onSubmit={submitSearch}>
+        {projectOptions.length > 0 && (
+          <select
+            value={selectedProjectId}
+            onChange={(event) => setSelectedProjectId(event.target.value)}
+            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 sm:w-64"
+            aria-label="Filter by project"
+          >
+            <option value="">All accessible projects</option>
+            {projectOptions.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        )}
         <Input
           value={value}
           onChange={(event) => setValue(event.target.value)}

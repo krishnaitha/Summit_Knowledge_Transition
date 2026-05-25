@@ -1,6 +1,7 @@
 import 'server-only';
 
-import { appEnv, assertEnv } from '@/lib/env';
+import { appEnv } from '@/lib/env';
+import { getLlmRuntimeSecrets } from '@/lib/llm/runtime-config';
 import { sleep } from '@/lib/utils';
 
 /**
@@ -80,10 +81,13 @@ export async function createCopilotChatCompletion(
     temperature?: number;
     max_tokens?: number;
     top_p?: number;
+    model?: string;
   },
   onStatus?: (message: string) => void,
 ) {
-  const token = assertEnv('copilotProxyToken');
+  const secrets = await getLlmRuntimeSecrets();
+  const token = secrets.copilotProxyToken;
+  const baseUrl = secrets.copilotBaseUrl || appEnv.copilotBaseUrl;
 
   if (!token) {
     throw new Error('Copilot proxy token is not configured. Add COPILOT_PROXY_TOKEN to continue.');
@@ -97,17 +101,17 @@ export async function createCopilotChatCompletion(
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-      const response = await fetch(appEnv.copilotBaseUrl, {
+      const response = await fetch(baseUrl, {
         method: 'POST',
         signal: controller.signal,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github+json',
+          Accept: 'application/vnd.github+json',
           'X-GitHub-Api-Version': '2022-11-28',
         },
         body: JSON.stringify({
-          model: appEnv.copilotModel,
+          model: args.model ?? appEnv.copilotModel,
           messages: args.messages,
           temperature: args.temperature ?? 0.7,
           max_tokens: args.max_tokens ?? 2000,
@@ -134,7 +138,7 @@ export async function createCopilotChatCompletion(
         if (response.status === 404) {
           throw new Error(
             `Copilot endpoint not found (404). Check COPILOT_BASE_URL and token scope (models:read). ` +
-            `Current URL: ${appEnv.copilotBaseUrl}. Response: ${errorText}`,
+              `Current URL: ${baseUrl}. Response: ${errorText}`,
           );
         }
 

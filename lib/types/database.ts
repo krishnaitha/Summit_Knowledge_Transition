@@ -56,7 +56,7 @@ export interface DocumentRecord {
   is_required: boolean;
   scan_flags: string[];
   source_connector_id?: string | null;
-  source_provider?: 'confluence' | 'sharepoint' | null;
+  source_provider?: 'confluence' | 'sharepoint' | 'jira' | 'monday' | 'onedrive' | 'github' | null;
   source_item_id?: string | null;
   source_url?: string | null;
   source_synced_at?: string | null;
@@ -65,7 +65,7 @@ export interface DocumentRecord {
 export interface DocumentConnectorRecord {
   id: string;
   project_id: string;
-  provider: 'confluence' | 'sharepoint';
+  provider: 'confluence' | 'sharepoint' | 'jira' | 'monday' | 'onedrive' | 'github';
   name: string;
   config: Record<string, unknown>;
   created_by: string | null;

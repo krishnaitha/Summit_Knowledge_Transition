@@ -77,6 +77,14 @@ create table if not exists password_reset_tokens (
   created_at timestamptz not null default now()
 );
 
+-- App settings (030)
+create table if not exists app_settings (
+  key        text        primary key,
+  value      jsonb       not null,
+  updated_by uuid        references users(id) on delete set null,
+  updated_at timestamptz not null default now()
+);
+
 -- Projects
 create table if not exists projects (
   id             uuid        primary key default gen_random_uuid(),
@@ -114,7 +122,7 @@ create table if not exists project_announcements (
 create table if not exists document_connectors (
   id               uuid        primary key default gen_random_uuid(),
   project_id       uuid        not null references projects(id) on delete cascade,
-  provider         text        not null check (provider in ('confluence', 'sharepoint')),
+  provider         text        not null check (provider in ('confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github')),
   name             text        not null,
   config           jsonb        not null default '{}'::jsonb,
   created_by       uuid        references users(id) on delete set null,
@@ -142,7 +150,7 @@ create table if not exists documents (
   is_required    boolean     not null default false,
   scan_flags     text[]      not null default '{}',
   source_connector_id uuid   references document_connectors(id) on delete set null,
-  source_provider text       check (source_provider in ('confluence', 'sharepoint')),
+  source_provider text       check (source_provider in ('confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github')),
   source_item_id text,
   source_url     text,
   source_synced_at timestamptz,

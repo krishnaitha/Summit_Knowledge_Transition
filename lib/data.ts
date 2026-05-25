@@ -579,8 +579,16 @@ export async function searchAccessibleDocumentChunks(
   role: UserProfile['role'] | null | undefined,
   query: string,
   limit = 20,
+  projectId?: string,
 ) {
   const normalizedQuery = query.trim();
+  const normalizedProjectId = (projectId ?? '').trim();
+  const projectFilterId =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      normalizedProjectId,
+    )
+      ? normalizedProjectId
+      : null;
 
   if (normalizedQuery.length < 2) {
     return [] as AccessibleDocumentSearchResult[];
@@ -642,7 +650,8 @@ export async function searchAccessibleDocumentChunks(
         JOIN projects p ON p.id = dc.project_id
         CROSS JOIN q
         CROSS JOIN query_terms
-        WHERE (
+        WHERE (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
+          AND (
           (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
           OR lower(dc.content) LIKE '%' || q.raw_query || '%'
           OR (
@@ -710,7 +719,8 @@ export async function searchAccessibleDocumentChunks(
       JOIN projects p ON p.id = dc.project_id
       CROSS JOIN q
       CROSS JOIN query_terms
-      WHERE (
+      WHERE (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
+        AND (
         (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
         OR lower(dc.content) LIKE '%' || q.raw_query || '%'
         OR (
@@ -781,6 +791,7 @@ export async function searchAccessibleDocumentChunks(
       CROSS JOIN q
       CROSS JOIN query_terms
       WHERE pm.user_id = ${userId}
+        AND (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
         AND (
           (numnode(q.ts_query) > 0 AND to_tsvector('english', dc.content) @@ q.ts_query)
           OR lower(dc.content) LIKE '%' || q.raw_query || '%'
@@ -851,6 +862,7 @@ export async function searchAccessibleDocumentChunks(
     CROSS JOIN q
     CROSS JOIN query_terms
     WHERE pm.user_id = ${userId}
+      AND (${projectFilterId}::uuid IS NULL OR dc.project_id = ${projectFilterId}::uuid)
       AND (
         (numnode(q.ts_query) > 0 AND dc.search_vector @@ q.ts_query)
         OR lower(dc.content) LIKE '%' || q.raw_query || '%'

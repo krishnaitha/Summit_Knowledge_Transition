@@ -26,7 +26,9 @@ export function DocumentConnectorsPanel({
   syncAction,
   deleteAction,
 }: Props) {
-  const [provider, setProvider] = useState<'confluence' | 'sharepoint'>('confluence');
+  const [provider, setProvider] = useState<
+    'confluence' | 'sharepoint' | 'jira' | 'monday' | 'onedrive' | 'github'
+  >('confluence');
 
   return (
     <Card>
@@ -37,6 +39,23 @@ export function DocumentConnectorsPanel({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4">
+          <p className="text-sm font-semibold text-slate-900">Need help setting up connectors?</p>
+          <p className="mt-1 text-xs text-slate-600">
+            Use the step-by-step setup guide for Confluence, SharePoint, Jira, Monday, OneDrive, and
+            GitHub.
+          </p>
+          <div className="mt-3">
+            <a
+              href="/connector-setup-guide.md"
+              download="connector-setup-guide.md"
+              className="inline-flex items-center rounded-xl bg-white px-3 py-2 text-xs font-semibold text-sky-700 ring-1 ring-sky-200 transition hover:bg-sky-100"
+            >
+              Download connector setup guide
+            </a>
+          </div>
+        </div>
+
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
           <p className="text-sm font-semibold text-slate-900">Try a sample connection</p>
           <p className="mt-1 text-xs text-slate-500">
@@ -61,6 +80,42 @@ export function DocumentConnectorsPanel({
                 Sample SharePoint
               </SubmitButton>
             </form>
+            <form action={createAction}>
+              <input type="hidden" name="project_id" value={projectId} />
+              <input type="hidden" name="provider" value="jira" />
+              <input type="hidden" name="name" value="Sample Jira connector" />
+              <input type="hidden" name="demo" value="true" />
+              <SubmitButton variant="secondary" loadingText="Adding…">
+                Sample Jira
+              </SubmitButton>
+            </form>
+            <form action={createAction}>
+              <input type="hidden" name="project_id" value={projectId} />
+              <input type="hidden" name="provider" value="monday" />
+              <input type="hidden" name="name" value="Sample Monday connector" />
+              <input type="hidden" name="demo" value="true" />
+              <SubmitButton variant="secondary" loadingText="Adding…">
+                Sample Monday
+              </SubmitButton>
+            </form>
+            <form action={createAction}>
+              <input type="hidden" name="project_id" value={projectId} />
+              <input type="hidden" name="provider" value="onedrive" />
+              <input type="hidden" name="name" value="Sample OneDrive connector" />
+              <input type="hidden" name="demo" value="true" />
+              <SubmitButton variant="secondary" loadingText="Adding…">
+                Sample OneDrive
+              </SubmitButton>
+            </form>
+            <form action={createAction}>
+              <input type="hidden" name="project_id" value={projectId} />
+              <input type="hidden" name="provider" value="github" />
+              <input type="hidden" name="name" value="Sample GitHub connector" />
+              <input type="hidden" name="demo" value="true" />
+              <SubmitButton variant="secondary" loadingText="Adding…">
+                Sample GitHub
+              </SubmitButton>
+            </form>
           </div>
         </div>
 
@@ -83,11 +138,25 @@ export function DocumentConnectorsPanel({
               <select
                 name="provider"
                 value={provider}
-                onChange={(e) => setProvider(e.target.value as 'confluence' | 'sharepoint')}
+                onChange={(e) =>
+                  setProvider(
+                    e.target.value as
+                      | 'confluence'
+                      | 'sharepoint'
+                      | 'jira'
+                      | 'monday'
+                      | 'onedrive'
+                      | 'github',
+                  )
+                }
                 className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
               >
                 <option value="confluence">Confluence</option>
                 <option value="sharepoint">SharePoint</option>
+                <option value="jira">Jira</option>
+                <option value="monday">Monday.com</option>
+                <option value="onedrive">OneDrive</option>
+                <option value="github">GitHub</option>
               </select>
             </label>
           </div>
@@ -128,7 +197,7 @@ export function DocumentConnectorsPanel({
                 />
               </label>
             </div>
-          ) : (
+          ) : provider === 'sharepoint' ? (
             <div className="grid gap-3 md:grid-cols-2">
               <label className="space-y-1 text-sm">
                 <span className="text-slate-600">SharePoint site URL</span>
@@ -156,11 +225,156 @@ export function DocumentConnectorsPanel({
                 />
               </label>
             </div>
+          ) : provider === 'jira' ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Jira base URL</span>
+                <input
+                  name="jira_base_url"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="https://company.atlassian.net"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Project key</span>
+                <input
+                  name="jira_project_key"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="KT"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Auth email</span>
+                <input
+                  name="jira_auth_email"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="name@company.com"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">API token</span>
+                <input
+                  name="jira_access_token"
+                  type="password"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="Atlassian API token"
+                />
+              </label>
+              <label className="space-y-1 text-sm md:col-span-2">
+                <span className="text-slate-600">JQL (optional)</span>
+                <input
+                  name="jira_jql"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="project = KT ORDER BY updated DESC"
+                />
+              </label>
+            </div>
+          ) : provider === 'monday' ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Monday API URL</span>
+                <input
+                  name="monday_api_url"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="https://api.monday.com/v2"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Workspace URL (optional)</span>
+                <input
+                  name="monday_workspace_url"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="https://your-workspace.monday.com"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Board IDs</span>
+                <input
+                  name="monday_board_ids"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="123456789,987654321"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">API token</span>
+                <input
+                  name="monday_access_token"
+                  type="password"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="Monday API token"
+                />
+              </label>
+            </div>
+          ) : provider === 'onedrive' ? (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Drive ID</span>
+                <input
+                  name="onedrive_drive_id"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="b!xxxxxx"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Folder path (optional)</span>
+                <input
+                  name="onedrive_folder_path"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="KT/Runbooks"
+                />
+              </label>
+              <label className="space-y-1 text-sm md:col-span-2">
+                <span className="text-slate-600">Access token</span>
+                <input
+                  name="onedrive_access_token"
+                  type="password"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="Microsoft Graph bearer token"
+                />
+              </label>
+            </div>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Repository</span>
+                <input
+                  name="github_repository"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="owner/repo"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Branch (optional)</span>
+                <input
+                  name="github_branch"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="main"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Docs path (optional)</span>
+                <input
+                  name="github_docs_path"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="docs"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-600">Personal access token (optional)</span>
+                <input
+                  name="github_access_token"
+                  type="password"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  placeholder="GitHub token (for private repos)"
+                />
+              </label>
+            </div>
           )}
 
           <p className="text-xs text-slate-500">
-            Confluence imports use API token auth. SharePoint imports read from a document library
-            using a bearer token and library path.
+            Confluence/Jira use Atlassian API token auth. SharePoint and OneDrive use Microsoft
+            Graph bearer tokens. Monday reads board items via GraphQL. GitHub sync reads repo
+            documents from selected branch/path.
           </p>
           <div className="flex items-center gap-2">
             <SubmitButton loadingText="Saving…">Connect source</SubmitButton>
@@ -172,9 +386,21 @@ export function DocumentConnectorsPanel({
             connectors.map((connector) => {
               const config = connector.config as Record<string, unknown>;
               const isConfluence = connector.provider === 'confluence';
+              const isSharePoint = connector.provider === 'sharepoint';
+              const isJira = connector.provider === 'jira';
+              const isMonday = connector.provider === 'monday';
+              const isOneDrive = connector.provider === 'onedrive';
               const sourceSummary = isConfluence
-                ? `${String(config.space_key ?? 'Space')}`
-                : `${String(config.library_path ?? 'Library')}`;
+                ? `Space ${String(config.space_key ?? 'Space')} · ${String(config.base_url ?? '')}`
+                : isSharePoint
+                  ? `Library ${String(config.library_path ?? 'Library')} · ${String(config.site_url ?? '')}`
+                  : isJira
+                    ? `Project ${String(config.project_key ?? 'Key')} · ${String(config.base_url ?? '')}`
+                    : isMonday
+                      ? `Boards ${String(config.board_ids ?? 'N/A')} · ${String(config.workspace_url ?? config.api_url ?? '')}`
+                      : isOneDrive
+                        ? `Drive ${String(config.drive_id ?? 'N/A')} · Folder ${String(config.folder_path ?? '/')}`
+                        : `Repo ${String(config.repository ?? 'owner/repo')} · Branch ${String(config.branch ?? 'main')}`;
 
               return (
                 <div
@@ -194,11 +420,7 @@ export function DocumentConnectorsPanel({
                         {connector.last_sync_status}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {isConfluence
-                        ? `Space ${sourceSummary} · ${String(config.base_url ?? '')}`
-                        : `Library ${sourceSummary} · ${String(config.site_url ?? '')}`}
-                    </p>
+                    <p className="mt-1 text-sm text-slate-500">{sourceSummary}</p>
                     {connector.last_sync_error && (
                       <p className="mt-1 text-sm text-rose-600">{connector.last_sync_error}</p>
                     )}
@@ -234,8 +456,9 @@ export function DocumentConnectorsPanel({
             })
           ) : (
             <div className="rounded-2xl border border-dashed border-slate-200 px-6 py-8 text-sm text-slate-500">
-              No external connectors yet. Add a Confluence space or SharePoint library to sync
-              documents into this project.
+              No external connectors yet. Add a Confluence space, SharePoint library, Jira project,
+              Monday board, OneDrive drive, or GitHub repository to sync documents into this
+              project.
             </div>
           )}
         </div>

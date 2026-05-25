@@ -35,6 +35,54 @@ const SAMPLE_FIXTURES = {
       text: 'Runbook: validate the checklist, confirm backups, and notify the owner after each deployment.',
     },
   ],
+  jira: [
+    {
+      id: 'KT-101',
+      title: 'KT handover dependency map',
+      text: 'Create and validate the dependency map before the handover readiness review.',
+    },
+    {
+      id: 'KT-102',
+      title: 'Escalation workflow review',
+      text: 'Review escalation workflow ownership, SLA expectations, and fallback contacts.',
+    },
+  ],
+  monday: [
+    {
+      id: 'sample-monday-1',
+      title: 'Monday onboarding board item',
+      text: 'Onboarding board item: owner assignment, kickoff date, and handoff acceptance status.',
+    },
+    {
+      id: 'sample-monday-2',
+      title: 'Monday risk register item',
+      text: 'Risk register item: unresolved blockers, severity, and mitigation owner.',
+    },
+  ],
+  onedrive: [
+    {
+      id: 'sample-onedrive-1',
+      title: 'OneDrive transition checklist.docx',
+      text: 'Transition checklist from OneDrive covering owners, approvals, and deadlines.',
+    },
+    {
+      id: 'sample-onedrive-2',
+      title: 'OneDrive support runbook.txt',
+      text: 'Support runbook from OneDrive including escalation path and incident template.',
+    },
+  ],
+  github: [
+    {
+      id: 'docs/getting-started.md',
+      title: 'Getting started guide',
+      text: '# Getting started\n\nThis guide explains setup and ownership for KT onboarding.',
+    },
+    {
+      id: 'docs/operations.md',
+      title: 'Operations manual',
+      text: '# Operations manual\n\nRunbook for monitoring, alerts, and escalation flows.',
+    },
+  ],
 } as const;
 
 function trimTrailingSlash(value: string) {
@@ -43,6 +91,29 @@ function trimTrailingSlash(value: string) {
 
 function asString(value: unknown, fallback = '') {
   return typeof value === 'string' ? value.trim() : fallback;
+}
+
+function stripJqlQuotes(value: string) {
+  return value.replace(/^"+|"+$/g, '').trim();
+}
+
+function normalizePath(path: string) {
+  return path.replace(/^\/+|\/+$/g, '');
+}
+
+function encodePathSegments(path: string) {
+  const cleaned = normalizePath(path);
+  return cleaned
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+}
+
+function fileExtension(fileName: string) {
+  const idx = fileName.lastIndexOf('.');
+  if (idx === -1) return 'txt';
+  return fileName.slice(idx + 1).toLowerCase();
 }
 
 function htmlToText(html: string) {
@@ -58,6 +129,27 @@ function htmlToText(html: string) {
     .replace(/&#39;/gi, "'")
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function jiraAdfToText(value: unknown): string {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (!Array.isArray(value) && typeof value !== 'object') return '';
+
+  const walk = (node: unknown): string[] => {
+    if (!node) return [];
+    if (typeof node === 'string') return [node];
+    if (Array.isArray(node)) return node.flatMap((item) => walk(item));
+    if (typeof node !== 'object') return [];
+
+    const record = node as Record<string, unknown>;
+    const text = asString(record.text);
+    const content = walk(record.content);
+
+    return text ? [text, ...content] : content;
+  };
+
+  return walk(value).join(' ').replace(/\s+/g, ' ').trim();
 }
 
 async function setConnectorSyncState(
@@ -335,6 +427,477 @@ async function syncSharePointConnector(connector: DocumentConnectorRecord) {
   return { imported, provider: 'sharepoint', connectorId: connector.id };
 }
 
+async function syncJiraConnector(connector: DocumentConnectorRecord) {
+  const config = connector.config as ConnectorConfig;
+  if (config.demo) {
+    let imported = 0;
+    for (const item of SAMPLE_FIXTURES.jira) {
+      const text = item.text;
+      const fileName = `${item.id} - ${item.title}.txt`;
+      const fileUrl = await uploadFile(fileName, Buffer.from(text, 'utf8'));
+      const documentId = await upsertImportedDocument({
+        connector,
+        itemId: item.id,
+        fileName,
+        fileType: 'txt',
+        fileUrl,
+        sourceUrl: `${String(config.base_url ?? 'https://demo.atlassian.net')}/browse/${item.id}`,
+      });
+      await processDocumentRecord(documentId, connector.project_id, text);
+      imported++;
+    }
+
+    return { imported, provider: 'jira', connectorId: connector.id, demo: true };
+  }
+
+  const baseUrl = trimTrailingSlash(asString(config.base_url));
+  const projectKey = asString(config.project_key).toUpperCase();
+  const authEmail = asString(config.auth_email);
+  const accessToken = asString(config.access_token);
+  const jql = stripJqlQuotes(asString(config.jql, `project = ${projectKey} ORDER BY updated DESC`));
+
+  if (!baseUrl || !projectKey || !authEmail || !accessToken) {
+    throw new Error('Jira connector is missing base URL, project key, email, or API token');
+  }
+
+  let startAt = 0;
+  let imported = 0;
+
+  while (true) {
+    const searchUrl = new URL(`${baseUrl}/rest/api/3/search`);
+    searchUrl.searchParams.set('jql', jql);
+    searchUrl.searchParams.set('startAt', String(startAt));
+    searchUrl.searchParams.set('maxResults', '50');
+    searchUrl.searchParams.set('fields', 'summary,description,updated,issuetype');
+
+    const response = await fetch(searchUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Basic ${Buffer.from(`${authEmail}:${accessToken}`).toString('base64')}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Jira request failed with ${response.status}`);
+    }
+
+    const data = (await response.json()) as {
+      issues?: Array<Record<string, unknown>>;
+      startAt?: number;
+      maxResults?: number;
+      total?: number;
+    };
+
+    const issues = data.issues ?? [];
+    if (!issues.length) break;
+
+    for (const issue of issues) {
+      const issueKey = asString(issue.key);
+      const issueId = asString(issue.id, issueKey);
+      const fields = (issue.fields ?? {}) as Record<string, unknown>;
+      const summary = asString(fields.summary, issueKey || 'Untitled issue');
+      const description = jiraAdfToText(fields.description);
+      const text = `Issue: ${issueKey}\nSummary: ${summary}\n\n${description || summary}`;
+      const fileName = `${issueKey || issueId} - ${summary}.txt`;
+
+      if (!issueId) continue;
+
+      const fileUrl = await uploadFile(fileName, Buffer.from(text, 'utf8'));
+      const documentId = await upsertImportedDocument({
+        connector,
+        itemId: issueId,
+        fileName,
+        fileType: 'txt',
+        fileUrl,
+        sourceUrl: issueKey ? `${baseUrl}/browse/${issueKey}` : baseUrl,
+      });
+
+      await processDocumentRecord(documentId, connector.project_id, text);
+      imported++;
+    }
+
+    const nextStart = (data.startAt ?? startAt) + (data.maxResults ?? issues.length);
+    if (nextStart >= (data.total ?? nextStart)) {
+      break;
+    }
+    startAt = nextStart;
+  }
+
+  return { imported, provider: 'jira', connectorId: connector.id };
+}
+
+async function syncMondayConnector(connector: DocumentConnectorRecord) {
+  const config = connector.config as ConnectorConfig;
+  if (config.demo) {
+    let imported = 0;
+    for (const item of SAMPLE_FIXTURES.monday) {
+      const text = item.text;
+      const fileName = `${item.title}.txt`;
+      const fileUrl = await uploadFile(fileName, Buffer.from(text, 'utf8'));
+      const documentId = await upsertImportedDocument({
+        connector,
+        itemId: item.id,
+        fileName,
+        fileType: 'txt',
+        fileUrl,
+        sourceUrl: `${String(config.workspace_url ?? 'https://demo.monday.com')}/boards/123456789/pulses/${item.id}`,
+      });
+      await processDocumentRecord(documentId, connector.project_id, text);
+      imported++;
+    }
+
+    return { imported, provider: 'monday', connectorId: connector.id, demo: true };
+  }
+
+  const apiUrl = trimTrailingSlash(asString(config.api_url, 'https://api.monday.com/v2'));
+  const workspaceUrl = trimTrailingSlash(asString(config.workspace_url));
+  const boardIdsRaw = asString(config.board_ids);
+  const accessToken = asString(config.access_token);
+
+  if (!boardIdsRaw || !accessToken) {
+    throw new Error('Monday connector is missing board IDs or API token');
+  }
+
+  const boardIds = boardIdsRaw
+    .split(',')
+    .map((id) => id.trim())
+    .filter((id) => /^\d+$/.test(id));
+
+  if (!boardIds.length) {
+    throw new Error('Monday board IDs must be a comma-separated list of numeric board IDs');
+  }
+
+  const query = `
+    query FetchBoards($boardIds: [ID!]!) {
+      boards(ids: $boardIds) {
+        id
+        name
+        items_page(limit: 100) {
+          items {
+            id
+            name
+            updated_at
+            column_values {
+              id
+              text
+              type
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: accessToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables: { boardIds } }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Monday request failed with ${response.status}`);
+  }
+
+  const data = (await response.json()) as {
+    data?: {
+      boards?: Array<{
+        id?: string;
+        name?: string;
+        items_page?: {
+          items?: Array<{
+            id?: string;
+            name?: string;
+            updated_at?: string;
+            column_values?: Array<{ id?: string; text?: string; type?: string }>;
+          }>;
+        };
+      }>;
+    };
+    errors?: Array<{ message?: string }>;
+  };
+
+  if (data.errors?.length) {
+    const message = asString(data.errors[0]?.message, 'Monday GraphQL request failed');
+    throw new Error(message);
+  }
+
+  const boards = data.data?.boards ?? [];
+  let imported = 0;
+
+  for (const board of boards) {
+    const boardId = asString(board.id);
+    const boardName = asString(board.name, 'Board');
+    const items = board.items_page?.items ?? [];
+
+    for (const item of items) {
+      const itemId = asString(item.id);
+      const itemName = asString(item.name, 'Untitled item');
+      if (!itemId) continue;
+
+      const columnLines = (item.column_values ?? [])
+        .map((col) => {
+          const columnText = asString(col.text);
+          if (!columnText) return '';
+          return `${asString(col.id, 'column')}: ${columnText}`;
+        })
+        .filter(Boolean)
+        .join('\n');
+
+      const text = [
+        `Board: ${boardName}`,
+        `Item: ${itemName}`,
+        item.updated_at ? `Updated: ${item.updated_at}` : '',
+        '',
+        columnLines,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const fileName = `${boardName} - ${itemName}.txt`;
+      const fileUrl = await uploadFile(fileName, Buffer.from(text, 'utf8'));
+      const sourceUrl =
+        workspaceUrl && boardId
+          ? `${workspaceUrl}/boards/${boardId}/pulses/${itemId}`
+          : `${apiUrl}#item-${itemId}`;
+
+      const documentId = await upsertImportedDocument({
+        connector,
+        itemId,
+        fileName,
+        fileType: 'txt',
+        fileUrl,
+        sourceUrl,
+      });
+
+      await processDocumentRecord(documentId, connector.project_id, text);
+      imported++;
+    }
+  }
+
+  return { imported, provider: 'monday', connectorId: connector.id };
+}
+
+async function syncOneDriveConnector(connector: DocumentConnectorRecord) {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    let imported = 0;
+    for (const item of SAMPLE_FIXTURES.onedrive) {
+      const buffer = Buffer.from(item.text, 'utf8');
+      const fileUrl = await uploadFile(item.title, buffer);
+      const documentId = await upsertImportedDocument({
+        connector,
+        itemId: item.id,
+        fileName: item.title,
+        fileType: fileExtension(item.title),
+        fileUrl,
+        sourceUrl: `https://onedrive.live.com/?id=${item.id}`,
+      });
+      await processDocumentRecord(documentId, connector.project_id, item.text);
+      imported++;
+    }
+
+    return { imported, provider: 'onedrive', connectorId: connector.id, demo: true };
+  }
+
+  const driveId = asString(config.drive_id);
+  const folderPath = asString(config.folder_path);
+  const accessToken = asString(config.access_token);
+
+  if (!driveId || !accessToken) {
+    throw new Error('OneDrive connector is missing drive ID or access token');
+  }
+
+  const listEndpoint = folderPath
+    ? `https://graph.microsoft.com/v1.0/drives/${encodeURIComponent(driveId)}/root:/${encodePathSegments(folderPath)}:/children?$top=200`
+    : `https://graph.microsoft.com/v1.0/drives/${encodeURIComponent(driveId)}/root/children?$top=200`;
+
+  const response = await fetch(listEndpoint, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`OneDrive request failed with ${response.status}`);
+  }
+
+  const data = (await response.json()) as {
+    value?: Array<{
+      id?: string;
+      name?: string;
+      webUrl?: string;
+      file?: Record<string, unknown>;
+      ['@microsoft.graph.downloadUrl']?: string;
+    }>;
+  };
+
+  const items = data.value ?? [];
+  let imported = 0;
+
+  for (const item of items) {
+    if (!item.file) continue;
+
+    const itemId = asString(item.id);
+    const name = asString(item.name, 'Untitled file');
+    const downloadUrl = asString(item['@microsoft.graph.downloadUrl']);
+    const sourceUrl = asString(item.webUrl, downloadUrl);
+
+    if (!itemId || !downloadUrl) continue;
+
+    const fileResponse = await fetch(downloadUrl);
+    if (!fileResponse.ok) {
+      throw new Error(`OneDrive file download failed for ${name}`);
+    }
+
+    const buffer = Buffer.from(await fileResponse.arrayBuffer());
+    const text = await extractTextFromFile(name, buffer);
+    const fileUrl = await uploadFile(name, buffer);
+
+    const documentId = await upsertImportedDocument({
+      connector,
+      itemId,
+      fileName: name,
+      fileType: fileExtension(name),
+      fileUrl,
+      sourceUrl,
+    });
+
+    await processDocumentRecord(documentId, connector.project_id, text);
+    imported++;
+  }
+
+  return { imported, provider: 'onedrive', connectorId: connector.id };
+}
+
+async function syncGitHubConnector(connector: DocumentConnectorRecord) {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    let imported = 0;
+    for (const item of SAMPLE_FIXTURES.github) {
+      const fileName = item.id.split('/').pop() ?? 'document.md';
+      const fileUrl = await uploadFile(fileName, Buffer.from(item.text, 'utf8'));
+      const documentId = await upsertImportedDocument({
+        connector,
+        itemId: item.id,
+        fileName,
+        fileType: fileExtension(fileName),
+        fileUrl,
+        sourceUrl: `https://github.com/${String(config.repository ?? 'octocat/Hello-World')}/blob/${String(config.branch ?? 'main')}/${item.id}`,
+      });
+      await processDocumentRecord(documentId, connector.project_id, item.text);
+      imported++;
+    }
+
+    return { imported, provider: 'github', connectorId: connector.id, demo: true };
+  }
+
+  const repository = asString(config.repository);
+  const branch = asString(config.branch, 'main');
+  const docsPath = normalizePath(asString(config.docs_path));
+  const accessToken = asString(config.access_token);
+
+  if (!/^[^/]+\/[^/]+$/.test(repository)) {
+    throw new Error('GitHub connector repository must be in owner/repo format');
+  }
+
+  const [owner, repo] = repository.split('/');
+  const headers: Record<string, string> = {
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  const refResponse = await fetch(
+    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/ref/heads/${encodeURIComponent(branch)}`,
+    { headers },
+  );
+
+  if (!refResponse.ok) {
+    throw new Error(`GitHub branch lookup failed with ${refResponse.status}`);
+  }
+
+  const refData = (await refResponse.json()) as { object?: { sha?: string } };
+  const branchSha = asString(refData.object?.sha);
+  if (!branchSha) {
+    throw new Error('GitHub branch SHA not found');
+  }
+
+  const treeResponse = await fetch(
+    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${encodeURIComponent(branchSha)}?recursive=1`,
+    { headers },
+  );
+
+  if (!treeResponse.ok) {
+    throw new Error(`GitHub tree request failed with ${treeResponse.status}`);
+  }
+
+  const treeData = (await treeResponse.json()) as {
+    tree?: Array<{ path?: string; mode?: string; type?: string; sha?: string; size?: number }>;
+  };
+
+  const allowedExtensions = new Set(['md', 'mdx', 'txt', 'rst', 'adoc']);
+  const items = (treeData.tree ?? [])
+    .filter((node) => node.type === 'blob' && Boolean(node.path) && Boolean(node.sha))
+    .filter((node) => {
+      const path = asString(node.path);
+      if (!path) return false;
+      if (docsPath && !path.startsWith(`${docsPath}/`) && path !== docsPath) return false;
+      const ext = fileExtension(path);
+      return allowedExtensions.has(ext);
+    })
+    .slice(0, 200);
+
+  let imported = 0;
+
+  for (const item of items) {
+    const path = asString(item.path);
+    const sha = asString(item.sha);
+    if (!path || !sha) continue;
+
+    const blobResponse = await fetch(
+      `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/blobs/${encodeURIComponent(sha)}`,
+      { headers },
+    );
+
+    if (!blobResponse.ok) {
+      throw new Error(`GitHub blob request failed for ${path}`);
+    }
+
+    const blobData = (await blobResponse.json()) as { content?: string; encoding?: string };
+    if (blobData.encoding !== 'base64') {
+      continue;
+    }
+
+    const content = Buffer.from(asString(blobData.content).replace(/\n/g, ''), 'base64').toString(
+      'utf8',
+    );
+    const fileName = path.split('/').pop() ?? path;
+    const fileUrl = await uploadFile(fileName, Buffer.from(content, 'utf8'));
+
+    const documentId = await upsertImportedDocument({
+      connector,
+      itemId: path,
+      fileName,
+      fileType: fileExtension(fileName),
+      fileUrl,
+      sourceUrl: `https://github.com/${owner}/${repo}/blob/${branch}/${path}`,
+    });
+
+    await processDocumentRecord(documentId, connector.project_id, content);
+    imported++;
+  }
+
+  return { imported, provider: 'github', connectorId: connector.id };
+}
+
 export async function syncDocumentConnector(connectorId: string) {
   const rows = await sql<DocumentConnectorRecord[]>`
     SELECT * FROM document_connectors WHERE id = ${connectorId} LIMIT 1
@@ -348,10 +911,21 @@ export async function syncDocumentConnector(connectorId: string) {
   await setConnectorSyncState(connector.id, 'running');
 
   try {
-    const result =
-      connector.provider === 'confluence'
-        ? await syncConfluenceConnector(connector)
-        : await syncSharePointConnector(connector);
+    let result;
+
+    if (connector.provider === 'confluence') {
+      result = await syncConfluenceConnector(connector);
+    } else if (connector.provider === 'sharepoint') {
+      result = await syncSharePointConnector(connector);
+    } else if (connector.provider === 'jira') {
+      result = await syncJiraConnector(connector);
+    } else if (connector.provider === 'monday') {
+      result = await syncMondayConnector(connector);
+    } else if (connector.provider === 'onedrive') {
+      result = await syncOneDriveConnector(connector);
+    } else {
+      result = await syncGitHubConnector(connector);
+    }
 
     await setConnectorSyncState(connector.id, 'success');
     return result;

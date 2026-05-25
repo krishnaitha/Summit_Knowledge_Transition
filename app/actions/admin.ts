@@ -8,6 +8,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth';
 import sql from '@/lib/db';
 import { isR2Configured } from '@/lib/env';
+import { getLlmRuntimeConfig, getLlmRuntimeSecrets } from '@/lib/llm/runtime-config';
 import { computeSectionScores } from '@/lib/quiz/scoring';
 import { deleteFile } from '@/lib/storage/local';
 import { deleteFromR2 } from '@/lib/storage/r2';
@@ -68,6 +69,138 @@ export async function toggleProjectStatusAction(formData: FormData) {
   revalidateTag(`project:${projectId}`, 'max');
 }
 
+async function ensureAppSettingsSchema() {
+  await sql`
+    create table if not exists app_settings (
+      key text primary key,
+      value jsonb not null,
+      updated_by uuid references users(id) on delete set null,
+      updated_at timestamptz not null default now()
+    )
+  `;
+}
+
+export async function updateLlmRuntimeConfigAction(formData: FormData) {
+  const { profile } = await requireAdmin();
+
+  const provider = String(formData.get('llm_provider') ?? 'groq').trim();
+  const copilotModelInput = String(formData.get('copilot_model') ?? '').trim();
+  const groqChatModelInput = String(formData.get('groq_chat_model') ?? '').trim();
+  const groqQuizModelInput = String(formData.get('groq_quiz_model') ?? '').trim();
+  const openAiModelInput = String(formData.get('openai_model') ?? '').trim();
+  const azureOpenAiDeploymentInput = String(formData.get('azure_openai_deployment') ?? '').trim();
+  const anthropicModelInput = String(formData.get('anthropic_model') ?? '').trim();
+  const mistralModelInput = String(formData.get('mistral_model') ?? '').trim();
+  const ollamaModelInput = String(formData.get('ollama_model') ?? '').trim();
+
+  if (
+    !['groq', 'copilot', 'openai', 'azure-openai', 'anthropic', 'mistral', 'ollama'].includes(
+      provider,
+    )
+  ) {
+    return;
+  }
+
+  await ensureAppSettingsSchema();
+
+  const currentConfig = await getLlmRuntimeConfig();
+  const currentSecrets = await getLlmRuntimeSecrets();
+  const groqApiKeyInput = String(formData.get('groq_api_key') ?? '').trim();
+  const groqQuizApiKeyInput = String(formData.get('groq_quiz_api_key') ?? '').trim();
+  const copilotProxyTokenInput = String(formData.get('copilot_proxy_token') ?? '').trim();
+  const copilotBaseUrlInput = String(formData.get('copilot_base_url') ?? '').trim();
+  const openAiApiKeyInput = String(formData.get('openai_api_key') ?? '').trim();
+  const openAiBaseUrlInput = String(formData.get('openai_base_url') ?? '').trim();
+  const azureOpenAiApiKeyInput = String(formData.get('azure_openai_api_key') ?? '').trim();
+  const azureOpenAiEndpointInput = String(formData.get('azure_openai_endpoint') ?? '').trim();
+  const azureOpenAiApiVersionInput = String(formData.get('azure_openai_api_version') ?? '').trim();
+  const anthropicApiKeyInput = String(formData.get('anthropic_api_key') ?? '').trim();
+  const anthropicBaseUrlInput = String(formData.get('anthropic_base_url') ?? '').trim();
+  const mistralApiKeyInput = String(formData.get('mistral_api_key') ?? '').trim();
+  const mistralBaseUrlInput = String(formData.get('mistral_base_url') ?? '').trim();
+  const ollamaBaseUrlInput = String(formData.get('ollama_base_url') ?? '').trim();
+
+  const nextSecrets: Record<string, string> = {
+    groqApiKey:
+      String(formData.get('clear_groq_api_key') ?? '') === 'true'
+        ? ''
+        : groqApiKeyInput || currentSecrets.groqApiKey,
+    groqQuizApiKey:
+      String(formData.get('clear_groq_quiz_api_key') ?? '') === 'true'
+        ? ''
+        : groqQuizApiKeyInput || currentSecrets.groqQuizApiKey,
+    copilotProxyToken:
+      String(formData.get('clear_copilot_proxy_token') ?? '') === 'true'
+        ? ''
+        : copilotProxyTokenInput || currentSecrets.copilotProxyToken,
+    copilotBaseUrl: copilotBaseUrlInput || currentSecrets.copilotBaseUrl,
+    openAiApiKey:
+      String(formData.get('clear_openai_api_key') ?? '') === 'true'
+        ? ''
+        : openAiApiKeyInput || currentSecrets.openAiApiKey,
+    openAiBaseUrl: openAiBaseUrlInput || currentSecrets.openAiBaseUrl,
+    azureOpenAiApiKey:
+      String(formData.get('clear_azure_openai_api_key') ?? '') === 'true'
+        ? ''
+        : azureOpenAiApiKeyInput || currentSecrets.azureOpenAiApiKey,
+    azureOpenAiEndpoint: azureOpenAiEndpointInput || currentSecrets.azureOpenAiEndpoint,
+    azureOpenAiApiVersion: azureOpenAiApiVersionInput || currentSecrets.azureOpenAiApiVersion,
+    anthropicApiKey:
+      String(formData.get('clear_anthropic_api_key') ?? '') === 'true'
+        ? ''
+        : anthropicApiKeyInput || currentSecrets.anthropicApiKey,
+    anthropicBaseUrl: anthropicBaseUrlInput || currentSecrets.anthropicBaseUrl,
+    mistralApiKey:
+      String(formData.get('clear_mistral_api_key') ?? '') === 'true'
+        ? ''
+        : mistralApiKeyInput || currentSecrets.mistralApiKey,
+    mistralBaseUrl: mistralBaseUrlInput || currentSecrets.mistralBaseUrl,
+    ollamaBaseUrl: ollamaBaseUrlInput || currentSecrets.ollamaBaseUrl,
+  };
+
+  const nextConfig = {
+    provider,
+    copilotModel: copilotModelInput || currentConfig.copilotModel,
+    groqChatModel: groqChatModelInput || currentConfig.groqChatModel,
+    groqQuizModel: groqQuizModelInput || currentConfig.groqQuizModel,
+    openAiModel: openAiModelInput || currentConfig.openAiModel,
+    azureOpenAiDeployment: azureOpenAiDeploymentInput || currentConfig.azureOpenAiDeployment,
+    anthropicModel: anthropicModelInput || currentConfig.anthropicModel,
+    mistralModel: mistralModelInput || currentConfig.mistralModel,
+    ollamaModel: ollamaModelInput || currentConfig.ollamaModel,
+  };
+
+  await sql`
+    insert into app_settings (key, value, updated_by, updated_at)
+    values (
+      'llm_config',
+      ${sql.json(nextConfig)},
+      ${profile?.id ?? null},
+      now()
+    )
+    on conflict (key) do update
+      set value = excluded.value,
+          updated_by = excluded.updated_by,
+          updated_at = now()
+  `;
+
+  await sql`
+    insert into app_settings (key, value, updated_by, updated_at)
+    values (
+      'llm_secrets',
+      ${sql.json(nextSecrets)},
+      ${profile?.id ?? null},
+      now()
+    )
+    on conflict (key) do update
+      set value = excluded.value,
+          updated_by = excluded.updated_by,
+          updated_at = now()
+  `;
+
+  revalidatePath('/admin/model-switcher');
+}
+
 export async function deleteDocumentAction(formData: FormData) {
   const documentId = String(formData.get('document_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
@@ -114,12 +247,88 @@ function buildConnectorConfig(formData: FormData, provider: string) {
     };
   }
 
+  if (isDemo && provider === 'jira') {
+    return {
+      demo: true,
+      base_url: 'https://demo.atlassian.net',
+      project_key: 'KT',
+      auth_email: 'demo@sample.local',
+      access_token: 'demo-token',
+      jql: 'project = KT ORDER BY updated DESC',
+    };
+  }
+
+  if (isDemo && provider === 'monday') {
+    return {
+      demo: true,
+      api_url: 'https://api.monday.com/v2',
+      workspace_url: 'https://demo.monday.com',
+      board_ids: '123456789',
+      access_token: 'demo-token',
+    };
+  }
+
+  if (isDemo && provider === 'onedrive') {
+    return {
+      demo: true,
+      drive_id: 'demo-drive-id',
+      folder_path: 'KT Docs',
+      access_token: 'demo-token',
+    };
+  }
+
+  if (isDemo && provider === 'github') {
+    return {
+      demo: true,
+      repository: 'octocat/Hello-World',
+      branch: 'main',
+      docs_path: 'docs',
+      access_token: 'demo-token',
+    };
+  }
+
   if (provider === 'confluence') {
     return {
       base_url: String(formData.get('confluence_base_url') ?? '').trim(),
       space_key: String(formData.get('confluence_space_key') ?? '').trim(),
       auth_email: String(formData.get('confluence_auth_email') ?? '').trim(),
       access_token: String(formData.get('confluence_access_token') ?? '').trim(),
+    };
+  }
+
+  if (provider === 'jira') {
+    return {
+      base_url: String(formData.get('jira_base_url') ?? '').trim(),
+      project_key: String(formData.get('jira_project_key') ?? '').trim(),
+      auth_email: String(formData.get('jira_auth_email') ?? '').trim(),
+      access_token: String(formData.get('jira_access_token') ?? '').trim(),
+      jql: String(formData.get('jira_jql') ?? '').trim(),
+    };
+  }
+
+  if (provider === 'monday') {
+    return {
+      api_url: String(formData.get('monday_api_url') ?? '').trim(),
+      workspace_url: String(formData.get('monday_workspace_url') ?? '').trim(),
+      board_ids: String(formData.get('monday_board_ids') ?? '').trim(),
+      access_token: String(formData.get('monday_access_token') ?? '').trim(),
+    };
+  }
+
+  if (provider === 'onedrive') {
+    return {
+      drive_id: String(formData.get('onedrive_drive_id') ?? '').trim(),
+      folder_path: String(formData.get('onedrive_folder_path') ?? '').trim(),
+      access_token: String(formData.get('onedrive_access_token') ?? '').trim(),
+    };
+  }
+
+  if (provider === 'github') {
+    return {
+      repository: String(formData.get('github_repository') ?? '').trim(),
+      branch: String(formData.get('github_branch') ?? '').trim(),
+      docs_path: String(formData.get('github_docs_path') ?? '').trim(),
+      access_token: String(formData.get('github_access_token') ?? '').trim(),
     };
   }
 
@@ -135,7 +344,7 @@ async function ensureConnectorSchema() {
     create table if not exists document_connectors (
       id uuid primary key default gen_random_uuid(),
       project_id uuid not null references projects(id) on delete cascade,
-      provider text not null check (provider in ('confluence', 'sharepoint')),
+      provider text not null check (provider in ('confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github')),
       name text not null,
       config jsonb not null default '{}'::jsonb,
       created_by uuid references users(id) on delete set null,
@@ -151,12 +360,34 @@ async function ensureConnectorSchema() {
   await sql`create index if not exists document_connectors_project_created_at on document_connectors (project_id, created_at desc)`;
 
   await sql`
+    alter table document_connectors
+      drop constraint if exists document_connectors_provider_check
+  `;
+
+  await sql`
+    alter table document_connectors
+      add constraint document_connectors_provider_check
+      check (provider in ('confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github'))
+  `;
+
+  await sql`
     alter table documents
       add column if not exists source_connector_id uuid references document_connectors(id) on delete set null,
-      add column if not exists source_provider text check (source_provider in ('confluence', 'sharepoint')),
+      add column if not exists source_provider text check (source_provider in ('confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github')),
       add column if not exists source_item_id text,
       add column if not exists source_url text,
       add column if not exists source_synced_at timestamptz
+  `;
+
+  await sql`
+    alter table documents
+      drop constraint if exists documents_source_provider_check
+  `;
+
+  await sql`
+    alter table documents
+      add constraint documents_source_provider_check
+      check (source_provider in ('confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github'))
   `;
 
   await sql`
@@ -171,7 +402,12 @@ export async function createDocumentConnectorAction(formData: FormData) {
   const provider = String(formData.get('provider') ?? '').trim();
   const name = String(formData.get('name') ?? '').trim();
 
-  if (!projectId || !name || !['confluence', 'sharepoint'].includes(provider)) return;
+  if (
+    !projectId ||
+    !name ||
+    !['confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github'].includes(provider)
+  )
+    return;
 
   await ensureConnectorSchema();
   const config = buildConnectorConfig(formData, provider);

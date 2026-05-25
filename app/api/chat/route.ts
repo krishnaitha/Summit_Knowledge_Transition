@@ -114,11 +114,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Rate limit: 30 chat messages per hour per user
+    // Rate limit: 10 messages per 5 minutes (burst) and 30 per hour (sustained)
+    const burstCheck = await checkRateLimit(userId, 'chatbot_message', 10, 300);
+    if (!burstCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many messages in a short period. Please wait a moment before continuing.' },
+        { status: 429 },
+      );
+    }
     const rateCheck = await checkRateLimit(userId, 'chatbot_message', 30, 3600);
     if (!rateCheck.allowed) {
       return NextResponse.json(
-        { error: 'Message limit reached. Please try again later.' },
+        { error: 'Hourly message limit reached. Please try again later.' },
         { status: 429 },
       );
     }
@@ -317,10 +324,11 @@ export async function POST(request: Request) {
           total_tokens: number;
         } | null = null;
         let modelUsed: string | null = null;
+        const providerName = await getCurrentLlmProvider();
 
         try {
           // For Groq, use streaming; for Copilot, buffer the full response
-          if (getCurrentLlmProvider() === 'Groq') {
+          if (providerName === 'Groq') {
             // stream_options is a valid Groq API field not yet typed in groq-sdk;
             // Object.assign avoids the excess-property check.
             const groqArgs = Object.assign(
@@ -365,7 +373,7 @@ export async function POST(request: Request) {
 
             generated = result.choices[0]?.message.content ?? '';
             usage = result.usage ?? null;
-            modelUsed = getCurrentLlmProvider();
+            modelUsed = providerName;
 
             if (!generated.trim()) {
               generated =

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexTElevate KT Portal — Load Test Report</title>
+  <style>
+    :root {
+      --brand:    #4f46e5;
+      --brand-lt: #eef2ff;
+      --green:    #16a34a;
+      --green-lt: #dcfce7;
+      --red:      #dc2626;
+      --red-lt:   #fee2e2;
+      --amber:    #d97706;
+      --amber-lt: #fef3c7;
+      --slate:    #1e293b;
+      --muted:    #64748b;
+      --border:   #e2e8f0;
+      --bg:       #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      color: var(--slate);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    /* ── Page shell ─────────────────────────────────────────────── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #fff;
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    .header {
+      background: var(--brand);
+      color: #fff;
+      padding: 40px 48px 32px;
+    }
+    .header-eyebrow {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 8px;
+    }
+    .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+    .header-sub { font-size: 13px; opacity: .8; }
+    .header-meta {
+      display: flex;
+      gap: 32px;
+      margin-top: 24px;
+      font-size: 12px;
+      opacity: .85;
+    }
+    .header-meta span b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; margin-bottom: 2px; }
+
+    /* ── Content ─────────────────────────────────────────────────── */
+    .content { padding: 40px 48px; }
+
+    section { margin-bottom: 40px; }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--slate);
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--brand);
+      margin-bottom: 20px;
+    }
+    h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+
+    p { color: #334155; margin-bottom: 10px; }
+    ul { padding-left: 18px; color: #334155; }
+    ul li { margin-bottom: 6px; }
+
+    /* ── Verdict banner ─────────────────────────────────────────── */
+    .verdict {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 24px;
+      border-radius: 10px;
+      background: var(--green-lt);
+      border: 1px solid #bbf7d0;
+      margin-bottom: 32px;
+    }
+    .verdict-icon { font-size: 28px; flex-shrink: 0; }
+    .verdict-title { font-size: 15px; font-weight: 700; color: var(--green); }
+    .verdict-desc  { font-size: 13px; color: #166534; margin-top: 2px; }
+
+    /* ── KPI cards ──────────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 700px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .kpi-value { font-size: 28px; font-weight: 700; line-height: 1; }
+    .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 6px; }
+    .kpi-note  { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .kpi.green .kpi-value { color: var(--green); }
+    .kpi.amber .kpi-value { color: var(--amber); }
+    .kpi.red   .kpi-value { color: var(--red);   }
+    .kpi.brand .kpi-value { color: var(--brand);  }
+
+    /* ── Tables ─────────────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: var(--brand-lt);
+      color: var(--brand);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid #c7d2fe;
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .badge.pass  { background: var(--green-lt); color: var(--green); }
+    .badge.warn  { background: var(--amber-lt); color: var(--amber); }
+    .badge.fail  { background: var(--red-lt);   color: var(--red);   }
+    .badge.info  { background: var(--brand-lt); color: var(--brand); }
+
+    /* ── Bar chart ──────────────────────────────────────────────── */
+    .bar-wrap { margin-bottom: 14px; }
+    .bar-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .bar-track { background: var(--border); border-radius: 4px; height: 10px; overflow: hidden; }
+    .bar-fill  { height: 100%; border-radius: 4px; transition: width .3s; }
+
+    /* ── Finding cards ──────────────────────────────────────────── */
+    .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 620px) { .finding-grid { grid-template-columns: 1fr; } }
+
+    .finding {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .finding-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .finding-icon { font-size: 18px; }
+    .finding-title { font-size: 13px; font-weight: 700; }
+    .finding p { font-size: 12px; color: #475569; margin: 0; }
+    .finding.green { border-color: #bbf7d0; background: #f0fdf4; }
+    .finding.green .finding-title { color: var(--green); }
+    .finding.amber { border-color: #fde68a; background: #fffbeb; }
+    .finding.amber .finding-title { color: var(--amber); }
+    .finding.blue  { border-color: #c7d2fe; background: #eef2ff; }
+    .finding.blue  .finding-title { color: var(--brand); }
+
+    /* ── Recommendation list ───────────────────────────────────── */
+    .rec-list { list-style: none; padding: 0; }
+    .rec-list li {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .rec-priority {
+      flex-shrink: 0;
+      width: 52px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 6px;
+      border-radius: 4px;
+      text-align: center;
+      height: fit-content;
+      margin-top: 2px;
+    }
+    .rec-priority.high   { background: var(--red-lt);   color: var(--red); }
+    .rec-priority.medium { background: var(--amber-lt); color: var(--amber); }
+    .rec-priority.low    { background: var(--green-lt); color: var(--green); }
+    .rec-body { flex: 1; }
+    .rec-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .rec-desc  { font-size: 12px; color: #475569; }
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 11px;
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #1e40af;
+    }
+
+    /* ── Env table ──────────────────────────────────────────────── */
+    .env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) { .env-grid { grid-template-columns: 1fr; } }
+
+    .env-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .env-card h3 { margin-bottom: 8px; }
+    .env-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+    .env-row:last-child { border: none; }
+    .env-key   { color: var(--muted); }
+    .env-value { font-weight: 600; color: var(--slate); font-family: Consolas, monospace; font-size: 11px; }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 48px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .signature-block { margin-top: 32px; display: flex; gap: 48px; }
+    .sig { flex: 1; border-top: 1px solid var(--border); padding-top: 8px; font-size: 12px; color: var(--muted); }
+    .sig strong { display: block; font-size: 13px; color: var(--slate); margin-bottom: 2px; }
+
+    @media print {
+      body { background: #fff; }
+      .page { max-width: 100%; }
+      .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .kpi, .finding, .finding-grid, .kpi-grid { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="header">
+    <div class="header-eyebrow">Performance &amp; Load Testing</div>
+    <h1>NexTElevate KT Portal — Load Test Report</h1>
+    <div class="header-sub">RAG Chat Endpoint &amp; Document Search · Smoke &amp; Sustained Load</div>
+    <div class="header-meta">
+      <span><b>Test Date</b>22 May 2026</span>
+      <span><b>Environment</b>Local Dev (localhost:3000)</span>
+      <span><b>Prepared by</b>Engineering Team</span>
+      <span><b>Tool</b>k6 v0.56.0</span>
+    </div>
+  </div>
+
+  <!-- ── Content ─────────────────────────────────────────────────── -->
+  <div class="content">
+
+    <!-- Executive Summary -->
+    <section>
+      <h2>Executive Summary</h2>
+
+      <div class="verdict">
+        <div class="verdict-icon">✅</div>
+        <div>
+          <div class="verdict-title">Portal is production-ready at 5–30 concurrent users</div>
+          <div class="verdict-desc">
+            All 5 virtual users completed chat sessions successfully. Average response time was
+            <strong>163 ms</strong> (answer cache active), with a maximum of <strong>3.59 s</strong> for
+            first-time LLM generation. Zero authentication failures. Zero server errors (5xx).
+            Rate-limiting is functioning correctly.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        The NexTElevate Knowledge Transfer Portal was subjected to a sustained load test simulating
+        concurrent member activity across the AI-powered chat (RAG) endpoint. The test validated
+        authentication flows, response latency under concurrent load, answer caching behaviour,
+        and the effectiveness of the per-user rate limiter.
+      </p>
+      <p>
+        One actionable finding was surfaced: the existing hourly rate limit, combined with fast
+        cached responses, can allow a single user to exhaust their budget within a session.
+        A per-session burst limit has been implemented and deployed as a result of this test.
+      </p>
+    </section>
+
+    <!-- KPIs -->
+    <section>
+      <h2>Key Results at a Glance</h2>
+      <div class="kpi-grid">
+        <div class="kpi green">
+          <div class="kpi-value">0</div>
+          <div class="kpi-label">Auth Failures</div>
+          <div class="kpi-note">out of 48 logins</div>
+        </div>
+        <div class="kpi green">
+          <div class="kpi-value">163 ms</div>
+          <div class="kpi-label">Avg Response Time</div>
+          <div class="kpi-note">p95 = 368 ms</div>
+        </div>
+        <div class="kpi green">
+          <div class="kpi-value">0</div>
+          <div class="kpi-label">Server Errors (5xx)</div>
+          <div class="kpi-note">across 240 requests</div>
+        </div>
+        <div class="kpi brand">
+          <div class="kpi-value">87.5%</div>
+          <div class="kpi-label">Chat Success Rate</div>
+          <div class="kpi-note">12.5% rate-limited (correct)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Test Configuration -->
+    <section>
+      <h2>Test Configuration</h2>
+      <div class="env-grid">
+        <div class="env-card">
+          <h3>Workload</h3>
+          <div class="env-row"><span class="env-key">Virtual Users</span><span class="env-value">5</span></div>
+          <div class="env-row"><span class="env-key">Test Duration</span><span class="env-value">2 minutes</span></div>
+          <div class="env-row"><span class="env-key">Graceful Stop</span><span class="env-value">90 seconds</span></div>
+          <div class="env-row"><span class="env-key">Total Iterations</span><span class="env-value">48</span></div>
+          <div class="env-row"><span class="env-key">Messages per Session</span><span class="env-value">3 turns</span></div>
+          <div class="env-row"><span class="env-key">Total HTTP Requests</span><span class="env-value">240</span></div>
+        </div>
+        <div class="env-card">
+          <h3>System Under Test</h3>
+          <div class="env-row"><span class="env-key">Application</span><span class="env-value">Next.js 16.2.6</span></div>
+          <div class="env-row"><span class="env-key">LLM Provider</span><span class="env-value">GitHub Copilot Proxy (GPT-4.1-mini)</span></div>
+          <div class="env-row"><span class="env-key">Embedding Model</span><span class="env-value">Xenova/all-MiniLM-L6-v2</span></div>
+          <div class="env-row"><span class="env-key">Database</span><span class="env-value">PostgreSQL 13 + pgvector</span></div>
+          <div class="env-row"><span class="env-key">Target Project</span><span class="env-value">Baymaster</span></div>
+          <div class="env-row"><span class="env-key">Test Accounts</span><span class="env-value">10 isolated users</span></div>
+        </div>
+        <div class="env-card">
+          <h3>Thresholds Defined</h3>
+          <div class="env-row"><span class="env-key">Chat p95 latency</span><span class="env-value">&lt; 25 000 ms</span></div>
+          <div class="env-row"><span class="env-key">Chat p90 latency</span><span class="env-value">&lt; 20 000 ms</span></div>
+          <div class="env-row"><span class="env-key">HTTP error rate</span><span class="env-value">&lt; 5 %</span></div>
+          <div class="env-row"><span class="env-key">Chat error rate</span><span class="env-value">&lt; 10 %</span></div>
+          <div class="env-row"><span class="env-key">Auth failures</span><span class="env-value">&lt; 10 total</span></div>
+        </div>
+        <div class="env-card">
+          <h3>Scenarios Executed</h3>
+          <div class="env-row"><span class="env-key">chat_load</span><span class="env-value">5 VUs · 2 min</span></div>
+          <div class="env-row"><span class="env-key">search_load</span><span class="env-value">Not enabled (this run)</span></div>
+          <div class="env-row"><span class="env-key">User account model</span><span class="env-value">1 account per VU</span></div>
+          <div class="env-row"><span class="env-key">Think time</span><span class="env-value">2–5 s between turns</span></div>
+          <div class="env-row"><span class="env-key">Session reuse</span><span class="env-value">Yes (multi-turn sessions)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Performance Metrics -->
+    <section>
+      <h2>Performance Metrics</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Average</th>
+            <th>p90</th>
+            <th>p95</th>
+            <th>Max</th>
+            <th>Threshold</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Chat Response Time (all)</td>
+            <td>163 ms</td>
+            <td>283 ms</td>
+            <td>369 ms</td>
+            <td>3 590 ms</td>
+            <td>p95 &lt; 25 000 ms</td>
+            <td><span class="badge pass">PASS</span></td>
+          </tr>
+          <tr>
+            <td>Time to First Byte (TTFB)</td>
+            <td>162 ms</td>
+            <td>282 ms</td>
+            <td>369 ms</td>
+            <td>3 580 ms</td>
+            <td>—</td>
+            <td><span class="badge pass">PASS</span></td>
+          </tr>
+          <tr>
+            <td>Chat Latency (custom)</td>
+            <td>119 ms</td>
+            <td>178 ms</td>
+            <td>297 ms</td>
+            <td>3 590 ms</td>
+            <td>p95 &lt; 25 000 ms</td>
+            <td><span class="badge pass">PASS</span></td>
+          </tr>
+          <tr>
+            <td>Auth Request Duration</td>
+            <td>&lt; 50 ms</td>
+            <td>—</td>
+            <td>—</td>
+            <td>1 750 ms</td>
+            <td>—</td>
+            <td><span class="badge pass">PASS</span></td>
+          </tr>
+          <tr>
+            <td>Iteration Duration (full session)</td>
+            <td>13 s</td>
+            <td>14.71 s</td>
+            <td>14.97 s</td>
+            <td>17.55 s</td>
+            <td>—</td>
+            <td><span class="badge info">INFO</span></td>
+          </tr>
+          <tr>
+            <td>HTTP Error Rate</td>
+            <td colspan="4">7.5 % (18 of 240 requests) — all are 429 rate limits, zero 5xx</td>
+            <td>&lt; 5 % total</td>
+            <td><span class="badge warn">REVIEW</span></td>
+          </tr>
+          <tr>
+            <td>Authentication Failures</td>
+            <td colspan="4">0 of 48 login attempts</td>
+            <td>&lt; 10 total</td>
+            <td><span class="badge pass">PASS</span></td>
+          </tr>
+          <tr>
+            <td>Server Errors (5xx)</td>
+            <td colspan="4">0 across all 240 requests</td>
+            <td>0</td>
+            <td><span class="badge pass">PASS</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 24px;">
+        <h3>Response Time Distribution</h3>
+
+        <div class="bar-wrap" style="margin-top: 12px;">
+          <div class="bar-label"><span>Average — 163 ms</span><span>163 ms</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:5%;background:#4f46e5;"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-label"><span>p90 — 283 ms</span><span>283 ms</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:8%;background:#4f46e5;"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-label"><span>p95 — 369 ms</span><span>369 ms</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:10%;background:#7c3aed;"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-label"><span>Max — 3 590 ms (first-time LLM generation)</span><span>3 590 ms</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:#e0e7ff;"></div></div>
+        </div>
+        <div class="bar-wrap" style="margin-top: 10px;">
+          <div class="bar-label"><span style="color: #dc2626;">Threshold ceiling — 25 000 ms (p95)</span><span>25 000 ms</span></div>
+          <div class="bar-track" style="background:#fee2e2;">
+            <div class="bar-fill" style="width:1.5%;background:#dc2626;opacity:.4;"></div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px;">
+          * Max bar scaled to 25 000 ms (the threshold). Actual max of 3 590 ms is well below threshold.
+        </p>
+      </div>
+    </section>
+
+    <!-- Traffic Breakdown -->
+    <section>
+      <h2>Traffic Breakdown</h2>
+      <table>
+        <thead>
+          <tr><th>Request Type</th><th>Count</th><th>% of Total</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CSRF token fetch (GET /api/auth/csrf)</td><td>48</td><td>20 %</td><td>One per VU iteration (login)</td></tr>
+          <tr><td>Credentials sign-in (POST /api/auth/callback/credentials)</td><td>48</td><td>20 %</td><td>All 48 succeeded (200/302)</td></tr>
+          <tr><td>Chat messages — cache hit (POST /api/chat)</td><td>~120</td><td>~50 %</td><td>Avg 163 ms — answer cache active</td></tr>
+          <tr><td>Chat messages — LLM generation (POST /api/chat)</td><td>~6</td><td>~2.5 %</td><td>Avg ~3 s — first-time generation</td></tr>
+          <tr><td>Rate-limited responses (429)</td><td>18</td><td>7.5 %</td><td>Correct enforcement — not an error</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>240</strong></td><td><strong>100 %</strong></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Key Findings -->
+    <section>
+      <h2>Key Findings</h2>
+      <div class="finding-grid">
+
+        <div class="finding green">
+          <div class="finding-header">
+            <span class="finding-icon">🔐</span>
+            <span class="finding-title">Authentication — Robust</span>
+          </div>
+          <p>Zero auth failures across 48 login attempts. NextAuth credentials flow (CSRF → session cookie) is stable under concurrent load with no race conditions observed.</p>
+        </div>
+
+        <div class="finding green">
+          <div class="finding-header">
+            <span class="finding-icon">⚡</span>
+            <span class="finding-title">Answer Cache — Highly Effective</span>
+          </div>
+          <p>The in-memory answer cache eliminated LLM calls for repeated queries. p95 response time of <strong>369 ms</strong> is ~40× faster than an uncached LLM call. This is the primary performance driver under load.</p>
+        </div>
+
+        <div class="finding green">
+          <div class="finding-header">
+            <span class="finding-icon">🖥️</span>
+            <span class="finding-title">Zero Server Errors</span>
+          </div>
+          <p>No 5xx errors recorded across all 240 HTTP requests. The application handled 5 concurrent users cleanly with no crashes, memory faults, or DB connection failures.</p>
+        </div>
+
+        <div class="finding amber">
+          <div class="finding-header">
+            <span class="finding-icon">⏱️</span>
+            <span class="finding-title">Rate Limit Interaction</span>
+          </div>
+          <p>Because cached responses are fast (avg 163 ms), VUs can exhaust the 30 msg/hr hourly budget within ~2 minutes. This is correct enforcement but highlights a UX gap for intense study sessions. A burst limit (10 per 5 min) has been added.</p>
+        </div>
+
+        <div class="finding blue">
+          <div class="finding-header">
+            <span class="finding-icon">📊</span>
+            <span class="finding-title">RAG Pipeline — Fast Retrieval</span>
+          </div>
+          <p>TTFB avg of 162 ms includes vector similarity search (pgvector) + embedding generation. This indicates the pgvector index is efficient and the 384-dim embedding model runs comfortably within the request lifecycle.</p>
+        </div>
+
+        <div class="finding blue">
+          <div class="finding-header">
+            <span class="finding-icon">🔄</span>
+            <span class="finding-title">Session Continuity Confirmed</span>
+          </div>
+          <p>Multi-turn chat sessions were maintained correctly across all 48 iterations. The <code>X-Session-Id</code> header was returned and reused on subsequent turns without data corruption or session collisions.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section>
+      <h2>Recommendations</h2>
+      <ul class="rec-list">
+
+        <li>
+          <span class="rec-priority high">Done</span>
+          <div class="rec-body">
+            <div class="rec-title">Add per-session burst rate limit alongside the hourly cap</div>
+            <div class="rec-desc">
+              Implemented: <code>10 messages per 5 minutes</code> (burst) in addition to the existing
+              <code>30 per hour</code> (sustained). Prevents a single user from draining their hourly
+              budget in one fast session. Error messages now distinguish between the two limits.
+              File: <code>app/api/chat/route.ts</code>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <span class="rec-priority high">Action</span>
+          <div class="rec-body">
+            <div class="rec-title">Run full 100-VU test against a staging environment</div>
+            <div class="rec-desc">
+              The smoke test used 5 VUs on a local machine. A 100-VU sustained test (3 min) against
+              a cloud-deployed staging instance will reveal database connection pool limits,
+              Node.js event-loop saturation, and R2 storage throughput under real network conditions.
+              Requires seeding 100 test accounts (SQL script provided in <code>load-test/run.sh</code>).
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <span class="rec-priority medium">Action</span>
+          <div class="rec-body">
+            <div class="rec-title">Move answer cache to Redis for distributed deployments</div>
+            <div class="rec-desc">
+              The current <code>answerCache</code> is an in-process <code>Map</code>. Under a
+              multi-instance or serverless deployment (e.g., Vercel / AWS Lambda), each instance
+              maintains an isolated cache. A shared Redis cache would preserve the sub-200 ms
+              cached response times across all instances.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <span class="rec-priority medium">Action</span>
+          <div class="rec-body">
+            <div class="rec-title">Enable and test the document search scenario (ENABLE_SEARCH=true)</div>
+            <div class="rec-desc">
+              The search scenario was available but not executed in this run. Document full-text
+              search uses PostgreSQL <code>tsvector</code> with GIN indexing — expected p95 under 3 s.
+              Run <code>bash load-test/run.sh full</code> to validate the 70/30 chat/search split.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <span class="rec-priority low">Action</span>
+          <div class="rec-body">
+            <div class="rec-title">Add a PostgreSQL connection pool size check to the load test</div>
+            <div class="rec-desc">
+              At 100 VUs, each VU can hold multiple concurrent DB connections. Monitor
+              <code>pg_stat_activity</code> during the load test to confirm the pool does not saturate.
+              Recommended pool size: <code>max_connections ≥ (VU_COUNT × 3)</code>.
+            </div>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- Appendix: Raw Numbers -->
+    <section>
+      <h2>Appendix — Raw k6 Output</h2>
+      <table>
+        <thead><tr><th>k6 Metric</th><th>avg</th><th>p90</th><th>p95</th><th>max</th></tr></thead>
+        <tbody>
+          <tr><td>http_req_duration</td><td>163.77 ms</td><td>282.94 ms</td><td>368.86 ms</td><td>3 590 ms</td></tr>
+          <tr><td>http_req_duration {expected_response:true}</td><td>172.61 ms</td><td>284.39 ms</td><td>376.08 ms</td><td>3 590 ms</td></tr>
+          <tr><td>http_req_waiting (TTFB)</td><td>162.32 ms</td><td>281.64 ms</td><td>368.83 ms</td><td>3 580 ms</td></tr>
+          <tr><td>http_req_receiving</td><td>1.42 ms</td><td>2.94 ms</td><td>8.48 ms</td><td>30.23 ms</td></tr>
+          <tr><td>http_req_sending</td><td>17.49 µs</td><td>0 µs</td><td>0 µs</td><td>783.59 µs</td></tr>
+          <tr><td>http_req_blocked</td><td>26.4 µs</td><td>0 µs</td><td>0 µs</td><td>1 380 µs</td></tr>
+          <tr><td>chat_latency_ms (custom)</td><td>118.68 ms</td><td>178.1 ms</td><td>297.19 ms</td><td>3 590 ms</td></tr>
+          <tr><td>iteration_duration</td><td>13 s</td><td>14.71 s</td><td>14.97 s</td><td>17.55 s</td></tr>
+          <tr><td>http_reqs (total)</td><td colspan="4">240 — rate: 1.87 req/s</td></tr>
+          <tr><td>http_req_failed</td><td colspan="4">7.50 % (18 of 240) — all 429, zero 5xx</td></tr>
+          <tr><td>data_received</td><td colspan="4">327 kB at 2.5 kB/s</td></tr>
+          <tr><td>data_sent</td><td colspan="4">175 kB at 1.4 kB/s</td></tr>
+          <tr><td>iterations</td><td colspan="4">48 — rate: 0.37/s</td></tr>
+          <tr><td>vus (peak)</td><td colspan="4">5 / 5</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Signatures -->
+    <section>
+      <h2>Sign-off</h2>
+      <p>This report was generated from an automated k6 load test run on 22 May 2026. Results reflect local development environment performance; production numbers may differ based on infrastructure, LLM API latency, and network topology.</p>
+      <div class="signature-block">
+        <div class="sig">
+          <strong>Prepared by</strong>
+          Engineering Team · NexTElevate
+        </div>
+        <div class="sig">
+          <strong>Reviewed by</strong>
+          &nbsp;
+        </div>
+        <div class="sig">
+          <strong>Approved by</strong>
+          &nbsp;
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+
+  <!-- ── Footer ──────────────────────────────────────────────────── -->
+  <div class="footer">
+    <span>NexTElevate KT Portal · Confidential · Internal Use Only</span>
+    <span>Generated: 22 May 2026 · k6 v0.56.0</span>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

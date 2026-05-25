@@ -1,50 +1,37 @@
 import Groq from 'groq-sdk';
 
-import { appEnv, assertEnv, isGroqConfigured } from '@/lib/env';
+import { getLlmRuntimeSecrets } from '@/lib/llm/runtime-config';
 import { sleep } from '@/lib/utils';
 
 const PRIMARY_MODEL = 'llama-3.3-70b-versatile';
 const FALLBACK_MODEL = 'llama-3.1-8b-instant';
 
-let groqClient: Groq | null = null;
-let groqQuizClient: Groq | null = null;
+function buildModelSequence(primary: string, secondary: string) {
+  const seen = new Set<string>();
+  const ordered: string[] = [];
 
-function getGroqClient(apiKey?: string) {
-  if (!isGroqConfigured()) {
-    return null;
+  for (const model of [primary, secondary]) {
+    const trimmed = model.trim();
+    if (!trimmed || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    ordered.push(trimmed);
   }
 
-  // If a specific key is provided, create a one-off client for that key
-  if (apiKey) {
-    return new Groq({ apiKey });
-  }
-
-  if (!groqClient) {
-    groqClient = new Groq({ apiKey: assertEnv('groqApiKey') });
-  }
-
-  return groqClient;
+  return ordered;
 }
 
-export function getGroqQuizClient(): Groq | null {
-  if (!isGroqConfigured()) return null;
-
-  const quizKey = appEnv.groqQuizApiKey;
-
-  // If no dedicated quiz key is configured, fall back to the default client
-  if (!quizKey) return getGroqClient();
-
-  if (!groqQuizClient) {
-    groqQuizClient = new Groq({ apiKey: quizKey });
-  }
-
-  return groqQuizClient;
+function getGroqClient(apiKey: string): Groq {
+  return new Groq({ apiKey });
 }
 
 function isRateLimitError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const status = (error as { status?: number }).status;
-  return status === 429 || error.message.includes('429') || error.message.toLowerCase().includes('rate limit');
+  return (
+    status === 429 ||
+    error.message.includes('429') ||
+    error.message.toLowerCase().includes('rate limit')
+  );
 }
 
 export function buildKtPrompt(projectName: string, context: string) {
@@ -64,13 +51,14 @@ export async function createGroqChatCompletion(
   onStatus?: (message: string) => void,
   primaryModel?: string,
 ) {
-  const client = getGroqClient();
+  const secrets = await getLlmRuntimeSecrets();
+  const client = secrets.groqApiKey ? getGroqClient(secrets.groqApiKey) : null;
 
   if (!client) {
     throw new Error('Groq is not configured. Add GROQ_API_KEY to continue.');
   }
 
-  for (const model of [primaryModel ?? PRIMARY_MODEL, FALLBACK_MODEL]) {
+  for (const model of buildModelSequence(primaryModel ?? PRIMARY_MODEL, FALLBACK_MODEL)) {
     let attempts = 0;
 
     while (attempts < 3) {
@@ -95,7 +83,9 @@ export async function createGroqChatCompletion(
     }
   }
 
-  throw new Error(`Groq request failed after all retries. Last error may be a rate limit — wait a minute and try again.`);
+  throw new Error(
+    `Groq request failed after all retries. Last error may be a rate limit — wait a minute and try again.`,
+  );
 }
 
 /**
@@ -105,14 +95,17 @@ export async function createGroqChatCompletion(
  */
 export async function createGroqQuizCompletion(
   args: Omit<Parameters<Groq['chat']['completions']['create']>[0], 'model'>,
+  primaryModel?: string,
 ) {
-  const client = getGroqQuizClient();
+  const secrets = await getLlmRuntimeSecrets();
+  const quizKey = secrets.groqQuizApiKey || secrets.groqApiKey;
+  const client = quizKey ? getGroqClient(quizKey) : null;
 
   if (!client) {
     throw new Error('Groq is not configured. Add GROQ_API_KEY to continue.');
   }
 
-  for (const model of [FALLBACK_MODEL, PRIMARY_MODEL]) {
+  for (const model of buildModelSequence(primaryModel ?? FALLBACK_MODEL, PRIMARY_MODEL)) {
     let attempts = 0;
 
     while (attempts < 3) {
@@ -132,5 +125,7 @@ export async function createGroqQuizCompletion(
     }
   }
 
-  throw new Error(`Groq quiz request failed after all retries. Last error may be a rate limit — wait a minute and try again.`);
+  throw new Error(
+    `Groq quiz request failed after all retries. Last error may be a rate limit — wait a minute and try again.`,
+  );
 }

@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import { DebouncedDocumentSearch } from '@/components/search/debounced-document-search';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireAnyAdmin } from '@/lib/auth';
-import { searchAccessibleDocumentChunks } from '@/lib/data';
+import { getAllProjects, getAssignedProjects, searchAccessibleDocumentChunks } from '@/lib/data';
 
 function HighlightedSnippet(props: { snippet: string }) {
   const segments = props.snippet
@@ -41,13 +41,33 @@ function HighlightedSnippet(props: { snippet: string }) {
   );
 }
 
-export default async function AdminSearchPage(props: { searchParams: Promise<{ q?: string }> }) {
+export default async function AdminSearchPage(props: {
+  searchParams: Promise<{ q?: string; projectId?: string }>;
+}) {
   const searchParams = await props.searchParams;
   const documentQuery = (searchParams.q ?? '').trim();
+  const requestedProjectId = (searchParams.projectId ?? '').trim();
   const { profile } = await requireAnyAdmin();
+  const accessibleProjects =
+    profile?.role === 'admin'
+      ? await getAllProjects()
+      : await getAssignedProjects(profile!.id, profile?.last_login_at ?? null);
+  const projectOptions = accessibleProjects.map((project) => ({
+    id: project.id,
+    name: project.name,
+  }));
+  const selectedProjectId = projectOptions.some((project) => project.id === requestedProjectId)
+    ? requestedProjectId
+    : '';
   const results =
     documentQuery.length >= 2
-      ? await searchAccessibleDocumentChunks(profile!.id, profile?.role, documentQuery)
+      ? await searchAccessibleDocumentChunks(
+          profile!.id,
+          profile?.role,
+          documentQuery,
+          20,
+          selectedProjectId || undefined,
+        )
       : [];
 
   return (
@@ -62,11 +82,16 @@ export default async function AdminSearchPage(props: { searchParams: Promise<{ q
 
       <Card id="search-documents">
         <CardHeader>
-          <CardTitle>Search Across All Accessible Documents</CardTitle>
+          <CardTitle>Search Accessible Documents</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-5">
-            <DebouncedDocumentSearch initialQuery={documentQuery} anchorId="search-documents" />
+            <DebouncedDocumentSearch
+              initialQuery={documentQuery}
+              initialProjectId={selectedProjectId}
+              projectOptions={projectOptions}
+              anchorId="search-documents"
+            />
           </div>
 
           {documentQuery.length > 0 ? (

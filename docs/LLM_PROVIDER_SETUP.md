@@ -1,11 +1,16 @@
 # LLM Provider Setup Guide
 
-Summit KT Portal supports switchable LLM providers: **Groq** (default) and **GitHub Models** (using a Copilot-compatible token).
+Summit KT Portal supports switchable LLM providers: **Groq** (default), **GitHub Models (Copilot Proxy)**, **OpenAI**, **Azure OpenAI**, **Anthropic**, **Mistral**, and **Ollama**.
 
 ## Overview
 
 - **Groq (Default)**: Free tier with generous limits, ideal for development and self-hosted deployments
 - **GitHub Models**: Uses a GitHub token with `models:read` permission
+- **OpenAI**: Uses an OpenAI API key and model name
+- **Azure OpenAI**: Uses Azure endpoint, deployment, API version, and API key
+- **Anthropic**: Uses an Anthropic API key and model name
+- **Mistral**: Uses a Mistral API key and model name
+- **Ollama**: Local/self-hosted provider; keyless by default via local base URL
 
 ## Groq Setup (Default)
 
@@ -86,6 +91,7 @@ npm run dev
 ```
 
 Check logs to confirm provider in use:
+
 - Groq: You'll see Groq model names (llama-3.3-70b-versatile, llama-3.1-8b-instant)
 - Copilot provider: You'll see provider/model metadata associated with configured GitHub Models values
 
@@ -96,11 +102,34 @@ If you see `401/403`, verify the token has `models:read` permission.
 
 ### At Runtime
 
-Update the environment variable and restart the development server:
+Use the admin screen to switch provider and models without editing `.env`:
+
+1. Open **Admin → Model Switcher**
+2. Choose provider (`Groq`, `Copilot Proxy`, `OpenAI`, `Azure OpenAI`, `Anthropic`, `Mistral`, or `Ollama`)
+3. The screen shows only the selected provider's model and credential fields
+4. Review the compact "Current Models" summary for non-selected providers
+5. Save
+
+This keeps the form focused while still surfacing what model is currently configured for every provider.
+
+For Ollama, only `Ollama Base URL` and `Ollama Model` are required (no key needed for local usage).
+
+Changes are stored in PostgreSQL (`app_settings.key = 'llm_config'` and `app_settings.key = 'llm_secrets'`) and applied to new requests immediately.
+
+Credential fields are shown as masked values in the UI. Leave a field blank to keep the current value.
+Environment variables (`GROQ_API_KEY`, `COPILOT_PROXY_TOKEN`, etc.) are now fallback defaults when no DB value is present.
+
+### Environment Defaults
+
+If no runtime setting exists yet, the app falls back to environment variables. You can still set defaults this way:
 
 ```bash
-# Switch from Groq to GitHub Models
-export LLM_PROVIDER=copilot
+# Default provider/model (used as fallback)
+export LLM_PROVIDER=groq
+export COPILOT_MODEL=openai/gpt-4.1-mini
+
+# Credentials
+export GROQ_API_KEY=gsk_your_groq_key
 export COPILOT_PROXY_TOKEN=your_token
 npm run dev
 ```
@@ -110,12 +139,14 @@ npm run dev
 Set environment variables in your deployment platform:
 
 **Azure App Service**:
+
 ```bash
 az webapp config appsettings set --name your-app --resource-group your-rg \
   --settings LLM_PROVIDER=copilot COPILOT_PROXY_TOKEN=your_token
 ```
 
 **Docker/Containerized**:
+
 ```dockerfile
 ENV LLM_PROVIDER=copilot
 ENV COPILOT_PROXY_TOKEN=your_token
@@ -126,15 +157,15 @@ Add to project settings under Environment Variables
 
 ## Provider Differences
 
-| Feature | Groq | GitHub Models (LLM_PROVIDER=copilot) |
-|---------|------|---------------|
-| Rate Limits | 131K TPM free tier | Depends on GitHub tier |
-| Models | llama-3.3-70b, llama-3.1-8b | Configurable via `COPILOT_MODEL` (default: `openai/gpt-4.1-mini`) |
-| Streaming | ✅ Full streaming support | ⚠️ Buffered responses |
-| Chat | ✅ | ✅ |
-| Quiz Generation | ✅ (optimized) | ✅ |
-| Cost | Free (within free tier) | GitHub Copilot subscription |
-| Setup Complexity | Simple | Token generation required |
+| Feature          | Groq                        | GitHub Models (LLM_PROVIDER=copilot)                              |
+| ---------------- | --------------------------- | ----------------------------------------------------------------- |
+| Rate Limits      | 131K TPM free tier          | Depends on GitHub tier                                            |
+| Models           | llama-3.3-70b, llama-3.1-8b | Configurable via `COPILOT_MODEL` (default: `openai/gpt-4.1-mini`) |
+| Streaming        | ✅ Full streaming support   | ⚠️ Buffered responses                                             |
+| Chat             | ✅                          | ✅                                                                |
+| Quiz Generation  | ✅ (optimized)              | ✅                                                                |
+| Cost             | Free (within free tier)     | GitHub Copilot subscription                                       |
+| Setup Complexity | Simple                      | Token generation required                                         |
 
 ## Troubleshooting
 
@@ -143,6 +174,7 @@ Add to project settings under Environment Variables
 **Cause**: `LLM_PROVIDER=copilot` but `COPILOT_PROXY_TOKEN` not set or invalid
 
 **Fix**:
+
 1. Verify token is valid and set in `.env.local`
 2. Restart dev server
 3. Check that token hasn't expired
@@ -152,6 +184,7 @@ Add to project settings under Environment Variables
 **Cause**: `LLM_PROVIDER=groq` (or default) but `GROQ_API_KEY` not set
 
 **Fix**:
+
 1. Get API key from [https://console.groq.com](https://console.groq.com)
 2. Add to `.env.local`: `GROQ_API_KEY=gsk_...`
 3. Restart dev server
@@ -159,11 +192,13 @@ Add to project settings under Environment Variables
 ### Rate Limit (429) Errors
 
 **From Groq**:
+
 - Free tier: 131K TPM limit per minute
 - Solution: Use `GROQ_API_KEY_QUIZ` for separate quiz generation quotas
 - Wait 60+ seconds before retrying
 
 **From GitHub Models**:
+
 - Depends on GitHub Copilot plan
 - Solution: Check GitHub Copilot usage dashboard
 - Implement exponential backoff (already built in)

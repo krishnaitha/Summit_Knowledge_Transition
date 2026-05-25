@@ -32,9 +32,6 @@ import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 // ── Config ─────────────────────────────────────────────────────────────────────
 
 const BASE_URL     = (__ENV.BASE_URL     || 'http://localhost:3000').replace(/\/$/, '');
-const TEST_PW      = __ENV.TEST_PASSWORD || 'TestPassword1!';
-const USER_PREFIX  = __ENV.USER_PREFIX   || 'loadtest+';
-const USER_DOMAIN  = __ENV.USER_DOMAIN   || 'example.com';
 const PROJECT_ID   = __ENV.PROJECT_ID    || '';
 const WITH_SEARCH  = __ENV.ENABLE_SEARCH === 'true';
 const VU_TOTAL     = parseInt(__ENV.VU_COUNT || '100', 10);

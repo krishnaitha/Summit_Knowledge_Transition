@@ -6,10 +6,25 @@ import sql from '@/lib/db';
 import { buildKtPrompt, createGroqChatCompletion } from '@/lib/groq/chat';
 import { streamGroqText } from '@/lib/groq/streaming';
 import { createChatCompletion, getCurrentLlmProvider } from '@/lib/llm';
+import {
+  buildMemoryContext,
+  parseMemoryConfirmation,
+  parseRememberIntent,
+  selectRelevantMemories,
+} from '@/lib/memory';
+import {
+  clearPendingMemoryConfirmation,
+  createPendingMemoryConfirmation,
+  ensureUserMemorySchema,
+  getPendingMemoryConfirmation,
+  listUserMemories,
+  touchUserMemories,
+  upsertUserMemory,
+} from '@/lib/memory-store';
 import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { validateOrigin } from '@/lib/security';
-import type { ChatMessageRecord, RagTraceRecord } from '@/lib/types/database';
+import type { ChatMessageRecord, Json, RagTraceRecord } from '@/lib/types/database';
 
 const answerCache = new Map<string, string>();
 
@@ -18,6 +33,74 @@ const HALLUCINATION_THRESHOLD = 0.35;
 const NOT_FOUND_MSG =
   'I could not find enough information in the KT documents to answer this question. ' +
   'This may indicate a gap in the knowledge base — consider asking your admin to add relevant documentation.';
+
+function buildMemoryAwarePrompt(projectName: string, context: string, hasDocumentContext: boolean) {
+  if (hasDocumentContext) {
+    return buildKtPrompt(projectName, context);
+  }
+
+  return [
+    `You are a helpful KT (Knowledge Transfer) assistant for the ${projectName} transition.`,
+    'No matching KT document context was retrieved for this request.',
+    'You may still answer using relevant persisted user memory if it is directly applicable to the question.',
+    'If the answer is not supported by user memory either, say that clearly.',
+    'Do not invent document citations when no document context is present.',
+  ].join('\n');
+}
+
+async function ensureSessionForUser(
+  userId: string,
+  projectId: string,
+  existingSessionId?: string | null,
+) {
+  if (existingSessionId) {
+    const rows = await sql`
+      select id
+      from chat_sessions
+      where id = ${existingSessionId} and user_id = ${userId} and project_id = ${projectId}
+      limit 1
+    `;
+
+    if (rows.length) {
+      return existingSessionId;
+    }
+  }
+
+  const createdRows = await sql`
+    insert into chat_sessions (user_id, project_id, message_count)
+    values (${userId}, ${projectId}, 0)
+    returning id
+  `;
+
+  return (createdRows[0]?.id as string) ?? null;
+}
+
+async function appendChatTurn(
+  sessionId: string,
+  userMessage: string,
+  assistantMessage: string,
+  sources: Json = [],
+) {
+  await sql`
+    insert into chat_messages (session_id, role, content, sources)
+    values (${sessionId}, 'user', ${userMessage}, ${null})
+  `;
+
+  await sql`
+    insert into chat_messages (session_id, role, content, sources)
+    values (${sessionId}, 'assistant', ${assistantMessage}, ${sql.json(sources)})
+  `;
+
+  const countRows =
+    await sql`select count(*) as c from chat_messages where session_id = ${sessionId}`;
+  const count = Number(countRows[0]?.c ?? 0);
+
+  await sql`
+    update chat_sessions
+    set message_count = ${count}, last_message_at = ${new Date().toISOString()}
+    where id = ${sessionId}
+  `;
+}
 
 async function writeRagTrace(
   trace: Omit<RagTraceRecord, 'id' | 'created_at' | 'is_slow'>,
@@ -136,7 +219,138 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    await ensureUserMemorySchema();
+
+    const normalizedMessage = body.message.trim();
+    const memorySessionId = await ensureSessionForUser(
+      userId,
+      body.projectId,
+      body.sessionId ?? null,
+    );
+
+    if (!memorySessionId) {
+      return NextResponse.json({ error: 'Unable to initialize chat session' }, { status: 500 });
+    }
+
+    const rememberIntent = parseRememberIntent(normalizedMessage);
+    if (rememberIntent) {
+      if (rememberIntent.isSensitive && !rememberIntent.allowsSensitiveStorage) {
+        const sensitiveMessage =
+          'That looks like sensitive data. I will not store it automatically. ' +
+          'If you still want to save it, repeat your request and include "allow sensitive memory", then confirm with "yes remember".';
+
+        await appendChatTurn(memorySessionId, body.message, sensitiveMessage, []);
+
+        return new NextResponse(sensitiveMessage, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'x-session-id': memorySessionId,
+            'x-sources': JSON.stringify([]),
+          },
+        });
+      }
+
+      await createPendingMemoryConfirmation(
+        userId,
+        memorySessionId,
+        body.projectId,
+        rememberIntent,
+      );
+
+      const confirmationPrompt =
+        `I can remember this preference:\n` +
+        `- ${rememberIntent.key}: ${rememberIntent.value}\n\n` +
+        `Reply with \"yes remember\" to save it or \"no remember\" to cancel.`;
+
+      await appendChatTurn(memorySessionId, body.message, confirmationPrompt, []);
+
+      return new NextResponse(confirmationPrompt, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'x-session-id': memorySessionId,
+          'x-sources': JSON.stringify([]),
+        },
+      });
+    }
+
+    const confirmationIntent = parseMemoryConfirmation(normalizedMessage);
+    if (confirmationIntent) {
+      const pending = await getPendingMemoryConfirmation(userId, memorySessionId);
+
+      if (!pending) {
+        const noPendingMessage =
+          'No pending memory request found. Say "remember ..." first, then confirm with "yes remember".';
+
+        await appendChatTurn(memorySessionId, body.message, noPendingMessage, []);
+
+        return new NextResponse(noPendingMessage, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'x-session-id': memorySessionId,
+            'x-sources': JSON.stringify([]),
+          },
+        });
+      }
+
+      if (confirmationIntent === 'cancel') {
+        await clearPendingMemoryConfirmation(userId, memorySessionId);
+        const cancelMessage = 'Memory update cancelled.';
+        await appendChatTurn(memorySessionId, body.message, cancelMessage, []);
+
+        return new NextResponse(cancelMessage, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'x-session-id': memorySessionId,
+            'x-sources': JSON.stringify([]),
+          },
+        });
+      }
+
+      if (pending.is_sensitive && !pending.allows_sensitive_storage) {
+        await clearPendingMemoryConfirmation(userId, memorySessionId);
+        const blockedMessage =
+          'I cannot save that memory because it contains sensitive content without explicit permission.';
+
+        await appendChatTurn(memorySessionId, body.message, blockedMessage, []);
+
+        return new NextResponse(blockedMessage, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'x-session-id': memorySessionId,
+            'x-sources': JSON.stringify([]),
+          },
+        });
+      }
+
+      await upsertUserMemory({
+        userId,
+        projectId: pending.project_id,
+        memoryKey: pending.memory_key,
+        memoryValue: pending.memory_value,
+        tags: pending.tags,
+        confidence: 0.9,
+        source: 'explicit',
+      });
+      await clearPendingMemoryConfirmation(userId, memorySessionId);
+
+      const savedMessage = `Saved memory: ${pending.memory_key}. I will use it when relevant in future chats.`;
+      await appendChatTurn(memorySessionId, body.message, savedMessage, []);
+
+      return new NextResponse(savedMessage, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'x-session-id': memorySessionId,
+          'x-sources': JSON.stringify([]),
+        },
+      });
+    }
+
     const project = await getProjectById(body.projectId);
+    const candidateMemories = await listUserMemories(userId, {
+      projectId: body.projectId,
+      limit: 80,
+    });
+    const relevantMemories = selectRelevantMemories(candidateMemories, body.message, 5);
     const chunks = await retrieveRelevantChunks(body.projectId, body.message);
     const t1 = Date.now();
     const retrieval_ms = t1 - t0;
@@ -147,33 +361,12 @@ export async function POST(request: Request) {
     const avgSimilarity =
       chunks.length > 0 ? chunks.reduce((sum, c) => sum + c.similarity, 0) / chunks.length : 0;
 
-    if (chunks.length === 0 || maxSimilarity < NO_MATCH_THRESHOLD) {
-      let gapSessionId = body.sessionId ?? null;
+    const hasRelevantMemory = relevantMemories.length > 0;
 
-      if (!gapSessionId) {
-        const newSessions = await sql`
-          INSERT INTO chat_sessions (user_id, project_id, message_count)
-          VALUES (${userId}, ${body.projectId}, 0)
-          RETURNING id
-        `;
-        gapSessionId = (newSessions[0]?.id as string) ?? null;
-      }
+    if ((chunks.length === 0 || maxSimilarity < NO_MATCH_THRESHOLD) && !hasRelevantMemory) {
+      const gapSessionId = memorySessionId;
 
-      if (gapSessionId) {
-        await sql`
-          INSERT INTO chat_messages (session_id, role, content, sources)
-          VALUES (${gapSessionId}, 'user', ${body.message}, ${null})
-        `;
-        await sql`
-          INSERT INTO chat_messages (session_id, role, content, sources)
-          VALUES (${gapSessionId}, 'assistant', ${NOT_FOUND_MSG}, ${sql.json([])})
-        `;
-        await sql`
-          UPDATE chat_sessions
-          SET message_count = 2, last_message_at = ${new Date().toISOString()}
-          WHERE id = ${gapSessionId}
-        `;
-      }
+      await appendChatTurn(gapSessionId, body.message, NOT_FOUND_MSG, []);
 
       await logActivity({
         userId,
@@ -224,16 +417,7 @@ export async function POST(request: Request) {
     const context = chunks.map((chunk) => `[${chunk.document_name}] ${chunk.content}`).join('\n\n');
     const cacheKey = `${body.projectId}:${body.message.trim().toLowerCase()}`;
 
-    let sessionId = body.sessionId ?? null;
-
-    if (!sessionId) {
-      const newSessions = await sql`
-        INSERT INTO chat_sessions (user_id, project_id, message_count)
-        VALUES (${userId}, ${body.projectId}, 0)
-        RETURNING id
-      `;
-      sessionId = (newSessions[0]?.id as string) ?? null;
-    }
+    const sessionId = memorySessionId;
 
     await sql`
       INSERT INTO chat_messages (session_id, role, content, sources)
@@ -309,7 +493,17 @@ export async function POST(request: Request) {
       });
     }
 
-    const systemPrompt = buildKtPrompt(project?.name ?? body.projectName ?? 'Project', context);
+    if (relevantMemories.length > 0) {
+      await touchUserMemories(relevantMemories.map((memory) => memory.id));
+    }
+
+    const memoryContext = buildMemoryContext(relevantMemories);
+    const basePrompt = buildMemoryAwarePrompt(
+      project?.name ?? body.projectName ?? 'Project',
+      context,
+      chunks.length > 0 && maxSimilarity >= NO_MATCH_THRESHOLD,
+    );
+    const systemPrompt = memoryContext ? `${basePrompt}\n\n${memoryContext}` : basePrompt;
 
     const stream = new ReadableStream({
       async start(controller) {

@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { unstable_cache } from 'next/cache';
+
 import type {
   AccessibleDocumentSearchResult,
   ActivityRecord,
@@ -1591,7 +1593,7 @@ export async function getMemberDashboardStats(userId: string) {
   };
 }
 
-export async function getMemberNotificationCount(userId: string): Promise<number> {
+const _getMemberNotificationCountUncached = async (userId: string): Promise<number> => {
   const [quizRows, announcementRows] = await Promise.all([
     sql<{ c: string }[]>`
     SELECT COUNT(*) AS c
@@ -1613,7 +1615,13 @@ export async function getMemberNotificationCount(userId: string): Promise<number
   ]);
 
   return Number(quizRows[0]?.c ?? 0) + Number(announcementRows[0]?.c ?? 0);
-}
+};
+
+export const getMemberNotificationCount = unstable_cache(
+  _getMemberNotificationCountUncached,
+  ['member-notification-count'],
+  { revalidate: 60 },
+);
 
 export async function getKnowledgeGapThread(threadId: string) {
   const rows = await sql<
@@ -1653,10 +1661,10 @@ export async function getKnowledgeGapThread(threadId: string) {
   return { ...thread, comments: commentRows };
 }
 
-export async function getOpenThreadNotificationCount(
+const _getOpenThreadNotificationCountUncached = async (
   userId: string,
   role: UserProfile['role'] | null | undefined,
-): Promise<number> {
+): Promise<number> => {
   if (role === 'admin') {
     const rows = await sql<{ c: string }[]>`
       SELECT COUNT(*) AS c
@@ -1674,7 +1682,13 @@ export async function getOpenThreadNotificationCount(
       AND t.status = 'open'
   `;
   return Number(rows[0]?.c ?? 0);
-}
+};
+
+export const getOpenThreadNotificationCount = unstable_cache(
+  _getOpenThreadNotificationCountUncached,
+  ['open-thread-notification-count'],
+  { revalidate: 60 },
+);
 
 export async function getOpenThreadsForUser(
   userId: string,

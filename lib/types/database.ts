@@ -208,6 +208,34 @@ export interface ChatMessageRecord {
   created_at: string;
 }
 
+export interface UserMemoryRecord {
+  id: string;
+  user_id: string;
+  project_id: string | null;
+  memory_key: string;
+  memory_value: string;
+  tags: string[];
+  confidence: number;
+  source: 'explicit' | 'manual';
+  created_at: string;
+  updated_at: string;
+  last_used_at: string | null;
+}
+
+export interface UserMemoryPendingRecord {
+  id: string;
+  user_id: string;
+  session_id: string;
+  project_id: string | null;
+  memory_key: string;
+  memory_value: string;
+  tags: string[];
+  is_sensitive: boolean;
+  allows_sensitive_storage: boolean;
+  expires_at: string;
+  created_at: string;
+}
+
 export interface QuizSetRecord {
   id: string;
   project_id: string;

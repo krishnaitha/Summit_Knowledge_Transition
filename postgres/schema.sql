@@ -167,6 +167,8 @@ create table if not exists document_chunks (
   content     text        not null,
   search_vector tsvector,
   embedding   vector(384),
+  embedding_model_id text,
+  embedding_model_revision text,
   chunk_index integer     not null,
   created_at  timestamptz not null default now()
 );

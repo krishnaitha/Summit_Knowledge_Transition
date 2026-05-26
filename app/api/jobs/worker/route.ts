@@ -2,7 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import sql from '@/lib/db';
-import { processBotThreadReply } from '@/lib/documents/bot-reply';
+import { ensureBotFailureReply, processBotThreadReply } from '@/lib/documents/bot-reply';
 import {
   enqueueDueDocumentConnectorSyncJobs,
   syncDocumentConnector,
@@ -384,6 +384,12 @@ export async function POST(request: Request) {
     }
   } catch (err) {
     jobError = err instanceof Error ? err.message : 'Unknown error';
+
+    if (job.type === 'bot_thread_reply') {
+      const payload = job.payload as Record<string, unknown>;
+      const threadId = String(payload.threadId ?? '');
+      await ensureBotFailureReply(threadId);
+    }
   }
 
   await sql`

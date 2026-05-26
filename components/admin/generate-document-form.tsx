@@ -34,6 +34,7 @@ export function GenerateDocumentForm({
   sourceThreadId,
 }: GenerateDocumentFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTranscriptFiles, setSelectedTranscriptFiles] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [generated, setGenerated] = useState<{
     content: string;
@@ -277,6 +278,37 @@ export function GenerateDocumentForm({
               disabled={isLoading}
               defaultValue={suggestedTranscript}
             />
+            <p className="mt-2 text-xs text-slate-500">
+              You can paste transcript text, upload transcript files, or combine both.
+            </p>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+              Upload Transcript Files (optional)
+            </label>
+            <input
+              type="file"
+              name="transcriptFiles"
+              multiple
+              accept=".txt,.md,.docx,.pdf,.csv,.xlsx,.ppt,.pptx"
+              disabled={isLoading}
+              onChange={(e) =>
+                setSelectedTranscriptFiles(
+                  Array.from(e.currentTarget.files ?? []).map((f) => f.name),
+                )
+              }
+              className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-200 focus:border-slate-900 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-100"
+            />
+            <p className="mt-2 text-xs text-slate-500">
+              Supported: TXT, MD, DOCX, PDF, CSV, XLSX, PPT, PPTX. Multiple files are merged with
+              pasted content before generation.
+            </p>
+            {selectedTranscriptFiles.length > 0 && (
+              <p className="mt-1 text-xs text-slate-600">
+                Selected ({selectedTranscriptFiles.length}): {selectedTranscriptFiles.join(', ')}
+              </p>
+            )}
           </div>
 
           <div>

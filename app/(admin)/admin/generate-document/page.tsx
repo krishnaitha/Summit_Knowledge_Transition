@@ -52,7 +52,8 @@ export default async function GenerateDocumentPage(props: {
       <div>
         <h1 className="text-3xl font-semibold text-slate-950">Generate Document from Transcript</h1>
         <p className="mt-2 text-sm text-slate-500">
-          Paste a transcript and let AI transform it into a well-structured knowledge document.
+          Paste transcript text or upload one or more transcript files, then let AI transform it
+          into a well-structured knowledge document.
         </p>
       </div>
 
@@ -74,9 +75,9 @@ export default async function GenerateDocumentPage(props: {
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-slate-600">
             <div>
-              <h4 className="font-semibold text-slate-900">1. Paste Transcript</h4>
+              <h4 className="font-semibold text-slate-900">1. Paste or Upload Transcript</h4>
               <p className="mt-1">
-                Paste any meeting notes, interview transcript, or conversation content.
+                Paste meeting notes directly, or upload multiple transcript files at once.
               </p>
             </div>
             <div>

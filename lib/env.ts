@@ -47,6 +47,9 @@ export const appEnv = {
   // Ollama configuration (local, keyless by default)
   ollamaBaseUrl: process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/api/chat',
   ollamaModel: process.env.OLLAMA_MODEL ?? 'llama3.1:8b',
+  // Embeddings configuration
+  embeddingModelId: process.env.EMBEDDING_MODEL_ID ?? 'Xenova/all-MiniLM-L6-v2',
+  embeddingModelRevision: process.env.EMBEDDING_MODEL_REVISION ?? '',
 };
 
 export function isDatabaseConfigured() {

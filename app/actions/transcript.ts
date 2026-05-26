@@ -15,6 +15,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAnyAdmin } from '@/lib/auth';
 import { userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
+import { extractTextFromFile } from '@/lib/documents/parse';
 import { createGroqChatCompletion } from '@/lib/groq/chat';
 import { uploadFile } from '@/lib/storage/local';
 
@@ -184,16 +185,61 @@ export async function generateDocumentFromTranscriptAction(formData: FormData) {
   const { profile } = await requireAnyAdmin();
 
   const transcript = String(formData.get('transcript') ?? '').trim();
+  const transcriptFiles = formData
+    .getAll('transcriptFiles')
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
   const title = String(formData.get('title') ?? '').trim() || 'Generated Document';
   const format = String(formData.get('format') ?? 'markdown');
+  const supportedTranscriptExtensions = new Set([
+    'txt',
+    'md',
+    'docx',
+    'pdf',
+    'csv',
+    'xlsx',
+    'ppt',
+    'pptx',
+  ]);
 
-  if (!transcript) throw new Error('Please provide a transcript');
-  if (transcript.length < 50) throw new Error('Transcript must be at least 50 characters');
-  if (transcript.length > 50000) throw new Error('Transcript must be less than 50,000 characters');
+  const transcriptSections: string[] = [];
+  if (transcript) {
+    transcriptSections.push(transcript);
+  }
+
+  for (const file of transcriptFiles) {
+    const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+    if (!supportedTranscriptExtensions.has(extension)) {
+      throw new Error(
+        `Unsupported transcript file type for "${file.name}". Use TXT, MD, DOCX, PDF, CSV, XLSX, PPT, or PPTX.`,
+      );
+    }
+
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const extracted = (await extractTextFromFile(file.name, fileBuffer)).trim();
+    if (extracted) {
+      transcriptSections.push(`--- Transcript File: ${file.name} ---\n${extracted}`);
+    }
+  }
+
+  const combinedTranscript = transcriptSections.join('\n\n').trim();
+
+  if (!combinedTranscript) {
+    throw new Error('Please paste a transcript or upload at least one transcript file');
+  }
+
+  if (combinedTranscript.length < 50) {
+    throw new Error('Transcript content must be at least 50 characters');
+  }
+
+  if (combinedTranscript.length > 50000) {
+    throw new Error('Combined transcript content must be less than 50,000 characters');
+  }
 
   try {
     const completion = await createGroqChatCompletion({
-      messages: [{ role: 'user', content: TRANSCRIPT_PROMPT.replace('{TRANSCRIPT}', transcript) }],
+      messages: [
+        { role: 'user', content: TRANSCRIPT_PROMPT.replace('{TRANSCRIPT}', combinedTranscript) },
+      ],
       temperature: 0.3,
       max_tokens: 4000,
     });

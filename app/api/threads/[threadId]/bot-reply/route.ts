@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { getCurrentUserContext } from '@/lib/auth';
 import { userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
-import { processBotThreadReply } from '@/lib/documents/bot-reply';
+import { ensureBotFailureReply, processBotThreadReply } from '@/lib/documents/bot-reply';
 
 // If a bot_thread_reply job has been pending for longer than this, the worker
 // is likely not running. Process the reply inline in this request instead.
@@ -60,13 +60,21 @@ export async function GET(
     return NextResponse.json({ reply: null });
   }
 
-  // Check for an existing pending job
-  const jobRows = await sql<{ id: string; created_at: string; job_query: string }[]>`
-    SELECT id, created_at, payload->>'query' AS job_query
+  // Check the latest job so failed jobs can surface a final bot message.
+  const jobRows = await sql<
+    {
+      id: string;
+      created_at: string;
+      job_query: string;
+      status: string;
+      error: string | null;
+    }[]
+  >`
+    SELECT id, created_at, payload->>'query' AS job_query, status, error
     FROM processing_jobs
     WHERE type = 'bot_thread_reply'
-      AND status IN ('pending', 'running')
       AND payload->>'threadId' = ${threadId}
+    ORDER BY created_at DESC
     LIMIT 1
   `;
   const job = jobRows[0];
@@ -92,6 +100,23 @@ export async function GET(
       VALUES ('bot_thread_reply', ${sql.json(payload)})
     `;
 
+    return NextResponse.json({ reply: null });
+  }
+
+  if (job.status === 'failed') {
+    await ensureBotFailureReply(threadId);
+    const failedReplyRows = await sql<{ body: string; created_at: string }[]>`
+      SELECT body, created_at
+      FROM document_thread_comments
+      WHERE thread_id = ${threadId} AND is_bot = true
+      ORDER BY created_at ASC
+      LIMIT 1
+    `;
+
+    return NextResponse.json({ reply: failedReplyRows[0] ?? null });
+  }
+
+  if (job.status !== 'pending' && job.status !== 'running') {
     return NextResponse.json({ reply: null });
   }
 
@@ -144,6 +169,16 @@ export async function GET(
       SET status = 'failed', completed_at = now()
       WHERE id = ${job.id}
     `;
-    return NextResponse.json({ reply: null });
+
+    await ensureBotFailureReply(threadId);
+    const failedReplyRows = await sql<{ body: string; created_at: string }[]>`
+      SELECT body, created_at
+      FROM document_thread_comments
+      WHERE thread_id = ${threadId} AND is_bot = true
+      ORDER BY created_at ASC
+      LIMIT 1
+    `;
+
+    return NextResponse.json({ reply: failedReplyRows[0] ?? null });
   }
 }

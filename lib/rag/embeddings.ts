@@ -1,6 +1,27 @@
 import 'server-only';
 
+import { appEnv } from '@/lib/env';
+
 let featureExtractorPromise: Promise<(input: string) => Promise<number[]>> | null = null;
+
+const EMBEDDING_DIMENSIONS = 384;
+
+export interface EmbeddingModelSpec {
+  modelId: string;
+  modelRevision: string | null;
+  dimensions: number;
+}
+
+export function getCurrentEmbeddingModelSpec(): EmbeddingModelSpec {
+  const modelId = appEnv.embeddingModelId.trim();
+  const revision = appEnv.embeddingModelRevision.trim();
+
+  return {
+    modelId,
+    modelRevision: revision.length > 0 ? revision : null,
+    dimensions: EMBEDDING_DIMENSIONS,
+  };
+}
 
 async function loadFeatureExtractor() {
   const [{ pipeline }, { env }] = await Promise.all([
@@ -12,7 +33,14 @@ async function loadFeatureExtractor() {
   // Vercel's filesystem is read-only; /tmp is the only writable directory
   env.cacheDir = '/tmp/.cache/transformers';
 
-  const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+  const embeddingSpec = getCurrentEmbeddingModelSpec();
+  const pipelineOptions: { revision?: string } = {};
+
+  if (embeddingSpec.modelRevision) {
+    pipelineOptions.revision = embeddingSpec.modelRevision;
+  }
+
+  const extractor = await pipeline('feature-extraction', embeddingSpec.modelId, pipelineOptions);
 
   return async (input: string) => {
     const output = await extractor(input, { pooling: 'mean', normalize: true });

@@ -9,6 +9,10 @@ export const BOT_NO_MATCH_MSG =
   "I searched the project's KT documents but couldn't find enough information to answer this question. " +
   'Consider asking an admin to add relevant documentation.';
 
+export const BOT_FAILURE_MSG =
+  "I couldn't generate an answer right now because the knowledge-base lookup failed. " +
+  'Please ask an admin to reprocess documents or verify embedding settings, then try again.';
+
 function buildBotReplyPrompt(projectName: string, context: string): string {
   return [
     `You are ${appEnv.botName}, a knowledge assistant for the ${projectName} knowledge transfer.`,
@@ -92,4 +96,25 @@ export async function processBotThreadReply(
   }
 
   return { threadId, chunkCount: chunks.length };
+}
+
+export async function ensureBotFailureReply(threadId: string, message = BOT_FAILURE_MSG) {
+  if (!threadId) return;
+
+  const sourcesJson = [] as unknown as Parameters<typeof sql.json>[0];
+
+  await sql`
+    INSERT INTO document_thread_comments (thread_id, author_id, body, is_answer, is_bot, sources)
+    SELECT ${threadId}, NULL, ${message}, true, true, ${sql.json(sourcesJson)}
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM document_thread_comments
+      WHERE thread_id = ${threadId}
+        AND is_bot = true
+    )
+  `;
+
+  await sql`
+    UPDATE document_threads SET updated_at = now() WHERE id = ${threadId}
+  `;
 }

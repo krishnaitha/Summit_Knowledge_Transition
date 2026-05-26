@@ -150,6 +150,10 @@ GROQ_API_KEY=gsk_...
 # COPILOT_BASE_URL=https://models.github.ai/inference/chat/completions
 # COPILOT_MODEL=openai/gpt-4.1-mini
 
+# Embeddings model (must remain consistent across indexing and retrieval)
+# EMBEDDING_MODEL_ID=Xenova/all-MiniLM-L6-v2
+# EMBEDDING_MODEL_REVISION=
+
 # ── Storage (choose one) ──────────────────────────────────────────────────────
 # Option A: Local filesystem (default — files saved to public/uploads/)
 STORAGE_PROVIDER=local
@@ -397,6 +401,10 @@ COPILOT_PROXY_TOKEN=<your-copilot-proxy-token>
 COPILOT_BASE_URL=https://api.githubcopilot.com/chat/completions  # default, override if needed
 COPILOT_MODEL=openai/gpt-5-mini                                  # default model
 
+# Embeddings model enforcement
+EMBEDDING_MODEL_ID=Xenova/all-MiniLM-L6-v2
+# EMBEDDING_MODEL_REVISION=main
+
 # File storage
 STORAGE_PROVIDER=local
 
@@ -543,16 +551,18 @@ The `is_active` flag controls login access regardless of provider. Admins can lo
    - Classifies content
    - Splits into 500-word overlapping chunks
    - Generates 384-dim embeddings via `Xenova/all-MiniLM-L6-v2`
-   - Stores chunks + embeddings in `document_chunks` with `pgvector`
+
+- Stores chunks + embeddings in `document_chunks` with `pgvector`, plus embedding model metadata
 
 ### RAG AI Chat
 
 1. Member types a question in the chat interface
 2. Question is embedded with the same model
-3. Cosine similarity search returns the top-5 most relevant document chunks from the project
-4. Chunks + question are sent to the LLM with a strict grounding prompt
-5. The LLM streams back a response citing only the provided context
-6. Sources are displayed below the answer; members can bookmark answers
+3. Retrieval enforces embedding model consistency for the project (mismatches require re-ingestion)
+4. Cosine similarity search returns the top-5 most relevant document chunks from the project
+5. Chunks + question are sent to the LLM with a strict grounding prompt
+6. The LLM streams back a response citing only the provided context
+7. Sources are displayed below the answer; members can bookmark answers
 
 ### Quiz Generation
 

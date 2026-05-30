@@ -384,7 +384,7 @@ create table if not exists activity_log (
 -- Background processing jobs (010)
 create table if not exists processing_jobs (
   id           uuid        primary key default gen_random_uuid(),
-  type         text        not null check (type in ('document_process', 'quiz_generate', 'connector_sync')),
+  type         text        not null check (type in ('document_process', 'quiz_generate', 'connector_sync', 'bot_thread_reply')),
   status       text        not null default 'pending'
                              check (status in ('pending', 'running', 'done', 'failed')),
   payload      jsonb       not null default '{}',
@@ -393,6 +393,16 @@ create table if not exists processing_jobs (
   created_at   timestamptz not null default now(),
   started_at   timestamptz,
   completed_at timestamptz
+);
+
+create table if not exists app_error_events (
+  id         uuid        primary key default gen_random_uuid(),
+  source     text        not null,
+  category   text        not null,
+  message    text        not null,
+  stack      text,
+  metadata   jsonb,
+  created_at timestamptz not null default now()
 );
 
 -- RAG observability traces (011)
@@ -518,6 +528,12 @@ create index if not exists chat_feedback_project_rating_idx
 -- Processing jobs by status
 create index if not exists processing_jobs_status_created_at
   on processing_jobs (status, created_at);
+
+create index if not exists app_error_events_created_idx
+  on app_error_events (created_at desc);
+
+create index if not exists app_error_events_source_category_idx
+  on app_error_events (source, category, created_at desc);
 
 -- RAG trace analytics
 create index if not exists rag_traces_project_created

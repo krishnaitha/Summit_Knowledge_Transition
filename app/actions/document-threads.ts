@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { getCurrentUserContext, getProjectAdminIds } from '@/lib/auth';
-import { userHasProjectAccess } from '@/lib/data';
+import { ensureDismissedGapsSchema, userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
 
 function cleanText(value: FormDataEntryValue | null, max: number): string {
@@ -236,4 +236,22 @@ export async function updateDocumentThreadStatusAction(formData: FormData) {
   } else {
     revalidateKnowledgeGapThreadPaths(projectId, threadId);
   }
+}
+
+export async function dismissKnowledgeGapAction(formData: FormData) {
+  const query = cleanText(formData.get('query'), 500);
+  if (!query) return;
+
+  const { userId, profile } = await getCurrentUserContext();
+  if (!userId || profile?.role !== 'admin') return;
+
+  await ensureDismissedGapsSchema();
+
+  await sql`
+    INSERT INTO dismissed_knowledge_gaps (norm_query, dismissed_by)
+    VALUES (${query.toLowerCase().trim()}, ${userId})
+    ON CONFLICT (norm_query) DO NOTHING
+  `;
+
+  revalidatePath('/admin/dashboard');
 }

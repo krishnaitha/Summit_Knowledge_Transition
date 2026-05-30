@@ -10,6 +10,7 @@ import {
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
 import { createQuizCompletion } from '@/lib/llm';
+import { logApplicationError } from '@/lib/observability';
 import { downloadFile } from '@/lib/storage/local';
 import type { ProcessingJobRecord, QuizOptionKey } from '@/lib/types/database';
 import { sleep } from '@/lib/utils';
@@ -383,10 +384,25 @@ export async function POST(request: Request) {
       throw new Error(`Unknown job type: ${job.type}`);
     }
   } catch (err) {
-    jobError = err instanceof Error ? err.message : 'Unknown error';
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    const stack = err instanceof Error ? (err.stack ?? null) : null;
+    jobError = stack ? `${message}\n${stack}` : message;
+
+    const payload = job.payload as Record<string, unknown>;
+    await logApplicationError({
+      source: 'worker',
+      category: `job:${job.type}`,
+      message,
+      stack,
+      metadata: {
+        jobId: job.id,
+        status: job.status,
+        threadId: String(payload.threadId ?? ''),
+        projectId: String(payload.projectId ?? ''),
+      },
+    });
 
     if (job.type === 'bot_thread_reply') {
-      const payload = job.payload as Record<string, unknown>;
       const threadId = String(payload.threadId ?? '');
       await ensureBotFailureReply(threadId);
     }

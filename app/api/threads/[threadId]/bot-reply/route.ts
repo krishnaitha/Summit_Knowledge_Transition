@@ -4,6 +4,7 @@ import { getCurrentUserContext } from '@/lib/auth';
 import { userHasProjectAccess } from '@/lib/data';
 import sql from '@/lib/db';
 import { ensureBotFailureReply, processBotThreadReply } from '@/lib/documents/bot-reply';
+import { logApplicationError } from '@/lib/observability';
 
 // If a bot_thread_reply job has been pending for longer than this, the worker
 // is likely not running. Process the reply inline in this request instead.
@@ -163,12 +164,23 @@ export async function GET(
     `;
 
     return NextResponse.json({ reply: newReply[0] ?? null });
-  } catch {
+  } catch (error) {
     await sql`
       UPDATE processing_jobs
       SET status = 'failed', completed_at = now()
       WHERE id = ${job.id}
     `;
+
+    await logApplicationError({
+      source: 'api',
+      category: 'threads.bot-reply.inline-fallback',
+      message: error instanceof Error ? error.message : 'Bot reply fallback failed',
+      stack: error instanceof Error ? (error.stack ?? null) : null,
+      metadata: {
+        threadId,
+        projectId: thread.project_id,
+      },
+    });
 
     await ensureBotFailureReply(threadId);
     const failedReplyRows = await sql<{ body: string; created_at: string }[]>`

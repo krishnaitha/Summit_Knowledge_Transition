@@ -1,6 +1,15 @@
 'use client';
 
-import { BellRing, Cpu, FolderKanban, LayoutDashboard, Search, Users, Wand2 } from 'lucide-react';
+import {
+  Activity,
+  BellRing,
+  Cpu,
+  FolderKanban,
+  LayoutDashboard,
+  Search,
+  Users,
+  Wand2,
+} from 'lucide-react';
 
 import { MobileSidebar } from './mobile-sidebar';
 
@@ -19,6 +28,9 @@ export function AdminMobileSidebar({
     { href: '/admin/generate-document', label: 'AI Document Generator', icon: Wand2 },
     { href: '/admin/search', label: 'Search Docs', icon: Search },
     { href: '/admin/threads', label: 'Threads', icon: BellRing, badge: openThreadCount },
+    ...(isSuperAdmin
+      ? [{ href: '/admin/system-health', label: 'System Health', icon: Activity }]
+      : []),
     ...(isSuperAdmin
       ? [{ href: '/admin/model-switcher', label: 'Model Switcher', icon: Cpu }]
       : []),

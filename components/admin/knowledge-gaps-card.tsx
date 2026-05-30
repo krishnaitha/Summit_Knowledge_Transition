@@ -7,10 +7,12 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useTransition, useState } from 'react';
 
+import { dismissKnowledgeGapAction } from '@/app/actions/document-threads';
 import { KnowledgeGapThreadButton } from '@/components/admin/knowledge-gap-thread-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { KnowledgeGap } from '@/lib/data';
@@ -86,6 +88,21 @@ export function KnowledgeGapsCard({ gaps }: { gaps: KnowledgeGap[] }) {
 }
 
 function GapRow({ gap }: { gap: KnowledgeGap }) {
+  const [confirming, setConfirming] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  if (dismissed) return null;
+
+  const handleDismiss = () => {
+    setDismissed(true); // optimistic hide
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set('query', gap.query);
+      await dismissKnowledgeGapAction(fd);
+    });
+  };
+
   return (
     <div className="flex items-start gap-3 border-t border-slate-100 px-6 py-3 first:border-t-0">
       <span
@@ -116,21 +133,52 @@ function GapRow({ gap }: { gap: KnowledgeGap }) {
       </div>
 
       <div className="flex shrink-0 items-center gap-1.5">
-        <Link
-          href={`/admin/generate-document?context=${encodeURIComponent(gap.query)}`}
-          className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
-          title="Capture knowledge for this topic"
-        >
-          <FileText className="h-3 w-3" />
-          Capture
-          <ArrowRight className="h-3 w-3" />
-        </Link>
-        {gap.projectIds.length > 0 && (
-          <KnowledgeGapThreadButton
-            query={gap.query}
-            projectIds={gap.projectIds}
-            projectNames={gap.projects}
-          />
+        {confirming ? (
+          <>
+            <span className="text-xs text-slate-500">Remove this gap?</span>
+            <button
+              type="button"
+              onClick={() => setConfirming(false)}
+              className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDismiss}
+              disabled={isPending}
+              className="rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 transition hover:border-red-400 hover:bg-red-100 disabled:opacity-50"
+            >
+              Dismiss
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              href={`/admin/generate-document?context=${encodeURIComponent(gap.query)}`}
+              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
+              title="Capture knowledge for this topic"
+            >
+              <FileText className="h-3 w-3" />
+              Capture
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+            {gap.projectIds.length > 0 && (
+              <KnowledgeGapThreadButton
+                query={gap.query}
+                projectIds={gap.projectIds}
+                projectNames={gap.projects}
+              />
+            )}
+            <button
+              type="button"
+              onClick={() => setConfirming(true)}
+              title="Dismiss — mark as irrelevant"
+              className="rounded-lg border border-transparent p-1.5 text-slate-300 transition hover:border-slate-200 hover:text-slate-500"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </>
         )}
       </div>
     </div>

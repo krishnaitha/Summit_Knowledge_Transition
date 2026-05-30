@@ -21,12 +21,39 @@ import {
   touchUserMemories,
   upsertUserMemory,
 } from '@/lib/memory-store';
+import { logApplicationError } from '@/lib/observability';
 import { retrieveRelevantChunks } from '@/lib/rag/retrieval';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { validateOrigin } from '@/lib/security';
 import type { ChatMessageRecord, Json, RagTraceRecord } from '@/lib/types/database';
 
-const answerCache = new Map<string, string>();
+interface CacheEntry {
+  answer: string;
+  expiresAt: number;
+}
+
+const CACHE_TTL_MS = 10 * 60 * 1000;
+const CACHE_MAX_SIZE = 200;
+const HISTORY_MESSAGE_LIMIT = 20;
+const answerCache = new Map<string, CacheEntry>();
+
+function getCached(key: string): string | null {
+  const entry = answerCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    answerCache.delete(key);
+    return null;
+  }
+  return entry.answer;
+}
+
+function setCached(key: string, answer: string): void {
+  if (answerCache.size >= CACHE_MAX_SIZE) {
+    const firstKey = answerCache.keys().next().value;
+    if (firstKey !== undefined) answerCache.delete(firstKey);
+  }
+  answerCache.set(key, { answer, expiresAt: Date.now() + CACHE_TTL_MS });
+}
 
 const NO_MATCH_THRESHOLD = 0.2;
 const HALLUCINATION_THRESHOLD = 0.35;
@@ -536,14 +563,26 @@ export async function POST(request: Request) {
 
     const sessionId = memorySessionId;
 
+    const priorMessages = await sql<Pick<ChatMessageRecord, 'role' | 'content'>[]>`
+      SELECT role, content
+      FROM chat_messages
+      WHERE session_id = ${sessionId}
+      ORDER BY created_at ASC
+      LIMIT ${HISTORY_MESSAGE_LIMIT}
+    `;
+
+    const conversationHistory = priorMessages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
     await sql`
       INSERT INTO chat_messages (session_id, role, content, sources)
       VALUES (${sessionId}, 'user', ${body.message}, ${null})
     `;
 
-    if (answerCache.has(cacheKey)) {
-      const cachedAnswer = answerCache.get(cacheKey)!;
-
+    const cachedAnswer = conversationHistory.length === 0 ? getCached(cacheKey) : null;
+    if (cachedAnswer !== null) {
       await sql`
         INSERT INTO chat_messages (session_id, role, content, sources)
         VALUES (${sessionId}, 'assistant', ${cachedAnswer}, ${sql.json(sources)})
@@ -656,6 +695,7 @@ export async function POST(request: Request) {
                 max_tokens: 1024,
                 messages: [
                   { role: 'system' as const, content: systemPrompt },
+                  ...conversationHistory,
                   { role: 'user' as const, content: body.message },
                 ],
               },
@@ -684,6 +724,7 @@ export async function POST(request: Request) {
                 max_tokens: 1024,
                 messages: [
                   { role: 'system', content: systemPrompt },
+                  ...conversationHistory,
                   { role: 'user', content: body.message },
                 ],
               },
@@ -714,7 +755,9 @@ export async function POST(request: Request) {
 
         const generation_ms = Date.now() - tGenStart;
 
-        answerCache.set(cacheKey, generated);
+        if (conversationHistory.length === 0) {
+          setCached(cacheKey, generated);
+        }
 
         const assistantMsgRows = await sql`
           INSERT INTO chat_messages (session_id, role, content, sources)
@@ -787,6 +830,13 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
+    await logApplicationError({
+      source: 'api',
+      category: 'chat.post',
+      message: error instanceof Error ? error.message : 'Chat failed',
+      stack: error instanceof Error ? (error.stack ?? null) : null,
+    });
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Chat failed' },
       { status: 500 },

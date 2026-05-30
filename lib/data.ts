@@ -47,6 +47,31 @@ export interface ObservabilityMetrics {
   slowQueries: Array<{ query: string; totalMs: number; generationMs: number; askedAt: string }>;
 }
 
+export interface SystemErrorEvent {
+  id: string;
+  source: string;
+  category: string;
+  message: string;
+  stack: string | null;
+  metadata: Json | null;
+  createdAt: string;
+}
+
+export interface SystemHealthSnapshot {
+  checkedAt: string;
+  databaseHealthy: boolean;
+  workerHealthy: boolean;
+  pendingJobs: number;
+  runningJobs: number;
+  failedJobs24h: number;
+  failedJobsTotal: number;
+  appErrors24h: number;
+  lastWorkerActivityAt: string | null;
+  ragRequestsLastHour: number;
+  ragAvgLatencyMsLastHour: number;
+  errors: SystemErrorEvent[];
+}
+
 import sql from '@/lib/db';
 import { computeSectionScores } from '@/lib/quiz/scoring';
 import { formatDate } from '@/lib/utils';
@@ -1901,6 +1926,178 @@ export async function getObservabilityMetrics(projectId: string): Promise<Observ
   };
 }
 
+export async function getSystemHealthSnapshot(): Promise<SystemHealthSnapshot> {
+  const checkedAt = new Date().toISOString();
+
+  const empty: SystemHealthSnapshot = {
+    checkedAt,
+    databaseHealthy: false,
+    workerHealthy: false,
+    pendingJobs: 0,
+    runningJobs: 0,
+    failedJobs24h: 0,
+    failedJobsTotal: 0,
+    appErrors24h: 0,
+    lastWorkerActivityAt: null,
+    ragRequestsLastHour: 0,
+    ragAvgLatencyMsLastHour: 0,
+    errors: [],
+  };
+
+  try {
+    await sql`SELECT 1`;
+  } catch {
+    return empty;
+  }
+
+  const appErrorTableRows = await sql<{ exists: boolean }[]>`
+    SELECT to_regclass('public.app_error_events') IS NOT NULL AS exists
+  `;
+  const hasAppErrorEventsTable = appErrorTableRows[0]?.exists ?? false;
+
+  const [jobRows, ragRows, appErrorRows, jobErrorRows] = await Promise.all([
+    sql<
+      {
+        pending_jobs: string;
+        running_jobs: string;
+        failed_jobs_24h: string;
+        failed_jobs_total: string;
+        last_worker_activity_at: string | null;
+      }[]
+    >`
+      SELECT
+        COUNT(*) FILTER (WHERE status = 'pending')::text AS pending_jobs,
+        COUNT(*) FILTER (WHERE status = 'running')::text AS running_jobs,
+        COUNT(*) FILTER (
+          WHERE status = 'failed' AND COALESCE(completed_at, created_at) >= NOW() - INTERVAL '24 hours'
+        )::text AS failed_jobs_24h,
+        COUNT(*) FILTER (WHERE status = 'failed')::text AS failed_jobs_total,
+        MAX(COALESCE(completed_at, started_at, created_at))::text AS last_worker_activity_at
+      FROM processing_jobs
+    `,
+    sql<
+      {
+        requests_last_hour: string;
+        avg_latency_ms_last_hour: string | null;
+      }[]
+    >`
+      SELECT
+        COUNT(*)::text AS requests_last_hour,
+        ROUND(COALESCE(AVG(total_ms), 0))::text AS avg_latency_ms_last_hour
+      FROM rag_traces
+      WHERE created_at >= NOW() - INTERVAL '1 hour'
+    `,
+    hasAppErrorEventsTable
+      ? sql<
+          {
+            id: string;
+            source: string;
+            category: string;
+            message: string;
+            stack: string | null;
+            metadata: Json | null;
+            created_at: string;
+          }[]
+        >`
+          SELECT id::text, source, category, message, stack, metadata, created_at::text
+          FROM app_error_events
+          WHERE created_at >= NOW() - INTERVAL '7 days'
+          ORDER BY created_at DESC
+          LIMIT 200
+        `
+      : Promise.resolve(
+          [] as {
+            id: string;
+            source: string;
+            category: string;
+            message: string;
+            stack: string | null;
+            metadata: Json | null;
+            created_at: string;
+          }[],
+        ),
+    sql<
+      {
+        id: string;
+        type: string;
+        error: string;
+        created_at: string;
+      }[]
+    >`
+      SELECT id::text, type, error, COALESCE(completed_at, created_at)::text AS created_at
+      FROM processing_jobs
+      WHERE status = 'failed'
+        AND error IS NOT NULL
+        AND COALESCE(completed_at, created_at) >= NOW() - INTERVAL '7 days'
+      ORDER BY COALESCE(completed_at, created_at) DESC
+      LIMIT 200
+    `,
+  ]);
+
+  const jobs = jobRows[0];
+  const rag = ragRows[0];
+
+  const normalizedAppErrors: SystemErrorEvent[] = appErrorRows.map((row) => ({
+    id: `app-${row.id}`,
+    source: row.source,
+    category: row.category,
+    message: row.message,
+    stack: row.stack,
+    metadata: row.metadata,
+    createdAt: row.created_at,
+  }));
+
+  const normalizedJobErrors: SystemErrorEvent[] = jobErrorRows.map((row) => {
+    const errorText = row.error ?? '';
+    const firstLineBreak = errorText.indexOf('\n');
+    const message = firstLineBreak >= 0 ? errorText.slice(0, firstLineBreak).trim() : errorText;
+    const stack = firstLineBreak >= 0 ? errorText.slice(firstLineBreak + 1).trim() : null;
+
+    return {
+      id: `job-${row.id}`,
+      source: 'worker',
+      category: `job:${row.type}`,
+      message: message || 'Worker job failed',
+      stack,
+      metadata: null,
+      createdAt: row.created_at,
+    };
+  });
+
+  const combinedErrors = [...normalizedAppErrors, ...normalizedJobErrors]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 200);
+
+  const appErrors24h = normalizedAppErrors.filter(
+    (row) => Date.now() - new Date(row.createdAt).getTime() <= 24 * 60 * 60 * 1000,
+  ).length;
+
+  const pendingJobs = Number(jobs?.pending_jobs ?? 0);
+  const runningJobs = Number(jobs?.running_jobs ?? 0);
+  const failedJobs24h = Number(jobs?.failed_jobs_24h ?? 0);
+  const lastWorkerActivityAt = jobs?.last_worker_activity_at ?? null;
+  const workerHealthy =
+    runningJobs > 0 ||
+    pendingJobs === 0 ||
+    (lastWorkerActivityAt !== null &&
+      Date.now() - new Date(lastWorkerActivityAt).getTime() <= 15 * 60 * 1000);
+
+  return {
+    checkedAt,
+    databaseHealthy: true,
+    workerHealthy,
+    pendingJobs,
+    runningJobs,
+    failedJobs24h,
+    failedJobsTotal: Number(jobs?.failed_jobs_total ?? 0),
+    appErrors24h,
+    lastWorkerActivityAt,
+    ragRequestsLastHour: Number(rag?.requests_last_hour ?? 0),
+    ragAvgLatencyMsLastHour: Number(rag?.avg_latency_ms_last_hour ?? 0),
+    errors: combinedErrors,
+  };
+}
+
 export interface KnowledgeGap {
   query: string;
   occurrences: number;
@@ -1911,11 +2108,36 @@ export interface KnowledgeGap {
   resolvedThreadId?: string;
 }
 
+// Lazy schema init — creates dismissed_knowledge_gaps table on first use.
+let _dismissedGapsSchemaReady: Promise<void> | null = null;
+
+export async function ensureDismissedGapsSchema(): Promise<void> {
+  if (!_dismissedGapsSchemaReady) {
+    _dismissedGapsSchemaReady = (async () => {
+      await sql`
+        CREATE TABLE IF NOT EXISTS dismissed_knowledge_gaps (
+          id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+          norm_query   text        NOT NULL UNIQUE,
+          dismissed_by uuid        REFERENCES users(id) ON DELETE SET NULL,
+          dismissed_at timestamptz NOT NULL DEFAULT now()
+        )
+      `;
+    })().catch((err: unknown) => {
+      _dismissedGapsSchemaReady = null;
+      throw err;
+    });
+  }
+  await _dismissedGapsSchemaReady;
+}
+
 export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
+  await ensureDismissedGapsSchema();
+
   // Aggregate refused queries first, then lateral-join to find a resolved thread
   // without risk of multiplying rows from the document_threads join.
+  // Dismissed gaps are excluded via NOT EXISTS on dismissed_knowledge_gaps.
   const rows = await sql`
     WITH gaps AS (
       SELECT
@@ -1929,6 +2151,10 @@ export async function getKnowledgeGaps(): Promise<KnowledgeGap[]> {
       LEFT JOIN projects p ON p.id = rt.project_id
       WHERE rt.answer_refused = true
         AND rt.created_at >= ${thirtyDaysAgo}
+        AND NOT EXISTS (
+          SELECT 1 FROM dismissed_knowledge_gaps d
+          WHERE d.norm_query = lower(trim(rt.query_text))
+        )
       GROUP BY lower(trim(rt.query_text))
       ORDER BY occurrences DESC, last_asked_at DESC
       LIMIT 10

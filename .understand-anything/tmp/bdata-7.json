@@ -1,0 +1,390 @@
+{
+  "batchImportData": {
+    "components/admin/quiz-generator.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/quiz-results-card.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/card.tsx"
+    ],
+    "components/admin/quiz-sets-panel.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx",
+      "components/ui/submit-button.tsx",
+      "components/ui/textarea.tsx"
+    ],
+    "components/admin/quiz-window-form.tsx": ["components/ui/button.tsx", "components/ui/card.tsx"],
+    "components/auth/accept-invite-form.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/auth/forgot-password-form.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/auth/login-form.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/input.tsx",
+      "lib/auth/features.ts"
+    ],
+    "components/auth/register-form.tsx": ["components/ui/button.tsx", "components/ui/input.tsx"],
+    "components/auth/reset-password-form.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/quiz/question-view.tsx": ["lib/utils.ts"],
+    "components/quiz/quiz-card.tsx": ["components/ui/card.tsx"],
+    "components/quiz/quiz-experience.tsx": [
+      "components/quiz/question-view.tsx",
+      "components/quiz/quiz-card.tsx",
+      "components/quiz/result-summary.tsx",
+      "components/quiz/retake-request-button.tsx",
+      "components/ui/button.tsx"
+    ],
+    "components/quiz/retake-request-button.tsx": ["components/ui/button.tsx"],
+    "components/ui/button.tsx": ["lib/utils.ts"],
+    "components/ui/input.tsx": ["lib/utils.ts"],
+    "components/ui/submit-button.tsx": ["components/ui/button.tsx"],
+    "components/ui/table.tsx": ["lib/utils.ts"],
+    "lib/auth/features.ts": []
+  },
+  "neighborMap": {
+    "components/admin/quiz-generator.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectQuizAdminPage"]
+      }
+    ],
+    "components/admin/quiz-results-card.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "components/admin/project-analytics-tabs.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectAnalyticsTabs"]
+      }
+    ],
+    "components/admin/quiz-sets-panel.tsx": [
+      { "path": "components/ui/badge.tsx", "batchIndex": 6, "symbols": ["Badge"] },
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      { "path": "components/ui/textarea.tsx", "batchIndex": 6, "symbols": ["Textarea"] },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectQuizAdminPage"]
+      }
+    ],
+    "components/admin/quiz-window-form.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/analytics/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectAnalyticsPage"]
+      }
+    ],
+    "components/auth/accept-invite-form.tsx": [
+      {
+        "path": "app/auth/accept-invite/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["AcceptInvitePage"]
+      }
+    ],
+    "components/auth/forgot-password-form.tsx": [
+      {
+        "path": "__tests__/components/auth/forgot-password-form.test.tsx",
+        "batchIndex": 5,
+        "symbols": []
+      },
+      { "path": "app/forgot-password/page.tsx", "batchIndex": 5, "symbols": ["ForgotPasswordPage"] }
+    ],
+    "components/auth/login-form.tsx": [
+      { "path": "__tests__/components/auth/login-form.test.tsx", "batchIndex": 5, "symbols": [] },
+      { "path": "app/(auth)/login/page.tsx", "batchIndex": 5, "symbols": ["LoginPage"] }
+    ],
+    "components/auth/register-form.tsx": [
+      {
+        "path": "__tests__/components/auth/register-form.test.tsx",
+        "batchIndex": 5,
+        "symbols": []
+      },
+      { "path": "app/register/page.tsx", "batchIndex": 5, "symbols": ["RegisterPage"] }
+    ],
+    "components/auth/reset-password-form.tsx": [
+      {
+        "path": "app/auth/reset-password/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ResetPasswordPage"]
+      }
+    ],
+    "components/quiz/question-view.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      { "path": "__tests__/components/quiz/question-view.test.tsx", "batchIndex": 5, "symbols": [] }
+    ],
+    "components/quiz/quiz-card.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      }
+    ],
+    "components/quiz/quiz-experience.tsx": [
+      {
+        "path": "components/quiz/result-summary.tsx",
+        "batchIndex": 6,
+        "symbols": ["ResultSummary"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/quiz/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectQuizPage"]
+      }
+    ],
+    "components/ui/button.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      { "path": "__tests__/components/ui/button.test.tsx", "batchIndex": 5, "symbols": [] },
+      {
+        "path": "app/(admin)/admin/threads/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminOpenThreadsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "app/(member)/threads/page.tsx",
+        "batchIndex": 6,
+        "symbols": ["MemberOpenThreadsPage"]
+      },
+      {
+        "path": "components/admin/activity-feed.tsx",
+        "batchIndex": 6,
+        "symbols": ["ActivityFeed"]
+      },
+      {
+        "path": "components/admin/analytics-table.tsx",
+        "batchIndex": 5,
+        "symbols": ["AnalyticsTable"]
+      },
+      {
+        "path": "components/admin/document-connectors-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentConnectorsPanel"]
+      },
+      {
+        "path": "components/admin/document-upload-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentUploadPanel"]
+      },
+      {
+        "path": "components/admin/documents-list.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentsList"]
+      },
+      {
+        "path": "components/admin/member-invite-form.tsx",
+        "batchIndex": 5,
+        "symbols": ["MemberInviteForm"]
+      },
+      {
+        "path": "components/admin/observability-panel.tsx",
+        "batchIndex": 5,
+        "symbols": ["ObservabilityPanel"]
+      },
+      {
+        "path": "components/admin/retake-requests-card.tsx",
+        "batchIndex": 6,
+        "symbols": ["RetakeRequestsCard"]
+      },
+      {
+        "path": "components/admin/user-filters.tsx",
+        "batchIndex": 8,
+        "symbols": ["UserFiltersPanel"]
+      },
+      { "path": "components/admin/users-table.tsx", "batchIndex": 8, "symbols": ["UsersTable"] },
+      {
+        "path": "components/chat/chat-interface.tsx",
+        "batchIndex": 3,
+        "symbols": ["ChatInterface"]
+      },
+      {
+        "path": "components/search/debounced-document-search.tsx",
+        "batchIndex": 3,
+        "symbols": ["DebouncedDocumentSearch"]
+      }
+    ],
+    "components/ui/input.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      { "path": "__tests__/components/ui/input.test.tsx", "batchIndex": 5, "symbols": [] },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectQuizAdminPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "components/admin/documents-list.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentsList"]
+      },
+      {
+        "path": "components/admin/member-invite-form.tsx",
+        "batchIndex": 5,
+        "symbols": ["MemberInviteForm"]
+      },
+      { "path": "components/admin/users-table.tsx", "batchIndex": 8, "symbols": ["UsersTable"] },
+      {
+        "path": "components/chat/chat-interface.tsx",
+        "batchIndex": 3,
+        "symbols": ["ChatInterface"]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 3,
+        "symbols": ["DocumentThreadsBoard"]
+      },
+      {
+        "path": "components/search/debounced-document-search.tsx",
+        "batchIndex": 3,
+        "symbols": ["DebouncedDocumentSearch"]
+      }
+    ],
+    "components/ui/submit-button.tsx": [
+      {
+        "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+        "batchIndex": 3,
+        "symbols": ["KnowledgeGapThreadPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectMembersPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectQuizAdminPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/users/page.tsx",
+        "batchIndex": 8,
+        "symbols": ["AdminUsersPage"]
+      },
+      { "path": "app/(member)/memory/page.tsx", "batchIndex": 1, "symbols": ["MemoryPage"] },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "components/admin/document-connectors-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentConnectorsPanel"]
+      },
+      {
+        "path": "components/admin/documents-list.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentsList"]
+      },
+      {
+        "path": "components/admin/member-invite-form.tsx",
+        "batchIndex": 5,
+        "symbols": ["MemberInviteForm"]
+      },
+      {
+        "path": "components/admin/model-switcher-form.tsx",
+        "batchIndex": 2,
+        "symbols": ["ModelSwitcherForm"]
+      },
+      { "path": "components/admin/users-table.tsx", "batchIndex": 8, "symbols": ["UsersTable"] },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 3,
+        "symbols": ["DocumentThreadsBoard"]
+      }
+    ],
+    "components/ui/table.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      {
+        "path": "components/admin/analytics-table.tsx",
+        "batchIndex": 5,
+        "symbols": ["AnalyticsTable"]
+      },
+      {
+        "path": "components/admin/observability-panel.tsx",
+        "batchIndex": 5,
+        "symbols": ["ObservabilityPanel"]
+      }
+    ],
+    "lib/auth/features.ts": [
+      { "path": "app/(auth)/login/page.tsx", "batchIndex": 5, "symbols": ["LoginPage"] }
+    ]
+  }
+}

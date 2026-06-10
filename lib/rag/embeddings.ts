@@ -16,9 +16,19 @@ export function getCurrentEmbeddingModelSpec(): EmbeddingModelSpec {
   const modelId = appEnv.embeddingModelId.trim();
   const revision = appEnv.embeddingModelRevision.trim();
 
+  if (!modelId) {
+    throw new Error('EMBEDDING_MODEL_ID must be configured for embedding generation.');
+  }
+
+  if (!revision) {
+    throw new Error(
+      'EMBEDDING_MODEL_REVISION must be pinned to a specific model revision to keep ingestion and retrieval consistent.',
+    );
+  }
+
   return {
     modelId,
-    modelRevision: revision.length > 0 ? revision : null,
+    modelRevision: revision,
     dimensions: EMBEDDING_DIMENSIONS,
   };
 }

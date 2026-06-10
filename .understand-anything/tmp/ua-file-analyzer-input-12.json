@@ -1,0 +1,12 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "language": "yaml",
+      "sizeLines": 52,
+      "fileCategory": "infra"
+    }
+  ],
+  "batchImportData": { ".github/workflows/ci.yml": [] }
+}

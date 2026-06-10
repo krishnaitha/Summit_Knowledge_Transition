@@ -1,0 +1,1148 @@
+{
+  "batchIndex": 5,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": "app/(member)/threads/page.tsx",
+      "language": "typescript",
+      "sizeLines": 174,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/actions/document-threads.ts",
+      "language": "typescript",
+      "sizeLines": 257,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/api/admin/analytics/route.ts",
+      "language": "typescript",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/activity-feed.tsx",
+      "language": "typescript",
+      "sizeLines": 264,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/generate-document-form.tsx",
+      "language": "typescript",
+      "sizeLines": 381,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/knowledge-gap-thread-button.tsx",
+      "language": "typescript",
+      "sizeLines": 112,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/knowledge-gaps-card.tsx",
+      "language": "typescript",
+      "sizeLines": 224,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/project-knowledge-gaps-table.tsx",
+      "language": "typescript",
+      "sizeLines": 121,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/retake-requests-card.tsx",
+      "language": "typescript",
+      "sizeLines": 177,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/stats-card.tsx",
+      "language": "typescript",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/system-health-errors-list.tsx",
+      "language": "typescript",
+      "sizeLines": 340,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/bookmark-button.tsx",
+      "language": "typescript",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/chat-interface.tsx",
+      "language": "typescript",
+      "sizeLines": 639,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/feedback-buttons.tsx",
+      "language": "typescript",
+      "sizeLines": 87,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/message-bubble.tsx",
+      "language": "typescript",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/source-tag.tsx",
+      "language": "typescript",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/project-card.tsx",
+      "language": "typescript",
+      "sizeLines": 165,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/setup-panel.tsx",
+      "language": "typescript",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/search/debounced-document-search.tsx",
+      "language": "typescript",
+      "sizeLines": 141,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/badge.tsx",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/card.tsx",
+      "language": "typescript",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/modal.tsx",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/data.ts",
+      "language": "typescript",
+      "sizeLines": 2372,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/utils.ts",
+      "language": "typescript",
+      "sizeLines": 56,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/(member)/threads/page.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/utils.ts"
+    ],
+    "app/actions/document-threads.ts": ["lib/auth.ts", "lib/data.ts", "lib/db.ts"],
+    "app/api/admin/analytics/route.ts": ["lib/auth.ts", "lib/data.ts"],
+    "components/admin/activity-feed.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/generate-document-form.tsx": [
+      "app/actions/transcript.ts",
+      "components/ui/card.tsx",
+      "components/ui/textarea.tsx"
+    ],
+    "components/admin/knowledge-gap-thread-button.tsx": [
+      "app/actions/document-threads.ts",
+      "components/ui/modal.tsx"
+    ],
+    "components/admin/knowledge-gaps-card.tsx": [
+      "app/actions/document-threads.ts",
+      "components/admin/knowledge-gap-thread-button.tsx",
+      "components/ui/card.tsx",
+      "lib/data.ts"
+    ],
+    "components/admin/project-knowledge-gaps-table.tsx": ["app/actions/document-threads.ts"],
+    "components/admin/retake-requests-card.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/stats-card.tsx": ["components/ui/card.tsx", "lib/utils.ts"],
+    "components/admin/system-health-errors-list.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/data.ts",
+      "lib/utils.ts"
+    ],
+    "components/chat/bookmark-button.tsx": ["lib/utils.ts"],
+    "components/chat/chat-interface.tsx": [
+      "components/chat/message-bubble.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/chat/feedback-buttons.tsx": ["lib/utils.ts"],
+    "components/chat/message-bubble.tsx": [
+      "components/chat/bookmark-button.tsx",
+      "components/chat/feedback-buttons.tsx",
+      "components/chat/source-tag.tsx",
+      "components/ui/markdown-content.tsx",
+      "lib/utils.ts"
+    ],
+    "components/chat/source-tag.tsx": ["components/ui/badge.tsx"],
+    "components/layout/project-card.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/types/database.ts"
+    ],
+    "components/layout/setup-panel.tsx": ["components/ui/card.tsx"],
+    "components/search/debounced-document-search.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/ui/badge.tsx": ["lib/utils.ts"],
+    "components/ui/card.tsx": ["lib/utils.ts"],
+    "components/ui/modal.tsx": ["lib/utils.ts"],
+    "lib/data.ts": ["lib/db.ts", "lib/quiz/scoring.ts", "lib/types/database.ts", "lib/utils.ts"],
+    "lib/utils.ts": []
+  },
+  "neighborMap": {
+    "app/(member)/threads/page.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      }
+    ],
+    "app/actions/document-threads.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 2,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["KnowledgeGapThreadPage"]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentThreadsBoard"]
+      }
+    ],
+    "app/api/admin/analytics/route.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      }
+    ],
+    "components/admin/activity-feed.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "app/(admin)/admin/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminDashboardPage"]
+      }
+    ],
+    "components/admin/generate-document-form.tsx": [
+      {
+        "path": "app/actions/transcript.ts",
+        "batchIndex": 3,
+        "symbols": ["generateDocumentFromTranscriptAction", "pushToKnowledgeBaseAction"]
+      },
+      {
+        "path": "components/ui/textarea.tsx",
+        "batchIndex": 1,
+        "symbols": ["Textarea"]
+      },
+      {
+        "path": "__tests__/components/admin/generate-document-form.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/generate-document/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["GenerateDocumentPage"]
+      }
+    ],
+    "components/admin/knowledge-gap-thread-button.tsx": [
+      {
+        "path": "components/admin/project-analytics-tabs.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectAnalyticsTabs"]
+      }
+    ],
+    "components/admin/knowledge-gaps-card.tsx": [
+      {
+        "path": "__tests__/components/admin/knowledge-gaps-card.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminDashboardPage"]
+      }
+    ],
+    "components/admin/retake-requests-card.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      }
+    ],
+    "components/admin/stats-card.tsx": [
+      {
+        "path": "app/(admin)/admin/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminDashboardPage"]
+      },
+      {
+        "path": "components/admin/observability-panel.tsx",
+        "batchIndex": 1,
+        "symbols": ["ObservabilityPanel"]
+      }
+    ],
+    "components/admin/system-health-errors-list.tsx": [
+      {
+        "path": "app/(admin)/admin/system-health/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSystemHealthPage"]
+      }
+    ],
+    "components/chat/chat-interface.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "components/ui/input.tsx",
+        "batchIndex": 1,
+        "symbols": ["Input"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/chat/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectChatPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/chat/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectChatPage"]
+      }
+    ],
+    "components/chat/message-bubble.tsx": [
+      {
+        "path": "components/ui/markdown-content.tsx",
+        "batchIndex": 8,
+        "symbols": ["MarkdownContent"]
+      },
+      {
+        "path": "__tests__/components/chat/message-bubble.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      }
+    ],
+    "components/chat/source-tag.tsx": [
+      {
+        "path": "__tests__/components/chat/source-tag.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      }
+    ],
+    "components/layout/project-card.tsx": [
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 6,
+        "symbols": []
+      },
+      {
+        "path": "__tests__/components/layout/project-card.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/(member)/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["DashboardPage"]
+      },
+      {
+        "path": "app/(member)/projects/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["MyProjectsPage"]
+      }
+    ],
+    "components/search/debounced-document-search.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "components/ui/input.tsx",
+        "batchIndex": 1,
+        "symbols": ["Input"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/search/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSearchPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectOverviewPage"]
+      },
+      {
+        "path": "app/(member)/search/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["MemberSearchPage"]
+      }
+    ],
+    "components/ui/badge.tsx": [
+      {
+        "path": "__tests__/components/ui/badge.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["KnowledgeGapThreadPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectMembersPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/system-health/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSystemHealthPage"]
+      },
+      {
+        "path": "app/(admin)/admin/threads/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminOpenThreadsPage"]
+      },
+      {
+        "path": "app/(member)/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["DashboardPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/bookmarks/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectBookmarksPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectOverviewPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/study/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectStudyModePage"]
+      },
+      {
+        "path": "components/admin/documents-list.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentsList"]
+      },
+      {
+        "path": "components/admin/observability-panel.tsx",
+        "batchIndex": 1,
+        "symbols": ["ObservabilityPanel"]
+      },
+      {
+        "path": "components/admin/quiz-sets-panel.tsx",
+        "batchIndex": 1,
+        "symbols": ["QuizSetsPanel"]
+      },
+      {
+        "path": "components/admin/user-detail-drawer.tsx",
+        "batchIndex": 6,
+        "symbols": ["UserDetailDrawer"]
+      },
+      {
+        "path": "components/admin/users-table.tsx",
+        "batchIndex": 6,
+        "symbols": ["UsersTable"]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentThreadsBoard"]
+      }
+    ],
+    "components/ui/card.tsx": [
+      {
+        "path": "__tests__/components/ui/card.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/generate-document/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["GenerateDocumentPage"]
+      },
+      {
+        "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["KnowledgeGapThreadPage"]
+      },
+      {
+        "path": "app/(admin)/admin/model-switcher/page.tsx",
+        "batchIndex": 3,
+        "symbols": ["AdminModelSwitcherPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectMembersPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectQuizAdminPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/search/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSearchPage"]
+      },
+      {
+        "path": "app/(admin)/admin/system-health/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSystemHealthPage"]
+      },
+      {
+        "path": "app/(admin)/admin/threads/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminOpenThreadsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/users/page.tsx",
+        "batchIndex": 6,
+        "symbols": ["AdminUsersPage"]
+      },
+      {
+        "path": "app/(member)/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["DashboardPage"]
+      },
+      {
+        "path": "app/(member)/memory/page.tsx",
+        "batchIndex": 2,
+        "symbols": ["MemoryPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/bookmarks/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectBookmarksPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectOverviewPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/quiz/page.tsx",
+        "batchIndex": 2,
+        "symbols": ["ProjectQuizPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/study/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectStudyModePage"]
+      },
+      {
+        "path": "app/(member)/projects/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["MyProjectsPage"]
+      },
+      {
+        "path": "app/(member)/search/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["MemberSearchPage"]
+      },
+      {
+        "path": "components/admin/analytics-table.tsx",
+        "batchIndex": 1,
+        "symbols": ["AnalyticsTable"]
+      },
+      {
+        "path": "components/admin/document-connectors-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentConnectorsPanel"]
+      },
+      {
+        "path": "components/admin/document-upload-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentUploadPanel"]
+      },
+      {
+        "path": "components/admin/documents-list.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentsList"]
+      },
+      {
+        "path": "components/admin/observability-panel.tsx",
+        "batchIndex": 1,
+        "symbols": ["ObservabilityPanel"]
+      },
+      {
+        "path": "components/admin/project-analytics-tabs.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectAnalyticsTabs"]
+      },
+      {
+        "path": "components/admin/quiz-generator.tsx",
+        "batchIndex": 1,
+        "symbols": ["QuizGenerator"]
+      },
+      {
+        "path": "components/admin/quiz-results-card.tsx",
+        "batchIndex": 1,
+        "symbols": ["QuizResultsCard"]
+      },
+      {
+        "path": "components/admin/quiz-sets-panel.tsx",
+        "batchIndex": 1,
+        "symbols": ["QuizSetsPanel"]
+      },
+      {
+        "path": "components/admin/quiz-window-form.tsx",
+        "batchIndex": 1,
+        "symbols": ["QuizWindowForm"]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentThreadsBoard"]
+      },
+      {
+        "path": "components/quiz/quiz-card.tsx",
+        "batchIndex": 10,
+        "symbols": ["QuizCard"]
+      },
+      {
+        "path": "components/quiz/result-summary.tsx",
+        "batchIndex": 10,
+        "symbols": ["ResultSummary"]
+      }
+    ],
+    "components/ui/modal.tsx": [
+      {
+        "path": "__tests__/components/ui/modal.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      }
+    ],
+    "lib/data.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 2,
+        "symbols": []
+      },
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 6,
+        "symbols": []
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentThreadsBoard"]
+      },
+      {
+        "path": "app/api/chat/route.ts",
+        "batchIndex": 2,
+        "symbols": ["GET", "POST"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["KnowledgeGapThreadPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectMembersPage"]
+      },
+      {
+        "path": "components/admin/observability-panel.tsx",
+        "batchIndex": 1,
+        "symbols": ["ObservabilityPanel"]
+      },
+      {
+        "path": "lib/documents/process.ts",
+        "batchIndex": 3,
+        "symbols": ["processDocumentRecord"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectQuizAdminPage"]
+      },
+      {
+        "path": "app/actions/transcript.ts",
+        "batchIndex": 3,
+        "symbols": ["generateDocumentFromTranscriptAction", "pushToKnowledgeBaseAction"]
+      },
+      {
+        "path": "app/api/quiz/start/route.ts",
+        "batchIndex": 2,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "app/api/quiz/submit/route.ts",
+        "batchIndex": 2,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "app/(admin)/admin/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminDashboardPage"]
+      },
+      {
+        "path": "app/(admin)/admin/system-health/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSystemHealthPage"]
+      },
+      {
+        "path": "app/(admin)/admin/threads/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminOpenThreadsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/users/page.tsx",
+        "batchIndex": 6,
+        "symbols": ["AdminUsersPage"]
+      },
+      {
+        "path": "app/(member)/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["DashboardPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectOverviewPage"]
+      },
+      {
+        "path": "app/actions/learning.ts",
+        "batchIndex": 2,
+        "symbols": ["generateProjectFlashcardsAction", "reviewFlashcardAction"]
+      },
+      {
+        "path": "app/api/threads/[threadId]/bot-reply/route.ts",
+        "batchIndex": 3,
+        "symbols": ["GET"]
+      },
+      {
+        "path": "__tests__/api/threads/bot-reply-route.test.ts",
+        "batchIndex": 3,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/layout.tsx",
+        "batchIndex": 7,
+        "symbols": ["AdminLayout"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/analytics/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectAnalyticsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+        "batchIndex": 6,
+        "symbols": ["ProjectDocumentsPage"]
+      },
+      {
+        "path": "app/(member)/layout.tsx",
+        "batchIndex": 7,
+        "symbols": ["MemberLayout"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/bookmarks/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectBookmarksPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/quiz/page.tsx",
+        "batchIndex": 2,
+        "symbols": ["ProjectQuizPage"]
+      },
+      {
+        "path": "app/api/documents/upload/route.ts",
+        "batchIndex": 2,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "app/api/documents/view/route.ts",
+        "batchIndex": 2,
+        "symbols": ["GET"]
+      },
+      {
+        "path": "lib/quiz/scoring.ts",
+        "batchIndex": 6,
+        "symbols": ["computeSectionScores", "scoreQuizSubmission"]
+      },
+      {
+        "path": "app/(admin)/admin/generate-document/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["GenerateDocumentPage"]
+      },
+      {
+        "path": "app/(admin)/admin/search/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSearchPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/study/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectStudyModePage"]
+      },
+      {
+        "path": "app/(member)/projects/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["MyProjectsPage"]
+      },
+      {
+        "path": "app/(member)/search/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["MemberSearchPage"]
+      },
+      {
+        "path": "app/api/chat/feedback/route.ts",
+        "batchIndex": 2,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "__tests__/components/documents/document-threads-board.test.tsx",
+        "batchIndex": 8,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/chat/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectChatPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+        "batchIndex": 8,
+        "symbols": ["AdminDocumentThreadsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/chat/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectChatPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+        "batchIndex": 8,
+        "symbols": ["MemberDocumentThreadsPage"]
+      },
+      {
+        "path": "__tests__/components/admin/knowledge-gaps-card.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      }
+    ],
+    "lib/utils.ts": [
+      {
+        "path": "__tests__/lib/utils.test.ts",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/(admin)/admin/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminDashboardPage"]
+      },
+      {
+        "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["KnowledgeGapThreadPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectMembersPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/system-health/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminSystemHealthPage"]
+      },
+      {
+        "path": "app/(admin)/admin/threads/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminOpenThreadsPage"]
+      },
+      {
+        "path": "app/(member)/dashboard/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["DashboardPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/bookmarks/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectBookmarksPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+        "batchIndex": 1,
+        "symbols": ["ProjectFlashcardsPage"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectOverviewPage"]
+      },
+      {
+        "path": "app/api/jobs/worker/route.ts",
+        "batchIndex": 3,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "components/admin/analytics-table.tsx",
+        "batchIndex": 1,
+        "symbols": ["AnalyticsTable"]
+      },
+      {
+        "path": "components/admin/document-connectors-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentConnectorsPanel"]
+      },
+      {
+        "path": "components/admin/document-upload-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentUploadPanel"]
+      },
+      {
+        "path": "components/admin/documents-list.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentsList"]
+      },
+      {
+        "path": "components/admin/quiz-generator.tsx",
+        "batchIndex": 1,
+        "symbols": ["QuizGenerator"]
+      },
+      {
+        "path": "components/admin/user-detail-drawer.tsx",
+        "batchIndex": 6,
+        "symbols": ["UserDetailDrawer"]
+      },
+      {
+        "path": "components/admin/users-table.tsx",
+        "batchIndex": 6,
+        "symbols": ["UsersTable"]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 8,
+        "symbols": ["DocumentThreadsBoard"]
+      },
+      {
+        "path": "components/layout/mobile-sidebar.tsx",
+        "batchIndex": 7,
+        "symbols": ["MOBILE_NAV_OPEN_EVENT", "MobileSidebar"]
+      },
+      {
+        "path": "components/layout/sidebar.tsx",
+        "batchIndex": 7,
+        "symbols": ["Sidebar"]
+      },
+      {
+        "path": "components/quiz/question-view.tsx",
+        "batchIndex": 10,
+        "symbols": ["QuestionView"]
+      },
+      {
+        "path": "components/quiz/result-summary.tsx",
+        "batchIndex": 10,
+        "symbols": ["ResultSummary"]
+      },
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "components/ui/input.tsx",
+        "batchIndex": 1,
+        "symbols": ["Input"]
+      },
+      {
+        "path": "components/ui/table.tsx",
+        "batchIndex": 1,
+        "symbols": ["Table", "THead", "TBody", "TR", "TH", "TD"]
+      },
+      {
+        "path": "components/ui/textarea.tsx",
+        "batchIndex": 1,
+        "symbols": ["Textarea"]
+      },
+      {
+        "path": "lib/export.ts",
+        "batchIndex": 6,
+        "symbols": ["generateUsersCsv", "downloadCsv"]
+      },
+      {
+        "path": "lib/groq/chat.ts",
+        "batchIndex": 3,
+        "symbols": ["buildKtPrompt", "createGroqChatCompletion", "createGroqQuizCompletion"]
+      },
+      {
+        "path": "lib/llm/anthropic.ts",
+        "batchIndex": 3,
+        "symbols": ["createAnthropicChatCompletion"]
+      },
+      {
+        "path": "lib/llm/copilot.ts",
+        "batchIndex": 3,
+        "symbols": ["createCopilotChatCompletion"]
+      },
+      {
+        "path": "lib/llm/openai.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "createOpenAiChatCompletion",
+          "createOllamaChatCompletion",
+          "createAzureOpenAiChatCompletion"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,848 @@
+{
+  "nodes": [
+    {
+      "id": "config:.claude/settings.json",
+      "type": "config",
+      "name": "settings.json",
+      "filePath": ".claude/settings.json",
+      "summary": "Claude Code project-level settings defining allowed permissions for bash, read, and write operations within the NexTElevate workspace.",
+      "tags": ["configuration", "developer-tooling", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/copilot-instructions.md",
+      "type": "document",
+      "name": "copilot-instructions.md",
+      "filePath": ".github/copilot-instructions.md",
+      "summary": "GitHub Copilot coding guidelines enforcing strict TypeScript and ESLint rules including no-any policy and type-safety requirements for AI-assisted development.",
+      "tags": ["documentation", "configuration", "developer-tooling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/pull_request_template.md",
+      "type": "document",
+      "name": "pull_request_template.md",
+      "filePath": ".github/pull_request_template.md",
+      "summary": "GitHub pull request template with structured sections for summary, changes, type of change, testing notes, and reviewer guidance.",
+      "tags": ["documentation", "developer-tooling", "ci-cd"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.husky/pre-commit",
+      "type": "file",
+      "name": "pre-commit",
+      "filePath": ".husky/pre-commit",
+      "summary": "Husky git pre-commit hook that enforces code quality checks before each commit, ensuring linting and formatting standards are met.",
+      "tags": ["ci-cd", "developer-tooling", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.prettierignore",
+      "type": "config",
+      "name": ".prettierignore",
+      "filePath": ".prettierignore",
+      "summary": "Prettier formatter ignore rules excluding generated files and directories like node_modules and .next from code formatting.",
+      "tags": ["configuration", "build-system", "developer-tooling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.understand-anything/.understandignore",
+      "type": "config",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Understand-Anything plugin ignore rules listing paths to exclude from codebase analysis, including generated artifacts, test fixtures, and third-party code.",
+      "tags": ["configuration", "developer-tooling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/chat/loading.tsx",
+      "type": "file",
+      "name": "loading.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/chat/loading.tsx",
+      "summary": "Admin-route chat loading skeleton shown by Next.js while the project chat page streams in, rendering a full-screen animated placeholder.",
+      "tags": ["component", "ui", "loading-state"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/chat/loading.tsx",
+      "type": "file",
+      "name": "loading.tsx",
+      "filePath": "app/(member)/projects/[id]/chat/loading.tsx",
+      "summary": "Member-route chat loading skeleton shown by Next.js while the project chat page streams in, rendering a full-screen animated placeholder.",
+      "tags": ["component", "ui", "loading-state"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/globals.css",
+      "type": "file",
+      "name": "globals.css",
+      "filePath": "app/globals.css",
+      "summary": "Global Tailwind CSS base stylesheet defining CSS custom properties for the design token color system (light and dark themes) consumed across the entire application.",
+      "tags": ["css", "design-system", "configuration"],
+      "complexity": "simple",
+      "languageNotes": "Uses CSS custom properties with Tailwind v4 @theme and @layer base syntax for a dark/light mode token system."
+    },
+    {
+      "id": "file:app/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "app/layout.tsx",
+      "summary": "Root Next.js App Router layout that sets site-wide metadata (title: NexTElevate) and wraps all pages in the base HTML shell importing global styles.",
+      "tags": ["entry-point", "component", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/loading.tsx",
+      "type": "file",
+      "name": "loading.tsx",
+      "filePath": "app/loading.tsx",
+      "summary": "Root-level Next.js loading boundary component rendering a full-screen spinner shown while any top-level page suspense boundary resolves.",
+      "tags": ["component", "loading-state", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/page.tsx",
+      "summary": "Root application page that immediately redirects users to the dashboard, acting as the default entry point after authentication.",
+      "tags": ["entry-point", "routing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:eslint.config.mjs",
+      "type": "config",
+      "name": "eslint.config.mjs",
+      "filePath": "eslint.config.mjs",
+      "summary": "ESLint flat config enforcing strict TypeScript rules including no-explicit-any as an error, no-unused-vars, and Next.js best-practice plugin rules across the project.",
+      "tags": ["configuration", "build-system", "developer-tooling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:keycloak/realm.json",
+      "type": "config",
+      "name": "realm.json",
+      "filePath": "keycloak/realm.json",
+      "summary": "Keycloak realm bootstrap configuration defining the NexTElevate realm with OIDC client settings, email login, and initial seed users for development.",
+      "tags": ["configuration", "security", "infrastructure"],
+      "complexity": "simple",
+      "languageNotes": "Defines the OIDC realm used when AUTH_PROVIDER=oidc; includes a confidential client with the next-auth redirect URI."
+    },
+    {
+      "id": "file:load-test/run.sh",
+      "type": "file",
+      "name": "run.sh",
+      "filePath": "load-test/run.sh",
+      "summary": "Bash script orchestrating k6 load tests with multiple named scenarios (smoke, chat, search, full) each with configurable VU counts, durations, and threshold parameters targeting the NexTElevate app.",
+      "tags": ["load-testing", "developer-tooling", "ci-cd"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:load-test/seed-users.mjs",
+      "type": "file",
+      "name": "seed-users.mjs",
+      "filePath": "load-test/seed-users.mjs",
+      "summary": "Node.js seed script that inserts 10 test users into the Postgres database and assigns them to a designated project, preparing the environment for load testing.",
+      "tags": ["developer-tooling", "database", "load-testing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:load-test/summit.js",
+      "type": "file",
+      "name": "summit.js",
+      "filePath": "load-test/summit.js",
+      "summary": "k6 load test script defining exported chat and search scenario functions, authentication helpers, and custom metrics (latency, error counters) to benchmark the NexTElevate portal under concurrent user load.",
+      "tags": ["load-testing", "developer-tooling", "performance"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:next-env.d.ts",
+      "type": "file",
+      "name": "next-env.d.ts",
+      "filePath": "next-env.d.ts",
+      "summary": "Auto-generated Next.js TypeScript ambient declaration file that includes Next.js type definitions for image, link, and server component types.",
+      "tags": ["type-definition", "configuration"],
+      "complexity": "simple",
+      "languageNotes": "This file is auto-generated by Next.js and should not be manually edited."
+    },
+    {
+      "id": "config:next.config.ts",
+      "type": "config",
+      "name": "next.config.ts",
+      "filePath": "next.config.ts",
+      "summary": "Next.js production configuration enabling standalone output, 10 MB server action body limit, external packages for @xenova/transformers (local embeddings), and file tracing for ONNX runtime.",
+      "tags": ["configuration", "build-system", "infrastructure"],
+      "complexity": "simple",
+      "languageNotes": "serverExternalPackages prevents Next.js from bundling heavy ONNX/transformer packages, keeping them as Node.js native requires to avoid binary compatibility issues."
+    },
+    {
+      "id": "config:postcss.config.mjs",
+      "type": "config",
+      "name": "postcss.config.mjs",
+      "filePath": "postcss.config.mjs",
+      "summary": "PostCSS configuration enabling the Tailwind CSS plugin for utility class generation and CSS custom property processing.",
+      "tags": ["configuration", "build-system", "css"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:postgres/legacy/add_learning_feedback_features.sql",
+      "type": "file",
+      "name": "add_learning_feedback_features.sql",
+      "filePath": "postgres/legacy/add_learning_feedback_features.sql",
+      "summary": "Legacy SQL migration adding quiz_coaching_plans and chat_answer_feedback tables plus supporting indexes for learning feedback features.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:postgres/legacy/add_project_announcements.sql",
+      "type": "file",
+      "name": "add_project_announcements.sql",
+      "filePath": "postgres/legacy/add_project_announcements.sql",
+      "summary": "Legacy SQL migration creating the project_announcements table for admin broadcast messages to project members.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:postgres/schema.sql",
+      "type": "file",
+      "name": "schema.sql",
+      "filePath": "postgres/schema.sql",
+      "summary": "Complete baseline Postgres schema defining all 30+ tables for the NexTElevate portal including users, projects, documents, RAG chunks, quiz, chat, jobs, and observability tables, with pgvector and pgcrypto dependencies.",
+      "tags": ["database", "schema-definition", "entry-point"],
+      "complexity": "complex",
+      "languageNotes": "Requires pgvector extension for embedding storage (vector type) and pgcrypto for UUID generation (gen_random_uuid())."
+    },
+    {
+      "id": "file:proxy.ts",
+      "type": "file",
+      "name": "proxy.ts",
+      "filePath": "proxy.ts",
+      "summary": "Next.js Edge middleware that performs lightweight session-cookie presence checks to redirect unauthenticated users to /login, avoiding heavy NextAuth imports incompatible with the Edge runtime.",
+      "tags": ["middleware", "security", "routing"],
+      "complexity": "simple",
+      "languageNotes": "Exported as proxy (not default) with a named config matcher; the Edge runtime constraint prevents importing openid-client, so only cookie presence is checked here."
+    },
+    {
+      "id": "document:public/connector-setup-guide.md",
+      "type": "document",
+      "name": "connector-setup-guide.md",
+      "filePath": "public/connector-setup-guide.md",
+      "summary": "End-user documentation guide covering setup instructions for all six supported document connectors (Confluence, SharePoint, Jira, Monday.com, OneDrive, GitHub), including credential retrieval steps and troubleshooting.",
+      "tags": ["documentation", "infrastructure", "configuration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/chat/loading.tsx:AdminProjectChatLoading",
+      "type": "function",
+      "name": "AdminProjectChatLoading",
+      "filePath": "app/(admin)/admin/projects/[id]/chat/loading.tsx",
+      "lineRange": [1, 25],
+      "summary": "Next.js loading UI component for the admin project chat route, rendering an animated skeleton while the page suspense resolves.",
+      "tags": ["component", "loading-state", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(member)/projects/[id]/chat/loading.tsx:MemberProjectChatLoading",
+      "type": "function",
+      "name": "MemberProjectChatLoading",
+      "filePath": "app/(member)/projects/[id]/chat/loading.tsx",
+      "lineRange": [1, 25],
+      "summary": "Next.js loading UI component for the member project chat route, rendering an animated skeleton while the page suspense resolves.",
+      "tags": ["component", "loading-state", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:load-test/summit.js:authenticate",
+      "type": "function",
+      "name": "authenticate",
+      "filePath": "load-test/summit.js",
+      "lineRange": [147, 193],
+      "summary": "Performs CSRF-protected NextAuth credentials login for a virtual user, returning session cookies for subsequent authenticated k6 requests.",
+      "tags": ["authentication", "load-testing", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:load-test/summit.js:chatScenario",
+      "type": "function",
+      "name": "chatScenario",
+      "filePath": "load-test/summit.js",
+      "lineRange": [202, 261],
+      "summary": "k6 exported scenario that authenticates a virtual user, selects a random project, sends a chat question via the API, and records latency and error metrics.",
+      "tags": ["load-testing", "performance", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:load-test/summit.js:searchScenario",
+      "type": "function",
+      "name": "searchScenario",
+      "filePath": "load-test/summit.js",
+      "lineRange": [268, 295],
+      "summary": "k6 exported scenario that authenticates a virtual user and performs a document search query, checking response correctness and recording search error metrics.",
+      "tags": ["load-testing", "performance", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:proxy.ts:proxy",
+      "type": "function",
+      "name": "proxy",
+      "filePath": "proxy.ts",
+      "lineRange": [7, 29],
+      "summary": "Edge middleware function that allows public paths and API routes through, and redirects any request without a NextAuth session cookie to the login page.",
+      "tags": ["middleware", "security", "routing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/legacy/add_learning_feedback_features.sql:quiz_coaching_plans",
+      "type": "table",
+      "name": "quiz_coaching_plans",
+      "filePath": "postgres/legacy/add_learning_feedback_features.sql",
+      "lineRange": [4, 12],
+      "summary": "Legacy migration table storing AI-generated coaching plans linked to quiz attempts with weak section identification and learning recommendations per user.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/legacy/add_learning_feedback_features.sql:chat_answer_feedback",
+      "type": "table",
+      "name": "chat_answer_feedback",
+      "filePath": "postgres/legacy/add_learning_feedback_features.sql",
+      "lineRange": [14, 25],
+      "summary": "Legacy migration table capturing per-message user feedback (ratings, reason tags, and comments) on AI chat answers.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/legacy/add_project_announcements.sql:project_announcements",
+      "type": "table",
+      "name": "project_announcements",
+      "filePath": "postgres/legacy/add_project_announcements.sql",
+      "lineRange": [1, 8],
+      "summary": "Legacy migration table for broadcast announcements sent by admins to project members, storing title, message body, and sender.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:users",
+      "type": "table",
+      "name": "users",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [47, 58],
+      "summary": "Core user identity table storing email, hashed password, global role (admin/member), and account status for all NexTElevate users.",
+      "tags": ["database", "schema-definition", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:invite_tokens",
+      "type": "table",
+      "name": "invite_tokens",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [61, 69],
+      "summary": "Invite token table enabling email-based user registration with optional project-scoped role assignment.",
+      "tags": ["database", "schema-definition", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:projects",
+      "type": "table",
+      "name": "projects",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [89, 100],
+      "summary": "Core projects table defining knowledge-transfer products with name, pass threshold, quiz close date, and creator reference.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:project_members",
+      "type": "table",
+      "name": "project_members",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [103, 110],
+      "summary": "Join table assigning users to projects with a project-scoped role (admin or member) and assignment timestamp.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:project_announcements",
+      "type": "table",
+      "name": "project_announcements",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [113, 120],
+      "summary": "Project announcements table for admin broadcast messages to project members, canonical version matching the legacy migration.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:document_connectors",
+      "type": "table",
+      "name": "document_connectors",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [122, 136],
+      "summary": "Connector configuration table for external document sources (Confluence, SharePoint, Jira, GitHub, OneDrive, Monday) with sync status, auto-sync flag, and encrypted config.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:documents",
+      "type": "table",
+      "name": "documents",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [139, 160],
+      "summary": "Document registry table tracking uploaded files per project with metadata for classification, PII scan flags, and optional connector sync provenance.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:document_chunks",
+      "type": "table",
+      "name": "document_chunks",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [163, 174],
+      "summary": "RAG chunk storage table holding text content, full-text search vector, pgvector embedding, and embedding model version for cosine similarity retrieval.",
+      "tags": ["database", "schema-definition", "rag"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:document_threads",
+      "type": "table",
+      "name": "document_threads",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [176, 193],
+      "summary": "Document discussion thread table tracking annotation threads on documents with status lifecycle, resolver tracking, and optional bot or gap-query source.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:chat_sessions",
+      "type": "table",
+      "name": "chat_sessions",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [231, 239],
+      "summary": "Chat session registry linking users to per-project conversation threads with message count and last-message timestamp for display ordering.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:chat_messages",
+      "type": "table",
+      "name": "chat_messages",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [242, 249],
+      "summary": "Individual chat message table storing role (user/assistant), content, and RAG source references per session.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:chat_answer_feedback",
+      "type": "table",
+      "name": "chat_answer_feedback",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [252, 263],
+      "summary": "Canonical chat answer feedback table recording user ratings and qualitative comments on AI-generated chat responses.",
+      "tags": ["database", "schema-definition", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:quiz_sets",
+      "type": "table",
+      "name": "quiz_sets",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [276, 286],
+      "summary": "Quiz set configuration table grouping questions into named sets per project with active flag and ordering.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:quiz_questions",
+      "type": "table",
+      "name": "quiz_questions",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [289, 302],
+      "summary": "Quiz question table storing four-option multiple choice questions with correct answer, explanation, and marks value.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:quiz_attempts",
+      "type": "table",
+      "name": "quiz_attempts",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [305, 321],
+      "summary": "Active quiz attempt table recording per-user quiz responses, scores, pass/fail status, and submission timestamps for readiness assessments.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:quiz_coaching_plans",
+      "type": "table",
+      "name": "quiz_coaching_plans",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [340, 348],
+      "summary": "Canonical quiz coaching plans table storing AI-generated recommendations for quiz retakers based on weak section analysis.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:processing_jobs",
+      "type": "table",
+      "name": "processing_jobs",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [385, 396],
+      "summary": "Postgres-backed job queue table for async background work (document processing, quiz generation, connector sync) with status lifecycle and error tracking.",
+      "tags": ["database", "schema-definition", "background-jobs"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:app_error_events",
+      "type": "table",
+      "name": "app_error_events",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [398, 406],
+      "summary": "Application error event log storing source, category, message, and stack traces for the Admin System Health page.",
+      "tags": ["database", "schema-definition", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:rag_traces",
+      "type": "table",
+      "name": "rag_traces",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [409, 432],
+      "summary": "Observability table capturing per-request RAG pipeline metrics including retrieval latency, similarity scores, token counts, and hallucination/refusal flags for the admin analytics panel.",
+      "tags": ["database", "schema-definition", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/schema.sql:user_memories",
+      "type": "table",
+      "name": "user_memories",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [434, 448],
+      "summary": "Persistent user memory store for the AI chat system, keying personalized context snippets by memory_key with confidence scores and tags per project.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:flashcards",
+      "type": "table",
+      "name": "flashcards",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [205, 214],
+      "summary": "Flashcard table storing AI-generated question/answer pairs sourced from document chunks per project with difficulty rating.",
+      "tags": ["database", "schema-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/schema.sql:activity_log",
+      "type": "table",
+      "name": "activity_log",
+      "filePath": "postgres/schema.sql",
+      "lineRange": [375, 382],
+      "summary": "User activity audit log recording action events with metadata for compliance and analytics purposes.",
+      "tags": ["database", "schema-definition", "monitoring"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/layout.tsx",
+      "target": "file:app/globals.css",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/chat/loading.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/chat/loading.tsx:AdminProjectChatLoading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/chat/loading.tsx",
+      "target": "function:app/(member)/projects/[id]/chat/loading.tsx:MemberProjectChatLoading",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:load-test/summit.js",
+      "target": "function:load-test/summit.js:authenticate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:load-test/summit.js",
+      "target": "function:load-test/summit.js:chatScenario",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:load-test/summit.js",
+      "target": "function:load-test/summit.js:searchScenario",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:proxy.ts",
+      "target": "function:proxy.ts:proxy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/legacy/add_learning_feedback_features.sql",
+      "target": "table:postgres/legacy/add_learning_feedback_features.sql:quiz_coaching_plans",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/legacy/add_learning_feedback_features.sql",
+      "target": "table:postgres/legacy/add_learning_feedback_features.sql:chat_answer_feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/legacy/add_project_announcements.sql",
+      "target": "table:postgres/legacy/add_project_announcements.sql:project_announcements",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:users",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:invite_tokens",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:projects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:project_members",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:project_announcements",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:document_connectors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:document_chunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:document_threads",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:chat_sessions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:chat_messages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:chat_answer_feedback",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:quiz_sets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:quiz_questions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:quiz_attempts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:quiz_coaching_plans",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:processing_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:app_error_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:rag_traces",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:user_memories",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:flashcards",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:postgres/schema.sql",
+      "target": "table:postgres/schema.sql:activity_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "config:next.config.ts",
+      "target": "file:app/layout.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:postcss.config.mjs",
+      "target": "file:app/globals.css",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:eslint.config.mjs",
+      "target": "file:app/layout.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:public/connector-setup-guide.md",
+      "target": "table:postgres/schema.sql:document_connectors",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:load-test/run.sh",
+      "target": "file:load-test/summit.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:load-test/seed-users.mjs",
+      "target": "table:postgres/schema.sql:users",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:load-test/seed-users.mjs",
+      "target": "table:postgres/schema.sql:project_members",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:postgres/legacy/add_learning_feedback_features.sql",
+      "target": "table:postgres/schema.sql:quiz_coaching_plans",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:postgres/legacy/add_learning_feedback_features.sql",
+      "target": "table:postgres/schema.sql:chat_answer_feedback",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:postgres/legacy/add_project_announcements.sql",
+      "target": "table:postgres/schema.sql:project_announcements",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:keycloak/realm.json",
+      "target": "file:proxy.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

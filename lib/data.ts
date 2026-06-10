@@ -932,6 +932,31 @@ export async function getLatestCoachingPlan(userId: string, projectId: string) {
 }
 
 export async function getProjectAnnouncements(projectId: string, limit = 5) {
+  const expiryColumnRows = await sql<{ exists: boolean }[]>`
+    SELECT EXISTS (
+      SELECT 1
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'project_announcements'
+        AND column_name = 'expires_at'
+    ) AS exists
+  `;
+  const hasExpiryColumn = expiryColumnRows[0]?.exists ?? false;
+
+  if (!hasExpiryColumn) {
+    return sql<(ProjectAnnouncementRecord & { sender_name: string | null })[]>`
+      SELECT
+        pa.*,
+        (pa.created_at + INTERVAL '72 hours')::text AS expires_at,
+        COALESCE(u.full_name, u.email) AS sender_name
+      FROM project_announcements pa
+      LEFT JOIN users u ON u.id = pa.sent_by
+      WHERE pa.project_id = ${projectId}
+      ORDER BY pa.created_at DESC
+      LIMIT ${Math.max(1, limit)}
+    `;
+  }
+
   return sql<(ProjectAnnouncementRecord & { sender_name: string | null })[]>`
     SELECT pa.*, COALESCE(u.full_name, u.email) AS sender_name
     FROM project_announcements pa
@@ -1552,6 +1577,7 @@ export async function getMemberDashboardStats(userId: string) {
         title: string;
         message: string;
         createdAt: string;
+        expiresAt: string;
       }>,
     };
   }
@@ -1585,14 +1611,61 @@ export async function getMemberDashboardStats(userId: string) {
       ORDER BY cb.created_at DESC
       LIMIT 4
     `,
-    sql<{ project_name: string; title: string; message: string; created_at: string }[]>`
-      SELECT p.name AS project_name, pa.title, pa.message, pa.created_at
-      FROM project_announcements pa
-      JOIN projects p ON p.id = pa.project_id
-      WHERE pa.project_id = ANY(${projectIds})
-      ORDER BY pa.created_at DESC
-      LIMIT 5
-    `,
+    (async () => {
+      const expiryColumnRows = await sql<{ exists: boolean }[]>`
+        SELECT EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'project_announcements'
+            AND column_name = 'expires_at'
+        ) AS exists
+      `;
+      const hasExpiryColumn = expiryColumnRows[0]?.exists ?? false;
+
+      if (!hasExpiryColumn) {
+        return sql<
+          {
+            project_name: string;
+            title: string;
+            message: string;
+            created_at: string;
+            expires_at: string;
+          }[]
+        >`
+          SELECT
+            p.name AS project_name,
+            pa.title,
+            pa.message,
+            pa.created_at,
+            (pa.created_at + INTERVAL '72 hours')::text AS expires_at
+          FROM project_announcements pa
+          JOIN projects p ON p.id = pa.project_id
+          WHERE pa.project_id = ANY(${projectIds})
+            AND pa.created_at + INTERVAL '72 hours' > NOW()
+          ORDER BY pa.created_at DESC
+          LIMIT 5
+        `;
+      }
+
+      return sql<
+        {
+          project_name: string;
+          title: string;
+          message: string;
+          created_at: string;
+          expires_at: string;
+        }[]
+      >`
+        SELECT p.name AS project_name, pa.title, pa.message, pa.created_at, pa.expires_at::text
+        FROM project_announcements pa
+        JOIN projects p ON p.id = pa.project_id
+        WHERE pa.project_id = ANY(${projectIds})
+          AND pa.expires_at > NOW()
+        ORDER BY pa.created_at DESC
+        LIMIT 5
+      `;
+    })(),
   ]);
 
   const projectNames = projectIds.length
@@ -1627,11 +1700,23 @@ export async function getMemberDashboardStats(userId: string) {
       title: a.title,
       message: a.message,
       createdAt: a.created_at,
+      expiresAt: a.expires_at,
     })),
   };
 }
 
 const _getMemberNotificationCountUncached = async (userId: string): Promise<number> => {
+  const expiryColumnRows = await sql<{ exists: boolean }[]>`
+    SELECT EXISTS (
+      SELECT 1
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'project_announcements'
+        AND column_name = 'expires_at'
+    ) AS exists
+  `;
+  const hasExpiryColumn = expiryColumnRows[0]?.exists ?? false;
+
   const [quizRows, announcementRows] = await Promise.all([
     sql<{ c: string }[]>`
     SELECT COUNT(*) AS c
@@ -1643,13 +1728,23 @@ const _getMemberNotificationCountUncached = async (userId: string): Promise<numb
         WHERE qa.user_id = pm.user_id AND qa.project_id = pm.project_id AND qa.status = 'submitted'
       )
   `,
-    sql<{ c: string }[]>`
-      SELECT COUNT(*) AS c
-      FROM project_announcements pa
-      JOIN project_members pm ON pm.project_id = pa.project_id AND pm.user_id = ${userId}
-      JOIN users u ON u.id = pm.user_id
-      WHERE pa.created_at > COALESCE(u.last_login_at, '1970-01-01'::timestamptz)
-    `,
+    hasExpiryColumn
+      ? sql<{ c: string }[]>`
+          SELECT COUNT(*) AS c
+          FROM project_announcements pa
+          JOIN project_members pm ON pm.project_id = pa.project_id AND pm.user_id = ${userId}
+          JOIN users u ON u.id = pm.user_id
+          WHERE pa.created_at > COALESCE(u.last_login_at, '1970-01-01'::timestamptz)
+            AND pa.expires_at > NOW()
+        `
+      : sql<{ c: string }[]>`
+          SELECT COUNT(*) AS c
+          FROM project_announcements pa
+          JOIN project_members pm ON pm.project_id = pa.project_id AND pm.user_id = ${userId}
+          JOIN users u ON u.id = pm.user_id
+          WHERE pa.created_at > COALESCE(u.last_login_at, '1970-01-01'::timestamptz)
+            AND pa.created_at + INTERVAL '72 hours' > NOW()
+        `,
   ]);
 
   return Number(quizRows[0]?.c ?? 0) + Number(announcementRows[0]?.c ?? 0);
@@ -1821,6 +1916,107 @@ export async function getOpenThreadsForUser(
     ORDER BY t.updated_at DESC
     LIMIT 200
   `;
+}
+
+export async function getAdminThreadQueuePage(params: {
+  statusFilter: 'open' | 'resolved' | 'all';
+  projectFilter?: string;
+  documentFilter?: string;
+  updatedTodayOnly?: boolean;
+  page?: number;
+  pageSize?: number;
+}) {
+  const pageSize = Math.min(Math.max(params.pageSize ?? 20, 1), 100);
+  const page = Math.max(params.page ?? 1, 1);
+  const offset = (page - 1) * pageSize;
+  const projectFilter = (params.projectFilter ?? '').trim();
+  const documentFilter = (params.documentFilter ?? '').trim();
+  const updatedTodayOnly = params.updatedTodayOnly ?? false;
+  const statusFilter = params.statusFilter;
+  const statusCondition = statusFilter === 'all' ? sql`TRUE` : sql`t.status = ${statusFilter}`;
+  const projectCondition = projectFilter ? sql`t.project_id = ${projectFilter}` : sql`TRUE`;
+  const documentCondition = documentFilter ? sql`t.document_id = ${documentFilter}` : sql`TRUE`;
+  const updatedTodayCondition = updatedTodayOnly
+    ? sql`t.updated_at >= date_trunc('day', NOW())`
+    : sql`TRUE`;
+
+  const [rows, totalRows, projectOptions, documentOptions] = await Promise.all([
+    sql<
+      {
+        thread_id: string;
+        project_id: string;
+        project_name: string;
+        document_id: string | null;
+        document_name: string | null;
+        title: string;
+        page_number: number | null;
+        updated_at: string;
+        comment_count: string;
+        source: 'document' | 'knowledge_gap';
+        gap_query: string | null;
+      }[]
+    >`
+      SELECT
+        t.id AS thread_id,
+        t.project_id,
+        p.name AS project_name,
+        t.document_id,
+        d.file_name AS document_name,
+        t.title,
+        t.page_number,
+        t.updated_at,
+        COALESCE(c.comment_count, 0)::text AS comment_count,
+        t.source,
+        t.gap_query
+      FROM document_threads t
+      JOIN projects p ON p.id = t.project_id
+      LEFT JOIN documents d ON d.id = t.document_id
+      LEFT JOIN (
+        SELECT thread_id, COUNT(*) AS comment_count
+        FROM document_thread_comments
+        GROUP BY thread_id
+      ) c ON c.thread_id = t.id
+      WHERE ${statusCondition}
+        AND ${projectCondition}
+        AND ${documentCondition}
+        AND ${updatedTodayCondition}
+      ORDER BY t.updated_at DESC
+      LIMIT ${pageSize}
+      OFFSET ${offset}
+    `,
+    sql<{ total_count: string }[]>`
+      SELECT COUNT(*)::text AS total_count
+      FROM document_threads t
+      WHERE ${statusCondition}
+        AND ${projectCondition}
+        AND ${documentCondition}
+        AND ${updatedTodayCondition}
+    `,
+    sql<{ id: string; name: string }[]>`
+      SELECT DISTINCT t.project_id AS id, p.name AS name
+      FROM document_threads t
+      JOIN projects p ON p.id = t.project_id
+      WHERE ${statusCondition}
+      ORDER BY name ASC
+    `,
+    sql<{ id: string; name: string }[]>`
+      SELECT DISTINCT d.id::text AS id, d.file_name AS name
+      FROM document_threads t
+      JOIN documents d ON d.id = t.document_id
+      WHERE ${statusCondition}
+        AND ${projectCondition}
+      ORDER BY name ASC
+    `,
+  ]);
+
+  return {
+    rows,
+    totalCount: Number(totalRows[0]?.total_count ?? 0),
+    page,
+    pageSize,
+    projectOptions,
+    documentOptions,
+  };
 }
 
 export async function getObservabilityMetrics(projectId: string): Promise<ObservabilityMetrics> {
@@ -2001,9 +2197,9 @@ export async function getSystemHealthSnapshot(): Promise<SystemHealthSnapshot> {
         >`
           SELECT id::text, source, category, message, stack, metadata, created_at::text
           FROM app_error_events
-          WHERE created_at >= NOW() - INTERVAL '7 days'
+          WHERE created_at >= NOW() - INTERVAL '30 days'
           ORDER BY created_at DESC
-          LIMIT 200
+          LIMIT 1000
         `
       : Promise.resolve(
           [] as {
@@ -2028,9 +2224,9 @@ export async function getSystemHealthSnapshot(): Promise<SystemHealthSnapshot> {
       FROM processing_jobs
       WHERE status = 'failed'
         AND error IS NOT NULL
-        AND COALESCE(completed_at, created_at) >= NOW() - INTERVAL '7 days'
+        AND COALESCE(completed_at, created_at) >= NOW() - INTERVAL '30 days'
       ORDER BY COALESCE(completed_at, created_at) DESC
-      LIMIT 200
+      LIMIT 1000
     `,
   ]);
 
@@ -2066,7 +2262,7 @@ export async function getSystemHealthSnapshot(): Promise<SystemHealthSnapshot> {
 
   const combinedErrors = [...normalizedAppErrors, ...normalizedJobErrors]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 200);
+    .slice(0, 1000);
 
   const appErrors24h = normalizedAppErrors.filter(
     (row) => Date.now() - new Date(row.createdAt).getTime() <= 24 * 60 * 60 * 1000,

@@ -1,0 +1,1354 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 35,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "postgres/migrations/001_init.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 423,
+      "nonEmptyLines": 380,
+      "definitions": [
+        {
+          "name": "users",
+          "kind": "table",
+          "fields": [
+            "id",
+            "email",
+            "full_name",
+            "role",
+            "password_hash",
+            "last_login_at",
+            "is_active"
+          ],
+          "startLine": 47,
+          "endLine": 57
+        },
+        {
+          "name": "invite_tokens",
+          "kind": "table",
+          "fields": ["id", "email", "token", "role", "project_id", "created_at"],
+          "startLine": 60,
+          "endLine": 68
+        },
+        {
+          "name": "projects",
+          "kind": "table",
+          "fields": [
+            "id",
+            "name",
+            "description",
+            "created_by",
+            "created_at",
+            "is_active",
+            "pass_threshold",
+            "quiz_close_at"
+          ],
+          "startLine": 71,
+          "endLine": 82
+        },
+        {
+          "name": "project_members",
+          "kind": "table",
+          "fields": ["id", "project_id", "user_id", "role", "assigned_at"],
+          "startLine": 85,
+          "endLine": 92
+        },
+        {
+          "name": "project_announcements",
+          "kind": "table",
+          "fields": ["id", "project_id", "title", "message", "sent_by", "created_at"],
+          "startLine": 95,
+          "endLine": 102
+        },
+        {
+          "name": "documents",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "file_name",
+            "file_url",
+            "file_type",
+            "uploaded_by",
+            "uploaded_at",
+            "chunk_count",
+            "classification",
+            "is_required",
+            "scan_flags"
+          ],
+          "startLine": 105,
+          "endLine": 121
+        },
+        {
+          "name": "document_chunks",
+          "kind": "table",
+          "fields": [
+            "id",
+            "document_id",
+            "project_id",
+            "content",
+            "embedding",
+            "chunk_index",
+            "created_at"
+          ],
+          "startLine": 124,
+          "endLine": 132
+        },
+        {
+          "name": "chat_sessions",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "started_at",
+            "message_count",
+            "last_message_at"
+          ],
+          "startLine": 135,
+          "endLine": 142
+        },
+        {
+          "name": "chat_messages",
+          "kind": "table",
+          "fields": ["id", "session_id", "role", "content", "sources", "created_at"],
+          "startLine": 145,
+          "endLine": 152
+        },
+        {
+          "name": "chat_answer_feedback",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "message_id",
+            "rating",
+            "reason_tag",
+            "comment",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 155,
+          "endLine": 166
+        },
+        {
+          "name": "chat_bookmarks",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "message_id", "created_at"],
+          "startLine": 169,
+          "endLine": 176
+        },
+        {
+          "name": "quiz_sets",
+          "kind": "table",
+          "fields": ["id", "project_id", "set_name", "set_number", "is_active", "created_at"],
+          "startLine": 179,
+          "endLine": 189
+        },
+        {
+          "name": "quiz_questions",
+          "kind": "table",
+          "fields": [
+            "id",
+            "quiz_set_id",
+            "question_text",
+            "option_a",
+            "option_b",
+            "option_c",
+            "option_d",
+            "correct_option",
+            "explanation",
+            "marks"
+          ],
+          "startLine": 192,
+          "endLine": 205
+        },
+        {
+          "name": "quiz_attempts",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "quiz_set_id",
+            "assigned_questions",
+            "answers_given",
+            "score",
+            "total_marks",
+            "percentage",
+            "passed",
+            "started_at",
+            "submitted_at",
+            "status"
+          ],
+          "startLine": 208,
+          "endLine": 224
+        },
+        {
+          "name": "quiz_coaching_plans",
+          "kind": "table",
+          "fields": [
+            "id",
+            "attempt_id",
+            "user_id",
+            "project_id",
+            "weak_sections",
+            "recommendations",
+            "created_at"
+          ],
+          "startLine": 227,
+          "endLine": 235
+        },
+        {
+          "name": "quiz_resets",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "reset_by", "reason", "reset_at"],
+          "startLine": 238,
+          "endLine": 245
+        },
+        {
+          "name": "activity_log",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "action", "metadata", "created_at"],
+          "startLine": 248,
+          "endLine": 255
+        },
+        {
+          "name": "processing_jobs",
+          "kind": "table",
+          "fields": [
+            "id",
+            "type",
+            "status",
+            "payload",
+            "result",
+            "error",
+            "created_at",
+            "started_at",
+            "completed_at"
+          ],
+          "startLine": 258,
+          "endLine": 269
+        },
+        {
+          "name": "rag_traces",
+          "kind": "table",
+          "fields": [
+            "id",
+            "created_at",
+            "project_id",
+            "user_id",
+            "session_id",
+            "message_id",
+            "query_text",
+            "chunks_retrieved",
+            "max_similarity",
+            "avg_similarity",
+            "retrieval_hit",
+            "retrieval_ms",
+            "model_used",
+            "prompt_tokens",
+            "completion_tokens",
+            "total_tokens",
+            "generation_ms",
+            "total_ms",
+            "answer_cached",
+            "answer_refused",
+            "possible_hallucination",
+            "is_slow"
+          ],
+          "startLine": 272,
+          "endLine": 295
+        },
+        {
+          "name": "quiz_attempts_one_per_user_project_submitted",
+          "kind": "index",
+          "fields": [],
+          "startLine": 302,
+          "endLine": 302
+        },
+        {
+          "name": "chat_bookmarks_user_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 307,
+          "endLine": 307
+        },
+        {
+          "name": "activity_log_rate_limit_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 311,
+          "endLine": 311
+        },
+        {
+          "name": "project_announcements_project_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 314,
+          "endLine": 314
+        },
+        {
+          "name": "documents_required_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 317,
+          "endLine": 317
+        },
+        {
+          "name": "coaching_project_user_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 320,
+          "endLine": 320
+        },
+        {
+          "name": "chat_feedback_project_rating_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 323,
+          "endLine": 323
+        },
+        {
+          "name": "processing_jobs_status_created_at",
+          "kind": "index",
+          "fields": [],
+          "startLine": 327,
+          "endLine": 327
+        },
+        {
+          "name": "rag_traces_project_created",
+          "kind": "index",
+          "fields": [],
+          "startLine": 331,
+          "endLine": 331
+        },
+        {
+          "name": "rag_traces_refused",
+          "kind": "index",
+          "fields": [],
+          "startLine": 334,
+          "endLine": 334
+        },
+        {
+          "name": "rag_traces_hallucination",
+          "kind": "index",
+          "fields": [],
+          "startLine": 338,
+          "endLine": 338
+        },
+        {
+          "name": "rag_traces_slow",
+          "kind": "index",
+          "fields": [],
+          "startLine": 342,
+          "endLine": 342
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 31
+      }
+    },
+    {
+      "path": "postgres/migrations/002_quiz_window_resets.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 15,
+      "nonEmptyLines": 13,
+      "definitions": [
+        {
+          "name": "public",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "reset_by", "reason", "reset_at"],
+          "startLine": 6,
+          "endLine": 13
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "postgres/migrations/003_activity_log_index.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 4,
+      "nonEmptyLines": 4,
+      "definitions": [
+        {
+          "name": "activity_log_rate_limit_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 3,
+          "endLine": 3
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "postgres/migrations/004_document_governance.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 11,
+      "nonEmptyLines": 9,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/005_seed_admin.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/006_chat_bookmarks.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 11,
+      "nonEmptyLines": 10,
+      "definitions": [
+        {
+          "name": "chat_bookmarks",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "message_id", "created_at"],
+          "startLine": 2,
+          "endLine": 9
+        },
+        {
+          "name": "chat_bookmarks_user_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 11,
+          "endLine": 11
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 2
+      }
+    },
+    {
+      "path": "postgres/migrations/007_quiz_category.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 6,
+      "nonEmptyLines": 5,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/008_partial_retake.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/009_question_type.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 5,
+      "nonEmptyLines": 5,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/010_processing_jobs.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 78,
+      "nonEmptyLines": 73,
+      "definitions": [
+        {
+          "name": "processing_jobs",
+          "kind": "table",
+          "fields": [
+            "id",
+            "type",
+            "status",
+            "payload",
+            "result",
+            "error",
+            "created_at",
+            "started_at",
+            "completed_at"
+          ],
+          "startLine": 10,
+          "endLine": 21
+        },
+        {
+          "name": "processing_jobs_status_created_at",
+          "kind": "index",
+          "fields": [],
+          "startLine": 23,
+          "endLine": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 2
+      }
+    },
+    {
+      "path": "postgres/migrations/011_observability.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 80,
+      "nonEmptyLines": 68,
+      "definitions": [
+        {
+          "name": "public",
+          "kind": "table",
+          "fields": [
+            "id",
+            "created_at",
+            "user_id",
+            "session_id",
+            "message_id",
+            "query_text",
+            "max_similarity",
+            "avg_similarity",
+            "retrieval_hit",
+            "retrieval_ms",
+            "prompt_tokens",
+            "completion_tokens",
+            "total_tokens",
+            "generation_ms",
+            "answer_refused",
+            "possible_hallucination",
+            "is_slow"
+          ],
+          "startLine": 5,
+          "endLine": 38
+        },
+        {
+          "name": "rag_traces_project_created",
+          "kind": "index",
+          "fields": [],
+          "startLine": 41,
+          "endLine": 41
+        },
+        {
+          "name": "rag_traces_refused",
+          "kind": "index",
+          "fields": [],
+          "startLine": 45,
+          "endLine": 45
+        },
+        {
+          "name": "rag_traces_hallucination",
+          "kind": "index",
+          "fields": [],
+          "startLine": 49,
+          "endLine": 49
+        },
+        {
+          "name": "rag_traces_slow",
+          "kind": "index",
+          "fields": [],
+          "startLine": 53,
+          "endLine": 53
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 5
+      }
+    },
+    {
+      "path": "postgres/migrations/012_add_project_member_roles.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 8,
+      "nonEmptyLines": 6,
+      "definitions": [
+        {
+          "name": "for",
+          "kind": "index",
+          "fields": [],
+          "startLine": 7,
+          "endLine": 7
+        },
+        {
+          "name": "idx_project_members_role",
+          "kind": "index",
+          "fields": [],
+          "startLine": 8,
+          "endLine": 8
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 2
+      }
+    },
+    {
+      "path": "postgres/migrations/013_project_announcements.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 13,
+      "nonEmptyLines": 11,
+      "definitions": [
+        {
+          "name": "public",
+          "kind": "table",
+          "fields": ["id", "project_id", "title", "message", "sent_by", "created_at"],
+          "startLine": 1,
+          "endLine": 8
+        },
+        {
+          "name": "project_announcements_project_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 10,
+          "endLine": 10
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 2
+      }
+    },
+    {
+      "path": "postgres/migrations/014_learning_feedback_features.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 36,
+      "nonEmptyLines": 30,
+      "definitions": [
+        {
+          "name": "public",
+          "kind": "table",
+          "fields": [
+            "id",
+            "attempt_id",
+            "user_id",
+            "project_id",
+            "weak_sections",
+            "recommendations",
+            "created_at"
+          ],
+          "startLine": 4,
+          "endLine": 12
+        },
+        {
+          "name": "public",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "message_id",
+            "rating",
+            "reason_tag",
+            "comment",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 14,
+          "endLine": 25
+        },
+        {
+          "name": "documents_required_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 27,
+          "endLine": 27
+        },
+        {
+          "name": "coaching_project_user_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 30,
+          "endLine": 30
+        },
+        {
+          "name": "chat_feedback_project_rating_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 33,
+          "endLine": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 5
+      }
+    },
+    {
+      "path": "postgres/migrations/015_document_chunks_fts.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 23,
+      "nonEmptyLines": 18,
+      "definitions": [
+        {
+          "name": "document_chunks_search_vector_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 22,
+          "endLine": 22
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "postgres/migrations/016_document_threads.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 34,
+      "nonEmptyLines": 30,
+      "definitions": [
+        {
+          "name": "document_threads",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "document_id",
+            "created_by",
+            "title",
+            "page_number",
+            "status",
+            "resolved_by",
+            "resolved_at",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 1,
+          "endLine": 15
+        },
+        {
+          "name": "document_thread_comments",
+          "kind": "table",
+          "fields": [
+            "id",
+            "thread_id",
+            "author_id",
+            "body",
+            "is_answer",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 17,
+          "endLine": 25
+        },
+        {
+          "name": "document_threads_document_status_updated_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 27,
+          "endLine": 27
+        },
+        {
+          "name": "document_threads_project_updated_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 30,
+          "endLine": 30
+        },
+        {
+          "name": "document_thread_comments_thread_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 33,
+          "endLine": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 5
+      }
+    },
+    {
+      "path": "postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 33,
+      "nonEmptyLines": 29,
+      "definitions": [
+        {
+          "name": "flashcards",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "source_chunk_id",
+            "question",
+            "answer",
+            "difficulty",
+            "created_by",
+            "created_at"
+          ],
+          "startLine": 1,
+          "endLine": 10
+        },
+        {
+          "name": "flashcard_progress",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "flashcard_id",
+            "interval_days",
+            "ease_factor",
+            "repetitions",
+            "due_at",
+            "last_reviewed_at",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 12,
+          "endLine": 24
+        },
+        {
+          "name": "flashcards_project_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 26,
+          "endLine": 26
+        },
+        {
+          "name": "flashcards_project_chunk_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 29,
+          "endLine": 29
+        },
+        {
+          "name": "flashcard_progress_user_due_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 32,
+          "endLine": 32
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 5
+      }
+    },
+    {
+      "path": "postgres/migrations/018_quiz_attempt_history.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 18,
+      "nonEmptyLines": 17,
+      "definitions": [
+        {
+          "name": "quiz_attempt_history",
+          "kind": "table",
+          "fields": [
+            "id",
+            "original_attempt_id",
+            "user_id",
+            "project_id",
+            "quiz_set_id",
+            "score",
+            "total_marks",
+            "percentage",
+            "passed",
+            "submitted_at",
+            "reset_at",
+            "reset_by",
+            "reset_reason"
+          ],
+          "startLine": 1,
+          "endLine": 15
+        },
+        {
+          "name": "quiz_attempt_history_user_project_reset_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 17,
+          "endLine": 17
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 2
+      }
+    },
+    {
+      "path": "postgres/migrations/019_document_connectors.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 35,
+      "nonEmptyLines": 30,
+      "definitions": [
+        {
+          "name": "document_connectors",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "provider",
+            "name",
+            "config",
+            "created_by",
+            "is_active",
+            "last_synced_at",
+            "last_sync_status",
+            "last_sync_error",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 1,
+          "endLine": 14
+        },
+        {
+          "name": "document_connectors_project_created_at",
+          "kind": "index",
+          "fields": [],
+          "startLine": 16,
+          "endLine": 16
+        },
+        {
+          "name": "documents_source_connector_item_unique",
+          "kind": "index",
+          "fields": [],
+          "startLine": 26,
+          "endLine": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 3
+      }
+    },
+    {
+      "path": "postgres/migrations/020_auth_provider.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 14,
+      "nonEmptyLines": 12,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/021_password_reset_tokens.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 8,
+      "nonEmptyLines": 8,
+      "definitions": [
+        {
+          "name": "password_reset_tokens",
+          "kind": "table",
+          "fields": ["id", "email", "token", "expires_at", "created_at"],
+          "startLine": 2,
+          "endLine": 8
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "postgres/migrations/022_quiz_retake_requests.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 19,
+      "nonEmptyLines": 17,
+      "definitions": [
+        {
+          "name": "quiz_retake_requests",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "attempt_id",
+            "status",
+            "created_at",
+            "resolved_at",
+            "resolved_by"
+          ],
+          "startLine": 2,
+          "endLine": 13
+        },
+        {
+          "name": "quiz_retake_requests_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 15,
+          "endLine": 15
+        },
+        {
+          "name": "quiz_retake_requests_user_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 18,
+          "endLine": 18
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 3
+      }
+    },
+    {
+      "path": "postgres/migrations/023_multi_provider_email.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 17,
+      "nonEmptyLines": 15,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/024_knowledge_gap_threads.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 11,
+      "nonEmptyLines": 9,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/025_bot_thread_replies.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 12,
+      "nonEmptyLines": 10,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/026_thread_comment_sources.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/027_thread_kb_capture.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/028_add_jira_monday_connectors.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 13,
+      "nonEmptyLines": 10,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/029_add_onedrive_github_connectors.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 13,
+      "nonEmptyLines": 10,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/030_add_app_settings.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 6,
+      "nonEmptyLines": 6,
+      "definitions": [
+        {
+          "name": "app_settings",
+          "kind": "table",
+          "fields": ["value", "updated_by", "updated_at"],
+          "startLine": 1,
+          "endLine": 6
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 1
+      }
+    },
+    {
+      "path": "postgres/migrations/031_user_memory.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 37,
+      "nonEmptyLines": 33,
+      "definitions": [
+        {
+          "name": "user_memories",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "memory_key",
+            "memory_value",
+            "tags",
+            "confidence",
+            "source",
+            "created_at",
+            "updated_at",
+            "last_used_at"
+          ],
+          "startLine": 3,
+          "endLine": 16
+        },
+        {
+          "name": "user_memory_pending_confirmations",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "session_id",
+            "project_id",
+            "memory_key",
+            "memory_value",
+            "tags",
+            "is_sensitive",
+            "allows_sensitive_storage",
+            "expires_at",
+            "created_at"
+          ],
+          "startLine": 18,
+          "endLine": 31
+        },
+        {
+          "name": "user_memories_user_project_updated_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 33,
+          "endLine": 33
+        },
+        {
+          "name": "user_memory_pending_lookup_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 36,
+          "endLine": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 4
+      }
+    },
+    {
+      "path": "postgres/migrations/032_chat_session_title.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 5,
+      "nonEmptyLines": 4,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/033_connector_auto_sync_toggle.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 2,
+      "nonEmptyLines": 2,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/034_embedding_model_enforcement.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 10,
+      "nonEmptyLines": 9,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "postgres/migrations/035_app_error_events.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 15,
+      "nonEmptyLines": 13,
+      "definitions": [
+        {
+          "name": "app_error_events",
+          "kind": "table",
+          "fields": ["id", "source", "category", "message", "stack", "metadata", "created_at"],
+          "startLine": 1,
+          "endLine": 9
+        },
+        {
+          "name": "app_error_events_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 11,
+          "endLine": 11
+        },
+        {
+          "name": "app_error_events_source_category_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 14,
+          "endLine": 14
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 3
+      }
+    }
+  ]
+}

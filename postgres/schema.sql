@@ -7,7 +7,7 @@
 --   CREATE EXTENSION IF NOT EXISTS pgcrypto;
 --
 -- Run this file:
---   psql -U postgres -d summit_kt -f postgres/schema.sql
+--   psql -U postgres -d nextelevate -f postgres/schema.sql
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
@@ -116,6 +116,7 @@ create table if not exists project_announcements (
   title      text        not null,
   message    text        not null,
   sent_by    uuid        references users(id) on delete set null,
+  expires_at timestamptz not null default (now() + interval '72 hours'),
   created_at timestamptz not null default now()
 );
 
@@ -160,6 +161,15 @@ create table if not exists documents (
 );
 
 -- Document chunks (vector embeddings)
+create table if not exists document_canonical_sources (
+  document_id uuid        primary key references documents(id) on delete cascade,
+  project_id  uuid        not null references projects(id) on delete cascade,
+  canonical_content text  not null,
+  content_sha256 text     not null,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
 create table if not exists document_chunks (
   id          uuid        primary key default gen_random_uuid(),
   document_id uuid        not null references documents(id) on delete cascade,
@@ -167,10 +177,14 @@ create table if not exists document_chunks (
   content     text        not null,
   search_vector tsvector,
   embedding   vector(384),
-  embedding_model_id text,
-  embedding_model_revision text,
+  embedding_model_id text not null,
+  embedding_model_revision text not null,
   chunk_index integer     not null,
-  created_at  timestamptz not null default now()
+  created_at  timestamptz not null default now(),
+  constraint document_chunks_embedding_model_id_nonempty
+    check (length(trim(embedding_model_id)) > 0),
+  constraint document_chunks_embedding_model_revision_nonempty
+    check (length(trim(embedding_model_revision)) > 0)
 );
 
 create table if not exists document_threads (
@@ -497,6 +511,9 @@ create unique index if not exists documents_source_connector_item_unique
 
 create index if not exists documents_required_idx
   on documents (project_id, is_required);
+
+create index if not exists document_canonical_sources_project_idx
+  on document_canonical_sources (project_id, updated_at desc);
 
 create index if not exists document_chunks_search_vector_idx
   on document_chunks using gin (search_vector);

@@ -1,0 +1,376 @@
+{
+  "nodes": [
+    {
+      "id": "table:postgres/migrations/011_observability.sql",
+      "type": "table",
+      "name": "011_observability.sql",
+      "filePath": "postgres/migrations/011_observability.sql",
+      "summary": "Creates the rag_traces observability table capturing per-query RAG metrics (retrieval latency, token usage, hallucination flags, slow queries) with four targeted partial indexes for analytics queries.",
+      "tags": ["database", "migration", "observability", "rag", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/011_observability.sql:rag_traces",
+      "type": "table",
+      "name": "rag_traces",
+      "filePath": "postgres/migrations/011_observability.sql",
+      "lineRange": [5, 38],
+      "summary": "RAG observability traces table recording per-query performance, token counts, similarity scores, and quality signals (refusals, hallucinations, slow responses) scoped to project and session.",
+      "tags": ["database", "observability", "rag", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/012_add_project_member_roles.sql",
+      "type": "table",
+      "name": "012_add_project_member_roles.sql",
+      "filePath": "postgres/migrations/012_add_project_member_roles.sql",
+      "summary": "Adds a project-level role column (member/admin) to project_members enabling fine-grained per-project admin delegation without requiring global admin rights.",
+      "tags": ["database", "migration", "authorization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/013_project_announcements.sql",
+      "type": "table",
+      "name": "013_project_announcements.sql",
+      "filePath": "postgres/migrations/013_project_announcements.sql",
+      "summary": "Creates the project_announcements table enabling admins to broadcast titled messages to project members, with an index on project and creation time.",
+      "tags": ["database", "migration", "notifications"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/013_project_announcements.sql:project_announcements",
+      "type": "table",
+      "name": "project_announcements",
+      "filePath": "postgres/migrations/013_project_announcements.sql",
+      "lineRange": [1, 8],
+      "summary": "Project-scoped announcement messages with title, body, sender reference, and creation timestamp.",
+      "tags": ["database", "notifications"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/014_learning_feedback_features.sql",
+      "type": "table",
+      "name": "014_learning_feedback_features.sql",
+      "filePath": "postgres/migrations/014_learning_feedback_features.sql",
+      "summary": "Creates quiz_coaching_plans and chat_answer_feedback tables for AI-generated coaching recommendations and user feedback on chat responses, plus three supporting indexes.",
+      "tags": ["database", "migration", "feedback", "quiz"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/015_document_chunks_fts.sql",
+      "type": "table",
+      "name": "015_document_chunks_fts.sql",
+      "filePath": "postgres/migrations/015_document_chunks_fts.sql",
+      "summary": "Adds full-text search capability to document_chunks by introducing a tsvector search_vector column maintained by a PL/pgSQL trigger, with a GIN index for fast keyword search.",
+      "tags": ["database", "migration", "full-text-search", "rag"],
+      "complexity": "moderate",
+      "languageNotes": "Uses a BEFORE INSERT OR UPDATE trigger with to_tsvector('english', ...) to auto-maintain the search_vector column; backfills existing rows in-place."
+    },
+    {
+      "id": "table:postgres/migrations/016_document_threads.sql",
+      "type": "table",
+      "name": "016_document_threads.sql",
+      "filePath": "postgres/migrations/016_document_threads.sql",
+      "summary": "Creates document_threads and document_thread_comments tables for collaborative Q&A discussions on specific documents, with status tracking and three performance indexes.",
+      "tags": ["database", "migration", "collaboration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/016_document_threads.sql:document_threads",
+      "type": "table",
+      "name": "document_threads",
+      "filePath": "postgres/migrations/016_document_threads.sql",
+      "lineRange": [1, 15],
+      "summary": "Threaded discussions on documents with page number scoping, status lifecycle (open/resolved), and resolver tracking.",
+      "tags": ["database", "collaboration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/016_document_threads.sql:document_thread_comments",
+      "type": "table",
+      "name": "document_thread_comments",
+      "filePath": "postgres/migrations/016_document_threads.sql",
+      "lineRange": [17, 25],
+      "summary": "Individual comment entries within document threads, supporting answer flagging and author attribution.",
+      "tags": ["database", "collaboration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "type": "table",
+      "name": "017_flashcards_spaced_repetition.sql",
+      "filePath": "postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "summary": "Creates flashcards and flashcard_progress tables implementing spaced repetition learning (SM-2 algorithm parameters: interval_days, ease_factor, repetitions, due_at) linked to document chunks.",
+      "tags": ["database", "migration", "spaced-repetition", "learning"],
+      "complexity": "moderate",
+      "languageNotes": "Stores SM-2 spaced repetition parameters (ease_factor, interval_days, repetitions, due_at) enabling adaptive review scheduling."
+    },
+    {
+      "id": "table:postgres/migrations/017_flashcards_spaced_repetition.sql:flashcards",
+      "type": "table",
+      "name": "flashcards",
+      "filePath": "postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "lineRange": [1, 10],
+      "summary": "AI-generated flashcard question/answer pairs derived from document chunks with difficulty metadata.",
+      "tags": ["database", "learning"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/017_flashcards_spaced_repetition.sql:flashcard_progress",
+      "type": "table",
+      "name": "flashcard_progress",
+      "filePath": "postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "lineRange": [12, 24],
+      "summary": "Per-user spaced repetition progress tracking for each flashcard with SM-2 scheduling parameters and due dates.",
+      "tags": ["database", "learning", "spaced-repetition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/018_quiz_attempt_history.sql",
+      "type": "table",
+      "name": "018_quiz_attempt_history.sql",
+      "filePath": "postgres/migrations/018_quiz_attempt_history.sql",
+      "summary": "Creates quiz_attempt_history table to preserve historical quiz scores before admin resets, enabling audit trails with reset reason and actor.",
+      "tags": ["database", "migration", "quiz", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/018_quiz_attempt_history.sql:quiz_attempt_history",
+      "type": "table",
+      "name": "quiz_attempt_history",
+      "filePath": "postgres/migrations/018_quiz_attempt_history.sql",
+      "lineRange": [1, 15],
+      "summary": "Immutable historical record of quiz attempt scores at the time of an admin reset, preserving pass/fail status and reset attribution.",
+      "tags": ["database", "quiz", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/019_document_connectors.sql",
+      "type": "table",
+      "name": "019_document_connectors.sql",
+      "filePath": "postgres/migrations/019_document_connectors.sql",
+      "summary": "Creates document_connectors table and adds source tracking columns to documents for external integrations (Confluence, SharePoint), enabling automated document sync from third-party providers.",
+      "tags": ["database", "migration", "connectors", "integration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/019_document_connectors.sql:document_connectors",
+      "type": "table",
+      "name": "document_connectors",
+      "filePath": "postgres/migrations/019_document_connectors.sql",
+      "lineRange": [1, 14],
+      "summary": "Configuration registry for external document provider integrations (Confluence, SharePoint) with sync status tracking and encrypted credentials storage.",
+      "tags": ["database", "connectors", "integration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/020_auth_provider.sql",
+      "type": "table",
+      "name": "020_auth_provider.sql",
+      "filePath": "postgres/migrations/020_auth_provider.sql",
+      "summary": "Adds auth_provider column to users to distinguish credential-based from Cognito-provisioned accounts, preventing cross-provider login conflicts with a backfill for existing Cognito rows.",
+      "tags": ["database", "migration", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/021_password_reset_tokens.sql",
+      "type": "table",
+      "name": "021_password_reset_tokens.sql",
+      "filePath": "postgres/migrations/021_password_reset_tokens.sql",
+      "summary": "Creates password_reset_tokens table storing time-limited email-scoped tokens for the credentials-based password reset flow.",
+      "tags": ["database", "migration", "authentication", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/021_password_reset_tokens.sql:password_reset_tokens",
+      "type": "table",
+      "name": "password_reset_tokens",
+      "filePath": "postgres/migrations/021_password_reset_tokens.sql",
+      "lineRange": [2, 8],
+      "summary": "Time-limited password reset tokens keyed by email with expiration timestamps for secure credential recovery.",
+      "tags": ["database", "authentication", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/022_quiz_retake_requests.sql",
+      "type": "table",
+      "name": "022_quiz_retake_requests.sql",
+      "filePath": "postgres/migrations/022_quiz_retake_requests.sql",
+      "summary": "Creates quiz_retake_requests table allowing members to formally request quiz retake approval from admins, with status lifecycle and resolution tracking.",
+      "tags": ["database", "migration", "quiz", "workflow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/022_quiz_retake_requests.sql:quiz_retake_requests",
+      "type": "table",
+      "name": "quiz_retake_requests",
+      "filePath": "postgres/migrations/022_quiz_retake_requests.sql",
+      "lineRange": [2, 13],
+      "summary": "Member-initiated retake requests linked to quiz attempts with admin approval workflow (pending/approved/denied) and resolution timestamps.",
+      "tags": ["database", "quiz", "workflow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/023_multi_provider_email.sql",
+      "type": "table",
+      "name": "023_multi_provider_email.sql",
+      "filePath": "postgres/migrations/023_multi_provider_email.sql",
+      "summary": "Replaces the single-column UNIQUE (email) constraint on users with a composite UNIQUE (email, auth_provider) constraint to allow the same email across different auth providers.",
+      "tags": ["database", "migration", "authentication"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/024_knowledge_gap_threads.sql",
+      "type": "table",
+      "name": "024_knowledge_gap_threads.sql",
+      "filePath": "postgres/migrations/024_knowledge_gap_threads.sql",
+      "summary": "Extends document_threads to support knowledge-gap discussions (no document required) by making document_id nullable and adding source type and gap_query columns.",
+      "tags": ["database", "migration", "collaboration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/025_bot_thread_replies.sql",
+      "type": "table",
+      "name": "025_bot_thread_replies.sql",
+      "filePath": "postgres/migrations/025_bot_thread_replies.sql",
+      "summary": "Adds bot_thread_reply job type to processing_jobs type constraint and adds is_bot flag to document_thread_comments to identify AI-generated replies.",
+      "tags": ["database", "migration", "job-queue", "ai-integration"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "table:postgres/migrations/011_observability.sql",
+      "target": "table:postgres/migrations/011_observability.sql:rag_traces",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/012_add_project_member_roles.sql",
+      "target": "table:postgres/migrations/001_init.sql:project_members",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/013_project_announcements.sql",
+      "target": "table:postgres/migrations/013_project_announcements.sql:project_announcements",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/016_document_threads.sql",
+      "target": "table:postgres/migrations/016_document_threads.sql:document_threads",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/016_document_threads.sql",
+      "target": "table:postgres/migrations/016_document_threads.sql:document_thread_comments",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "target": "table:postgres/migrations/017_flashcards_spaced_repetition.sql:flashcards",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "target": "table:postgres/migrations/017_flashcards_spaced_repetition.sql:flashcard_progress",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/018_quiz_attempt_history.sql",
+      "target": "table:postgres/migrations/018_quiz_attempt_history.sql:quiz_attempt_history",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/018_quiz_attempt_history.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_attempts",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/019_document_connectors.sql",
+      "target": "table:postgres/migrations/019_document_connectors.sql:document_connectors",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/019_document_connectors.sql",
+      "target": "table:postgres/migrations/001_init.sql:documents",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/020_auth_provider.sql",
+      "target": "table:postgres/migrations/001_init.sql:users",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/021_password_reset_tokens.sql",
+      "target": "table:postgres/migrations/021_password_reset_tokens.sql:password_reset_tokens",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/022_quiz_retake_requests.sql",
+      "target": "table:postgres/migrations/022_quiz_retake_requests.sql:quiz_retake_requests",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/023_multi_provider_email.sql",
+      "target": "table:postgres/migrations/001_init.sql:users",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/024_knowledge_gap_threads.sql",
+      "target": "table:postgres/migrations/016_document_threads.sql:document_threads",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/025_bot_thread_replies.sql",
+      "target": "table:postgres/migrations/016_document_threads.sql:document_thread_comments",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/025_bot_thread_replies.sql",
+      "target": "table:postgres/migrations/001_init.sql:processing_jobs",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/015_document_chunks_fts.sql",
+      "target": "table:postgres/migrations/001_init.sql:document_chunks",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

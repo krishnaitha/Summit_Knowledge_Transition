@@ -1,0 +1,227 @@
+{
+  "nodes": [
+    {
+      "id": "table:postgres/migrations/026_thread_comment_sources.sql",
+      "type": "table",
+      "name": "026_thread_comment_sources.sql",
+      "filePath": "postgres/migrations/026_thread_comment_sources.sql",
+      "summary": "Adds a sources JSONB column to document_thread_comments to store the RAG document citations used by bot-generated replies.",
+      "tags": ["database", "migration", "rag", "ai-integration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/027_thread_kb_capture.sql",
+      "type": "table",
+      "name": "027_thread_kb_capture.sql",
+      "filePath": "postgres/migrations/027_thread_kb_capture.sql",
+      "summary": "Adds kb_document_id foreign key to document_threads to track which knowledge-base document was captured from a resolved knowledge-gap thread.",
+      "tags": ["database", "migration", "knowledge-base", "collaboration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/028_add_jira_monday_connectors.sql",
+      "type": "table",
+      "name": "028_add_jira_monday_connectors.sql",
+      "filePath": "postgres/migrations/028_add_jira_monday_connectors.sql",
+      "summary": "Expands the document_connectors and documents provider enum constraints to include Jira and Monday.com as valid external sync sources.",
+      "tags": ["database", "migration", "connectors", "integration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/029_add_onedrive_github_connectors.sql",
+      "type": "table",
+      "name": "029_add_onedrive_github_connectors.sql",
+      "filePath": "postgres/migrations/029_add_onedrive_github_connectors.sql",
+      "summary": "Expands the provider constraint on document_connectors and documents to additionally allow OneDrive and GitHub as external document sources.",
+      "tags": ["database", "migration", "connectors", "integration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/030_add_app_settings.sql",
+      "type": "table",
+      "name": "030_add_app_settings.sql",
+      "filePath": "postgres/migrations/030_add_app_settings.sql",
+      "summary": "Creates the app_settings key-value table for runtime configuration storage, enabling admin-driven LLM provider and model overrides without redeployment.",
+      "tags": ["database", "migration", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/030_add_app_settings.sql:app_settings",
+      "type": "table",
+      "name": "app_settings",
+      "filePath": "postgres/migrations/030_add_app_settings.sql",
+      "lineRange": [1, 6],
+      "summary": "Key-value store for runtime application settings (LLM config, secrets) with update audit columns.",
+      "tags": ["database", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/031_user_memory.sql",
+      "type": "table",
+      "name": "031_user_memory.sql",
+      "filePath": "postgres/migrations/031_user_memory.sql",
+      "summary": "Creates user_memories and user_memory_pending_confirmations tables for the AI personalization memory system, storing per-user knowledge facts with confidence scores and sensitivity controls.",
+      "tags": ["database", "migration", "ai-integration", "personalization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/031_user_memory.sql:user_memories",
+      "type": "table",
+      "name": "user_memories",
+      "filePath": "postgres/migrations/031_user_memory.sql",
+      "lineRange": [3, 16],
+      "summary": "Persistent AI memory store for user-specific knowledge facts per project with confidence scores, tags, and usage tracking for personalized responses.",
+      "tags": ["database", "ai-integration", "personalization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/031_user_memory.sql:user_memory_pending_confirmations",
+      "type": "table",
+      "name": "user_memory_pending_confirmations",
+      "filePath": "postgres/migrations/031_user_memory.sql",
+      "lineRange": [18, 31],
+      "summary": "Staging table for AI-proposed memory entries awaiting user confirmation, with sensitivity flags and expiration for GDPR-conscious memory capture.",
+      "tags": ["database", "ai-integration", "personalization", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/032_chat_session_title.sql",
+      "type": "table",
+      "name": "032_chat_session_title.sql",
+      "filePath": "postgres/migrations/032_chat_session_title.sql",
+      "summary": "Adds an optional user-visible title column to chat_sessions for improved session discoverability in the conversation history UI.",
+      "tags": ["database", "migration", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/033_connector_auto_sync_toggle.sql",
+      "type": "table",
+      "name": "033_connector_auto_sync_toggle.sql",
+      "filePath": "postgres/migrations/033_connector_auto_sync_toggle.sql",
+      "summary": "Adds auto_sync_enabled boolean flag to document_connectors to allow per-connector disabling of scheduled automatic sync without deleting the connector.",
+      "tags": ["database", "migration", "connectors"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/034_embedding_model_enforcement.sql",
+      "type": "table",
+      "name": "034_embedding_model_enforcement.sql",
+      "filePath": "postgres/migrations/034_embedding_model_enforcement.sql",
+      "summary": "Adds embedding_model_id and embedding_model_revision columns to document_chunks to enforce embedding model consistency and enable detection of chunks requiring re-ingestion after model changes.",
+      "tags": ["database", "migration", "rag", "embeddings"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/035_app_error_events.sql",
+      "type": "table",
+      "name": "035_app_error_events.sql",
+      "filePath": "postgres/migrations/035_app_error_events.sql",
+      "summary": "Creates app_error_events table for centralized application error tracking with source, category, message, stack trace, and metadata columns surfaced in the Admin System Health dashboard.",
+      "tags": ["database", "migration", "observability", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/035_app_error_events.sql:app_error_events",
+      "type": "table",
+      "name": "app_error_events",
+      "filePath": "postgres/migrations/035_app_error_events.sql",
+      "lineRange": [1, 9],
+      "summary": "Centralized error event log with source, category, message, stack trace, and JSON metadata for admin system health monitoring.",
+      "tags": ["database", "observability", "monitoring"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "table:postgres/migrations/026_thread_comment_sources.sql",
+      "target": "table:postgres/migrations/016_document_threads.sql:document_thread_comments",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/027_thread_kb_capture.sql",
+      "target": "table:postgres/migrations/016_document_threads.sql:document_threads",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/028_add_jira_monday_connectors.sql",
+      "target": "table:postgres/migrations/019_document_connectors.sql:document_connectors",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/028_add_jira_monday_connectors.sql",
+      "target": "table:postgres/migrations/001_init.sql:documents",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/029_add_onedrive_github_connectors.sql",
+      "target": "table:postgres/migrations/019_document_connectors.sql:document_connectors",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/029_add_onedrive_github_connectors.sql",
+      "target": "table:postgres/migrations/001_init.sql:documents",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/030_add_app_settings.sql",
+      "target": "table:postgres/migrations/030_add_app_settings.sql:app_settings",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/031_user_memory.sql",
+      "target": "table:postgres/migrations/031_user_memory.sql:user_memories",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/031_user_memory.sql",
+      "target": "table:postgres/migrations/031_user_memory.sql:user_memory_pending_confirmations",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/032_chat_session_title.sql",
+      "target": "table:postgres/migrations/001_init.sql:chat_sessions",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/033_connector_auto_sync_toggle.sql",
+      "target": "table:postgres/migrations/019_document_connectors.sql:document_connectors",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/034_embedding_model_enforcement.sql",
+      "target": "table:postgres/migrations/001_init.sql:document_chunks",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/035_app_error_events.sql",
+      "target": "table:postgres/migrations/035_app_error_events.sql:app_error_events",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

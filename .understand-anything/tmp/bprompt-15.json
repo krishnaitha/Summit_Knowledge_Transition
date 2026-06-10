@@ -1,0 +1,6 @@
+{
+  "batchIndex": 15,
+  "fileList": "1. `.env.example` (69 lines, language: `config`, fileCategory: `config`)\n2. `AGENTS.md` (32 lines, language: `markdown`, fileCategory: `docs`)\n3. `CLAUDE.md` (133 lines, language: `markdown`, fileCategory: `docs`)\n4. `README.md` (610 lines, language: `markdown`, fileCategory: `docs`)\n5. `package.json` (83 lines, language: `json`, fileCategory: `config`)\n6. `tsconfig.json` (41 lines, language: `json`, fileCategory: `config`)",
+  "batchImportData": "{\".env.example\":[],\"AGENTS.md\":[],\"CLAUDE.md\":[],\"README.md\":[],\"package.json\":[],\"tsconfig.json\":[]}",
+  "neighborMap": "{}"
+}

@@ -1,0 +1,174 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": "app/(member)/threads/page.tsx",
+      "language": "typescript",
+      "sizeLines": 174,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/activity-feed.tsx",
+      "language": "typescript",
+      "sizeLines": 264,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/document-connectors-panel.tsx",
+      "language": "typescript",
+      "sizeLines": 495,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/document-upload-panel.tsx",
+      "language": "typescript",
+      "sizeLines": 305,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/generate-document-form.tsx",
+      "language": "typescript",
+      "sizeLines": 381,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/retake-requests-card.tsx",
+      "language": "typescript",
+      "sizeLines": 177,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/stats-card.tsx",
+      "language": "typescript",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/system-health-errors-list.tsx",
+      "language": "typescript",
+      "sizeLines": 340,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/bookmark-button.tsx",
+      "language": "typescript",
+      "sizeLines": 63,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/feedback-buttons.tsx",
+      "language": "typescript",
+      "sizeLines": 87,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/message-bubble.tsx",
+      "language": "typescript",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/source-tag.tsx",
+      "language": "typescript",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/project-card.tsx",
+      "language": "typescript",
+      "sizeLines": 165,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/setup-panel.tsx",
+      "language": "typescript",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/result-summary.tsx",
+      "language": "typescript",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/badge.tsx",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/card.tsx",
+      "language": "typescript",
+      "sizeLines": 22,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/textarea.tsx",
+      "language": "typescript",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    { "path": "lib/utils.ts", "language": "typescript", "sizeLines": 56, "fileCategory": "code" }
+  ],
+  "batchImportData": {
+    "app/(member)/threads/page.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/utils.ts"
+    ],
+    "components/admin/activity-feed.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/document-connectors-panel.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx",
+      "components/ui/submit-button.tsx"
+    ],
+    "components/admin/document-upload-panel.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/submit-button.tsx"
+    ],
+    "components/admin/generate-document-form.tsx": [
+      "app/actions/transcript.ts",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/submit-button.tsx",
+      "components/ui/textarea.tsx"
+    ],
+    "components/admin/retake-requests-card.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx"
+    ],
+    "components/admin/stats-card.tsx": [],
+    "components/admin/system-health-errors-list.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/chat/bookmark-button.tsx": [],
+    "components/chat/feedback-buttons.tsx": [],
+    "components/chat/message-bubble.tsx": ["components/ui/markdown-content.tsx"],
+    "components/chat/source-tag.tsx": [],
+    "components/layout/project-card.tsx": ["components/ui/badge.tsx", "lib/utils.ts"],
+    "components/layout/setup-panel.tsx": ["components/ui/card.tsx"],
+    "components/quiz/result-summary.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/ui/badge.tsx": [],
+    "components/ui/card.tsx": [],
+    "components/ui/textarea.tsx": [],
+    "lib/utils.ts": []
+  }
+}

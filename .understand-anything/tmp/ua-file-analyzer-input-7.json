@@ -1,0 +1,165 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": "components/admin/quiz-generator.tsx",
+      "language": "typescript",
+      "sizeLines": 205,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/quiz-results-card.tsx",
+      "language": "typescript",
+      "sizeLines": 540,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/quiz-sets-panel.tsx",
+      "language": "typescript",
+      "sizeLines": 410,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/quiz-window-form.tsx",
+      "language": "typescript",
+      "sizeLines": 97,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/accept-invite-form.tsx",
+      "language": "typescript",
+      "sizeLines": 124,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/forgot-password-form.tsx",
+      "language": "typescript",
+      "sizeLines": 101,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/login-form.tsx",
+      "language": "typescript",
+      "sizeLines": 253,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/register-form.tsx",
+      "language": "typescript",
+      "sizeLines": 156,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/reset-password-form.tsx",
+      "language": "typescript",
+      "sizeLines": 111,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/question-view.tsx",
+      "language": "typescript",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/quiz-card.tsx",
+      "language": "typescript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/quiz-experience.tsx",
+      "language": "typescript",
+      "sizeLines": 601,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/retake-request-button.tsx",
+      "language": "typescript",
+      "sizeLines": 96,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "language": "typescript",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/input.tsx",
+      "language": "typescript",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/submit-button.tsx",
+      "language": "typescript",
+      "sizeLines": 26,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/table.tsx",
+      "language": "typescript",
+      "sizeLines": 26,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/features.ts",
+      "language": "typescript",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "components/admin/quiz-generator.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/submit-button.tsx"
+    ],
+    "components/admin/quiz-results-card.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/table.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/quiz-sets-panel.tsx": [
+      "app/actions/admin.ts",
+      "components/admin/quiz-generator.tsx",
+      "components/admin/quiz-window-form.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx",
+      "components/ui/submit-button.tsx",
+      "components/ui/table.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/quiz-window-form.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/submit-button.tsx"
+    ],
+    "components/auth/accept-invite-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/forgot-password-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/login-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/register-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/reset-password-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/quiz/question-view.tsx": [],
+    "components/quiz/quiz-card.tsx": [],
+    "components/quiz/quiz-experience.tsx": [
+      "components/quiz/question-view.tsx",
+      "components/quiz/quiz-card.tsx",
+      "components/quiz/retake-request-button.tsx",
+      "components/quiz/result-summary.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/quiz/retake-request-button.tsx": ["components/ui/submit-button.tsx"],
+    "components/ui/button.tsx": [],
+    "components/ui/input.tsx": [],
+    "components/ui/submit-button.tsx": [],
+    "components/ui/table.tsx": [],
+    "lib/auth/features.ts": []
+  }
+}

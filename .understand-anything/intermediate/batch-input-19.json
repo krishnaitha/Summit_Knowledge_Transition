@@ -1,0 +1,149 @@
+{
+  "batchIndex": 19,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".understand-anything/tmp/b1.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-1.json",
+      "language": "json",
+      "sizeLines": 1392,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-10.json",
+      "language": "json",
+      "sizeLines": 113,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-11.json",
+      "language": "json",
+      "sizeLines": 28,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-12.json",
+      "language": "json",
+      "sizeLines": 14,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-13.json",
+      "language": "json",
+      "sizeLines": 252,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-14.json",
+      "language": "json",
+      "sizeLines": 42,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-15.json",
+      "language": "json",
+      "sizeLines": 49,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-16.json",
+      "language": "json",
+      "sizeLines": 77,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-17.json",
+      "language": "json",
+      "sizeLines": 184,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-18.json",
+      "language": "json",
+      "sizeLines": 35,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-2.json",
+      "language": "json",
+      "sizeLines": 937,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-3.json",
+      "language": "json",
+      "sizeLines": 1009,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-4.json",
+      "language": "json",
+      "sizeLines": 1474,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-5.json",
+      "language": "json",
+      "sizeLines": 1027,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-6.json",
+      "language": "json",
+      "sizeLines": 1190,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-7.json",
+      "language": "json",
+      "sizeLines": 751,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-8.json",
+      "language": "json",
+      "sizeLines": 771,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-data-9.json",
+      "language": "json",
+      "sizeLines": 293,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/batch-prompt-1.txt",
+      "language": "txt",
+      "sizeLines": 35,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    ".understand-anything/tmp/b1.json": [],
+    ".understand-anything/tmp/batch-data-1.json": [],
+    ".understand-anything/tmp/batch-data-10.json": [],
+    ".understand-anything/tmp/batch-data-11.json": [],
+    ".understand-anything/tmp/batch-data-12.json": [],
+    ".understand-anything/tmp/batch-data-13.json": [],
+    ".understand-anything/tmp/batch-data-14.json": [],
+    ".understand-anything/tmp/batch-data-15.json": [],
+    ".understand-anything/tmp/batch-data-16.json": [],
+    ".understand-anything/tmp/batch-data-17.json": [],
+    ".understand-anything/tmp/batch-data-18.json": [],
+    ".understand-anything/tmp/batch-data-2.json": [],
+    ".understand-anything/tmp/batch-data-3.json": [],
+    ".understand-anything/tmp/batch-data-4.json": [],
+    ".understand-anything/tmp/batch-data-5.json": [],
+    ".understand-anything/tmp/batch-data-6.json": [],
+    ".understand-anything/tmp/batch-data-7.json": [],
+    ".understand-anything/tmp/batch-data-8.json": [],
+    ".understand-anything/tmp/batch-data-9.json": [],
+    ".understand-anything/tmp/batch-prompt-1.txt": []
+  },
+  "neighborMap": {}
+}

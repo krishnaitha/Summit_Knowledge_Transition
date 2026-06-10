@@ -184,7 +184,7 @@ export function ModelSwitcherForm(props: ModelSwitcherFormProps) {
               name="copilot_model"
               defaultValue={props.config.copilotModel}
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900"
-              placeholder="openai/gpt-4.1-mini"
+              placeholder="google/gemini-3.5-flash"
             />
           </div>
           <div className="grid gap-4 md:grid-cols-2">

@@ -1,0 +1,94 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": "app/(admin)/admin/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/admin-mobile-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/admin-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/logout-button.tsx",
+      "language": "typescript",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/member-mobile-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/member-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/mobile-menu-button.tsx",
+      "language": "typescript",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/mobile-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 105,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/navbar.tsx",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/(admin)/admin/layout.tsx": ["components/layout/admin-sidebar.tsx", "lib/auth.ts"],
+    "app/(member)/layout.tsx": ["components/layout/member-sidebar.tsx", "lib/auth.ts"],
+    "components/layout/admin-mobile-sidebar.tsx": ["components/layout/mobile-sidebar.tsx"],
+    "components/layout/admin-sidebar.tsx": [
+      "components/layout/admin-mobile-sidebar.tsx",
+      "components/layout/logout-button.tsx",
+      "components/layout/navbar.tsx",
+      "components/layout/sidebar.tsx"
+    ],
+    "components/layout/logout-button.tsx": [],
+    "components/layout/member-mobile-sidebar.tsx": ["components/layout/mobile-sidebar.tsx"],
+    "components/layout/member-sidebar.tsx": [
+      "components/layout/logout-button.tsx",
+      "components/layout/member-mobile-sidebar.tsx",
+      "components/layout/navbar.tsx",
+      "components/layout/sidebar.tsx"
+    ],
+    "components/layout/mobile-menu-button.tsx": [],
+    "components/layout/mobile-sidebar.tsx": ["components/layout/mobile-menu-button.tsx"],
+    "components/layout/navbar.tsx": ["lib/env.client.ts"],
+    "components/layout/sidebar.tsx": []
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "batchIndex": 17,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".understand-anything/intermediate/assembled-graph.json",
+      "language": "json",
+      "sizeLines": 18598,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-1-part-1.json",
+      "language": "json",
+      "sizeLines": 1135,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-1-part-2.json",
+      "language": "json",
+      "sizeLines": 777,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-10.json",
+      "language": "json",
+      "sizeLines": 230,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-11.json",
+      "language": "json",
+      "sizeLines": 307,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-12.json",
+      "language": "json",
+      "sizeLines": 96,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-13-part-1.json",
+      "language": "json",
+      "sizeLines": 463,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-13-part-2.json",
+      "language": "json",
+      "sizeLines": 376,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-13-part-3.json",
+      "language": "json",
+      "sizeLines": 227,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-14.json",
+      "language": "json",
+      "sizeLines": 135,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-15.json",
+      "language": "json",
+      "sizeLines": 109,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-16.json",
+      "language": "json",
+      "sizeLines": 98,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-17.json",
+      "language": "json",
+      "sizeLines": 848,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-18.json",
+      "language": "json",
+      "sizeLines": 92,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-2.json",
+      "language": "json",
+      "sizeLines": 1720,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-3.json",
+      "language": "json",
+      "sizeLines": 1478,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-4.json",
+      "language": "json",
+      "sizeLines": 1213,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-5.json",
+      "language": "json",
+      "sizeLines": 710,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-6.json",
+      "language": "json",
+      "sizeLines": 1011,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-7.json",
+      "language": "json",
+      "sizeLines": 823,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    ".understand-anything/intermediate/assembled-graph.json": [],
+    ".understand-anything/intermediate/batch-1-part-1.json": [],
+    ".understand-anything/intermediate/batch-1-part-2.json": [],
+    ".understand-anything/intermediate/batch-10.json": [],
+    ".understand-anything/intermediate/batch-11.json": [],
+    ".understand-anything/intermediate/batch-12.json": [],
+    ".understand-anything/intermediate/batch-13-part-1.json": [],
+    ".understand-anything/intermediate/batch-13-part-2.json": [],
+    ".understand-anything/intermediate/batch-13-part-3.json": [],
+    ".understand-anything/intermediate/batch-14.json": [],
+    ".understand-anything/intermediate/batch-15.json": [],
+    ".understand-anything/intermediate/batch-16.json": [],
+    ".understand-anything/intermediate/batch-17.json": [],
+    ".understand-anything/intermediate/batch-18.json": [],
+    ".understand-anything/intermediate/batch-2.json": [],
+    ".understand-anything/intermediate/batch-3.json": [],
+    ".understand-anything/intermediate/batch-4.json": [],
+    ".understand-anything/intermediate/batch-5.json": [],
+    ".understand-anything/intermediate/batch-6.json": [],
+    ".understand-anything/intermediate/batch-7.json": []
+  },
+  "neighborMap": {}
+}

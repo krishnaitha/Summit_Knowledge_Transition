@@ -1,0 +1,128 @@
+{
+  "batchIndex": 22,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-5.json",
+      "language": "json",
+      "sizeLines": 45,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-6.json",
+      "language": "json",
+      "sizeLines": 45,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-7.json",
+      "language": "json",
+      "sizeLines": 43,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-8.json",
+      "language": "json",
+      "sizeLines": 37,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-9.json",
+      "language": "json",
+      "sizeLines": 29,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-10.json",
+      "language": "json",
+      "sizeLines": 261,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-11.json",
+      "language": "json",
+      "sizeLines": 224,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-13.json",
+      "language": "json",
+      "sizeLines": 1445,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-15.json",
+      "language": "json",
+      "sizeLines": 523,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-16.json",
+      "language": "json",
+      "sizeLines": 1508,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-17.json",
+      "language": "json",
+      "sizeLines": 1783,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-extract-results-6.json",
+      "language": "json",
+      "sizeLines": 2544,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-import-map-input.json",
+      "language": "json",
+      "sizeLines": 1708,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-import-map-output.json",
+      "language": "json",
+      "sizeLines": 1023,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-scan-files.json",
+      "language": "json",
+      "sizeLines": 1738,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-tour-input.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-tour-results.json",
+      "language": "json",
+      "sizeLines": 5491,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    ".understand-anything/tmp/ua-file-analyzer-input-5.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-6.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-7.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-8.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-9.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-10.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-11.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-13.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-15.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-16.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-17.json": [],
+    ".understand-anything/tmp/ua-file-extract-results-6.json": [],
+    ".understand-anything/tmp/ua-import-map-input.json": [],
+    ".understand-anything/tmp/ua-import-map-output.json": [],
+    ".understand-anything/tmp/ua-scan-files.json": [],
+    ".understand-anything/tmp/ua-tour-input.json": [],
+    ".understand-anything/tmp/ua-tour-results.json": []
+  },
+  "neighborMap": {}
+}

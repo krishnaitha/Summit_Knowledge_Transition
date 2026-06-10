@@ -1,0 +1,307 @@
+{
+  "nodes": [
+    {
+      "id": "config:.dockerignore",
+      "type": "config",
+      "name": ".dockerignore",
+      "filePath": ".dockerignore",
+      "summary": "Docker build context exclusion rules that prevent node_modules, .next output, .env secret files, dev tooling, test artifacts, and OS noise from being copied into Docker images, keeping images lean and secrets-safe.",
+      "tags": ["configuration", "containerization", "infrastructure", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "type": "service",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "Full local development stack orchestrating six services: a pgvector Postgres database, database migration runner, Keycloak OIDC identity provider, Next.js app server, background job worker, and an optional admin elevation helper — all wired with health checks and dependency ordering.",
+      "tags": ["orchestration", "infrastructure", "deployment", "containerization", "ci-cd"],
+      "complexity": "moderate",
+      "languageNotes": "Uses Docker Compose health-check conditions (service_healthy, service_completed_successfully) to enforce strict startup ordering; Keycloak is imported from a realm.json file for repeatable SSO configuration."
+    },
+    {
+      "id": "service:docker-compose.yml:db",
+      "type": "service",
+      "name": "db",
+      "filePath": "docker-compose.yml",
+      "summary": "Postgres 17 database service with the pgvector extension, used for all relational data and vector similarity search.",
+      "tags": ["database", "infrastructure", "orchestration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:migrate",
+      "type": "service",
+      "name": "migrate",
+      "filePath": "docker-compose.yml",
+      "summary": "One-shot migration runner that applies pending node-pg-migrate migrations to the Postgres database before the app or worker services start.",
+      "tags": ["database", "migration", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:keycloak",
+      "type": "service",
+      "name": "keycloak",
+      "filePath": "docker-compose.yml",
+      "summary": "Keycloak 26.2 OIDC identity provider pre-seeded from a realm JSON file, serving as the authentication backend for the app and worker services.",
+      "tags": ["infrastructure", "security", "orchestration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:app",
+      "type": "service",
+      "name": "app",
+      "filePath": "docker-compose.yml",
+      "summary": "Next.js application container built from the Dockerfile runner stage, exposed on port 3000 and configured with OIDC auth pointing at the local Keycloak instance.",
+      "tags": ["deployment", "infrastructure", "orchestration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:worker",
+      "type": "service",
+      "name": "worker",
+      "filePath": "docker-compose.yml",
+      "summary": "Background job worker container built from the Dockerfile worker stage, sharing the uploads volume with the app and connecting to the app over the internal Docker network.",
+      "tags": ["deployment", "infrastructure", "orchestration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:elevate-demo-user",
+      "type": "service",
+      "name": "elevate-demo-user",
+      "filePath": "docker-compose.yml",
+      "summary": "Optional one-off helper service (tools profile) that promotes the Keycloak demo user to admin role via a direct SQL UPDATE, intended to be run manually after first login.",
+      "tags": ["infrastructure", "deployment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Four-stage multi-target Dockerfile: a builder stage that compiles the Next.js app, a minimal runner stage serving the standalone Next.js server on port 3000 as a non-root user, a worker stage reusing the runner filesystem with a different entrypoint, and a lightweight migrate stage that runs node-pg-migrate against the database.",
+      "tags": ["containerization", "infrastructure", "deployment", "build-system"],
+      "complexity": "moderate",
+      "languageNotes": "Uses BuildKit cache mounts (--mount=type=cache) to persist npm download cache across builds without bloating image layers; runner inherits from the builder via --from=builder copying only the standalone Next.js output, significantly reducing image size."
+    },
+    {
+      "id": "service:Dockerfile:builder",
+      "type": "service",
+      "name": "builder",
+      "filePath": "Dockerfile",
+      "summary": "Build stage that installs all npm dependencies and compiles the Next.js application into standalone output.",
+      "tags": ["build-system", "containerization", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile:runner",
+      "type": "service",
+      "name": "runner",
+      "filePath": "Dockerfile",
+      "summary": "Minimal production runtime image that copies only the Next.js standalone bundle, static assets, public files, and worker scripts from the builder stage, running as a non-root nextjs user.",
+      "tags": ["deployment", "containerization", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile:worker",
+      "type": "service",
+      "name": "worker",
+      "filePath": "Dockerfile",
+      "summary": "Worker stage that extends the runner image with a different CMD to launch the background job worker process instead of the Next.js server.",
+      "tags": ["deployment", "containerization", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile:migrate",
+      "type": "service",
+      "name": "migrate",
+      "filePath": "Dockerfile",
+      "summary": "Lightweight migration stage that installs only production dependencies and copies the migrations directory, running node-pg-migrate on startup.",
+      "tags": ["database", "migration", "containerization"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:db",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:migrate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:keycloak",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:worker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:elevate-demo-user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:builder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:runner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:worker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:migrate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml:app",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:worker",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:migrate",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:migrate",
+      "target": "service:docker-compose.yml:db",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:app",
+      "target": "service:docker-compose.yml:migrate",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:app",
+      "target": "service:docker-compose.yml:keycloak",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:worker",
+      "target": "service:docker-compose.yml:migrate",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:worker",
+      "target": "service:docker-compose.yml:keycloak",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:elevate-demo-user",
+      "target": "service:docker-compose.yml:db",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Dockerfile:runner",
+      "target": "service:Dockerfile:builder",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Dockerfile:worker",
+      "target": "service:Dockerfile:runner",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.dockerignore",
+      "target": "service:Dockerfile",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:app",
+      "target": "service:Dockerfile:runner",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:docker-compose.yml:worker",
+      "target": "service:Dockerfile:worker",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:docker-compose.yml:migrate",
+      "target": "service:Dockerfile:migrate",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Dockerfile:runner",
+      "target": "file:app/api",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

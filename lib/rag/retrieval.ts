@@ -18,6 +18,55 @@ interface EmbeddingConsistencyRow {
   sample_model_revision: string | null;
 }
 
+interface ProjectDocumentRow {
+  id: string;
+}
+
+async function purgeAndScheduleProjectReindex(projectId: string, reason: string) {
+  const projectUuid = projectId;
+  const projectIdText = projectId;
+  const reasonText = reason;
+
+  const documents = await sql<ProjectDocumentRow[]>`
+    SELECT id
+    FROM documents
+    WHERE project_id = ${projectUuid}::uuid
+  `;
+
+  await sql`
+    DELETE FROM document_chunks
+    WHERE project_id = ${projectUuid}::uuid
+  `;
+
+  if (!documents.length) {
+    return 0;
+  }
+
+  const rows = await sql<{ id: string }[]>`
+    INSERT INTO processing_jobs (type, payload)
+    SELECT
+      'document_process',
+      jsonb_build_object(
+        'documentId', d.id,
+        'projectId', ${projectIdText}::text,
+        'sourceMode', 'canonical',
+        'reason', ${reasonText}::text
+      )
+    FROM documents d
+    WHERE d.project_id = ${projectUuid}::uuid
+      AND NOT EXISTS (
+        SELECT 1
+        FROM processing_jobs pj
+        WHERE pj.type = 'document_process'
+          AND pj.status IN ('pending', 'running')
+          AND pj.payload->>'documentId' = d.id::text
+      )
+    RETURNING id
+  `;
+
+  return rows.length;
+}
+
 async function assertEmbeddingConsistency(projectId: string) {
   const embeddingSpec = getCurrentEmbeddingModelSpec();
   const expectedRevision = embeddingSpec.modelRevision ?? '';
@@ -70,8 +119,13 @@ async function assertEmbeddingConsistency(projectId: string) {
   const expectedModel = embeddingSpec.modelId;
   const expectedModelRevision = embeddingSpec.modelRevision ?? 'none';
 
+  await purgeAndScheduleProjectReindex(
+    projectId,
+    `embedding_mismatch:${foundModel}@${foundRevision}->${expectedModel}@${expectedModelRevision}`,
+  );
+
   throw new Error(
-    `Embedding model mismatch detected for this project. Expected ${expectedModel}@${expectedModelRevision}, found ${foundModel}@${foundRevision}. Re-ingest project documents to continue.`,
+    `Embedding model mismatch detected for this project. Expected ${expectedModel}@${expectedModelRevision}, found ${foundModel}@${foundRevision}. Existing vectors were purged and a re-index job was queued from canonical sources.`,
   );
 }
 

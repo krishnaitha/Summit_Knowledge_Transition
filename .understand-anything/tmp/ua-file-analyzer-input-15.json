@@ -1,0 +1,19 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    { "path": ".env.example", "language": "config", "sizeLines": 55, "fileCategory": "config" },
+    { "path": "AGENTS.md", "language": "markdown", "sizeLines": 48, "fileCategory": "docs" },
+    { "path": "CLAUDE.md", "language": "markdown", "sizeLines": 115, "fileCategory": "docs" },
+    { "path": "README.md", "language": "markdown", "sizeLines": 264, "fileCategory": "docs" },
+    { "path": "app/globals.css", "language": "css", "sizeLines": 27, "fileCategory": "markup" },
+    { "path": "proxy.ts", "language": "typescript", "sizeLines": 38, "fileCategory": "code" }
+  ],
+  "batchImportData": {
+    ".env.example": [],
+    "AGENTS.md": [],
+    "CLAUDE.md": [],
+    "README.md": [],
+    "app/globals.css": [],
+    "proxy.ts": []
+  }
+}

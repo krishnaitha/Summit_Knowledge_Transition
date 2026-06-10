@@ -1,0 +1,6 @@
+{
+  "batchIndex": 18,
+  "fileList": "1. `tailwind.config.ts` (50 lines, language: `typescript`, fileCategory: `code`)\n2. `vitest.config.mts` (15 lines, language: `mts`, fileCategory: `code`)\n3. `vitest.setup.ts` (9 lines, language: `typescript`, fileCategory: `code`)\n4. `worker/index.mjs` (88 lines, language: `javascript`, fileCategory: `code`)",
+  "batchImportData": "{\"tailwind.config.ts\":[],\"vitest.config.mts\":[],\"vitest.setup.ts\":[],\"worker/index.mjs\":[]}",
+  "neighborMap": "{}"
+}

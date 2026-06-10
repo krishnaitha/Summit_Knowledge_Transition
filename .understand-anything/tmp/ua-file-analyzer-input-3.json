@@ -1,0 +1,274 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": "__tests__/components/admin/knowledge-gaps-card.test.tsx",
+      "language": "typescript",
+      "sizeLines": 214,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/documents/bot-reply-poller.test.tsx",
+      "language": "typescript",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/documents/document-threads-board.test.tsx",
+      "language": "typescript",
+      "sizeLines": 359,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/ui/markdown-content.test.tsx",
+      "language": "typescript",
+      "sizeLines": 98,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/ui/modal.test.tsx",
+      "language": "typescript",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/env.client.test.ts",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "language": "typescript",
+      "sizeLines": 165,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "language": "typescript",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "language": "typescript",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/search/page.tsx",
+      "language": "typescript",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/projects/[id]/chat/page.tsx",
+      "language": "typescript",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "language": "typescript",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/projects/[id]/page.tsx",
+      "language": "typescript",
+      "sizeLines": 240,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/search/page.tsx",
+      "language": "typescript",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/actions/document-threads.ts",
+      "language": "typescript",
+      "sizeLines": 257,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/api/admin/analytics/route.ts",
+      "language": "typescript",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/knowledge-gap-thread-button.tsx",
+      "language": "typescript",
+      "sizeLines": 112,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/knowledge-gaps-card.tsx",
+      "language": "typescript",
+      "sizeLines": 224,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/project-knowledge-gaps-table.tsx",
+      "language": "typescript",
+      "sizeLines": 121,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/chat/chat-interface.tsx",
+      "language": "typescript",
+      "sizeLines": 639,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/documents/bot-reply-poller.tsx",
+      "language": "typescript",
+      "sizeLines": 67,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/documents/document-threads-board.tsx",
+      "language": "typescript",
+      "sizeLines": 213,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/search/debounced-document-search.tsx",
+      "language": "typescript",
+      "sizeLines": 141,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/markdown-content.tsx",
+      "language": "typescript",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/ui/modal.tsx",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    { "path": "lib/data.ts", "language": "typescript", "sizeLines": 2188, "fileCategory": "code" },
+    {
+      "path": "lib/env.client.ts",
+      "language": "typescript",
+      "sizeLines": 13,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "__tests__/components/admin/knowledge-gaps-card.test.tsx": [
+      "components/admin/knowledge-gaps-card.tsx",
+      "lib/data.ts"
+    ],
+    "__tests__/components/documents/bot-reply-poller.test.tsx": [
+      "components/documents/bot-reply-poller.tsx"
+    ],
+    "__tests__/components/documents/document-threads-board.test.tsx": [
+      "components/documents/document-threads-board.tsx",
+      "lib/data.ts",
+      "lib/types/database.ts"
+    ],
+    "__tests__/components/ui/markdown-content.test.tsx": ["components/ui/markdown-content.tsx"],
+    "__tests__/components/ui/modal.test.tsx": ["components/ui/modal.tsx"],
+    "__tests__/lib/env.client.test.ts": ["lib/env.client.ts"],
+    "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx": [
+      "app/actions/document-threads.ts",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/submit-button.tsx",
+      "components/ui/textarea.tsx",
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/utils.ts"
+    ],
+    "app/(admin)/admin/projects/[id]/chat/page.tsx": [
+      "components/chat/chat-interface.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx": [
+      "components/documents/document-threads-board.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(admin)/admin/search/page.tsx": [
+      "components/search/debounced-document-search.tsx",
+      "components/ui/card.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(member)/projects/[id]/chat/page.tsx": [
+      "components/chat/chat-interface.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx": [
+      "components/documents/document-threads-board.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(member)/projects/[id]/page.tsx": [
+      "components/search/debounced-document-search.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/utils.ts"
+    ],
+    "app/(member)/search/page.tsx": [
+      "components/search/debounced-document-search.tsx",
+      "components/ui/card.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/actions/document-threads.ts": ["lib/auth.ts", "lib/data.ts", "lib/db.ts"],
+    "app/api/admin/analytics/route.ts": ["lib/auth.ts", "lib/data.ts"],
+    "components/admin/knowledge-gap-thread-button.tsx": [
+      "app/actions/document-threads.ts",
+      "components/ui/modal.tsx"
+    ],
+    "components/admin/knowledge-gaps-card.tsx": [
+      "app/actions/document-threads.ts",
+      "components/admin/knowledge-gap-thread-button.tsx",
+      "components/ui/card.tsx",
+      "lib/data.ts"
+    ],
+    "components/admin/project-knowledge-gaps-table.tsx": ["app/actions/document-threads.ts"],
+    "components/chat/chat-interface.tsx": [
+      "components/chat/message-bubble.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/documents/bot-reply-poller.tsx": [
+      "components/ui/markdown-content.tsx",
+      "lib/env.client.ts"
+    ],
+    "components/documents/document-threads-board.tsx": [
+      "app/actions/document-threads.ts",
+      "components/documents/bot-reply-poller.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx",
+      "components/ui/markdown-content.tsx",
+      "components/ui/submit-button.tsx",
+      "components/ui/textarea.tsx",
+      "lib/data.ts",
+      "lib/env.ts",
+      "lib/types/database.ts",
+      "lib/utils.ts"
+    ],
+    "components/search/debounced-document-search.tsx": [
+      "components/ui/button.tsx",
+      "components/ui/input.tsx"
+    ],
+    "components/ui/markdown-content.tsx": [],
+    "components/ui/modal.tsx": ["lib/utils.ts"],
+    "lib/data.ts": ["lib/db.ts", "lib/quiz/scoring.ts", "lib/types/database.ts", "lib/utils.ts"],
+    "lib/env.client.ts": []
+  }
+}

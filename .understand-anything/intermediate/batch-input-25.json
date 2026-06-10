@@ -1,0 +1,58 @@
+{
+  "batchIndex": 25,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": "postgres/schema.sql",
+      "language": "sql",
+      "sizeLines": 658,
+      "fileCategory": "data"
+    },
+    {
+      "path": "proxy.ts",
+      "language": "typescript",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/connector-setup-guide.md",
+      "language": "markdown",
+      "sizeLines": 225,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "language": "typescript",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "vitest.config.mts",
+      "language": "mts",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "vitest.setup.ts",
+      "language": "typescript",
+      "sizeLines": 9,
+      "fileCategory": "code"
+    },
+    {
+      "path": "worker/index.mjs",
+      "language": "javascript",
+      "sizeLines": 88,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "postgres/schema.sql": [],
+    "proxy.ts": [],
+    "public/connector-setup-guide.md": [],
+    "tailwind.config.ts": [],
+    "vitest.config.mts": [],
+    "vitest.setup.ts": [],
+    "worker/index.mjs": []
+  },
+  "neighborMap": {}
+}

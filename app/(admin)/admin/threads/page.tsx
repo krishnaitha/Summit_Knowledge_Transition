@@ -1,47 +1,65 @@
 import Link from 'next/link';
-import { BellRing, ChevronRight } from 'lucide-react';
+import { BellRing, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireAnyAdmin } from '@/lib/auth';
-import { getOpenThreadsForUser } from '@/lib/data';
+import { getAdminThreadQueuePage } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
+const PAGE_SIZE = 20;
+
+function buildThreadsHref(params: {
+  projectFilter: string;
+  documentFilter: string;
+  updatedTodayOnly: boolean;
+  statusFilter: 'open' | 'resolved' | 'all';
+  page: number;
+}) {
+  const searchParams = new URLSearchParams();
+
+  if (params.projectFilter) searchParams.set('project', params.projectFilter);
+  if (params.documentFilter) searchParams.set('document', params.documentFilter);
+  if (params.updatedTodayOnly) searchParams.set('today', '1');
+  if (params.statusFilter !== 'open') searchParams.set('status', params.statusFilter);
+  if (params.page > 1) searchParams.set('page', String(params.page));
+
+  const query = searchParams.toString();
+  return query ? `/admin/threads?${query}` : '/admin/threads';
+}
+
 export default async function AdminOpenThreadsPage(props: {
-  searchParams: Promise<{ project?: string; document?: string; today?: string; status?: string }>;
+  searchParams: Promise<{
+    project?: string;
+    document?: string;
+    today?: string;
+    status?: string;
+    page?: string;
+  }>;
 }) {
   const searchParams = await props.searchParams;
   const projectFilter = (searchParams.project ?? '').trim();
   const documentFilter = (searchParams.document ?? '').trim();
   const updatedTodayOnly = (searchParams.today ?? '') === '1';
+  const page = Math.max(Number.parseInt((searchParams.page ?? '1').trim(), 10) || 1, 1);
   const rawStatus = (searchParams.status ?? 'open').trim().toLowerCase();
   const statusFilter =
     rawStatus === 'resolved' || rawStatus === 'all' || rawStatus === 'open' ? rawStatus : 'open';
 
-  const { profile } = await requireAnyAdmin();
-  const rows = await getOpenThreadsForUser(profile!.id, profile?.role, statusFilter, true);
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-
-  const projectOptions = Array.from(
-    new Map(rows.map((row) => [row.project_id, row.project_name])).entries(),
-  ).map(([id, name]) => ({ id, name }));
-
-  const documentOptions = Array.from(
-    new Map(
-      rows
-        .filter((row) => row.document_id && row.document_name)
-        .map((row) => [row.document_id as string, row.document_name as string]),
-    ).entries(),
-  ).map(([id, name]) => ({ id, name }));
-
-  const filteredRows = rows.filter((row) => {
-    if (projectFilter && row.project_id !== projectFilter) return false;
-    if (documentFilter && row.document_id !== documentFilter) return false;
-    if (updatedTodayOnly && new Date(row.updated_at) < todayStart) return false;
-    return true;
+  await requireAnyAdmin();
+  const { rows, totalCount, projectOptions, documentOptions } = await getAdminThreadQueuePage({
+    statusFilter,
+    projectFilter,
+    documentFilter,
+    updatedTodayOnly,
+    page,
+    pageSize: PAGE_SIZE,
   });
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = totalCount === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+  const pageEnd = totalCount === 0 ? 0 : pageStart + rows.length - 1;
 
   return (
     <div className="space-y-6">
@@ -60,9 +78,9 @@ export default async function AdminOpenThreadsPage(props: {
             Track open and closed discussions across accessible projects.
           </p>
         </div>
-        <Badge variant={rows.length > 0 ? 'warning' : 'neutral'}>
+        <Badge variant={totalCount > 0 ? 'warning' : 'neutral'}>
           <BellRing className="h-3.5 w-3.5" />
-          {filteredRows.length}{' '}
+          {totalCount}{' '}
           {statusFilter === 'all' ? 'shown' : statusFilter === 'resolved' ? 'closed' : 'open'}
         </Badge>
       </div>
@@ -141,8 +159,8 @@ export default async function AdminOpenThreadsPage(props: {
           <CardTitle>Thread Queue</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {filteredRows.length ? (
-            filteredRows.map((row) => (
+          {rows.length ? (
+            rows.map((row) => (
               <div
                 key={row.thread_id}
                 className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
@@ -173,6 +191,51 @@ export default async function AdminOpenThreadsPage(props: {
             ))
           ) : (
             <p className="text-sm text-slate-500">No threads match the selected filters.</p>
+          )}
+
+          {totalCount > PAGE_SIZE && (
+            <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-slate-500">
+                Showing {pageStart}-{pageEnd} of {totalCount} threads
+              </p>
+              <div className="flex items-center gap-2">
+                <Link
+                  href={buildThreadsHref({
+                    projectFilter,
+                    documentFilter,
+                    updatedTodayOnly,
+                    statusFilter,
+                    page: Math.max(1, currentPage - 1),
+                  })}
+                  aria-disabled={currentPage === 1}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                >
+                  <Button type="button" variant="secondary" disabled={currentPage === 1}>
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                </Link>
+                <span className="text-sm text-slate-600">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Link
+                  href={buildThreadsHref({
+                    projectFilter,
+                    documentFilter,
+                    updatedTodayOnly,
+                    statusFilter,
+                    page: Math.min(totalPages, currentPage + 1),
+                  })}
+                  aria-disabled={currentPage === totalPages}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                >
+                  <Button type="button" variant="secondary" disabled={currentPage === totalPages}>
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

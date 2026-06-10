@@ -1,0 +1,6 @@
+{
+  "batchIndex": 14,
+  "fileList": "1. `.claude/commands/add-llm-provider.md` (36 lines, language: `markdown`, fileCategory: `docs`)\n2. `.claude/commands/debug-rag.md` (34 lines, language: `markdown`, fileCategory: `docs`)\n3. `.claude/commands/new-admin-page.md` (24 lines, language: `markdown`, fileCategory: `docs`)\n4. `.claude/commands/new-api-route.md` (24 lines, language: `markdown`, fileCategory: `docs`)\n5. `.claude/commands/new-migration.md` (16 lines, language: `markdown`, fileCategory: `docs`)",
+  "batchImportData": "{\".claude/commands/add-llm-provider.md\":[],\".claude/commands/debug-rag.md\":[],\".claude/commands/new-admin-page.md\":[],\".claude/commands/new-api-route.md\":[],\".claude/commands/new-migration.md\":[]}",
+  "neighborMap": "{}"
+}

@@ -1,0 +1,257 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "app/api/auth/[...nextauth]/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 7,
+      "nonEmptyLines": 4,
+      "exports": [
+        {
+          "name": "GET",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "POST",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "auth.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 17,
+      "nonEmptyLines": 14,
+      "exports": [
+        {
+          "name": "authOptions",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/auth/providers/cognito.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 19,
+      "nonEmptyLines": 15,
+      "exports": [
+        {
+          "name": "cognitoProviderDefinition",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/auth/providers/credentials.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 57,
+      "exports": [
+        {
+          "name": "credentialsProviderDefinition",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "authorize",
+          "callee": "sql",
+          "lineNumber": 23
+        },
+        {
+          "caller": "authorize",
+          "callee": "bcrypt.compare",
+          "lineNumber": 33
+        },
+        {
+          "caller": "authorize",
+          "callee": "sql",
+          "lineNumber": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/auth/providers/index.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 19,
+      "functions": [
+        {
+          "name": "getAuthProviderDefinition",
+          "startLine": 12,
+          "endLine": 23,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "getAuthProviderDefinition",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getAuthProviderDefinition",
+          "callee": "Object.keys(registry).join",
+          "lineNumber": 18
+        },
+        {
+          "caller": "getAuthProviderDefinition",
+          "callee": "Object.keys",
+          "lineNumber": 18
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/auth/providers/oidc-callbacks.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 56,
+      "functions": [
+        {
+          "name": "buildOidcCallbacks",
+          "startLine": 19,
+          "endLine": 67,
+          "params": ["providerId", "overrides"]
+        }
+      ],
+      "exports": [
+        {
+          "name": "buildOidcCallbacks",
+          "line": 19,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "signIn",
+          "callee": "await sql<{ is_active: boolean | null }[]>",
+          "lineNumber": 28
+        },
+        {
+          "caller": "jwt",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/auth/providers/oidc.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 45,
+      "nonEmptyLines": 37,
+      "functions": [
+        {
+          "name": "parseChecks",
+          "startLine": 17,
+          "endLine": 24,
+          "params": ["raw"]
+        }
+      ],
+      "exports": [
+        {
+          "name": "oidcProviderDefinition",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parseChecks",
+          "callee": "raw\r\n    .split(',')\r\n    .map((s) => s.trim())\r\n    .filter",
+          "lineNumber": 19
+        },
+        {
+          "caller": "parseChecks",
+          "callee": "raw\r\n    .split(',')\r\n    .map",
+          "lineNumber": 19
+        },
+        {
+          "caller": "parseChecks",
+          "callee": "raw\r\n    .split",
+          "lineNumber": 19
+        },
+        {
+          "caller": "parseChecks",
+          "callee": "s.trim",
+          "lineNumber": 21
+        },
+        {
+          "caller": "parseChecks",
+          "callee": "VALID_CHECKS.has",
+          "lineNumber": 22
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/auth/providers/types.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 7,
+      "nonEmptyLines": 6,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

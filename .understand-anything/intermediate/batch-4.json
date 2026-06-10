@@ -1,0 +1,1213 @@
+{
+  "nodes": [
+    {
+      "id": "file:__tests__/components/admin/generate-document-form.test.tsx",
+      "type": "file",
+      "name": "generate-document-form.test.tsx",
+      "filePath": "__tests__/components/admin/generate-document-form.test.tsx",
+      "summary": "Vitest component tests for GenerateDocumentForm covering banner display logic, transcript textarea pre-filling, document title derivation from context, and form structure rendering across multiple describe blocks.",
+      "tags": ["test", "component", "admin", "form-validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/chat/message-bubble.test.tsx",
+      "type": "file",
+      "name": "message-bubble.test.tsx",
+      "filePath": "__tests__/components/chat/message-bubble.test.tsx",
+      "summary": "Vitest component tests for MessageBubble verifying layout alignment, background styling, source tag rendering, and bookmark/feedback button visibility for both user and assistant message roles.",
+      "tags": ["test", "component", "chat", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/chat/source-tag.test.tsx",
+      "type": "file",
+      "name": "source-tag.test.tsx",
+      "filePath": "__tests__/components/chat/source-tag.test.tsx",
+      "summary": "Vitest component tests for SourceTag verifying confidence label rendering (High/Medium/Low/Unknown) and CSS variant classes based on similarity score thresholds.",
+      "tags": ["test", "component", "chat", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/components/layout/project-card.test.tsx",
+      "type": "file",
+      "name": "project-card.test.tsx",
+      "filePath": "__tests__/components/layout/project-card.test.tsx",
+      "summary": "Vitest component tests for ProjectCard covering project name/description rendering, quiz status badge variants, doc counts, navigation links, deadline badges (overdue, due today), and new-docs indicator.",
+      "tags": ["test", "component", "layout", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/quiz/result-summary.test.tsx",
+      "type": "file",
+      "name": "result-summary.test.tsx",
+      "filePath": "__tests__/components/quiz/result-summary.test.tsx",
+      "summary": "Vitest component tests for ResultSummary validating disqualified state display (reason text, heading suppression) and normal quiz result rendering including score, percentage, and coaching plan recommendations.",
+      "tags": ["test", "component", "quiz", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/ui/badge.test.tsx",
+      "type": "file",
+      "name": "badge.test.tsx",
+      "filePath": "__tests__/components/ui/badge.test.tsx",
+      "summary": "Vitest component tests for the Badge UI primitive verifying all variant CSS classes (neutral, success, warning, danger, info), custom className merging, and span element rendering.",
+      "tags": ["test", "component", "ui", "design-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/components/ui/card.test.tsx",
+      "type": "file",
+      "name": "card.test.tsx",
+      "filePath": "__tests__/components/ui/card.test.tsx",
+      "summary": "Vitest component tests for Card and its sub-components (CardHeader, CardTitle, CardDescription, CardContent) verifying layout classes, element types, and className merging.",
+      "tags": ["test", "component", "ui", "design-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/lib/utils.test.ts",
+      "type": "file",
+      "name": "utils.test.ts",
+      "filePath": "__tests__/lib/utils.test.ts",
+      "summary": "Vitest unit tests for lib/utils covering cn (Tailwind class merging), formatDate, formatPercent, safeJsonParse, toCsv, and sleep utility functions with edge cases including null, undefined, and timer mocking.",
+      "tags": ["test", "utility", "unit-test"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/dashboard/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/dashboard/page.tsx",
+      "summary": "Admin dashboard page that displays platform-wide statistics (users, documents, messages, quiz completion, open threads, retake requests) alongside a KnowledgeGapsCard and ActivityFeed, gated by requireAdmin.",
+      "tags": ["api-handler", "admin", "dashboard", "data-display"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/dashboard/page.tsx:AdminDashboardPage",
+      "type": "function",
+      "name": "AdminDashboardPage",
+      "filePath": "app/(admin)/admin/dashboard/page.tsx",
+      "lineRange": [19, 108],
+      "summary": "Async server component that fetches dashboard stats and knowledge gaps in parallel, renders stat cards with conditional link wrappers for actionable metrics, and embeds the KnowledgeGapsCard and ActivityFeed.",
+      "tags": ["api-handler", "admin", "dashboard"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/generate-document/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/generate-document/page.tsx",
+      "summary": "Admin page for AI document generation from transcripts; resolves optional threadId search param to pre-populate the GenerateDocumentForm with a structured Q&A transcript and suggested title, gated by requireAnyAdmin.",
+      "tags": ["api-handler", "admin", "ai-feature", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/generate-document/page.tsx:GenerateDocumentPage",
+      "type": "function",
+      "name": "GenerateDocumentPage",
+      "filePath": "app/(admin)/admin/generate-document/page.tsx",
+      "lineRange": [6, 107],
+      "summary": "Async server component that reads threadId from search params, optionally fetches the knowledge-gap thread to build a pre-populated transcript and title, then renders GenerateDocumentForm alongside a static how-it-works sidebar.",
+      "tags": ["api-handler", "admin", "ai-feature"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "summary": "Admin document management page for a project, rendering DocumentConnectorsPanel, DocumentUploadPanel, and DocumentsList with breadcrumb navigation; fetches project, documents, and connectors in parallel.",
+      "tags": ["api-handler", "admin", "document-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/documents/page.tsx:ProjectDocumentsPage",
+      "type": "function",
+      "name": "ProjectDocumentsPage",
+      "filePath": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "lineRange": [16, 53],
+      "summary": "Async server component that fetches project metadata, documents, and connectors in parallel and renders the full document management UI with connector panel, upload panel, and documents list.",
+      "tags": ["api-handler", "admin", "document-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/page.tsx",
+      "summary": "Comprehensive admin project detail page showing stats, inline settings form, document knowledge base, full-text search, announcement sender, recent announcements, and quiz retake requests; gated by requireProjectAdmin.",
+      "tags": ["api-handler", "admin", "project-management", "complex-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/page.tsx:HighlightedSnippet",
+      "type": "function",
+      "name": "HighlightedSnippet",
+      "filePath": "app/(admin)/admin/projects/[id]/page.tsx",
+      "lineRange": [41, 74],
+      "summary": "React component that splits a snippet string on <<H>>/<</H>> markers and renders matched segments as highlighted <mark> elements with amber background for document chunk search result display.",
+      "tags": ["component", "utility", "search"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "type": "function",
+      "name": "AdminProjectDetailPage",
+      "filePath": "app/(admin)/admin/projects/[id]/page.tsx",
+      "lineRange": [76, 384],
+      "summary": "Async server component orchestrating all project management views: fetches project details, documents, members, quiz sets, retake requests, announcements, and search results; renders a full-featured project workspace for admins.",
+      "tags": ["api-handler", "admin", "project-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/page.tsx",
+      "summary": "Admin projects listing page with a create-project form and a grid of existing projects showing status badges, pending retake counts, and activate/deactivate actions; gated by requireAdmin.",
+      "tags": ["api-handler", "admin", "project-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "type": "function",
+      "name": "AdminProjectsPage",
+      "filePath": "app/(admin)/admin/projects/page.tsx",
+      "lineRange": [14, 112],
+      "summary": "Async server component that fetches all projects and pending retake counts in parallel, renders a create form and project cards with status, pending requests indicator, and toggle actions.",
+      "tags": ["api-handler", "admin", "project-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/system-health/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/system-health/page.tsx",
+      "summary": "Admin system health monitoring page displaying database and worker health status, job and error counts over 24h, RAG metrics, and a detailed error list from the application error log; gated by requireAdmin.",
+      "tags": ["api-handler", "admin", "monitoring", "observability"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/system-health/page.tsx:HealthBadge",
+      "type": "function",
+      "name": "HealthBadge",
+      "filePath": "app/(admin)/admin/system-health/page.tsx",
+      "lineRange": [11, 13],
+      "summary": "Small helper component that renders a success or danger Badge based on an ok boolean, used for database and worker health status indicators.",
+      "tags": ["component", "utility", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(admin)/admin/system-health/page.tsx:AdminSystemHealthPage",
+      "type": "function",
+      "name": "AdminSystemHealthPage",
+      "filePath": "app/(admin)/admin/system-health/page.tsx",
+      "lineRange": [15, 128],
+      "summary": "Async server component that fetches a system health snapshot and renders database/worker health cards, job/error counters, a RAG metrics summary, and the full error stack list.",
+      "tags": ["api-handler", "admin", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/threads/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/threads/page.tsx",
+      "summary": "Admin threads management page listing open and resolved document discussion threads with filter controls for project, document, status, and updated-today; gated by requireAnyAdmin.",
+      "tags": ["api-handler", "admin", "threads", "data-display"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/threads/page.tsx:AdminOpenThreadsPage",
+      "type": "function",
+      "name": "AdminOpenThreadsPage",
+      "filePath": "app/(admin)/admin/threads/page.tsx",
+      "lineRange": [11, 181],
+      "summary": "Async server component that fetches threads visible to the current admin, builds project and document filter options from the result set, applies client-side filters, and renders a thread queue with status badges and open-thread links.",
+      "tags": ["api-handler", "admin", "threads"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(member)/dashboard/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/dashboard/page.tsx",
+      "summary": "Member dashboard page combining a hero stats banner, quick-command panel with next-action project, assigned project cards, managed products section, admin announcements, bookmarked AI answers, and recent activity feed; gated by requireMember.",
+      "tags": ["api-handler", "member", "dashboard", "complex-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/(member)/dashboard/page.tsx:activityLabel",
+      "type": "function",
+      "name": "activityLabel",
+      "filePath": "app/(member)/dashboard/page.tsx",
+      "lineRange": [32, 34],
+      "summary": "Helper that maps raw activity action strings to human-readable labels using a lookup table, falling back to underscore-to-space replacement.",
+      "tags": ["utility", "member", "display"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(member)/dashboard/page.tsx:DashboardPage",
+      "type": "function",
+      "name": "DashboardPage",
+      "filePath": "app/(member)/dashboard/page.tsx",
+      "lineRange": [45, 360],
+      "summary": "Async server component fetching assigned projects, member stats, and admin project IDs in parallel to render a rich dashboard with hero section, project cards, announcements, bookmarks, and activity feed.",
+      "tags": ["api-handler", "member", "dashboard"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/[id]/bookmarks/page.tsx",
+      "summary": "Member bookmarks page for a specific project, listing saved AI chat answers with their source document badges and timestamps; redirects to dashboard if the member lacks project access.",
+      "tags": ["api-handler", "member", "bookmarks", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(member)/projects/[id]/bookmarks/page.tsx:ProjectBookmarksPage",
+      "type": "function",
+      "name": "ProjectBookmarksPage",
+      "filePath": "app/(member)/projects/[id]/bookmarks/page.tsx",
+      "lineRange": [11, 67],
+      "summary": "Async server component that validates project access, fetches bookmarks for the current member and project, and renders each bookmarked answer with sources and creation timestamp.",
+      "tags": ["api-handler", "member", "bookmarks"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/study/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/[id]/study/page.tsx",
+      "summary": "Member personalized study mode page showing weak quiz sections as warning badges and per-section coaching recommendations with relevant document links and RAG chunk references; redirects if no project access.",
+      "tags": ["api-handler", "member", "study", "coaching"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(member)/projects/[id]/study/page.tsx:ProjectStudyModePage",
+      "type": "function",
+      "name": "ProjectStudyModePage",
+      "filePath": "app/(member)/projects/[id]/study/page.tsx",
+      "lineRange": [13, 136],
+      "summary": "Async server component that fetches the personalized study guide, renders weak-section badges and coaching recommendations with document and chunk references, and links to the flashcards feature.",
+      "tags": ["api-handler", "member", "study"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(member)/projects/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/page.tsx",
+      "summary": "Minimal member projects listing page that fetches assigned projects and renders them as ProjectCards in a two-column grid, falling back to an empty-state card; gated by requireMember.",
+      "tags": ["api-handler", "member", "project-listing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(member)/projects/page.tsx:MyProjectsPage",
+      "type": "function",
+      "name": "MyProjectsPage",
+      "filePath": "app/(member)/projects/page.tsx",
+      "lineRange": [6, 30],
+      "summary": "Async server component that fetches the member's assigned projects and renders them as ProjectCards or an empty-state message.",
+      "tags": ["api-handler", "member", "project-listing"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:__tests__/components/admin/generate-document-form.test.tsx",
+      "target": "file:components/admin/generate-document-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/admin/generate-document-form.test.tsx",
+      "target": "file:components/admin/generate-document-form.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/chat/message-bubble.test.tsx",
+      "target": "file:components/chat/message-bubble.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/chat/message-bubble.test.tsx",
+      "target": "file:components/chat/message-bubble.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/chat/source-tag.test.tsx",
+      "target": "file:components/chat/source-tag.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/chat/source-tag.test.tsx",
+      "target": "file:components/chat/source-tag.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/layout/project-card.test.tsx",
+      "target": "file:components/layout/project-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/layout/project-card.test.tsx",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/layout/project-card.test.tsx",
+      "target": "file:components/layout/project-card.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/quiz/result-summary.test.tsx",
+      "target": "file:components/quiz/result-summary.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/quiz/result-summary.test.tsx",
+      "target": "file:components/quiz/result-summary.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/badge.test.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/badge.test.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/card.test.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/card.test.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/utils.test.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/utils.test.ts",
+      "target": "file:lib/utils.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "file:components/admin/activity-feed.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "file:components/admin/knowledge-gaps-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "file:components/admin/stats-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "function:app/(admin)/admin/dashboard/page.tsx:AdminDashboardPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/dashboard/page.tsx",
+      "target": "function:app/(admin)/admin/dashboard/page.tsx:AdminDashboardPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/dashboard/page.tsx:AdminDashboardPage",
+      "target": "function:lib/auth.ts:requireAdmin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/dashboard/page.tsx:AdminDashboardPage",
+      "target": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/generate-document/page.tsx",
+      "target": "file:components/admin/generate-document-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/generate-document/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/generate-document/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/generate-document/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/generate-document/page.tsx",
+      "target": "function:app/(admin)/admin/generate-document/page.tsx:GenerateDocumentPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/generate-document/page.tsx",
+      "target": "function:app/(admin)/admin/generate-document/page.tsx:GenerateDocumentPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:components/admin/document-connectors-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:components/admin/document-upload-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:components/admin/documents-list.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/documents/page.tsx:ProjectDocumentsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/documents/page.tsx:ProjectDocumentsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/admin/document-upload-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/admin/retake-requests-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/search/debounced-document-search.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/page.tsx:HighlightedSnippet",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "target": "function:lib/auth.ts:requireProjectAdmin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "target": "function:lib/data.ts:getProjectById",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "target": "function:app/(admin)/admin/projects/[id]/page.tsx:HighlightedSnippet",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "target": "function:lib/auth.ts:requireAdmin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "target": "function:lib/data.ts:getAllProjects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "file:components/admin/system-health-errors-list.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "function:app/(admin)/admin/system-health/page.tsx:HealthBadge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "function:app/(admin)/admin/system-health/page.tsx:AdminSystemHealthPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/system-health/page.tsx",
+      "target": "function:app/(admin)/admin/system-health/page.tsx:AdminSystemHealthPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/system-health/page.tsx:AdminSystemHealthPage",
+      "target": "function:lib/auth.ts:requireAdmin",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/system-health/page.tsx:AdminSystemHealthPage",
+      "target": "function:lib/data.ts:getSystemHealthSnapshot",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(admin)/admin/system-health/page.tsx:AdminSystemHealthPage",
+      "target": "function:app/(admin)/admin/system-health/page.tsx:HealthBadge",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "function:app/(admin)/admin/threads/page.tsx:AdminOpenThreadsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/threads/page.tsx",
+      "target": "function:app/(admin)/admin/threads/page.tsx:AdminOpenThreadsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "file:components/layout/project-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "function:app/(member)/dashboard/page.tsx:activityLabel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "function:app/(member)/dashboard/page.tsx:DashboardPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/dashboard/page.tsx",
+      "target": "function:app/(member)/dashboard/page.tsx:DashboardPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/dashboard/page.tsx:DashboardPage",
+      "target": "function:lib/auth.ts:requireMember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/dashboard/page.tsx:DashboardPage",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/dashboard/page.tsx:DashboardPage",
+      "target": "function:app/(member)/dashboard/page.tsx:activityLabel",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "function:app/(member)/projects/[id]/bookmarks/page.tsx:ProjectBookmarksPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/bookmarks/page.tsx",
+      "target": "function:app/(member)/projects/[id]/bookmarks/page.tsx:ProjectBookmarksPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/projects/[id]/bookmarks/page.tsx:ProjectBookmarksPage",
+      "target": "function:lib/auth.ts:requireMember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/projects/[id]/bookmarks/page.tsx:ProjectBookmarksPage",
+      "target": "function:lib/data.ts:getProjectBookmarks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/study/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/study/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/study/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/study/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/study/page.tsx",
+      "target": "function:app/(member)/projects/[id]/study/page.tsx:ProjectStudyModePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/study/page.tsx",
+      "target": "function:app/(member)/projects/[id]/study/page.tsx:ProjectStudyModePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/projects/[id]/study/page.tsx:ProjectStudyModePage",
+      "target": "function:lib/auth.ts:requireMember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/projects/[id]/study/page.tsx:ProjectStudyModePage",
+      "target": "function:lib/data.ts:getInteractiveStudyGuide",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/projects/page.tsx",
+      "target": "file:components/layout/project-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/page.tsx",
+      "target": "function:app/(member)/projects/page.tsx:MyProjectsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/projects/page.tsx",
+      "target": "function:app/(member)/projects/page.tsx:MyProjectsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/projects/page.tsx:MyProjectsPage",
+      "target": "function:lib/auth.ts:requireMember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/projects/page.tsx:MyProjectsPage",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

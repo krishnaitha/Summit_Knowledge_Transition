@@ -1,0 +1,170 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": "__tests__/components/auth/forgot-password-form.test.tsx",
+      "language": "typescript",
+      "sizeLines": 129,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/auth/login-form.test.tsx",
+      "language": "typescript",
+      "sizeLines": 134,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/auth/register-form.test.tsx",
+      "language": "typescript",
+      "sizeLines": 124,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/ui/button.test.tsx",
+      "language": "typescript",
+      "sizeLines": 86,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/ui/input.test.tsx",
+      "language": "typescript",
+      "sizeLines": 72,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "language": "typescript",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+      "language": "typescript",
+      "sizeLines": 81,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "language": "typescript",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(auth)/login/page.tsx",
+      "language": "typescript",
+      "sizeLines": 11,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/auth/accept-invite/page.tsx",
+      "language": "typescript",
+      "sizeLines": 72,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/auth/reset-password/page.tsx",
+      "language": "typescript",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/member-invite-form.tsx",
+      "language": "typescript",
+      "sizeLines": 79,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/observability-panel.tsx",
+      "language": "typescript",
+      "sizeLines": 247,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/project-analytics-tabs.tsx",
+      "language": "typescript",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/accept-invite-form.tsx",
+      "language": "typescript",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/forgot-password-form.tsx",
+      "language": "typescript",
+      "sizeLines": 67,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/login-form.tsx",
+      "language": "typescript",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/register-form.tsx",
+      "language": "typescript",
+      "sizeLines": 89,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/auth/reset-password-form.tsx",
+      "language": "typescript",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "__tests__/components/auth/forgot-password-form.test.tsx": [
+      "components/auth/forgot-password-form.tsx"
+    ],
+    "__tests__/components/auth/login-form.test.tsx": ["components/auth/login-form.tsx"],
+    "__tests__/components/auth/register-form.test.tsx": ["components/auth/register-form.tsx"],
+    "__tests__/components/ui/button.test.tsx": ["components/ui/button.tsx"],
+    "__tests__/components/ui/input.test.tsx": ["components/ui/input.tsx"],
+    "app/(admin)/admin/projects/[id]/analytics/page.tsx": [
+      "components/admin/project-analytics-tabs.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(admin)/admin/projects/[id]/members/page.tsx": [
+      "app/actions/admin.ts",
+      "components/admin/member-invite-form.tsx",
+      "components/admin/user-detail-drawer.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(admin)/admin/projects/[id]/quiz/page.tsx": [
+      "app/actions/admin.ts",
+      "components/admin/quiz-sets-panel.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(auth)/login/page.tsx": ["components/auth/login-form.tsx"],
+    "app/auth/accept-invite/page.tsx": ["components/auth/accept-invite-form.tsx", "lib/db.ts"],
+    "app/auth/reset-password/page.tsx": ["components/auth/reset-password-form.tsx", "lib/db.ts"],
+    "components/admin/member-invite-form.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/submit-button.tsx"
+    ],
+    "components/admin/observability-panel.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/data.ts"
+    ],
+    "components/admin/project-analytics-tabs.tsx": [
+      "components/admin/quiz-results-card.tsx",
+      "components/admin/stats-card.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/data.ts"
+    ],
+    "components/auth/accept-invite-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/forgot-password-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/login-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/register-form.tsx": ["components/ui/submit-button.tsx"],
+    "components/auth/reset-password-form.tsx": ["components/ui/submit-button.tsx"]
+  }
+}

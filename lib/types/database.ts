@@ -75,6 +75,7 @@ export interface DocumentConnectorRecord {
   last_synced_at: string | null;
   last_sync_status: 'idle' | 'running' | 'success' | 'failed';
   last_sync_error: string | null;
+  last_sync_summary?: Json | null;
   created_at: string;
   updated_at: string;
 }
@@ -184,6 +185,7 @@ export interface ProjectAnnouncementRecord {
   title: string;
   message: string;
   sent_by: string | null;
+  expires_at: string;
   created_at: string;
 }
 

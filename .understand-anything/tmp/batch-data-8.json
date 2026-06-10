@@ -1,0 +1,636 @@
+{
+  "batchIndex": 8,
+  "files": [
+    {
+      "path": "__tests__/lib/quiz/assignment.test.ts",
+      "language": "typescript",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/quiz/scoring.test.ts",
+      "language": "typescript",
+      "sizeLines": 179,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/quiz/shuffle.test.ts",
+      "language": "typescript",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/users/page.tsx",
+      "language": "typescript",
+      "sizeLines": 109,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/actions/admin.ts",
+      "language": "typescript",
+      "sizeLines": 1022,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/documents-list.tsx",
+      "language": "typescript",
+      "sizeLines": 187,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/user-detail-drawer.tsx",
+      "language": "typescript",
+      "sizeLines": 167,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/user-filters.tsx",
+      "language": "typescript",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/users-table.tsx",
+      "language": "typescript",
+      "sizeLines": 404,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/export.ts",
+      "language": "typescript",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/quiz/assignment.ts",
+      "language": "typescript",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/quiz/scoring.ts",
+      "language": "typescript",
+      "sizeLines": 47,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/quiz/shuffle.ts",
+      "language": "typescript",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/storage/r2.ts",
+      "language": "typescript",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/types/database.ts",
+      "language": "typescript",
+      "sizeLines": 394,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "__tests__/lib/quiz/assignment.test.ts": ["lib/quiz/assignment.ts", "lib/types/database.ts"],
+    "__tests__/lib/quiz/scoring.test.ts": ["lib/quiz/scoring.ts", "lib/types/database.ts"],
+    "__tests__/lib/quiz/shuffle.test.ts": ["lib/quiz/shuffle.ts"],
+    "app/(admin)/admin/users/page.tsx": [
+      "app/actions/admin.ts",
+      "components/admin/users-table.tsx",
+      "components/ui/card.tsx",
+      "components/ui/submit-button.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/actions/admin.ts": [
+      "lib/auth.ts",
+      "lib/db.ts",
+      "lib/env.ts",
+      "lib/llm/runtime-config.ts",
+      "lib/quiz/scoring.ts",
+      "lib/storage/local.ts",
+      "lib/storage/r2.ts",
+      "lib/types/database.ts"
+    ],
+    "components/admin/documents-list.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx",
+      "components/ui/submit-button.tsx",
+      "lib/types/database.ts",
+      "lib/utils.ts"
+    ],
+    "components/admin/user-detail-drawer.tsx": [
+      "components/ui/badge.tsx",
+      "lib/types/database.ts",
+      "lib/utils.ts"
+    ],
+    "components/admin/user-filters.tsx": ["components/ui/button.tsx", "lib/types/database.ts"],
+    "components/admin/users-table.tsx": [
+      "app/actions/admin.ts",
+      "components/admin/user-detail-drawer.tsx",
+      "components/admin/user-filters.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/input.tsx",
+      "components/ui/submit-button.tsx",
+      "lib/export.ts",
+      "lib/types/database.ts",
+      "lib/utils.ts"
+    ],
+    "lib/export.ts": ["lib/types/database.ts", "lib/utils.ts"],
+    "lib/quiz/assignment.ts": ["lib/quiz/shuffle.ts", "lib/types/database.ts"],
+    "lib/quiz/scoring.ts": ["lib/types/database.ts"],
+    "lib/quiz/shuffle.ts": ["lib/types/database.ts"],
+    "lib/storage/r2.ts": [],
+    "lib/types/database.ts": []
+  },
+  "neighborMap": {
+    "app/(admin)/admin/users/page.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "components/ui/submit-button.tsx",
+        "batchIndex": 7,
+        "symbols": ["SubmitButton"]
+      },
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      }
+    ],
+    "app/actions/admin.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "lib/env.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "appEnv",
+          "isDatabaseConfigured",
+          "isR2Configured",
+          "isGroqConfigured",
+          "isCopilotProxyConfigured",
+          "isOpenAiConfigured",
+          "isAzureOpenAiConfigured",
+          "isAnthropicConfigured",
+          "isMistralConfigured",
+          "isOllamaConfigured",
+          "isLlmConfigured",
+          "assertEnv"
+        ]
+      },
+      {
+        "path": "lib/llm/runtime-config.ts",
+        "batchIndex": 2,
+        "symbols": ["getLlmRuntimeConfig", "getLlmRuntimeSecrets", "getMaskedLlmRuntimeSecrets"]
+      },
+      {
+        "path": "lib/storage/local.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "ensureUploadDir",
+          "uploadFile",
+          "downloadFile",
+          "getFileStream",
+          "deleteFile",
+          "getFileInfo"
+        ]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/analytics/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectAnalyticsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectDocumentsPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectMembersPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectDetailPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+        "batchIndex": 5,
+        "symbols": ["ProjectQuizAdminPage"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["AdminProjectsPage"]
+      },
+      {
+        "path": "components/admin/model-switcher-form.tsx",
+        "batchIndex": 2,
+        "symbols": ["ModelSwitcherForm"]
+      }
+    ],
+    "components/admin/documents-list.tsx": [
+      {
+        "path": "components/ui/badge.tsx",
+        "batchIndex": 6,
+        "symbols": ["Badge"]
+      },
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 7,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "components/ui/input.tsx",
+        "batchIndex": 7,
+        "symbols": ["Input"]
+      },
+      {
+        "path": "components/ui/submit-button.tsx",
+        "batchIndex": 7,
+        "symbols": ["SubmitButton"]
+      },
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      {
+        "path": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+        "batchIndex": 4,
+        "symbols": ["ProjectDocumentsPage"]
+      }
+    ],
+    "components/admin/user-detail-drawer.tsx": [
+      {
+        "path": "components/ui/badge.tsx",
+        "batchIndex": 6,
+        "symbols": ["Badge"]
+      },
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "components/admin/user-filters.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 7,
+        "symbols": ["Button"]
+      }
+    ],
+    "components/admin/users-table.tsx": [
+      {
+        "path": "components/ui/badge.tsx",
+        "batchIndex": 6,
+        "symbols": ["Badge"]
+      },
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 7,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "components/ui/input.tsx",
+        "batchIndex": 7,
+        "symbols": ["Input"]
+      },
+      {
+        "path": "components/ui/submit-button.tsx",
+        "batchIndex": 7,
+        "symbols": ["SubmitButton"]
+      },
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "lib/export.ts": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "lib/quiz/assignment.ts": [
+      {
+        "path": "app/api/quiz/start/route.ts",
+        "batchIndex": 1,
+        "symbols": ["POST"]
+      }
+    ],
+    "lib/quiz/scoring.ts": [
+      {
+        "path": "app/api/quiz/submit/route.ts",
+        "batchIndex": 1,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      }
+    ],
+    "lib/storage/r2.ts": [
+      {
+        "path": "app/api/documents/view/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET"]
+      }
+    ],
+    "lib/types/database.ts": [
+      {
+        "path": "__tests__/api/threads/bot-reply-route.test.ts",
+        "batchIndex": 2,
+        "symbols": []
+      },
+      {
+        "path": "__tests__/components/documents/document-threads-board.test.tsx",
+        "batchIndex": 3,
+        "symbols": []
+      },
+      {
+        "path": "__tests__/components/layout/project-card.test.tsx",
+        "batchIndex": 4,
+        "symbols": []
+      },
+      {
+        "path": "app/actions/learning.ts",
+        "batchIndex": 1,
+        "symbols": ["generateProjectFlashcardsAction", "reviewFlashcardAction"]
+      },
+      {
+        "path": "app/api/chat/export/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET"]
+      },
+      {
+        "path": "app/api/chat/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET", "POST"]
+      },
+      {
+        "path": "app/api/jobs/worker/route.ts",
+        "batchIndex": 2,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "app/api/quiz/start/route.ts",
+        "batchIndex": 1,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "app/api/quiz/submit/route.ts",
+        "batchIndex": 1,
+        "symbols": ["POST"]
+      },
+      {
+        "path": "components/admin/document-connectors-panel.tsx",
+        "batchIndex": 6,
+        "symbols": ["DocumentConnectorsPanel"]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 3,
+        "symbols": ["DocumentThreadsBoard"]
+      },
+      {
+        "path": "components/layout/navbar.tsx",
+        "batchIndex": 9,
+        "symbols": ["Navbar"]
+      },
+      {
+        "path": "components/layout/project-card.tsx",
+        "batchIndex": 6,
+        "symbols": ["ProjectCard"]
+      },
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      },
+      {
+        "path": "lib/documents/connectors.ts",
+        "batchIndex": 2,
+        "symbols": ["enqueueDueDocumentConnectorSyncJobs", "syncDocumentConnector"]
+      },
+      {
+        "path": "lib/memory-store.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "ensureUserMemorySchema",
+          "createPendingMemoryConfirmation",
+          "getPendingMemoryConfirmation",
+          "clearPendingMemoryConfirmation",
+          "upsertUserMemory",
+          "listUserMemories",
+          "deleteUserMemory",
+          "touchUserMemories"
+        ]
+      },
+      {
+        "path": "lib/memory.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "containsSensitiveContent",
+          "parseRememberIntent",
+          "parseMemoryConfirmation",
+          "selectRelevantMemories",
+          "buildMemoryContext"
+        ]
+      },
+      {
+        "path": "lib/observability.ts",
+        "batchIndex": 2,
+        "symbols": ["logApplicationError"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "batchIndex": 10,
+  "files": [
+    {
+      "path": "app/api/auth/[...nextauth]/route.ts",
+      "language": "typescript",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "auth.ts",
+      "language": "typescript",
+      "sizeLines": 17,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/providers/cognito.ts",
+      "language": "typescript",
+      "sizeLines": 19,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/providers/credentials.ts",
+      "language": "typescript",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/providers/index.ts",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/providers/oidc-callbacks.ts",
+      "language": "typescript",
+      "sizeLines": 67,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/providers/oidc.ts",
+      "language": "typescript",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/auth/providers/types.ts",
+      "language": "typescript",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/api/auth/[...nextauth]/route.ts": ["auth.ts"],
+    "auth.ts": ["lib/auth/providers/index.ts"],
+    "lib/auth/providers/cognito.ts": [
+      "lib/auth/providers/oidc-callbacks.ts",
+      "lib/auth/providers/types.ts"
+    ],
+    "lib/auth/providers/credentials.ts": ["lib/auth/providers/types.ts", "lib/db.ts"],
+    "lib/auth/providers/index.ts": [
+      "lib/auth/providers/cognito.ts",
+      "lib/auth/providers/credentials.ts",
+      "lib/auth/providers/oidc.ts",
+      "lib/auth/providers/types.ts"
+    ],
+    "lib/auth/providers/oidc-callbacks.ts": ["lib/db.ts"],
+    "lib/auth/providers/oidc.ts": [
+      "lib/auth/providers/oidc-callbacks.ts",
+      "lib/auth/providers/types.ts"
+    ],
+    "lib/auth/providers/types.ts": []
+  },
+  "neighborMap": {
+    "auth.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      }
+    ],
+    "lib/auth/providers/credentials.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      }
+    ],
+    "lib/auth/providers/oidc-callbacks.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      }
+    ]
+  }
+}

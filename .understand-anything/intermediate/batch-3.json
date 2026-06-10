@@ -1,0 +1,1478 @@
+{
+  "nodes": [
+    {
+      "id": "file:__tests__/components/admin/knowledge-gaps-card.test.tsx",
+      "type": "file",
+      "name": "knowledge-gaps-card.test.tsx",
+      "filePath": "__tests__/components/admin/knowledge-gaps-card.test.tsx",
+      "summary": "Comprehensive Vitest test suite for the KnowledgeGapsCard component, covering empty state, header badges, open/resolved gap rows, occurrence badge colours, and the resolved-gaps expand/collapse toggle.",
+      "tags": ["test", "component", "admin", "knowledge-gap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/documents/bot-reply-poller.test.tsx",
+      "type": "file",
+      "name": "bot-reply-poller.test.tsx",
+      "filePath": "__tests__/components/documents/bot-reply-poller.test.tsx",
+      "summary": "Vitest test suite for BotReplyPoller verifying initial render, polling timing with fake timers, router refresh on bot reply arrival, and network-error resilience.",
+      "tags": ["test", "component", "polling", "bot"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/documents/document-threads-board.test.tsx",
+      "type": "file",
+      "name": "document-threads-board.test.tsx",
+      "filePath": "__tests__/components/documents/document-threads-board.test.tsx",
+      "summary": "Extensive Vitest test suite for DocumentThreadsBoard covering empty state, thread rendering, user/bot comment display, moderation controls, BotReplyPoller integration, and reply form submission.",
+      "tags": ["test", "component", "document-threads", "moderation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:__tests__/components/ui/markdown-content.test.tsx",
+      "type": "file",
+      "name": "markdown-content.test.tsx",
+      "filePath": "__tests__/components/ui/markdown-content.test.tsx",
+      "summary": "Vitest tests for the MarkdownContent component validating plain text rendering, markdown element conversion (bold, italic, code, lists, headings), and size-prop CSS class behaviour.",
+      "tags": ["test", "component", "markdown", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/ui/modal.test.tsx",
+      "type": "file",
+      "name": "modal.test.tsx",
+      "filePath": "__tests__/components/ui/modal.test.tsx",
+      "summary": "Vitest tests for the Modal component covering open/closed rendering, title/children display, close-button callback, backdrop overlay, and heading semantics.",
+      "tags": ["test", "component", "ui", "modal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/lib/env.client.test.ts",
+      "type": "file",
+      "name": "env.client.test.ts",
+      "filePath": "__tests__/lib/env.client.test.ts",
+      "summary": "Vitest tests for the clientEnv module validating default fallback values for appName, appUrl, and botName, as well as correct env-var override behaviour via vi.stubEnv.",
+      "tags": ["test", "config", "environment", "client"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "summary": "Admin detail page for a knowledge-gap discussion thread, displaying the original unanswered query, comment history, resolve/reopen actions, and a link to capture the answer as a knowledge-base document.",
+      "tags": ["api-handler", "admin", "knowledge-gap", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "summary": "Admin route that renders the AI chat interface for a specific project, guarded by requireAdmin and showing an empty initial session.",
+      "tags": ["api-handler", "admin", "chat", "component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "summary": "Admin page displaying document discussion threads for a specific document within a project, with full moderation privileges, guarded by requireProjectAdmin.",
+      "tags": ["api-handler", "admin", "document-threads", "moderation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/search/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/search/page.tsx",
+      "summary": "Admin full-text search page that searches document chunks accessible to the admin across all projects, displaying highlighted snippet results with project context.",
+      "tags": ["api-handler", "admin", "search", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/chat/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/[id]/chat/page.tsx",
+      "summary": "Member route that renders the AI chat interface for a project the user has access to, verifying membership before rendering the ChatInterface component.",
+      "tags": ["api-handler", "component", "chat", "member"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "summary": "Member page for viewing and posting discussion threads on a specific document, with moderation capability inferred from whether the user is a project admin.",
+      "tags": ["api-handler", "component", "document-threads", "member"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/[id]/page.tsx",
+      "summary": "Member project overview page listing KT documents with search, quiz status badge, and links to Chat, Quiz, Bookmarks, Flashcards, and Study Mode features.",
+      "tags": ["api-handler", "component", "member", "project-overview"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(member)/search/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/search/page.tsx",
+      "summary": "Member full-text search page for searching document chunks across all assigned projects, with highlighted snippet results and optional per-project filtering.",
+      "tags": ["api-handler", "component", "search", "member"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/actions/document-threads.ts",
+      "type": "file",
+      "name": "document-threads.ts",
+      "filePath": "app/actions/document-threads.ts",
+      "summary": "Next.js Server Actions for document thread and knowledge-gap thread management: creating threads, adding replies, updating status (open/resolved), and dismissing knowledge gaps, all with role-based authorization checks.",
+      "tags": ["api-handler", "service", "document-threads", "server-action"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/api/admin/analytics/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/admin/analytics/route.ts",
+      "summary": "Admin-only REST endpoint returning project analytics data, gated by admin role check and projectId query param validation.",
+      "tags": ["api-handler", "admin", "analytics"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "type": "file",
+      "name": "knowledge-gap-thread-button.tsx",
+      "filePath": "components/admin/knowledge-gap-thread-button.tsx",
+      "summary": "Client component providing a button that opens a Modal for creating a knowledge-gap discussion thread, supporting single-project shortcuts and multi-project selection.",
+      "tags": ["component", "admin", "knowledge-gap", "modal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/knowledge-gaps-card.tsx",
+      "type": "file",
+      "name": "knowledge-gaps-card.tsx",
+      "filePath": "components/admin/knowledge-gaps-card.tsx",
+      "summary": "Client component rendering a card of unresolved knowledge gaps detected in the last 30 days, with dismiss, capture-to-document, and create-thread actions, plus a collapsible resolved-gaps section.",
+      "tags": ["component", "admin", "knowledge-gap", "dashboard"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "type": "file",
+      "name": "project-knowledge-gaps-table.tsx",
+      "filePath": "components/admin/project-knowledge-gaps-table.tsx",
+      "summary": "Client component rendering a tabular view of knowledge gap queries for a single project, with per-row actions to capture answers as documents or create discussion threads.",
+      "tags": ["component", "admin", "knowledge-gap", "table"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/chat/chat-interface.tsx",
+      "type": "file",
+      "name": "chat-interface.tsx",
+      "filePath": "components/chat/chat-interface.tsx",
+      "summary": "Full-featured AI chat client component managing session state, streaming message submission, session history sidebar, response-style selection, citations-only and clarify-first modes, bookmark toggling, session renaming/deletion, and transcript download.",
+      "tags": ["component", "chat", "service", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/documents/bot-reply-poller.tsx",
+      "type": "file",
+      "name": "bot-reply-poller.tsx",
+      "filePath": "components/documents/bot-reply-poller.tsx",
+      "summary": "Client component that polls the bot-reply API endpoint every 2 seconds and triggers a Next.js router refresh when an AI reply becomes available for an open document thread.",
+      "tags": ["component", "polling", "bot", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/documents/document-threads-board.tsx",
+      "type": "file",
+      "name": "document-threads-board.tsx",
+      "filePath": "components/documents/document-threads-board.tsx",
+      "summary": "Server component rendering a two-panel discussion board for a document: a form to start new threads and a list of existing threads with comments, bot-reply indicators, moderation controls, and reply forms.",
+      "tags": ["component", "document-threads", "moderation", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/search/debounced-document-search.tsx",
+      "type": "file",
+      "name": "debounced-document-search.tsx",
+      "filePath": "components/search/debounced-document-search.tsx",
+      "summary": "Client component providing a debounced document search bar that updates URL query params 350 ms after typing, supporting optional project-filter select and minimum-character thresholds.",
+      "tags": ["component", "search", "utility", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/ui/markdown-content.tsx",
+      "type": "file",
+      "name": "markdown-content.tsx",
+      "filePath": "components/ui/markdown-content.tsx",
+      "summary": "Client component that renders a markdown string as rich HTML using react-markdown and remark-gfm, with two size modes (sm for inline comments, base for full prose) and special styled headings for Checklist, Timeline, Risk Matrix, and Dependency Map sections.",
+      "tags": ["component", "ui", "markdown", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/ui/modal.tsx",
+      "type": "file",
+      "name": "modal.tsx",
+      "filePath": "components/ui/modal.tsx",
+      "summary": "Minimal client-side modal dialog component with a fixed backdrop overlay, title, close button, and children slot; renders nothing when closed.",
+      "tags": ["component", "ui", "modal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/data.ts",
+      "type": "file",
+      "name": "data.ts",
+      "filePath": "lib/data.ts",
+      "summary": "Central server-only data access layer providing all SQL query functions for users, projects, documents, quizzes, flashcards, chat sessions, analytics, RAG observability, knowledge gaps, and system health, using the postgres tagged-template client.",
+      "tags": ["service", "data-model", "utility", "singleton"],
+      "complexity": "complex",
+      "languageNotes": "Uses Next.js unstable_cache for notification counts and import 'server-only' to prevent accidental client-side import. Implements lazy schema-migration patterns for knowledge-gap and dismissed-gaps tables."
+    },
+    {
+      "id": "file:lib/env.client.ts",
+      "type": "file",
+      "name": "env.client.ts",
+      "filePath": "lib/env.client.ts",
+      "summary": "Exposes a clientEnv object containing only NEXT_PUBLIC_ environment variables safe for browser use: appName, appUrl, and botName with sensible defaults.",
+      "tags": ["config", "environment", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/document-threads.ts:createKnowledgeGapThreadAction",
+      "type": "function",
+      "name": "createKnowledgeGapThreadAction",
+      "filePath": "app/actions/document-threads.ts",
+      "lineRange": [87, 108],
+      "summary": "Server action that creates a new knowledge-gap thread for a project after verifying moderation permissions, lazily ensuring the knowledge-gap schema columns exist.",
+      "tags": ["server-action", "knowledge-gap", "document-threads"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/actions/document-threads.ts:createDocumentThreadAction",
+      "type": "function",
+      "name": "createDocumentThreadAction",
+      "filePath": "app/actions/document-threads.ts",
+      "lineRange": [110, 161],
+      "summary": "Server action that creates a document discussion thread with an initial comment and enqueues a bot_thread_reply background job for AI-powered responses.",
+      "tags": ["server-action", "document-threads", "background-job"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/actions/document-threads.ts:addDocumentThreadReplyAction",
+      "type": "function",
+      "name": "addDocumentThreadReplyAction",
+      "filePath": "app/actions/document-threads.ts",
+      "lineRange": [163, 203],
+      "summary": "Server action that posts a reply comment to an existing document or knowledge-gap thread, promoting it to an official answer if the user has moderation rights.",
+      "tags": ["server-action", "document-threads", "moderation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/actions/document-threads.ts:updateDocumentThreadStatusAction",
+      "type": "function",
+      "name": "updateDocumentThreadStatusAction",
+      "filePath": "app/actions/document-threads.ts",
+      "lineRange": [205, 238],
+      "summary": "Server action that transitions a document thread between open and resolved states, requiring moderation access and revalidating all affected paths.",
+      "tags": ["server-action", "document-threads", "moderation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/actions/document-threads.ts:dismissKnowledgeGapAction",
+      "type": "function",
+      "name": "dismissKnowledgeGapAction",
+      "filePath": "app/actions/document-threads.ts",
+      "lineRange": [241, 257],
+      "summary": "Server action that dismisses a knowledge gap query for admins by inserting the normalised query into the dismissed_knowledge_gaps table.",
+      "tags": ["server-action", "knowledge-gap", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/chat/chat-interface.tsx:ChatInterface",
+      "type": "function",
+      "name": "ChatInterface",
+      "filePath": "components/chat/chat-interface.tsx",
+      "lineRange": [65, 639],
+      "summary": "Main exported React component managing the full chat UI lifecycle: message streaming, session switching, history loading, bookmarks, response style, citations/clarify modes, session rename/delete, and transcript export.",
+      "tags": ["component", "chat", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "type": "function",
+      "name": "DocumentThreadsBoard",
+      "filePath": "components/documents/document-threads-board.tsx",
+      "lineRange": [22, 213],
+      "summary": "Exported component that renders a complete discussion board for a document, including thread creation form, thread list with comments, bot-reply polling, and moderation controls.",
+      "tags": ["component", "document-threads", "moderation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/documents/bot-reply-poller.tsx:BotReplyPoller",
+      "type": "function",
+      "name": "BotReplyPoller",
+      "filePath": "components/documents/bot-reply-poller.tsx",
+      "lineRange": [14, 67],
+      "summary": "Client component that polls the bot-reply endpoint at 2-second intervals and refreshes the page router when a reply arrives for a given thread.",
+      "tags": ["component", "polling", "bot"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/search/debounced-document-search.tsx:DebouncedDocumentSearch",
+      "type": "function",
+      "name": "DebouncedDocumentSearch",
+      "filePath": "components/search/debounced-document-search.tsx",
+      "lineRange": [18, 141],
+      "summary": "Exported search component that debounces input and drives Next.js router URL updates for full-text document search with optional project-scope filtering.",
+      "tags": ["component", "search", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "function",
+      "name": "MarkdownContent",
+      "filePath": "components/ui/markdown-content.tsx",
+      "lineRange": [51, 151],
+      "summary": "Exported component rendering markdown as styled HTML with two display modes (sm for comment-level text, base for full prose with custom heading variants).",
+      "tags": ["component", "ui", "markdown"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/knowledge-gaps-card.tsx:KnowledgeGapsCard",
+      "type": "function",
+      "name": "KnowledgeGapsCard",
+      "filePath": "components/admin/knowledge-gaps-card.tsx",
+      "lineRange": [20, 88],
+      "summary": "Exported component showing knowledge-gap queries grouped into open and resolved sections with dismiss, capture, and thread-creation actions.",
+      "tags": ["component", "admin", "knowledge-gap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/knowledge-gap-thread-button.tsx:KnowledgeGapThreadButton",
+      "type": "function",
+      "name": "KnowledgeGapThreadButton",
+      "filePath": "components/admin/knowledge-gap-thread-button.tsx",
+      "lineRange": [9, 112],
+      "summary": "Exported button component that opens a Modal for raising a knowledge-gap discussion thread, supporting single or multi-project selection.",
+      "tags": ["component", "admin", "knowledge-gap", "modal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/project-knowledge-gaps-table.tsx:ProjectKnowledgeGapsTable",
+      "type": "function",
+      "name": "ProjectKnowledgeGapsTable",
+      "filePath": "components/admin/project-knowledge-gaps-table.tsx",
+      "lineRange": [51, 121],
+      "summary": "Exported component rendering a sortable table of per-project knowledge gap queries with capture-to-document and create-thread action columns.",
+      "tags": ["component", "admin", "knowledge-gap", "table"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/data.ts:getAssignedProjects",
+      "type": "function",
+      "name": "getAssignedProjects",
+      "filePath": "lib/data.ts",
+      "lineRange": [127, 200],
+      "summary": "Fetches all active projects assigned to a user, aggregating document counts, quiz attempt status, new-docs flags, viewed-document counts, and open-thread counts in a single parallel query fan-out.",
+      "tags": ["data-model", "service", "utility"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getDocumentThreads",
+      "type": "function",
+      "name": "getDocumentThreads",
+      "filePath": "lib/data.ts",
+      "lineRange": [389, 458],
+      "summary": "Loads all discussion threads for a document along with their comments, enriching each comment with author name, email, global role, and project role.",
+      "tags": ["data-model", "document-threads", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "function",
+      "name": "searchProjectDocumentChunks",
+      "filePath": "lib/data.ts",
+      "lineRange": [474, 615],
+      "summary": "Full-text searches document chunks within a project using ts_vector when available, falling back to LIKE-based matching with highlighted snippet generation.",
+      "tags": ["service", "search", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "function",
+      "name": "searchAccessibleDocumentChunks",
+      "filePath": "lib/data.ts",
+      "lineRange": [617, 900],
+      "summary": "Searches document chunks accessible to a user (admin sees all, member sees assigned projects only), with optional project-scope filter and ts_vector/LIKE dual strategy.",
+      "tags": ["service", "search", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "function",
+      "name": "getAdminDashboardStats",
+      "filePath": "lib/data.ts",
+      "lineRange": [1005, 1064],
+      "summary": "Aggregates admin dashboard metrics including total users, active users, messages, documents, quiz completion rate, pending retake requests, open threads, and recent activity in a single parallel query fan-out.",
+      "tags": ["service", "admin", "analytics"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "function",
+      "name": "getKnowledgeGaps",
+      "filePath": "lib/data.ts",
+      "lineRange": [2133, 2188],
+      "summary": "Queries RAG traces for refused/refusal events in the last 30 days, aggregating by normalised query text and joining to knowledge-gap thread resolution status, while excluding dismissed gaps.",
+      "tags": ["service", "knowledge-gap", "analytics"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:ensureDismissedGapsSchema",
+      "type": "function",
+      "name": "ensureDismissedGapsSchema",
+      "filePath": "lib/data.ts",
+      "lineRange": [2114, 2131],
+      "summary": "Lazy idempotent schema migration that creates the dismissed_knowledge_gaps table on first use, using a module-level promise cache to avoid re-running.",
+      "tags": ["service", "migration", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/data.ts:getInteractiveStudyGuide",
+      "type": "function",
+      "name": "getInteractiveStudyGuide",
+      "filePath": "lib/data.ts",
+      "lineRange": [281, 380],
+      "summary": "Builds an interactive study guide from the user's latest coaching plan, enriching weak-section recommendations with relevant chunk references scored by keyword overlap.",
+      "tags": ["service", "data-model", "rag"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "function",
+      "name": "getOpenThreadsForUser",
+      "filePath": "lib/data.ts",
+      "lineRange": [1731, 1840],
+      "summary": "Returns a filtered list of document/knowledge-gap threads accessible to the user, with admin users seeing all threads and members seeing only threads from their assigned projects.",
+      "tags": ["service", "document-threads", "data-model"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:__tests__/components/admin/knowledge-gaps-card.test.tsx",
+      "target": "file:components/admin/knowledge-gaps-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/admin/knowledge-gaps-card.test.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/admin/knowledge-gaps-card.test.tsx",
+      "target": "file:components/admin/knowledge-gaps-card.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/documents/bot-reply-poller.test.tsx",
+      "target": "file:components/documents/bot-reply-poller.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/documents/bot-reply-poller.test.tsx",
+      "target": "file:components/documents/bot-reply-poller.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/documents/document-threads-board.test.tsx",
+      "target": "file:components/documents/document-threads-board.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/documents/document-threads-board.test.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/documents/document-threads-board.test.tsx",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/documents/document-threads-board.test.tsx",
+      "target": "file:components/documents/document-threads-board.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/markdown-content.test.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/markdown-content.test.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/modal.test.tsx",
+      "target": "file:components/ui/modal.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/modal.test.tsx",
+      "target": "file:components/ui/modal.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/env.client.test.ts",
+      "target": "file:lib/env.client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/env.client.test.ts",
+      "target": "file:lib/env.client.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "target": "file:components/chat/chat-interface.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "target": "file:components/documents/document-threads-board.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:components/search/debounced-document-search.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/chat/page.tsx",
+      "target": "file:components/chat/chat-interface.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/chat/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/chat/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "target": "file:components/documents/document-threads-board.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/documents/[documentId]/threads/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "file:components/search/debounced-document-search.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/search/page.tsx",
+      "target": "file:components/search/debounced-document-search.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/search/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/search/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/search/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/admin/analytics/route.ts",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/admin/analytics/route.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "target": "file:components/ui/modal.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/chat/message-bubble.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/bot-reply-poller.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/bot-reply-poller.tsx",
+      "target": "file:lib/env.client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/documents/bot-reply-poller.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/search/debounced-document-search.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/search/debounced-document-search.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/ui/modal.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/quiz/scoring.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getDocumentThreads",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:ensureDismissedGapsSchema",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getInteractiveStudyGuide",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getDocumentThreads",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:ensureDismissedGapsSchema",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getInteractiveStudyGuide",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:createKnowledgeGapThreadAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:createDocumentThreadAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:addDocumentThreadReplyAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:updateDocumentThreadStatusAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:dismissKnowledgeGapAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:createKnowledgeGapThreadAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:createDocumentThreadAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:addDocumentThreadReplyAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:updateDocumentThreadStatusAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/document-threads.ts",
+      "target": "function:app/actions/document-threads.ts:dismissKnowledgeGapAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "function:components/chat/chat-interface.tsx:ChatInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "function:components/chat/chat-interface.tsx:ChatInterface",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/documents/bot-reply-poller.tsx",
+      "target": "function:components/documents/bot-reply-poller.tsx:BotReplyPoller",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/documents/bot-reply-poller.tsx",
+      "target": "function:components/documents/bot-reply-poller.tsx:BotReplyPoller",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/search/debounced-document-search.tsx",
+      "target": "function:components/search/debounced-document-search.tsx:DebouncedDocumentSearch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/search/debounced-document-search.tsx",
+      "target": "function:components/search/debounced-document-search.tsx:DebouncedDocumentSearch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/markdown-content.tsx",
+      "target": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/ui/markdown-content.tsx",
+      "target": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:components/admin/knowledge-gaps-card.tsx:KnowledgeGapsCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:components/admin/knowledge-gaps-card.tsx:KnowledgeGapsCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "target": "function:components/admin/knowledge-gap-thread-button.tsx:KnowledgeGapThreadButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "target": "function:components/admin/knowledge-gap-thread-button.tsx:KnowledgeGapThreadButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "function:components/admin/project-knowledge-gaps-table.tsx:ProjectKnowledgeGapsTable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "function:components/admin/project-knowledge-gaps-table.tsx:ProjectKnowledgeGapsTable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:app/actions/document-threads.ts:dismissKnowledgeGapAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "target": "function:app/actions/document-threads.ts:createKnowledgeGapThreadAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "function:app/actions/document-threads.ts:createKnowledgeGapThreadAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:app/actions/document-threads.ts:createDocumentThreadAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:app/actions/document-threads.ts:addDocumentThreadReplyAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:app/actions/document-threads.ts:updateDocumentThreadStatusAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "function:app/actions/document-threads.ts:addDocumentThreadReplyAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "function:app/actions/document-threads.ts:updateDocumentThreadStatusAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/chat/page.tsx",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/page.tsx",
+      "target": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/search/page.tsx",
+      "target": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/admin/analytics/route.ts",
+      "target": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

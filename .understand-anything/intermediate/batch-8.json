@@ -1,0 +1,1132 @@
+{
+  "nodes": [
+    {
+      "id": "file:__tests__/lib/quiz/assignment.test.ts",
+      "type": "file",
+      "name": "assignment.test.ts",
+      "filePath": "__tests__/lib/quiz/assignment.test.ts",
+      "summary": "Vitest unit tests for the assignQuizSetToUser function, verifying round-robin set assignment, sort stability, and immutability of the input array.",
+      "tags": ["test", "quiz", "assignment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/lib/quiz/scoring.test.ts",
+      "type": "file",
+      "name": "scoring.test.ts",
+      "filePath": "__tests__/lib/quiz/scoring.test.ts",
+      "summary": "Vitest unit tests for computeSectionScores and scoreQuizSubmission, covering score aggregation, pass/fail thresholds, percentage calculation, and per-question review metadata.",
+      "tags": ["test", "quiz", "scoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/lib/quiz/shuffle.test.ts",
+      "type": "file",
+      "name": "shuffle.test.ts",
+      "filePath": "__tests__/lib/quiz/shuffle.test.ts",
+      "summary": "Vitest unit tests for fisherYatesShuffle and normalizeOptionKey, verifying length preservation, non-mutation, randomness, and key normalization fallback behaviour.",
+      "tags": ["test", "quiz", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/users/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/users/page.tsx",
+      "summary": "Admin users page that fetches all users, projects, and dashboard stats server-side, then renders a demo-user creation panel (credentials auth only) and the full UsersTable component.",
+      "tags": ["api-handler", "component", "admin", "entry-point"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/actions/admin.ts",
+      "type": "file",
+      "name": "admin.ts",
+      "filePath": "app/actions/admin.ts",
+      "summary": "Central Next.js Server Actions module providing all admin mutations: project CRUD, document management, document connectors, quiz management, user management (including bulk actions and demo user), retake request approval, and LLM runtime config updates.",
+      "tags": ["api-handler", "service", "admin", "middleware"],
+      "complexity": "complex",
+      "languageNotes": "Uses 'use server' directive; all exported functions are Next.js Server Actions callable directly from client components via form actions. Dynamic imports (e.g. syncDocumentConnector) are used for lazy loading heavy modules."
+    },
+    {
+      "id": "file:components/admin/documents-list.tsx",
+      "type": "file",
+      "name": "documents-list.tsx",
+      "filePath": "components/admin/documents-list.tsx",
+      "summary": "Client component rendering a paginated, filterable list of project documents with classification badges, PII indicators, required-status toggling, view/thread links, and delete actions.",
+      "tags": ["component", "admin", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/user-detail-drawer.tsx",
+      "type": "file",
+      "name": "user-detail-drawer.tsx",
+      "filePath": "components/admin/user-detail-drawer.tsx",
+      "summary": "Client component slide-over drawer displaying a selected user's profile, activity timeline, quiz stats, and recent activity entries.",
+      "tags": ["component", "admin", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/user-filters.tsx",
+      "type": "file",
+      "name": "user-filters.tsx",
+      "filePath": "components/admin/user-filters.tsx",
+      "summary": "Client component providing a collapsible filter panel for the users table, supporting role, status, project, and last-login-window filters with an active-count badge.",
+      "tags": ["component", "admin", "ui", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/users-table.tsx",
+      "type": "file",
+      "name": "users-table.tsx",
+      "filePath": "components/admin/users-table.tsx",
+      "summary": "Client component implementing the full admin users table with search, filtering, pagination, per-row role/lock actions, multi-select bulk operations, CSV export, and a side-drawer for user details.",
+      "tags": ["component", "admin", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:lib/export.ts",
+      "type": "file",
+      "name": "export.ts",
+      "filePath": "lib/export.ts",
+      "summary": "Provides generateUsersCsv to serialise a list of user profiles to CSV and downloadCsv to trigger a browser file download.",
+      "tags": ["utility", "serialization", "export"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/quiz/assignment.ts",
+      "type": "file",
+      "name": "assignment.ts",
+      "filePath": "lib/quiz/assignment.ts",
+      "summary": "Quiz assignment logic: assignQuizSetToUser for round-robin set distribution and createAssignedQuestions/createSectionedQuestions for building shuffled, option-remapped question objects for a quiz attempt.",
+      "tags": ["service", "quiz", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/quiz/scoring.ts",
+      "type": "file",
+      "name": "scoring.ts",
+      "filePath": "lib/quiz/scoring.ts",
+      "summary": "Pure scoring utilities: computeSectionScores for per-section mark aggregation and scoreQuizSubmission for calculating total score, percentage, pass/fail, and per-question review data.",
+      "tags": ["utility", "quiz", "scoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/quiz/shuffle.ts",
+      "type": "file",
+      "name": "shuffle.ts",
+      "filePath": "lib/quiz/shuffle.ts",
+      "summary": "Provides fisherYatesShuffle for generic in-place-safe array shuffling and normalizeOptionKey for coercing answer keys to valid QuizOptionKey values.",
+      "tags": ["utility", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/storage/r2.ts",
+      "type": "file",
+      "name": "r2.ts",
+      "filePath": "lib/storage/r2.ts",
+      "summary": "Cloudflare R2 storage adapter providing lazy-initialised S3Client, downloadFromR2, and deleteFromR2 operations for production file storage.",
+      "tags": ["service", "infrastructure", "storage"],
+      "complexity": "simple",
+      "languageNotes": "S3Client is lazily initialised so modules that never call R2 (e.g. local-only deployments) do not crash at import time even if R2 env vars are absent."
+    },
+    {
+      "id": "file:lib/types/database.ts",
+      "type": "file",
+      "name": "database.ts",
+      "filePath": "lib/types/database.ts",
+      "summary": "Central TypeScript type definitions for all database record shapes: users, projects, documents, connectors, quiz sets/questions/attempts, chat sessions/messages, flashcards, RAG traces, processing jobs, and activity logs.",
+      "tags": ["type-definition", "data-model", "schema-definition"],
+      "complexity": "complex",
+      "languageNotes": "Pure type/interface file with no runtime code; serves as the single source of truth for all database record shapes across the application."
+    },
+    {
+      "id": "function:app/actions/admin.ts:createProjectAction",
+      "type": "function",
+      "name": "createProjectAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [17, 30],
+      "summary": "Server Action that inserts a new project record and revalidates the admin projects path.",
+      "tags": ["api-handler", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:updateProjectSettingsAction",
+      "type": "function",
+      "name": "updateProjectSettingsAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [32, 60],
+      "summary": "Server Action that validates and updates a project's name, description, and pass threshold, then revalidates affected paths.",
+      "tags": ["api-handler", "admin", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:updateLlmRuntimeConfigAction",
+      "type": "function",
+      "name": "updateLlmRuntimeConfigAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [83, 202],
+      "summary": "Server Action that reads and merges the current LLM config and secrets, then upserts both into the app_settings table supporting all seven LLM providers.",
+      "tags": ["api-handler", "admin", "configuration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/actions/admin.ts:deleteDocumentAction",
+      "type": "function",
+      "name": "deleteDocumentAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [204, 226],
+      "summary": "Server Action that deletes a document from storage (R2 or local) and removes its DB rows, revalidating the documents path.",
+      "tags": ["api-handler", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:createDocumentConnectorAction",
+      "type": "function",
+      "name": "createDocumentConnectorAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [406, 436],
+      "summary": "Server Action that creates a document connector record for a provider, optionally triggers an immediate sync for demo connectors.",
+      "tags": ["api-handler", "admin", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/actions/admin.ts:resetQuizAttemptAction",
+      "type": "function",
+      "name": "resetQuizAttemptAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [631, 734],
+      "summary": "Server Action that archives the current quiz attempt to history, optionally carries forward completed section scores, then deletes and recreates the attempt for a partial or full reset.",
+      "tags": ["api-handler", "admin", "quiz"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/actions/admin.ts:importQuizCsvAction",
+      "type": "function",
+      "name": "importQuizCsvAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [848, 875],
+      "summary": "Server Action that parses CSV text and bulk-inserts quiz questions into the given quiz set.",
+      "tags": ["api-handler", "admin", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:createDemoUserAction",
+      "type": "function",
+      "name": "createDemoUserAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [877, 909],
+      "summary": "Server Action that upserts the fixed demo@summit.app credentials user and optionally assigns them to a project.",
+      "tags": ["api-handler", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:bulkToggleUserActiveAction",
+      "type": "function",
+      "name": "bulkToggleUserActiveAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [931, 945],
+      "summary": "Server Action that locks or unlocks multiple users in a loop and revalidates the admin users path.",
+      "tags": ["api-handler", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:bulkUpdateUserRoleAction",
+      "type": "function",
+      "name": "bulkUpdateUserRoleAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [947, 961],
+      "summary": "Server Action that promotes or demotes multiple users to a given role in a loop.",
+      "tags": ["api-handler", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:bulkAssignToProjectAction",
+      "type": "function",
+      "name": "bulkAssignToProjectAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [963, 984],
+      "summary": "Server Action that assigns multiple users to a project using INSERT ... ON CONFLICT DO NOTHING, then revalidates user and project member paths.",
+      "tags": ["api-handler", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/admin.ts:approveRetakeRequestAction",
+      "type": "function",
+      "name": "approveRetakeRequestAction",
+      "filePath": "app/actions/admin.ts",
+      "lineRange": [986, 1006],
+      "summary": "Server Action that deletes the member's quiz attempt and marks the retake request as approved, allowing the member to retake.",
+      "tags": ["api-handler", "admin", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/admin/documents-list.tsx:DocumentsList",
+      "type": "function",
+      "name": "DocumentsList",
+      "filePath": "components/admin/documents-list.tsx",
+      "lineRange": [23, 187],
+      "summary": "React component that renders a paginated, searchable list of project documents with classification/PII badges and document management actions.",
+      "tags": ["component", "admin"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/user-detail-drawer.tsx:UserDetailDrawer",
+      "type": "function",
+      "name": "UserDetailDrawer",
+      "filePath": "components/admin/user-detail-drawer.tsx",
+      "lineRange": [22, 167],
+      "summary": "React component rendering a slide-over drawer with a user's profile details, account timeline, quiz stats grid, and recent activity list.",
+      "tags": ["component", "admin", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/user-filters.tsx:UserFiltersPanel",
+      "type": "function",
+      "name": "UserFiltersPanel",
+      "filePath": "components/admin/user-filters.tsx",
+      "lineRange": [22, 152],
+      "summary": "React component providing a dropdown filter panel for the users table with role, status, project, and last-login-window selects.",
+      "tags": ["component", "admin", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/users-table.tsx:UsersTable",
+      "type": "function",
+      "name": "UsersTable",
+      "filePath": "components/admin/users-table.tsx",
+      "lineRange": [31, 403],
+      "summary": "React component implementing the complete admin users management table with search, multi-filter, pagination, per-row actions, bulk operations, CSV export, and user detail drawer integration.",
+      "tags": ["component", "admin", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/export.ts:generateUsersCsv",
+      "type": "function",
+      "name": "generateUsersCsv",
+      "filePath": "lib/export.ts",
+      "lineRange": [4, 26],
+      "summary": "Serialises an array of UserProfile objects (with optional projectCount) to a properly quoted CSV string.",
+      "tags": ["utility", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/quiz/assignment.ts:assignQuizSetToUser",
+      "type": "function",
+      "name": "assignQuizSetToUser",
+      "filePath": "lib/quiz/assignment.ts",
+      "lineRange": [6, 13],
+      "summary": "Returns the quiz set for a user index using round-robin modulo assignment over sets sorted by set_number.",
+      "tags": ["utility", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/quiz/assignment.ts:createAssignedQuestions",
+      "type": "function",
+      "name": "createAssignedQuestions",
+      "filePath": "lib/quiz/assignment.ts",
+      "lineRange": [15, 17],
+      "summary": "Convenience wrapper that delegates to createSectionedQuestions with a 'functional' section label and no question limit.",
+      "tags": ["utility", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/quiz/assignment.ts:createSectionedQuestions",
+      "type": "function",
+      "name": "createSectionedQuestions",
+      "filePath": "lib/quiz/assignment.ts",
+      "lineRange": [19, 60],
+      "summary": "Shuffles quiz questions, slices to the given limit, and maps each to an AssignedQuestion with display-key-remapped options — handling MCQ shuffle vs. fixed True/False ordering.",
+      "tags": ["utility", "quiz", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/quiz/scoring.ts:computeSectionScores",
+      "type": "function",
+      "name": "computeSectionScores",
+      "filePath": "lib/quiz/scoring.ts",
+      "lineRange": [4, 16],
+      "summary": "Aggregates raw scores and totals per section from a list of assigned questions and a submitted-answers map.",
+      "tags": ["utility", "quiz", "scoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/quiz/scoring.ts:scoreQuizSubmission",
+      "type": "function",
+      "name": "scoreQuizSubmission",
+      "filePath": "lib/quiz/scoring.ts",
+      "lineRange": [18, 47],
+      "summary": "Scores a complete quiz submission: produces per-question review, total score, total marks, percentage, and pass/fail result against a configurable threshold.",
+      "tags": ["utility", "quiz", "scoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/quiz/shuffle.ts:fisherYatesShuffle",
+      "type": "function",
+      "name": "fisherYatesShuffle",
+      "filePath": "lib/quiz/shuffle.ts",
+      "lineRange": [3, 12],
+      "summary": "Generic Fisher-Yates shuffle that returns a new shuffled array without mutating the input.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/quiz/shuffle.ts:normalizeOptionKey",
+      "type": "function",
+      "name": "normalizeOptionKey",
+      "filePath": "lib/quiz/shuffle.ts",
+      "lineRange": [14, 21],
+      "summary": "Normalises a raw option key string to a valid QuizOptionKey (A–D), falling back to 'A' for unrecognised values.",
+      "tags": ["utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/storage/r2.ts:downloadFromR2",
+      "type": "function",
+      "name": "downloadFromR2",
+      "filePath": "lib/storage/r2.ts",
+      "lineRange": [26, 35],
+      "summary": "Downloads an object from Cloudflare R2 by key and returns it as a Node.js ReadableStream.",
+      "tags": ["service", "storage"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/storage/r2.ts:deleteFromR2",
+      "type": "function",
+      "name": "deleteFromR2",
+      "filePath": "lib/storage/r2.ts",
+      "lineRange": [37, 39],
+      "summary": "Deletes an object from Cloudflare R2 by key.",
+      "tags": ["service", "storage"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:__tests__/lib/quiz/assignment.test.ts",
+      "target": "file:lib/quiz/assignment.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/quiz/assignment.test.ts",
+      "target": "file:lib/quiz/assignment.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/quiz/scoring.test.ts",
+      "target": "file:lib/quiz/scoring.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/quiz/scoring.test.ts",
+      "target": "file:lib/quiz/scoring.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/quiz/shuffle.test.ts",
+      "target": "file:lib/quiz/shuffle.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/quiz/shuffle.test.ts",
+      "target": "file:lib/quiz/shuffle.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:components/admin/user-filters.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:components/admin/users-table.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:lib/export.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/users/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/documents/connectors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/documents/process.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/email-sendgrid.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/llm/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/storage/local.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/storage/r2.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:createProjectAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:updateProjectSettingsAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:updateLlmRuntimeConfigAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:deleteDocumentAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:createDocumentConnectorAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:resetQuizAttemptAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:importQuizCsvAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:createDemoUserAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:bulkToggleUserActiveAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:bulkUpdateUserRoleAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:bulkAssignToProjectAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:approveRetakeRequestAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:createProjectAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:updateProjectSettingsAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:updateLlmRuntimeConfigAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:deleteDocumentAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:createDocumentConnectorAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:resetQuizAttemptAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:importQuizCsvAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:createDemoUserAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:bulkToggleUserActiveAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:bulkUpdateUserRoleAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:bulkAssignToProjectAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "function:app/actions/admin.ts:approveRetakeRequestAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/storage/r2.ts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/admin.ts",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/documents-list.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/documents-list.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/documents-list.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/documents-list.tsx",
+      "target": "function:components/admin/documents-list.tsx:DocumentsList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/documents-list.tsx",
+      "target": "function:components/admin/documents-list.tsx:DocumentsList",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/documents-list.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "function:components/admin/user-detail-drawer.tsx:UserDetailDrawer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/user-detail-drawer.tsx",
+      "target": "function:components/admin/user-detail-drawer.tsx:UserDetailDrawer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/user-filters.tsx",
+      "target": "function:components/admin/user-filters.tsx:UserFiltersPanel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/user-filters.tsx",
+      "target": "function:components/admin/user-filters.tsx:UserFiltersPanel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/admin/user-detail-drawer.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/admin/user-filters.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:components/ui/table.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "function:components/admin/users-table.tsx:UsersTable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "function:components/admin/users-table.tsx:UsersTable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "function:app/actions/admin.ts:bulkToggleUserActiveAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "function:app/actions/admin.ts:bulkUpdateUserRoleAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "function:app/actions/admin.ts:bulkAssignToProjectAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/users-table.tsx",
+      "target": "file:lib/export.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:lib/export.ts",
+      "target": "function:lib/export.ts:generateUsersCsv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/export.ts",
+      "target": "function:lib/export.ts:generateUsersCsv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "function:lib/quiz/assignment.ts:assignQuizSetToUser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "function:lib/quiz/assignment.ts:createAssignedQuestions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "function:lib/quiz/assignment.ts:createSectionedQuestions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "function:lib/quiz/assignment.ts:assignQuizSetToUser",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "function:lib/quiz/assignment.ts:createAssignedQuestions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "function:lib/quiz/assignment.ts:createSectionedQuestions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/assignment.ts",
+      "target": "file:lib/quiz/shuffle.ts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/scoring.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/quiz/scoring.ts",
+      "target": "function:lib/quiz/scoring.ts:computeSectionScores",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/scoring.ts",
+      "target": "function:lib/quiz/scoring.ts:scoreQuizSubmission",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/scoring.ts",
+      "target": "function:lib/quiz/scoring.ts:computeSectionScores",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/scoring.ts",
+      "target": "function:lib/quiz/scoring.ts:scoreQuizSubmission",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/shuffle.ts",
+      "target": "function:lib/quiz/shuffle.ts:fisherYatesShuffle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/shuffle.ts",
+      "target": "function:lib/quiz/shuffle.ts:normalizeOptionKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/quiz/shuffle.ts",
+      "target": "function:lib/quiz/shuffle.ts:fisherYatesShuffle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/quiz/shuffle.ts",
+      "target": "function:lib/quiz/shuffle.ts:normalizeOptionKey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/storage/r2.ts",
+      "target": "function:lib/storage/r2.ts:downloadFromR2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/storage/r2.ts",
+      "target": "function:lib/storage/r2.ts:deleteFromR2",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/storage/r2.ts",
+      "target": "function:lib/storage/r2.ts:downloadFromR2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/storage/r2.ts",
+      "target": "function:lib/storage/r2.ts:deleteFromR2",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

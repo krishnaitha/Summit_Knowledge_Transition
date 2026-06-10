@@ -1,0 +1,1720 @@
+{
+  "nodes": [
+    {
+      "id": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "type": "file",
+      "name": "bot-reply-route.test.ts",
+      "filePath": "__tests__/api/threads/bot-reply-route.test.ts",
+      "summary": "Integration test suite for the GET /bot-reply API route, covering authentication guards, thread status checks, job queueing, fresh/stale job handling, and inline fallback processing.",
+      "tags": ["test", "api-handler", "bot-reply"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/lib/documents/bot-reply.test.ts",
+      "type": "file",
+      "name": "bot-reply.test.ts",
+      "filePath": "__tests__/lib/documents/bot-reply.test.ts",
+      "summary": "Comprehensive unit test suite for `processBotThreadReply`, verifying required-field validation, RAG chunk filtering, LLM call behaviour, DB side effects, cache revalidation, and return value shape.",
+      "tags": ["test", "service", "bot-reply", "rag"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/lib/env.test.ts",
+      "type": "file",
+      "name": "env.test.ts",
+      "filePath": "__tests__/lib/env.test.ts",
+      "summary": "Unit tests for all environment helper functions in `lib/env.ts`, verifying presence/absence detection for database, R2, Groq, Copilot, and the active LLM provider, plus `assertEnv` behaviour.",
+      "tags": ["test", "config", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/model-switcher/page.tsx",
+      "summary": "Admin-only server component page that renders the LLM model switcher, loading runtime config and masked secrets then passing them to `ModelSwitcherForm`.",
+      "tags": ["api-handler", "component", "admin", "llm-config"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(admin)/admin/model-switcher/page.tsx:AdminModelSwitcherPage",
+      "type": "function",
+      "name": "AdminModelSwitcherPage",
+      "filePath": "app/(admin)/admin/model-switcher/page.tsx",
+      "lineRange": [10, 46],
+      "summary": "Async Next.js server component that guards the route with `requireAdmin`, fetches LLM config and masked secrets, and renders the card-wrapped model switcher form.",
+      "tags": ["component", "admin", "server-component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/actions/transcript.ts",
+      "type": "file",
+      "name": "transcript.ts",
+      "filePath": "app/actions/transcript.ts",
+      "summary": "Server actions for generating structured knowledge-transfer documents from meeting transcripts using Groq LLM, and pushing the generated content to the project knowledge base as a processed document.",
+      "tags": ["api-handler", "service", "llm", "document-processing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/actions/transcript.ts:generateDocumentFromTranscriptAction",
+      "type": "function",
+      "name": "generateDocumentFromTranscriptAction",
+      "filePath": "app/actions/transcript.ts",
+      "lineRange": [184, 296],
+      "summary": "Server action that accepts a transcript text or file uploads, extracts content, calls Groq LLM to generate a structured KT document, and returns the formatted output in markdown, text, or DOCX format.",
+      "tags": ["api-handler", "llm", "document-processing"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/actions/transcript.ts:pushToKnowledgeBaseAction",
+      "type": "function",
+      "name": "pushToKnowledgeBaseAction",
+      "filePath": "app/actions/transcript.ts",
+      "lineRange": [298, 353],
+      "summary": "Server action that uploads generated content to storage, inserts a document record, enqueues a document_process job, and optionally links the document to a discussion thread.",
+      "tags": ["api-handler", "service", "document-processing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/actions/transcript.ts:buildDocxBuffer",
+      "type": "function",
+      "name": "buildDocxBuffer",
+      "filePath": "app/actions/transcript.ts",
+      "lineRange": [79, 180],
+      "summary": "Converts a markdown string into a fully-styled DOCX buffer using the `docx` library, handling headings, bullet lists, numbered lists, and inline bold formatting.",
+      "tags": ["utility", "document-processing", "serialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/api/jobs/worker/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/jobs/worker/route.ts",
+      "summary": "Background job worker API route that claims and dispatches Postgres-backed jobs for document processing, quiz generation, bot thread replies, and connector syncs, with error logging and stale-job recovery.",
+      "tags": ["api-handler", "service", "background-job"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/jobs/worker/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "app/api/jobs/worker/route.ts",
+      "lineRange": [339, 421],
+      "summary": "HTTP POST handler that authenticates the worker secret, resets stale running jobs, conditionally triggers connector auto-sync, atomically claims the next pending job, and dispatches it to the appropriate processor.",
+      "tags": ["api-handler", "background-job", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/jobs/worker/route.ts:processQuizGenerateJob",
+      "type": "function",
+      "name": "processQuizGenerateJob",
+      "filePath": "app/api/jobs/worker/route.ts",
+      "lineRange": [225, 317],
+      "summary": "Fetches document chunks for a project, shuffles them into sets, generates quiz questions via LLM for each set with exponential backoff, and inserts quiz sets and questions into the database.",
+      "tags": ["service", "llm", "quiz"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/threads/[threadId]/bot-reply/route.ts",
+      "summary": "API route that polls or enqueues bot reply generation for a discussion thread, with an inline fallback that processes the reply directly if the worker job has been pending for over 30 seconds.",
+      "tags": ["api-handler", "bot-reply", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/threads/[threadId]/bot-reply/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "app/api/threads/[threadId]/bot-reply/route.ts",
+      "lineRange": [13, 196],
+      "summary": "Auth-guarded GET handler that returns an existing bot reply, enqueues a new job if none exists, or falls back to inline processing for jobs stale beyond 30 seconds with atomic claim to prevent duplicate work.",
+      "tags": ["api-handler", "bot-reply", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/model-switcher-form.tsx",
+      "type": "file",
+      "name": "model-switcher-form.tsx",
+      "filePath": "components/admin/model-switcher-form.tsx",
+      "summary": "Client-side React form component for the admin model switcher, rendering provider-specific credential and model fields for all seven supported LLM providers with live provider selection and smooth scroll.",
+      "tags": ["component", "admin", "llm-config"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/model-switcher-form.tsx:ModelSwitcherForm",
+      "type": "function",
+      "name": "ModelSwitcherForm",
+      "filePath": "components/admin/model-switcher-form.tsx",
+      "lineRange": [40, 489],
+      "summary": "Exported React component that renders a provider-selection dropdown and conditionally displays credential/model input sections for each of the seven LLM providers, submitting via a server action.",
+      "tags": ["component", "admin", "llm-config"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:lib/documents/bot-reply.ts",
+      "type": "file",
+      "name": "bot-reply.ts",
+      "filePath": "lib/documents/bot-reply.ts",
+      "summary": "Core service that generates AI bot replies for document discussion threads by retrieving relevant RAG chunks, calling the LLM with a system prompt, and persisting the answer with sources to the database.",
+      "tags": ["service", "bot-reply", "rag", "llm"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/documents/bot-reply.ts:processBotThreadReply",
+      "type": "function",
+      "name": "processBotThreadReply",
+      "filePath": "lib/documents/bot-reply.ts",
+      "lineRange": [42, 99],
+      "summary": "Validates params, retrieves RAG chunks, calls LLM for an answer (or uses no-match fallback), inserts a bot comment with deduplicated sources, and triggers Next.js cache revalidation.",
+      "tags": ["service", "rag", "llm", "bot-reply"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/documents/bot-reply.ts:ensureBotFailureReply",
+      "type": "function",
+      "name": "ensureBotFailureReply",
+      "filePath": "lib/documents/bot-reply.ts",
+      "lineRange": [101, 120],
+      "summary": "Idempotently inserts a failure-notification bot comment into a thread only if no bot comment already exists, then updates the thread's updated_at timestamp.",
+      "tags": ["service", "bot-reply", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/documents/connectors.ts",
+      "type": "file",
+      "name": "connectors.ts",
+      "filePath": "lib/documents/connectors.ts",
+      "summary": "Document connector sync engine supporting Confluence, SharePoint, Jira, Monday.com, OneDrive, and GitHub with demo-fixture mode, upserting synced documents and triggering RAG processing for each provider.",
+      "tags": ["service", "data-pipeline", "integration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/documents/connectors.ts:syncDocumentConnector",
+      "type": "function",
+      "name": "syncDocumentConnector",
+      "filePath": "lib/documents/connectors.ts",
+      "lineRange": [930, 966],
+      "summary": "Orchestrates a full sync for a given connector by loading its record, setting status to running, dispatching to the provider-specific sync function, and updating status to success or failed.",
+      "tags": ["service", "integration", "data-pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/documents/connectors.ts:enqueueDueDocumentConnectorSyncJobs",
+      "type": "function",
+      "name": "enqueueDueDocumentConnectorSyncJobs",
+      "filePath": "lib/documents/connectors.ts",
+      "lineRange": [170, 197],
+      "summary": "Atomically enqueues `connector_sync` jobs for all active connectors with auto-sync enabled whose last sync time exceeds the specified interval, skipping any that already have a pending or running job.",
+      "tags": ["service", "background-job", "data-pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/documents/parse.ts",
+      "type": "file",
+      "name": "parse.ts",
+      "filePath": "lib/documents/parse.ts",
+      "summary": "Text extraction utility supporting PDF (pdf-parse), DOCX (mammoth), CSV (csv-parse), XLSX, and PPTX file formats, returning plain text from any supported binary document.",
+      "tags": ["utility", "document-processing", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/documents/parse.ts:extractTextFromFile",
+      "type": "function",
+      "name": "extractTextFromFile",
+      "filePath": "lib/documents/parse.ts",
+      "lineRange": [8, 72],
+      "summary": "Dispatches file content extraction to the appropriate library based on file extension, returning plain UTF-8 text from PDF, DOCX, CSV, XLSX, PPTX, or raw buffer.",
+      "tags": ["utility", "document-processing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/documents/pii.ts",
+      "type": "file",
+      "name": "pii.ts",
+      "filePath": "lib/documents/pii.ts",
+      "summary": "PII redaction utility that scans text for emails, phone numbers, SSNs, and credit card numbers using regex patterns, replacing matches with [REDACTED] and reporting counts and types found.",
+      "tags": ["utility", "security", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/documents/pii.ts:redactPii",
+      "type": "function",
+      "name": "redactPii",
+      "filePath": "lib/documents/pii.ts",
+      "lineRange": [16, 31],
+      "summary": "Applies all PII regex patterns to the input text sequentially, replacing matches with [REDACTED] and returning the cleaned text along with the match count and type list.",
+      "tags": ["utility", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/documents/process.ts",
+      "type": "file",
+      "name": "process.ts",
+      "filePath": "lib/documents/process.ts",
+      "summary": "Document ingestion pipeline that redacts PII, scans for secrets, chunks the content, embeds each chunk, persists chunks with embedding metadata, and updates the document record with scan results.",
+      "tags": ["service", "document-processing", "data-pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/documents/process.ts:processDocumentRecord",
+      "type": "function",
+      "name": "processDocumentRecord",
+      "filePath": "lib/documents/process.ts",
+      "lineRange": [10, 69],
+      "summary": "Full document ingestion pipeline: redacts PII, scans for sensitive content, chunks text, generates embeddings in parallel, persists all chunks, updates the document record, and logs PII detection activity.",
+      "tags": ["service", "document-processing", "data-pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/documents/scan.ts",
+      "type": "file",
+      "name": "scan.ts",
+      "filePath": "lib/documents/scan.ts",
+      "summary": "Document sensitivity classifier that scans text for secrets (AWS keys, API keys, passwords, connection strings) and internal-use markers, returning a classification of confidential, internal, or public.",
+      "tags": ["utility", "security", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/documents/scan.ts:scanDocument",
+      "type": "function",
+      "name": "scanDocument",
+      "filePath": "lib/documents/scan.ts",
+      "lineRange": [25, 43],
+      "summary": "Applies secret and internal-use regex patterns to classify a document as confidential, internal, or public, also incorporating whether PII was previously detected.",
+      "tags": ["utility", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/documents/upload.ts",
+      "type": "file",
+      "name": "upload.ts",
+      "filePath": "lib/documents/upload.ts",
+      "summary": "Thin server-only wrapper that generates a UUID-based filename for an uploaded `File` object and delegates to `uploadFile` in local storage, returning the storage path.",
+      "tags": ["utility", "service", "file-upload"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/documents/upload.ts:uploadDocumentToStorage",
+      "type": "function",
+      "name": "uploadDocumentToStorage",
+      "filePath": "lib/documents/upload.ts",
+      "lineRange": [6, 14],
+      "summary": "Generates a project-scoped UUID filename and uploads a File's buffer to local storage, returning the stored path.",
+      "tags": ["utility", "file-upload"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/env.ts",
+      "type": "file",
+      "name": "env.ts",
+      "filePath": "lib/env.ts",
+      "summary": "Central environment configuration module exposing a typed `appEnv` object with all runtime env vars and helper functions to check whether each LLM provider, database, and storage provider is configured.",
+      "tags": ["config", "utility", "validation"],
+      "complexity": "moderate",
+      "languageNotes": "Exposes a mutable `appEnv` object to allow test-time overrides, which is why env.test.ts can reassign fields and restore them with afterEach."
+    },
+    {
+      "id": "file:lib/groq/chat.ts",
+      "type": "file",
+      "name": "chat.ts",
+      "filePath": "lib/groq/chat.ts",
+      "summary": "Groq-specific LLM client with retry logic and model fallback, exposing `createGroqChatCompletion` for chat traffic and `createGroqQuizCompletion` (quiz-optimised, uses separate API key if set).",
+      "tags": ["service", "llm", "groq"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/groq/chat.ts:createGroqChatCompletion",
+      "type": "function",
+      "name": "createGroqChatCompletion",
+      "filePath": "lib/groq/chat.ts",
+      "lineRange": [49, 89],
+      "summary": "Creates a Groq chat completion with automatic primary-to-fallback model switching and up to 3 retry attempts with rate-limit-aware back-off.",
+      "tags": ["service", "llm", "groq"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/groq/chat.ts:createGroqQuizCompletion",
+      "type": "function",
+      "name": "createGroqQuizCompletion",
+      "filePath": "lib/groq/chat.ts",
+      "lineRange": [96, 131],
+      "summary": "Quiz-specific Groq completion function using the quiz API key (falls back to chat key) and starting with the smaller instant model to reduce rate-limit contention with chat traffic.",
+      "tags": ["service", "llm", "groq", "quiz"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/llm/anthropic.ts",
+      "type": "file",
+      "name": "anthropic.ts",
+      "filePath": "lib/llm/anthropic.ts",
+      "summary": "Anthropic Claude LLM provider implementation using raw HTTP fetch with system-message extraction, request timeout, and retry logic; normalises the response to the unified chat completion shape.",
+      "tags": ["service", "llm", "anthropic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/anthropic.ts:createAnthropicChatCompletion",
+      "type": "function",
+      "name": "createAnthropicChatCompletion",
+      "filePath": "lib/llm/anthropic.ts",
+      "lineRange": [79, 158],
+      "summary": "Calls the Anthropic Messages API with split system/user messages, 120-second timeout, and up to 3 retries with rate-limit back-off, normalising the text-block response to the unified format.",
+      "tags": ["service", "llm", "anthropic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/llm/copilot.ts",
+      "type": "file",
+      "name": "copilot.ts",
+      "filePath": "lib/llm/copilot.ts",
+      "summary": "GitHub Copilot proxy LLM provider with retry/back-off logic, normalising the OpenAI-compatible response to the unified shape, plus a generator-based streaming placeholder.",
+      "tags": ["service", "llm", "copilot"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/copilot.ts:createCopilotChatCompletion",
+      "type": "function",
+      "name": "createCopilotChatCompletion",
+      "filePath": "lib/llm/copilot.ts",
+      "lineRange": [78, 182],
+      "summary": "Posts to the Copilot proxy endpoint with the configured token and model, retrying on rate limits with 60-second back-off, and normalising multi-type content blocks to a plain string.",
+      "tags": ["service", "llm", "copilot"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/llm/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "lib/llm/index.ts",
+      "summary": "Unified LLM provider abstraction that routes `createChatCompletion` and `createQuizCompletion` calls to the runtime-configured provider (Groq, Copilot, OpenAI, Azure OpenAI, Anthropic, Mistral, or Ollama).",
+      "tags": ["service", "llm", "entry-point", "factory"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/llm/index.ts:createChatCompletion",
+      "type": "function",
+      "name": "createChatCompletion",
+      "filePath": "lib/llm/index.ts",
+      "lineRange": [44, 176],
+      "summary": "Provider-agnostic chat completion entry point that reads runtime config, checks credential availability, and delegates to the appropriate provider implementation.",
+      "tags": ["service", "llm", "factory"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/llm/index.ts:createQuizCompletion",
+      "type": "function",
+      "name": "createQuizCompletion",
+      "filePath": "lib/llm/index.ts",
+      "lineRange": [182, 319],
+      "summary": "Quiz-generation variant of `createChatCompletion` that routes to the quiz-optimised Groq client for the groq provider, and falls back to standard completion for all other providers.",
+      "tags": ["service", "llm", "quiz", "factory"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:lib/llm/openai.ts",
+      "type": "file",
+      "name": "openai.ts",
+      "filePath": "lib/llm/openai.ts",
+      "summary": "OpenAI-compatible HTTP client implementing `createOpenAiChatCompletion`, `createOllamaChatCompletion`, and `createAzureOpenAiChatCompletion` with shared retry logic and response normalisation.",
+      "tags": ["service", "llm", "openai"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/llm/openai.ts:createOpenAiChatCompletion",
+      "type": "function",
+      "name": "createOpenAiChatCompletion",
+      "filePath": "lib/llm/openai.ts",
+      "lineRange": [111, 165],
+      "summary": "Sends a JSON chat completion request to any OpenAI-compatible endpoint with optional Bearer auth, retry on failures, and normalises the response to the unified shape.",
+      "tags": ["service", "llm", "openai"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/openai.ts:createOllamaChatCompletion",
+      "type": "function",
+      "name": "createOllamaChatCompletion",
+      "filePath": "lib/llm/openai.ts",
+      "lineRange": [181, 235],
+      "summary": "Calls a local Ollama `/api/chat` endpoint in non-streaming mode, mapping Ollama's response shape to the unified completion format.",
+      "tags": ["service", "llm", "ollama"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/openai.ts:createAzureOpenAiChatCompletion",
+      "type": "function",
+      "name": "createAzureOpenAiChatCompletion",
+      "filePath": "lib/llm/openai.ts",
+      "lineRange": [237, 296],
+      "summary": "Builds the Azure OpenAI deployment URL with API version, posts with `api-key` auth, and normalises the response to the unified completion shape.",
+      "tags": ["service", "llm", "azure"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/llm/runtime-config.ts",
+      "type": "file",
+      "name": "runtime-config.ts",
+      "filePath": "lib/llm/runtime-config.ts",
+      "summary": "LLM runtime configuration service that reads provider, model, and credentials from the `app_settings` table (DB-first) with fallback to environment defaults, and exposes masked secrets for admin display.",
+      "tags": ["service", "config", "llm"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/runtime-config.ts:getLlmRuntimeConfig",
+      "type": "function",
+      "name": "getLlmRuntimeConfig",
+      "filePath": "lib/llm/runtime-config.ts",
+      "lineRange": [118, 152],
+      "summary": "Reads LLM provider and model config from the `app_settings.llm_config` row, normalising all fields and falling back to environment defaults on miss or error.",
+      "tags": ["service", "config", "llm"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/runtime-config.ts:getLlmRuntimeSecrets",
+      "type": "function",
+      "name": "getLlmRuntimeSecrets",
+      "filePath": "lib/llm/runtime-config.ts",
+      "lineRange": [154, 201],
+      "summary": "Reads provider API keys and endpoints from the `app_settings.llm_secrets` row, normalising and falling back to environment defaults.",
+      "tags": ["service", "config", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/llm/runtime-config.ts:getMaskedLlmRuntimeSecrets",
+      "type": "function",
+      "name": "getMaskedLlmRuntimeSecrets",
+      "filePath": "lib/llm/runtime-config.ts",
+      "lineRange": [203, 222],
+      "summary": "Returns a masked copy of all LLM secrets suitable for admin UI display, replacing key values with asterisked previews.",
+      "tags": ["service", "config", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/observability.ts",
+      "type": "file",
+      "name": "observability.ts",
+      "filePath": "lib/observability.ts",
+      "summary": "Application error logging utility that inserts structured error events into the `app_error_events` table with source, category, message, stack, and metadata, silently swallowing any logging failure.",
+      "tags": ["service", "monitoring", "observability"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/observability.ts:logApplicationError",
+      "type": "function",
+      "name": "logApplicationError",
+      "filePath": "lib/observability.ts",
+      "lineRange": [26, 45],
+      "summary": "Inserts a truncated error event into `app_error_events` with source, category, message, stack, and JSON metadata; any insertion failure is swallowed to avoid breaking the caller.",
+      "tags": ["service", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/rag/chunking.ts",
+      "type": "file",
+      "name": "chunking.ts",
+      "filePath": "lib/rag/chunking.ts",
+      "summary": "Simple token-based text chunking utility that splits normalised whitespace-tokenised text into overlapping chunks of configurable size for RAG ingestion.",
+      "tags": ["utility", "rag", "data-pipeline"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/rag/chunking.ts:chunkDocumentText",
+      "type": "function",
+      "name": "chunkDocumentText",
+      "filePath": "lib/rag/chunking.ts",
+      "lineRange": [9, 35],
+      "summary": "Splits input text into overlapping word-token chunks using a sliding window with configurable size (default 500) and overlap (default 50).",
+      "tags": ["utility", "rag"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/rag/embeddings.ts",
+      "type": "file",
+      "name": "embeddings.ts",
+      "filePath": "lib/rag/embeddings.ts",
+      "summary": "Local embedding service using `@xenova/transformers` (all-MiniLM-L6-v2 by default) with lazy singleton initialisation, mean-pooled normalised 384-dimensional vectors.",
+      "tags": ["service", "rag", "embeddings"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/rag/embeddings.ts:embedText",
+      "type": "function",
+      "name": "embedText",
+      "filePath": "lib/rag/embeddings.ts",
+      "lineRange": [51, 58],
+      "summary": "Returns a 384-dimensional float embedding vector for the input string, initialising the feature extractor singleton on first call.",
+      "tags": ["service", "rag", "embeddings"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/rag/retrieval.ts",
+      "type": "file",
+      "name": "retrieval.ts",
+      "filePath": "lib/rag/retrieval.ts",
+      "summary": "RAG retrieval service that asserts embedding model consistency across a project's chunks before embedding the query and executing cosine-similarity search via the `match_document_chunks` Postgres function.",
+      "tags": ["service", "rag", "data-pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/rag/retrieval.ts:retrieveRelevantChunks",
+      "type": "function",
+      "name": "retrieveRelevantChunks",
+      "filePath": "lib/rag/retrieval.ts",
+      "lineRange": [78, 93],
+      "summary": "Asserts embedding consistency, embeds the query, and retrieves the top-N most similar document chunks from the project using the Postgres vector similarity function.",
+      "tags": ["service", "rag"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/storage/local.ts",
+      "type": "file",
+      "name": "local.ts",
+      "filePath": "lib/storage/local.ts",
+      "summary": "Local filesystem storage provider with path-traversal-safe resolution, providing upload, download, streaming, delete, and stat operations for documents stored in `public/uploads/`.",
+      "tags": ["service", "file-upload", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/storage/local.ts:uploadFile",
+      "type": "function",
+      "name": "uploadFile",
+      "filePath": "lib/storage/local.ts",
+      "lineRange": [72, 84],
+      "summary": "Writes a buffer to the upload directory under a timestamp-prefixed sanitised filename and returns the relative `uploads/<filename>` path for DB storage.",
+      "tags": ["service", "file-upload"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/storage/local.ts:downloadFile",
+      "type": "function",
+      "name": "downloadFile",
+      "filePath": "lib/storage/local.ts",
+      "lineRange": [91, 94],
+      "summary": "Resolves the stored path safely to prevent directory traversal and reads the file buffer from disk.",
+      "tags": ["service", "file-upload"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "target": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "target": "file:lib/documents/bot-reply.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "file:__tests__/api/threads/bot-reply-route.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/documents/bot-reply.test.ts",
+      "target": "file:lib/documents/bot-reply.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/documents/bot-reply.test.ts",
+      "target": "file:lib/llm/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/documents/bot-reply.test.ts",
+      "target": "file:lib/rag/retrieval.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "file:__tests__/lib/documents/bot-reply.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/env.test.ts",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/env.ts",
+      "target": "file:__tests__/lib/env.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "file:components/admin/model-switcher-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "function:app/(admin)/admin/model-switcher/page.tsx:AdminModelSwitcherPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/model-switcher/page.tsx",
+      "target": "function:app/(admin)/admin/model-switcher/page.tsx:AdminModelSwitcherPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "file:lib/documents/parse.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "file:lib/groq/chat.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "file:lib/storage/local.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "function:app/actions/transcript.ts:generateDocumentFromTranscriptAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "function:app/actions/transcript.ts:generateDocumentFromTranscriptAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "function:app/actions/transcript.ts:pushToKnowledgeBaseAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "function:app/actions/transcript.ts:pushToKnowledgeBaseAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/transcript.ts",
+      "target": "function:app/actions/transcript.ts:buildDocxBuffer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/documents/bot-reply.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/documents/connectors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/documents/parse.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/documents/process.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/llm/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/observability.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/storage/local.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "function:app/api/jobs/worker/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "function:app/api/jobs/worker/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/jobs/worker/route.ts",
+      "target": "function:app/api/jobs/worker/route.ts:processQuizGenerateJob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "file:lib/documents/bot-reply.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "file:lib/observability.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "function:app/api/threads/[threadId]/bot-reply/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/threads/[threadId]/bot-reply/route.ts",
+      "target": "function:app/api/threads/[threadId]/bot-reply/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/model-switcher-form.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/model-switcher-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/model-switcher-form.tsx",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/model-switcher-form.tsx",
+      "target": "function:components/admin/model-switcher-form.tsx:ModelSwitcherForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/model-switcher-form.tsx",
+      "target": "function:components/admin/model-switcher-form.tsx:ModelSwitcherForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "file:lib/llm/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "file:lib/rag/retrieval.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "function:lib/documents/bot-reply.ts:processBotThreadReply",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "function:lib/documents/bot-reply.ts:processBotThreadReply",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "function:lib/documents/bot-reply.ts:ensureBotFailureReply",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "function:lib/documents/bot-reply.ts:ensureBotFailureReply",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "function:lib/rag/retrieval.ts:retrieveRelevantChunks",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/bot-reply.ts",
+      "target": "function:lib/llm/index.ts:createChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "file:lib/documents/parse.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "file:lib/documents/process.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "file:lib/storage/local.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "function:lib/documents/connectors.ts:syncDocumentConnector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "function:lib/documents/connectors.ts:syncDocumentConnector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "function:lib/documents/connectors.ts:enqueueDueDocumentConnectorSyncJobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "function:lib/documents/connectors.ts:enqueueDueDocumentConnectorSyncJobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/connectors.ts",
+      "target": "function:lib/documents/process.ts:processDocumentRecord",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/parse.ts",
+      "target": "function:lib/documents/parse.ts:extractTextFromFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/parse.ts",
+      "target": "function:lib/documents/parse.ts:extractTextFromFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/pii.ts",
+      "target": "function:lib/documents/pii.ts:redactPii",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/pii.ts",
+      "target": "function:lib/documents/pii.ts:redactPii",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "file:lib/documents/pii.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "file:lib/documents/scan.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "file:lib/rag/chunking.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "file:lib/rag/embeddings.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "function:lib/documents/process.ts:processDocumentRecord",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "function:lib/documents/process.ts:processDocumentRecord",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "function:lib/documents/pii.ts:redactPii",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "function:lib/documents/scan.ts:scanDocument",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "function:lib/rag/chunking.ts:chunkDocumentText",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/process.ts",
+      "target": "function:lib/rag/embeddings.ts:embedText",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/scan.ts",
+      "target": "function:lib/documents/scan.ts:scanDocument",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/scan.ts",
+      "target": "function:lib/documents/scan.ts:scanDocument",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/upload.ts",
+      "target": "file:lib/storage/local.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/documents/upload.ts",
+      "target": "function:lib/documents/upload.ts:uploadDocumentToStorage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/documents/upload.ts",
+      "target": "function:lib/documents/upload.ts:uploadDocumentToStorage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/documents/upload.ts",
+      "target": "function:lib/storage/local.ts:uploadFile",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/groq/chat.ts",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/groq/chat.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/groq/chat.ts",
+      "target": "function:lib/groq/chat.ts:createGroqChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/groq/chat.ts",
+      "target": "function:lib/groq/chat.ts:createGroqChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/groq/chat.ts",
+      "target": "function:lib/groq/chat.ts:createGroqQuizCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/groq/chat.ts",
+      "target": "function:lib/groq/chat.ts:createGroqQuizCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/anthropic.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/anthropic.ts",
+      "target": "function:lib/llm/anthropic.ts:createAnthropicChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/anthropic.ts",
+      "target": "function:lib/llm/anthropic.ts:createAnthropicChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/copilot.ts",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/copilot.ts",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/copilot.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/copilot.ts",
+      "target": "function:lib/llm/copilot.ts:createCopilotChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/copilot.ts",
+      "target": "function:lib/llm/copilot.ts:createCopilotChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "file:lib/groq/chat.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "file:lib/llm/anthropic.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "file:lib/llm/copilot.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "file:lib/llm/openai.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/index.ts:createChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/index.ts:createChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/index.ts:createQuizCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/index.ts:createQuizCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/anthropic.ts:createAnthropicChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/copilot.ts:createCopilotChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/openai.ts:createOpenAiChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/openai.ts:createOllamaChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/llm/openai.ts:createAzureOpenAiChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/groq/chat.ts:createGroqChatCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/index.ts",
+      "target": "function:lib/groq/chat.ts:createGroqQuizCompletion",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "function:lib/llm/openai.ts:createOpenAiChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "function:lib/llm/openai.ts:createOpenAiChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "function:lib/llm/openai.ts:createOllamaChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "function:lib/llm/openai.ts:createOllamaChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "function:lib/llm/openai.ts:createAzureOpenAiChatCompletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/openai.ts",
+      "target": "function:lib/llm/openai.ts:createAzureOpenAiChatCompletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "function:lib/llm/runtime-config.ts:getLlmRuntimeConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "function:lib/llm/runtime-config.ts:getLlmRuntimeConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "function:lib/llm/runtime-config.ts:getLlmRuntimeSecrets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "function:lib/llm/runtime-config.ts:getLlmRuntimeSecrets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "function:lib/llm/runtime-config.ts:getMaskedLlmRuntimeSecrets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/llm/runtime-config.ts",
+      "target": "function:lib/llm/runtime-config.ts:getMaskedLlmRuntimeSecrets",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/observability.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/observability.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/observability.ts",
+      "target": "function:lib/observability.ts:logApplicationError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/observability.ts",
+      "target": "function:lib/observability.ts:logApplicationError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/rag/chunking.ts",
+      "target": "function:lib/rag/chunking.ts:chunkDocumentText",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/rag/chunking.ts",
+      "target": "function:lib/rag/chunking.ts:chunkDocumentText",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/rag/embeddings.ts",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/rag/embeddings.ts",
+      "target": "function:lib/rag/embeddings.ts:embedText",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/rag/embeddings.ts",
+      "target": "function:lib/rag/embeddings.ts:embedText",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/rag/retrieval.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/rag/retrieval.ts",
+      "target": "file:lib/rag/embeddings.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/rag/retrieval.ts",
+      "target": "function:lib/rag/retrieval.ts:retrieveRelevantChunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/rag/retrieval.ts",
+      "target": "function:lib/rag/retrieval.ts:retrieveRelevantChunks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/rag/retrieval.ts",
+      "target": "function:lib/rag/embeddings.ts:embedText",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/storage/local.ts",
+      "target": "function:lib/storage/local.ts:uploadFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/storage/local.ts",
+      "target": "function:lib/storage/local.ts:uploadFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/storage/local.ts",
+      "target": "function:lib/storage/local.ts:downloadFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/storage/local.ts",
+      "target": "function:lib/storage/local.ts:downloadFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

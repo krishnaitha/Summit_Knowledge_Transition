@@ -1,0 +1,844 @@
+{
+  "batchIndex": 2,
+  "files": [
+    {
+      "path": "__tests__/api/threads/bot-reply-route.test.ts",
+      "language": "typescript",
+      "sizeLines": 230,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/documents/bot-reply.test.ts",
+      "language": "typescript",
+      "sizeLines": 304,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/env.test.ts",
+      "language": "typescript",
+      "sizeLines": 162,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/model-switcher/page.tsx",
+      "language": "typescript",
+      "sizeLines": 46,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/actions/transcript.ts",
+      "language": "typescript",
+      "sizeLines": 353,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/api/jobs/worker/route.ts",
+      "language": "typescript",
+      "sizeLines": 421,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/api/threads/[threadId]/bot-reply/route.ts",
+      "language": "typescript",
+      "sizeLines": 196,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/model-switcher-form.tsx",
+      "language": "typescript",
+      "sizeLines": 489,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/bot-reply.ts",
+      "language": "typescript",
+      "sizeLines": 120,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/connectors.ts",
+      "language": "typescript",
+      "sizeLines": 966,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/parse.ts",
+      "language": "typescript",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/pii.ts",
+      "language": "typescript",
+      "sizeLines": 31,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/process.ts",
+      "language": "typescript",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/scan.ts",
+      "language": "typescript",
+      "sizeLines": 43,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/documents/upload.ts",
+      "language": "typescript",
+      "sizeLines": 14,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/env.ts",
+      "language": "typescript",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/groq/chat.ts",
+      "language": "typescript",
+      "sizeLines": 131,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/llm/anthropic.ts",
+      "language": "typescript",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/llm/copilot.ts",
+      "language": "typescript",
+      "sizeLines": 203,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/llm/index.ts",
+      "language": "typescript",
+      "sizeLines": 352,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/llm/openai.ts",
+      "language": "typescript",
+      "sizeLines": 296,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/llm/runtime-config.ts",
+      "language": "typescript",
+      "sizeLines": 222,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/observability.ts",
+      "language": "typescript",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/rag/chunking.ts",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/rag/embeddings.ts",
+      "language": "typescript",
+      "sizeLines": 58,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/rag/retrieval.ts",
+      "language": "typescript",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/storage/local.ts",
+      "language": "typescript",
+      "sizeLines": 134,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "__tests__/api/threads/bot-reply-route.test.ts": [
+      "app/api/threads/[threadId]/bot-reply/route.ts",
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/documents/bot-reply.ts",
+      "lib/types/database.ts"
+    ],
+    "__tests__/lib/documents/bot-reply.test.ts": [
+      "lib/documents/bot-reply.ts",
+      "lib/llm/index.ts",
+      "lib/rag/retrieval.ts"
+    ],
+    "__tests__/lib/env.test.ts": ["lib/env.ts"],
+    "app/(admin)/admin/model-switcher/page.tsx": [
+      "components/admin/model-switcher-form.tsx",
+      "components/ui/card.tsx",
+      "lib/auth.ts",
+      "lib/env.ts",
+      "lib/llm/runtime-config.ts"
+    ],
+    "app/actions/transcript.ts": [
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/db.ts",
+      "lib/documents/parse.ts",
+      "lib/groq/chat.ts",
+      "lib/storage/local.ts"
+    ],
+    "app/api/jobs/worker/route.ts": [
+      "lib/db.ts",
+      "lib/documents/bot-reply.ts",
+      "lib/documents/connectors.ts",
+      "lib/documents/parse.ts",
+      "lib/documents/process.ts",
+      "lib/llm/index.ts",
+      "lib/observability.ts",
+      "lib/storage/local.ts",
+      "lib/types/database.ts",
+      "lib/utils.ts"
+    ],
+    "app/api/threads/[threadId]/bot-reply/route.ts": [
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/db.ts",
+      "lib/documents/bot-reply.ts",
+      "lib/observability.ts"
+    ],
+    "components/admin/model-switcher-form.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/submit-button.tsx",
+      "lib/llm/runtime-config.ts"
+    ],
+    "lib/documents/bot-reply.ts": [
+      "lib/db.ts",
+      "lib/env.ts",
+      "lib/llm/index.ts",
+      "lib/rag/retrieval.ts"
+    ],
+    "lib/documents/connectors.ts": [
+      "lib/db.ts",
+      "lib/documents/parse.ts",
+      "lib/documents/process.ts",
+      "lib/storage/local.ts",
+      "lib/types/database.ts"
+    ],
+    "lib/documents/parse.ts": [],
+    "lib/documents/pii.ts": [],
+    "lib/documents/process.ts": [
+      "lib/data.ts",
+      "lib/db.ts",
+      "lib/documents/pii.ts",
+      "lib/documents/scan.ts",
+      "lib/rag/chunking.ts",
+      "lib/rag/embeddings.ts"
+    ],
+    "lib/documents/scan.ts": [],
+    "lib/documents/upload.ts": ["lib/storage/local.ts"],
+    "lib/env.ts": [],
+    "lib/groq/chat.ts": ["lib/llm/runtime-config.ts", "lib/utils.ts"],
+    "lib/llm/anthropic.ts": ["lib/utils.ts"],
+    "lib/llm/copilot.ts": ["lib/env.ts", "lib/llm/runtime-config.ts", "lib/utils.ts"],
+    "lib/llm/index.ts": [
+      "lib/groq/chat.ts",
+      "lib/llm/anthropic.ts",
+      "lib/llm/copilot.ts",
+      "lib/llm/openai.ts",
+      "lib/llm/runtime-config.ts"
+    ],
+    "lib/llm/openai.ts": ["lib/utils.ts"],
+    "lib/llm/runtime-config.ts": ["lib/db.ts", "lib/env.ts"],
+    "lib/observability.ts": ["lib/db.ts", "lib/types/database.ts"],
+    "lib/rag/chunking.ts": [],
+    "lib/rag/embeddings.ts": ["lib/env.ts"],
+    "lib/rag/retrieval.ts": ["lib/db.ts", "lib/rag/embeddings.ts"],
+    "lib/storage/local.ts": []
+  },
+  "neighborMap": {
+    "__tests__/api/threads/bot-reply-route.test.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      },
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 8,
+        "symbols": []
+      }
+    ],
+    "app/(admin)/admin/model-switcher/page.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 6,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      }
+    ],
+    "app/actions/transcript.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      },
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "components/admin/generate-document-form.tsx",
+        "batchIndex": 6,
+        "symbols": ["GenerateDocumentForm"]
+      }
+    ],
+    "app/api/jobs/worker/route.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 8,
+        "symbols": []
+      },
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "app/api/threads/[threadId]/bot-reply/route.ts": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 1,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      },
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      }
+    ],
+    "components/admin/model-switcher-form.tsx": [
+      {
+        "path": "app/actions/admin.ts",
+        "batchIndex": 8,
+        "symbols": [
+          "createProjectAction",
+          "updateProjectSettingsAction",
+          "toggleProjectStatusAction",
+          "updateLlmRuntimeConfigAction",
+          "deleteDocumentAction",
+          "createDocumentConnectorAction",
+          "syncDocumentConnectorAction",
+          "deleteDocumentConnectorAction",
+          "toggleDocumentConnectorAutoSyncAction",
+          "toggleDocumentRequiredAction",
+          "inviteProjectMemberAction",
+          "sendProjectAnnouncementAction",
+          "removeProjectMemberAction",
+          "updateProjectMemberRoleAction",
+          "resetQuizAttemptAction",
+          "setQuizWindowAction",
+          "deleteQuizSetAction",
+          "deleteQuizQuestionAction",
+          "createQuizSetAction",
+          "createQuizQuestionAction",
+          "updateQuizQuestionAction",
+          "toggleQuizSetActiveAction",
+          "importQuizCsvAction",
+          "createDemoUserAction",
+          "updateUserRoleAction",
+          "toggleUserActiveAction",
+          "bulkToggleUserActiveAction",
+          "bulkUpdateUserRoleAction",
+          "bulkAssignToProjectAction",
+          "approveRetakeRequestAction",
+          "rejectRetakeRequestAction"
+        ]
+      },
+      {
+        "path": "components/ui/submit-button.tsx",
+        "batchIndex": 7,
+        "symbols": ["SubmitButton"]
+      }
+    ],
+    "lib/documents/bot-reply.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      }
+    ],
+    "lib/documents/connectors.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 8,
+        "symbols": []
+      }
+    ],
+    "lib/documents/process.ts": [
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      },
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      }
+    ],
+    "lib/documents/upload.ts": [
+      {
+        "path": "app/api/documents/upload/route.ts",
+        "batchIndex": 1,
+        "symbols": ["POST"]
+      }
+    ],
+    "lib/env.ts": [
+      {
+        "path": "app/actions/admin.ts",
+        "batchIndex": 8,
+        "symbols": [
+          "createProjectAction",
+          "updateProjectSettingsAction",
+          "toggleProjectStatusAction",
+          "updateLlmRuntimeConfigAction",
+          "deleteDocumentAction",
+          "createDocumentConnectorAction",
+          "syncDocumentConnectorAction",
+          "deleteDocumentConnectorAction",
+          "toggleDocumentConnectorAutoSyncAction",
+          "toggleDocumentRequiredAction",
+          "inviteProjectMemberAction",
+          "sendProjectAnnouncementAction",
+          "removeProjectMemberAction",
+          "updateProjectMemberRoleAction",
+          "resetQuizAttemptAction",
+          "setQuizWindowAction",
+          "deleteQuizSetAction",
+          "deleteQuizQuestionAction",
+          "createQuizSetAction",
+          "createQuizQuestionAction",
+          "updateQuizQuestionAction",
+          "toggleQuizSetActiveAction",
+          "importQuizCsvAction",
+          "createDemoUserAction",
+          "updateUserRoleAction",
+          "toggleUserActiveAction",
+          "bulkToggleUserActiveAction",
+          "bulkUpdateUserRoleAction",
+          "bulkAssignToProjectAction",
+          "approveRetakeRequestAction",
+          "rejectRetakeRequestAction"
+        ]
+      },
+      {
+        "path": "components/documents/document-threads-board.tsx",
+        "batchIndex": 3,
+        "symbols": ["DocumentThreadsBoard"]
+      },
+      {
+        "path": "components/layout/navbar.tsx",
+        "batchIndex": 9,
+        "symbols": ["Navbar"]
+      }
+    ],
+    "lib/groq/chat.ts": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      },
+      {
+        "path": "app/api/chat/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET", "POST"]
+      }
+    ],
+    "lib/llm/anthropic.ts": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "lib/llm/copilot.ts": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "lib/llm/index.ts": [
+      {
+        "path": "app/actions/learning.ts",
+        "batchIndex": 1,
+        "symbols": ["generateProjectFlashcardsAction", "reviewFlashcardAction"]
+      },
+      {
+        "path": "app/api/chat/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET", "POST"]
+      }
+    ],
+    "lib/llm/openai.ts": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 6,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "lib/llm/runtime-config.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "app/actions/admin.ts",
+        "batchIndex": 8,
+        "symbols": [
+          "createProjectAction",
+          "updateProjectSettingsAction",
+          "toggleProjectStatusAction",
+          "updateLlmRuntimeConfigAction",
+          "deleteDocumentAction",
+          "createDocumentConnectorAction",
+          "syncDocumentConnectorAction",
+          "deleteDocumentConnectorAction",
+          "toggleDocumentConnectorAutoSyncAction",
+          "toggleDocumentRequiredAction",
+          "inviteProjectMemberAction",
+          "sendProjectAnnouncementAction",
+          "removeProjectMemberAction",
+          "updateProjectMemberRoleAction",
+          "resetQuizAttemptAction",
+          "setQuizWindowAction",
+          "deleteQuizSetAction",
+          "deleteQuizQuestionAction",
+          "createQuizSetAction",
+          "createQuizQuestionAction",
+          "updateQuizQuestionAction",
+          "toggleQuizSetActiveAction",
+          "importQuizCsvAction",
+          "createDemoUserAction",
+          "updateUserRoleAction",
+          "toggleUserActiveAction",
+          "bulkToggleUserActiveAction",
+          "bulkUpdateUserRoleAction",
+          "bulkAssignToProjectAction",
+          "approveRetakeRequestAction",
+          "rejectRetakeRequestAction"
+        ]
+      }
+    ],
+    "lib/observability.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 8,
+        "symbols": []
+      },
+      {
+        "path": "app/api/chat/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET", "POST"]
+      }
+    ],
+    "lib/rag/retrieval.ts": [
+      {
+        "path": "lib/db.ts",
+        "batchIndex": 1,
+        "symbols": []
+      },
+      {
+        "path": "app/api/chat/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET", "POST"]
+      }
+    ],
+    "lib/storage/local.ts": [
+      {
+        "path": "app/actions/admin.ts",
+        "batchIndex": 8,
+        "symbols": [
+          "createProjectAction",
+          "updateProjectSettingsAction",
+          "toggleProjectStatusAction",
+          "updateLlmRuntimeConfigAction",
+          "deleteDocumentAction",
+          "createDocumentConnectorAction",
+          "syncDocumentConnectorAction",
+          "deleteDocumentConnectorAction",
+          "toggleDocumentConnectorAutoSyncAction",
+          "toggleDocumentRequiredAction",
+          "inviteProjectMemberAction",
+          "sendProjectAnnouncementAction",
+          "removeProjectMemberAction",
+          "updateProjectMemberRoleAction",
+          "resetQuizAttemptAction",
+          "setQuizWindowAction",
+          "deleteQuizSetAction",
+          "deleteQuizQuestionAction",
+          "createQuizSetAction",
+          "createQuizQuestionAction",
+          "updateQuizQuestionAction",
+          "toggleQuizSetActiveAction",
+          "importQuizCsvAction",
+          "createDemoUserAction",
+          "updateUserRoleAction",
+          "toggleUserActiveAction",
+          "bulkToggleUserActiveAction",
+          "bulkUpdateUserRoleAction",
+          "bulkAssignToProjectAction",
+          "approveRetakeRequestAction",
+          "rejectRetakeRequestAction"
+        ]
+      },
+      {
+        "path": "app/api/documents/view/route.ts",
+        "batchIndex": 1,
+        "symbols": ["GET"]
+      }
+    ]
+  }
+}

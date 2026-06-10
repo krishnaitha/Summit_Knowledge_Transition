@@ -1,0 +1,30 @@
+{
+  "batchIndex": 16,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".understand-anything/fingerprints.json",
+      "language": "json",
+      "sizeLines": 13331,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/knowledge-graph.json",
+      "language": "json",
+      "sizeLines": 18632,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/meta.json",
+      "language": "json",
+      "sizeLines": 8,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    ".understand-anything/fingerprints.json": [],
+    ".understand-anything/knowledge-graph.json": [],
+    ".understand-anything/meta.json": []
+  },
+  "neighborMap": {}
+}

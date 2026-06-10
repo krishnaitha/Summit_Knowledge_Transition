@@ -16,15 +16,64 @@ type Props = {
   connectors: DocumentConnectorRecord[];
   createAction: ConnectorAction;
   syncAction: ConnectorAction;
+  testConnectionAction: ConnectorAction;
+  dryRunAction: ConnectorAction;
   deleteAction: ConnectorAction;
   toggleAutoSyncAction: ConnectorAction;
 };
+
+type ConnectorRunSummary = {
+  mode: 'sync' | 'dry-run' | 'test';
+  imported: number;
+  scanned: number;
+  skipped: number;
+  skip_reasons: Array<{ reason: string; count: number }>;
+  completed_at?: string;
+};
+
+function parseConnectorRunSummary(value: unknown): ConnectorRunSummary | null {
+  if (!value || typeof value !== 'object') return null;
+
+  const record = value as Record<string, unknown>;
+  const modeRaw = String(record.mode ?? '').trim();
+  const mode =
+    modeRaw === 'sync' || modeRaw === 'dry-run' || modeRaw === 'test' ? modeRaw : undefined;
+
+  if (!mode) return null;
+
+  const imported = Number(record.imported ?? 0);
+  const scanned = Number(record.scanned ?? 0);
+  const skipped = Number(record.skipped ?? 0);
+
+  const skipReasonsRaw = Array.isArray(record.skip_reasons) ? record.skip_reasons : [];
+  const skip_reasons = skipReasonsRaw
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const item = entry as Record<string, unknown>;
+      const reason = String(item.reason ?? '').trim();
+      const count = Number(item.count ?? 0);
+      if (!reason || !Number.isFinite(count) || count <= 0) return null;
+      return { reason, count };
+    })
+    .filter((entry): entry is { reason: string; count: number } => Boolean(entry));
+
+  return {
+    mode,
+    imported: Number.isFinite(imported) ? imported : 0,
+    scanned: Number.isFinite(scanned) ? scanned : 0,
+    skipped: Number.isFinite(skipped) ? skipped : 0,
+    skip_reasons,
+    completed_at: typeof record.completed_at === 'string' ? record.completed_at : undefined,
+  };
+}
 
 export function DocumentConnectorsPanel({
   projectId,
   connectors,
   createAction,
   syncAction,
+  testConnectionAction,
+  dryRunAction,
   deleteAction,
   toggleAutoSyncAction,
 }: Props) {
@@ -179,7 +228,7 @@ export function DocumentConnectorsPanel({
                 <input
                   name="confluence_base_url"
                   className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
-                  placeholder="https://company.atlassian.net/wiki"
+                  placeholder="https://company.atlassian.net/wiki or company.atlassian.net"
                 />
               </label>
               <label className="space-y-1 text-sm">
@@ -223,7 +272,7 @@ export function DocumentConnectorsPanel({
                 <input
                   name="sharepoint_library_path"
                   className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
-                  placeholder="Shared Documents"
+                  placeholder="Shared Documents or /sites/Team/Shared Documents"
                 />
               </label>
               <label className="space-y-1 text-sm md:col-span-2">
@@ -287,7 +336,7 @@ export function DocumentConnectorsPanel({
                 <input
                   name="monday_api_url"
                   className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
-                  placeholder="https://api.monday.com/v2"
+                  placeholder="https://api.monday.com/v2 (or leave default)"
                 />
               </label>
               <label className="space-y-1 text-sm">
@@ -331,7 +380,7 @@ export function DocumentConnectorsPanel({
                 <input
                   name="onedrive_folder_path"
                   className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
-                  placeholder="KT/Runbooks"
+                  placeholder="KT/Runbooks or full OneDrive folder URL"
                 />
               </label>
               <label className="space-y-1 text-sm md:col-span-2">
@@ -351,7 +400,7 @@ export function DocumentConnectorsPanel({
                 <input
                   name="github_repository"
                   className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3"
-                  placeholder="owner/repo"
+                  placeholder="owner/repo or github.com/owner/repo"
                 />
               </label>
               <label className="space-y-1 text-sm">
@@ -396,6 +445,7 @@ export function DocumentConnectorsPanel({
           {connectors.length ? (
             connectors.map((connector) => {
               const config = connector.config as Record<string, unknown>;
+              const summary = parseConnectorRunSummary(connector.last_sync_summary);
               const isConfluence = connector.provider === 'confluence';
               const isSharePoint = connector.provider === 'sharepoint';
               const isJira = connector.provider === 'jira';
@@ -436,6 +486,23 @@ export function DocumentConnectorsPanel({
                       Auto-sync is {connector.auto_sync_enabled ? 'enabled' : 'disabled'} for this
                       connector.
                     </p>
+                    {summary && (
+                      <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                        <p className="font-medium text-slate-700">
+                          Last {summary.mode}: scanned {summary.scanned}, importable{' '}
+                          {summary.imported}, skipped {summary.skipped}
+                        </p>
+                        {summary.skip_reasons.length > 0 && (
+                          <p className="mt-1">
+                            Top skip reasons:{' '}
+                            {summary.skip_reasons
+                              .slice(0, 3)
+                              .map((reason) => `${reason.reason} (${reason.count})`)
+                              .join(' · ')}
+                          </p>
+                        )}
+                      </div>
+                    )}
                     {connector.last_sync_error && (
                       <p className="mt-1 text-sm text-rose-600">{connector.last_sync_error}</p>
                     )}
@@ -461,6 +528,20 @@ export function DocumentConnectorsPanel({
                           <RefreshCcw className="h-3.5 w-3.5" />
                           Sync now
                         </span>
+                      </SubmitButton>
+                    </form>
+                    <form action={testConnectionAction}>
+                      <input type="hidden" name="project_id" value={projectId} />
+                      <input type="hidden" name="connector_id" value={connector.id} />
+                      <SubmitButton variant="secondary" loadingText="Testing…">
+                        Test connection
+                      </SubmitButton>
+                    </form>
+                    <form action={dryRunAction}>
+                      <input type="hidden" name="project_id" value={projectId} />
+                      <input type="hidden" name="connector_id" value={connector.id} />
+                      <SubmitButton variant="secondary" loadingText="Running…">
+                        Dry run
                       </SubmitButton>
                     </form>
                     <form action={deleteAction}>

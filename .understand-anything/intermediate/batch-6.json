@@ -1,0 +1,1011 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/(member)/threads/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/threads/page.tsx",
+      "summary": "Member-facing page listing open support threads with filtering by project, document, and status, requiring member authentication before rendering.",
+      "tags": ["component", "member", "threads", "filtering"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/(member)/threads/page.tsx:MemberOpenThreadsPage",
+      "type": "function",
+      "name": "MemberOpenThreadsPage",
+      "filePath": "app/(member)/threads/page.tsx",
+      "lineRange": [11, 174],
+      "summary": "Async server component that fetches open threads for the authenticated member and renders a filterable, paginated thread list with project and document selectors.",
+      "tags": ["component", "server-component", "threads", "member"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/activity-feed.tsx",
+      "type": "file",
+      "name": "activity-feed.tsx",
+      "filePath": "components/admin/activity-feed.tsx",
+      "summary": "Interactive admin activity feed component with pagination, search, per-user filtering, and date-grouped display of system audit events.",
+      "tags": ["component", "admin", "activity", "filtering"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/activity-feed.tsx:ActivityFeed",
+      "type": "function",
+      "name": "ActivityFeed",
+      "filePath": "components/admin/activity-feed.tsx",
+      "lineRange": [76, 264],
+      "summary": "Client component that renders a paginated, searchable, filterable feed of admin audit events grouped by date with user filtering support.",
+      "tags": ["component", "admin", "activity-feed", "pagination"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/document-connectors-panel.tsx",
+      "type": "file",
+      "name": "document-connectors-panel.tsx",
+      "filePath": "components/admin/document-connectors-panel.tsx",
+      "summary": "Admin panel for managing external document connectors (GitHub, Confluence, Jira, etc.) including creation, deletion, sync, and auto-sync toggle per connector.",
+      "tags": ["component", "admin", "connectors", "document-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "type": "function",
+      "name": "DocumentConnectorsPanel",
+      "filePath": "components/admin/document-connectors-panel.tsx",
+      "lineRange": [23, 495],
+      "summary": "Large client component managing the full lifecycle of document connectors — listing existing connectors, adding new ones via a provider-specific form, and triggering sync or deletion via server actions.",
+      "tags": ["component", "admin", "connectors", "server-actions"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/document-upload-panel.tsx",
+      "type": "file",
+      "name": "document-upload-panel.tsx",
+      "filePath": "components/admin/document-upload-panel.tsx",
+      "summary": "Admin document upload panel with drag-and-drop, multi-file queue management, upload progress tracking, and background job polling for document processing status.",
+      "tags": ["component", "admin", "file-upload", "document-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/document-upload-panel.tsx:DocumentUploadPanel",
+      "type": "function",
+      "name": "DocumentUploadPanel",
+      "filePath": "components/admin/document-upload-panel.tsx",
+      "lineRange": [31, 305],
+      "summary": "Client component implementing drag-and-drop file upload with per-file status tracking, background job polling via setInterval, and inline progress indicators.",
+      "tags": ["component", "admin", "file-upload", "polling"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/generate-document-form.tsx",
+      "type": "file",
+      "name": "generate-document-form.tsx",
+      "filePath": "components/admin/generate-document-form.tsx",
+      "summary": "Admin form for generating structured documents from meeting transcripts using AI, with options to download the result or push it directly to a project's knowledge base.",
+      "tags": ["component", "admin", "ai-generation", "document-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/generate-document-form.tsx:GenerateDocumentForm",
+      "type": "function",
+      "name": "GenerateDocumentForm",
+      "filePath": "components/admin/generate-document-form.tsx",
+      "lineRange": [28, 381],
+      "summary": "Client component providing a multi-step form to upload transcripts, generate a document via AI server action, download the result, or push it to the knowledge base.",
+      "tags": ["component", "admin", "ai-generation", "server-actions"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/retake-requests-card.tsx",
+      "type": "file",
+      "name": "retake-requests-card.tsx",
+      "filePath": "components/admin/retake-requests-card.tsx",
+      "summary": "Admin card component for reviewing quiz retake requests, with approve and reject actions displayed in pending and resolved sections.",
+      "tags": ["component", "admin", "quiz", "approval-workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/retake-requests-card.tsx:RetakeRequestsCard",
+      "type": "function",
+      "name": "RetakeRequestsCard",
+      "filePath": "components/admin/retake-requests-card.tsx",
+      "lineRange": [108, 177],
+      "summary": "Admin component that separates quiz retake requests into pending and resolved sections, delegating row-level approve/reject actions to RequestRow.",
+      "tags": ["component", "admin", "quiz", "approval-workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/stats-card.tsx",
+      "type": "file",
+      "name": "stats-card.tsx",
+      "filePath": "components/admin/stats-card.tsx",
+      "summary": "Simple presentational card component for displaying a labeled metric with an optional icon and accent color for the admin dashboard.",
+      "tags": ["component", "admin", "utility", "dashboard"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/admin/stats-card.tsx:StatsCard",
+      "type": "function",
+      "name": "StatsCard",
+      "filePath": "components/admin/stats-card.tsx",
+      "lineRange": [6, 40],
+      "summary": "Presentational component rendering a stat tile with a label, value, optional hint, icon, and conditional accent styling.",
+      "tags": ["component", "admin", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/admin/system-health-errors-list.tsx",
+      "type": "file",
+      "name": "system-health-errors-list.tsx",
+      "filePath": "components/admin/system-health-errors-list.tsx",
+      "summary": "Admin system health error viewer with search, source/category filtering, date range selection, and paginated display of application error events.",
+      "tags": ["component", "admin", "observability", "filtering"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/system-health-errors-list.tsx:SystemHealthErrorsList",
+      "type": "function",
+      "name": "SystemHealthErrorsList",
+      "filePath": "components/admin/system-health-errors-list.tsx",
+      "lineRange": [13, 340],
+      "summary": "Client component rendering a searchable, filterable, paginated table of app error events from the observability system with full stack trace expansion.",
+      "tags": ["component", "admin", "observability", "pagination"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/chat/bookmark-button.tsx",
+      "type": "file",
+      "name": "bookmark-button.tsx",
+      "filePath": "components/chat/bookmark-button.tsx",
+      "summary": "Interactive button component for bookmarking or unbookmarking individual chat messages, calling the bookmarks API with optimistic UI state.",
+      "tags": ["component", "chat", "bookmark", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/chat/bookmark-button.tsx:BookmarkButton",
+      "type": "function",
+      "name": "BookmarkButton",
+      "filePath": "components/chat/bookmark-button.tsx",
+      "lineRange": [14, 63],
+      "summary": "Client component that toggles a message bookmark via REST API calls with optimistic local state updates and loading feedback.",
+      "tags": ["component", "chat", "bookmark", "optimistic-ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/chat/feedback-buttons.tsx",
+      "type": "file",
+      "name": "feedback-buttons.tsx",
+      "filePath": "components/chat/feedback-buttons.tsx",
+      "summary": "Thumbs-up/thumbs-down rating buttons for chat messages that persist user feedback via the message ratings API, with downvote reason selection.",
+      "tags": ["component", "chat", "feedback", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/chat/feedback-buttons.tsx:FeedbackButtons",
+      "type": "function",
+      "name": "FeedbackButtons",
+      "filePath": "components/chat/feedback-buttons.tsx",
+      "lineRange": [15, 87],
+      "summary": "Client component providing thumbs-up/thumbs-down feedback for chat messages, saving ratings via API with optional downvote reason selection.",
+      "tags": ["component", "chat", "feedback", "rating"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/chat/message-bubble.tsx",
+      "type": "file",
+      "name": "message-bubble.tsx",
+      "filePath": "components/chat/message-bubble.tsx",
+      "summary": "Chat message bubble rendering user and assistant messages with markdown support, RAG source tags, bookmark button, and feedback buttons.",
+      "tags": ["component", "chat", "message", "rag"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "type": "function",
+      "name": "MessageBubble",
+      "filePath": "components/chat/message-bubble.tsx",
+      "lineRange": [17, 73],
+      "summary": "Renders a single chat message with role-differentiated styling, markdown content, attached source document tags, bookmarking, and feedback controls.",
+      "tags": ["component", "chat", "message", "rag"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/chat/source-tag.tsx",
+      "type": "file",
+      "name": "source-tag.tsx",
+      "filePath": "components/chat/source-tag.tsx",
+      "summary": "Small presentational tag component that displays a RAG source document name alongside a confidence label derived from cosine similarity score.",
+      "tags": ["component", "chat", "rag", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/project-card.tsx",
+      "type": "file",
+      "name": "project-card.tsx",
+      "filePath": "components/layout/project-card.tsx",
+      "summary": "Member-facing project card displaying onboarding progress, quiz scores, document completion stats, and a deadline countdown for a given project.",
+      "tags": ["component", "layout", "project", "member"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/layout/project-card.tsx:ProjectCard",
+      "type": "function",
+      "name": "ProjectCard",
+      "filePath": "components/layout/project-card.tsx",
+      "lineRange": [29, 165],
+      "summary": "Renders a clickable project summary card with progress bars for document reading and quiz completion, a days-until-deadline indicator, and status badges.",
+      "tags": ["component", "layout", "project", "member"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/layout/setup-panel.tsx",
+      "type": "file",
+      "name": "setup-panel.tsx",
+      "filePath": "components/layout/setup-panel.tsx",
+      "summary": "Minimal presentational panel component used in empty-state or onboarding screens to display a title and description inside a card.",
+      "tags": ["component", "layout", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/quiz/result-summary.tsx",
+      "type": "file",
+      "name": "result-summary.tsx",
+      "filePath": "components/quiz/result-summary.tsx",
+      "summary": "Quiz result summary component showing the member's score, pass/fail status, coaching plan recommendations, and recent attempt history.",
+      "tags": ["component", "quiz", "member", "coaching"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/quiz/result-summary.tsx:ResultSummary",
+      "type": "function",
+      "name": "ResultSummary",
+      "filePath": "components/quiz/result-summary.tsx",
+      "lineRange": [9, 151],
+      "summary": "Renders a quiz result card with score badge, disqualification notice, AI coaching plan with document links, and a historical attempt trend.",
+      "tags": ["component", "quiz", "member", "coaching"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/ui/badge.tsx",
+      "type": "file",
+      "name": "badge.tsx",
+      "filePath": "components/ui/badge.tsx",
+      "summary": "Reusable badge UI primitive with neutral, success, warning, and error variant styles built on Tailwind CSS.",
+      "tags": ["component", "ui", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/card.tsx",
+      "type": "file",
+      "name": "card.tsx",
+      "filePath": "components/ui/card.tsx",
+      "summary": "Reusable card layout primitives — Card, CardHeader, CardTitle, CardDescription, CardContent — wrapping styled div elements with className merging.",
+      "tags": ["component", "ui", "utility", "layout"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/textarea.tsx",
+      "type": "file",
+      "name": "textarea.tsx",
+      "filePath": "components/ui/textarea.tsx",
+      "summary": "Styled textarea UI primitive forwarding all standard HTML textarea props with consistent Tailwind styling.",
+      "tags": ["component", "ui", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/utils.ts",
+      "type": "file",
+      "name": "utils.ts",
+      "filePath": "lib/utils.ts",
+      "summary": "Shared utility functions used across the codebase: class name merging (cn), date/percent formatting, safe JSON parsing, CSV generation, and async sleep.",
+      "tags": ["utility", "formatting", "helper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/utils.ts:cn",
+      "type": "function",
+      "name": "cn",
+      "filePath": "lib/utils.ts",
+      "lineRange": [5, 7],
+      "summary": "Merges Tailwind CSS class names using clsx and tailwind-merge to handle conditional classes and deduplication.",
+      "tags": ["utility", "tailwind", "styling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/utils.ts:formatDate",
+      "type": "function",
+      "name": "formatDate",
+      "filePath": "lib/utils.ts",
+      "lineRange": [9, 17],
+      "summary": "Formats a date value to a human-readable string, optionally including time, using date-fns format.",
+      "tags": ["utility", "formatting", "date"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/utils.ts:formatPercent",
+      "type": "function",
+      "name": "formatPercent",
+      "filePath": "lib/utils.ts",
+      "lineRange": [19, 25],
+      "summary": "Converts a numeric value to a percentage string with a percent sign, returning an em-dash for NaN values.",
+      "tags": ["utility", "formatting"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/utils.ts:safeJsonParse",
+      "type": "function",
+      "name": "safeJsonParse",
+      "filePath": "lib/utils.ts",
+      "lineRange": [27, 33],
+      "summary": "Parses a JSON string, returning a typed fallback value if parsing fails rather than throwing.",
+      "tags": ["utility", "json", "error-handling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/utils.ts:toCsv",
+      "type": "function",
+      "name": "toCsv",
+      "filePath": "lib/utils.ts",
+      "lineRange": [35, 51],
+      "summary": "Converts an array of objects to a CSV string, automatically deriving headers from the first row and escaping quoted fields.",
+      "tags": ["utility", "serialization", "csv"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/utils.ts:sleep",
+      "type": "function",
+      "name": "sleep",
+      "filePath": "lib/utils.ts",
+      "lineRange": [53, 57],
+      "summary": "Returns a Promise that resolves after the specified number of milliseconds, useful for async delays in polling loops.",
+      "tags": ["utility", "async"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "function:app/(member)/threads/page.tsx:MemberOpenThreadsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "function:app/(member)/threads/page.tsx:MemberOpenThreadsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/threads/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:app/(member)/threads/page.tsx:MemberOpenThreadsPage",
+      "target": "function:lib/auth.ts:requireMember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/threads/page.tsx:MemberOpenThreadsPage",
+      "target": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/(member)/threads/page.tsx:MemberOpenThreadsPage",
+      "target": "function:lib/utils.ts:formatDate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/activity-feed.tsx",
+      "target": "function:components/admin/activity-feed.tsx:ActivityFeed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/activity-feed.tsx",
+      "target": "function:components/admin/activity-feed.tsx:ActivityFeed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/activity-feed.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/activity-feed.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/activity-feed.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/admin/activity-feed.tsx:ActivityFeed",
+      "target": "function:lib/utils.ts:formatDate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-connectors-panel.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "target": "function:app/actions/admin.ts:createDocumentConnectorAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "target": "function:app/actions/admin.ts:syncDocumentConnectorAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "target": "function:app/actions/admin.ts:deleteDocumentConnectorAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/document-connectors-panel.tsx:DocumentConnectorsPanel",
+      "target": "function:app/actions/admin.ts:toggleDocumentConnectorAutoSyncAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/document-upload-panel.tsx",
+      "target": "function:components/admin/document-upload-panel.tsx:DocumentUploadPanel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/document-upload-panel.tsx",
+      "target": "function:components/admin/document-upload-panel.tsx:DocumentUploadPanel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/document-upload-panel.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-upload-panel.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-upload-panel.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/document-upload-panel.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/admin/document-upload-panel.tsx:DocumentUploadPanel",
+      "target": "function:app/actions/admin.ts:deleteDocumentAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/document-upload-panel.tsx:DocumentUploadPanel",
+      "target": "function:app/actions/admin.ts:toggleDocumentRequiredAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "function:components/admin/generate-document-form.tsx:GenerateDocumentForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "function:components/admin/generate-document-form.tsx:GenerateDocumentForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "file:app/actions/transcript.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/generate-document-form.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/admin/generate-document-form.tsx:GenerateDocumentForm",
+      "target": "function:app/actions/transcript.ts:generateDocumentFromTranscriptAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/generate-document-form.tsx:GenerateDocumentForm",
+      "target": "function:app/actions/transcript.ts:pushToKnowledgeBaseAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/retake-requests-card.tsx",
+      "target": "function:components/admin/retake-requests-card.tsx:RetakeRequestsCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/retake-requests-card.tsx",
+      "target": "function:components/admin/retake-requests-card.tsx:RetakeRequestsCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/retake-requests-card.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/retake-requests-card.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/retake-requests-card.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/admin/retake-requests-card.tsx:RetakeRequestsCard",
+      "target": "function:app/actions/admin.ts:approveRetakeRequestAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/retake-requests-card.tsx:RetakeRequestsCard",
+      "target": "function:app/actions/admin.ts:rejectRetakeRequestAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/retake-requests-card.tsx:RetakeRequestsCard",
+      "target": "function:app/actions/admin.ts:resetQuizAttemptAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/stats-card.tsx",
+      "target": "function:components/admin/stats-card.tsx:StatsCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/stats-card.tsx",
+      "target": "function:components/admin/stats-card.tsx:StatsCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/system-health-errors-list.tsx",
+      "target": "function:components/admin/system-health-errors-list.tsx:SystemHealthErrorsList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/system-health-errors-list.tsx",
+      "target": "function:components/admin/system-health-errors-list.tsx:SystemHealthErrorsList",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/system-health-errors-list.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/system-health-errors-list.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/system-health-errors-list.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/admin/system-health-errors-list.tsx:SystemHealthErrorsList",
+      "target": "function:lib/utils.ts:formatDate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/bookmark-button.tsx",
+      "target": "function:components/chat/bookmark-button.tsx:BookmarkButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/bookmark-button.tsx",
+      "target": "function:components/chat/bookmark-button.tsx:BookmarkButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/feedback-buttons.tsx",
+      "target": "function:components/chat/feedback-buttons.tsx:FeedbackButtons",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/feedback-buttons.tsx",
+      "target": "function:components/chat/feedback-buttons.tsx:FeedbackButtons",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "target": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/source-tag.tsx",
+      "target": "file:components/chat/message-bubble.tsx",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:components/layout/project-card.tsx",
+      "target": "function:components/layout/project-card.tsx:ProjectCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/project-card.tsx",
+      "target": "function:components/layout/project-card.tsx:ProjectCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/project-card.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/project-card.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/setup-panel.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/result-summary.tsx",
+      "target": "function:components/quiz/result-summary.tsx:ResultSummary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/quiz/result-summary.tsx",
+      "target": "function:components/quiz/result-summary.tsx:ResultSummary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/quiz/result-summary.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/result-summary.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/result-summary.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:components/quiz/result-summary.tsx:ResultSummary",
+      "target": "function:lib/utils.ts:formatPercent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:cn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:formatDate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:formatPercent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:safeJsonParse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:toCsv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:sleep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:cn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:formatDate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:formatPercent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:safeJsonParse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:toCsv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/utils.ts",
+      "target": "function:lib/utils.ts:sleep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

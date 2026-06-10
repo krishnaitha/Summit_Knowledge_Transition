@@ -367,6 +367,11 @@ async function ensureConnectorSchema() {
 
   await sql`
     alter table document_connectors
+      add column if not exists last_sync_summary jsonb
+  `;
+
+  await sql`
+    alter table document_connectors
       drop constraint if exists document_connectors_provider_check
   `;
 
@@ -450,6 +455,48 @@ export async function syncDocumentConnectorAction(formData: FormData) {
     await syncDocumentConnector(connectorId);
   } catch (error) {
     console.error('[Sync Connector Error]', error);
+    throw error;
+  }
+
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
+export async function testDocumentConnectorAction(formData: FormData) {
+  const { requireAdmin } = await import('@/lib/auth');
+  await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const connectorId = String(formData.get('connector_id') ?? '').trim();
+
+  if (!projectId || !connectorId) return;
+
+  try {
+    await ensureConnectorSchema();
+    const { syncDocumentConnector } = await import('@/lib/documents/connectors');
+    await syncDocumentConnector(connectorId, { mode: 'test' });
+  } catch (error) {
+    console.error('[Test Connector Error]', error);
+    throw error;
+  }
+
+  revalidatePath(`/admin/projects/${projectId}/documents`);
+}
+
+export async function dryRunDocumentConnectorAction(formData: FormData) {
+  const { requireAdmin } = await import('@/lib/auth');
+  await requireAdmin();
+
+  const projectId = String(formData.get('project_id') ?? '').trim();
+  const connectorId = String(formData.get('connector_id') ?? '').trim();
+
+  if (!projectId || !connectorId) return;
+
+  try {
+    await ensureConnectorSchema();
+    const { syncDocumentConnector } = await import('@/lib/documents/connectors');
+    await syncDocumentConnector(connectorId, { mode: 'dry-run' });
+  } catch (error) {
+    console.error('[Dry Run Connector Error]', error);
     throw error;
   }
 
@@ -579,12 +626,39 @@ export async function sendProjectAnnouncementAction(formData: FormData) {
   const projectId = String(formData.get('project_id') ?? '').trim();
   const title = String(formData.get('title') ?? '').trim();
   const message = String(formData.get('message') ?? '').trim();
+  const expiresAtInput = String(formData.get('expires_at') ?? '').trim();
 
   if (!projectId || !title || !message) return;
 
   await sql`
-    INSERT INTO project_announcements (project_id, title, message, sent_by)
-    VALUES (${projectId}, ${title.slice(0, 140)}, ${message.slice(0, 2000)}, ${profile?.id ?? null})
+    ALTER TABLE project_announcements
+      ADD COLUMN IF NOT EXISTS expires_at timestamptz
+  `;
+
+  await sql`
+    UPDATE project_announcements
+    SET expires_at = COALESCE(expires_at, created_at + INTERVAL '72 hours')
+    WHERE expires_at IS NULL
+  `;
+
+  await sql`
+    ALTER TABLE project_announcements
+      ALTER COLUMN expires_at SET DEFAULT now() + INTERVAL '72 hours'
+  `;
+
+  const fallbackExpiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000);
+  const parsedExpiresAt = expiresAtInput ? new Date(expiresAtInput) : fallbackExpiresAt;
+  const expiresAt = Number.isNaN(parsedExpiresAt.getTime()) ? fallbackExpiresAt : parsedExpiresAt;
+
+  await sql`
+    INSERT INTO project_announcements (project_id, title, message, sent_by, expires_at)
+    VALUES (
+      ${projectId},
+      ${title.slice(0, 140)},
+      ${message.slice(0, 2000)},
+      ${profile?.id ?? null},
+      ${expiresAt.toISOString()}
+    )
   `;
 
   await sql`
@@ -593,7 +667,7 @@ export async function sendProjectAnnouncementAction(formData: FormData) {
       ${profile?.id ?? null},
       ${projectId},
       'admin_announcement_sent',
-      ${sql.json({ title: title.slice(0, 140) })}
+      ${sql.json({ title: title.slice(0, 140), expiresAt: expiresAt.toISOString() })}
     )
   `;
 

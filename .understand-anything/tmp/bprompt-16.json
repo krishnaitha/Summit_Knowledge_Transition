@@ -1,0 +1,6 @@
+{
+  "batchIndex": 16,
+  "fileList": "1. `docs/ARCHITECTURE.md` (1552 lines, language: `markdown`, fileCategory: `docs`)\n2. `docs/CONNECTOR_SETUP.md` (195 lines, language: `markdown`, fileCategory: `docs`)\n3. `docs/LLM_PROVIDER_SETUP.md` (285 lines, language: `markdown`, fileCategory: `docs`)\n4. `docs/LOCAL_STORAGE.md` (216 lines, language: `markdown`, fileCategory: `docs`)\n5. `docs/RELEASE_NOTES_2026_05.md` (85 lines, language: `markdown`, fileCategory: `docs`)\n6. `docs/SELF_HOSTED_DEPLOYMENT.md` (581 lines, language: `markdown`, fileCategory: `docs`)\n7. `docs/USER_GUIDE.md` (607 lines, language: `markdown`, fileCategory: `docs`)\n8. `docs/WORKER_SETUP.md` (252 lines, language: `markdown`, fileCategory: `docs`)\n9. `docs/database-options-comparison.md` (236 lines, language: `markdown`, fileCategory: `docs`)\n10. `docs/load_test_report.html` (684 lines, language: `html`, fileCategory: `markup`)",
+  "batchImportData": "{\"docs/ARCHITECTURE.md\":[],\"docs/CONNECTOR_SETUP.md\":[],\"docs/LLM_PROVIDER_SETUP.md\":[],\"docs/LOCAL_STORAGE.md\":[],\"docs/RELEASE_NOTES_2026_05.md\":[],\"docs/SELF_HOSTED_DEPLOYMENT.md\":[],\"docs/USER_GUIDE.md\":[],\"docs/WORKER_SETUP.md\":[],\"docs/database-options-comparison.md\":[],\"docs/load_test_report.html\":[]}",
+  "neighborMap": "{}"
+}

@@ -1,0 +1,6 @@
+{
+  "batchIndex": 11,
+  "fileList": "1. `.dockerignore` (39 lines, language: `unknown`, fileCategory: `infra`)\n2. `docker-compose.yml` (116 lines, language: `yaml`, fileCategory: `infra`)\n3. `Dockerfile` (56 lines, language: `dockerfile`, fileCategory: `infra`)",
+  "batchImportData": "{\".dockerignore\":[],\"docker-compose.yml\":[],\"Dockerfile\":[]}",
+  "neighborMap": "{}"
+}

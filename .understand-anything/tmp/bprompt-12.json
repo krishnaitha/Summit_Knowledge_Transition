@@ -1,0 +1,6 @@
+{
+  "batchIndex": 12,
+  "fileList": "1. `.github/workflows/ci.yml` (144 lines, language: `yaml`, fileCategory: `infra`)",
+  "batchImportData": "{\".github/workflows/ci.yml\":[]}",
+  "neighborMap": "{}"
+}

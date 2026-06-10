@@ -1,0 +1,147 @@
+{
+  "projectRoot": "C:\\Projects\\FullSteam\\Summit\\NextElevate",
+  "batchFiles": [
+    {
+      "path": "__tests__/lib/quiz/assignment.test.ts",
+      "language": "typescript",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/quiz/scoring.test.ts",
+      "language": "typescript",
+      "sizeLines": 179,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/lib/quiz/shuffle.test.ts",
+      "language": "typescript",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(admin)/admin/users/page.tsx",
+      "language": "typescript",
+      "sizeLines": 109,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/actions/admin.ts",
+      "language": "typescript",
+      "sizeLines": 1022,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/documents-list.tsx",
+      "language": "typescript",
+      "sizeLines": 187,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/user-detail-drawer.tsx",
+      "language": "typescript",
+      "sizeLines": 167,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/user-filters.tsx",
+      "language": "typescript",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/admin/users-table.tsx",
+      "language": "typescript",
+      "sizeLines": 404,
+      "fileCategory": "code"
+    },
+    { "path": "lib/export.ts", "language": "typescript", "sizeLines": 40, "fileCategory": "code" },
+    {
+      "path": "lib/quiz/assignment.ts",
+      "language": "typescript",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/quiz/scoring.ts",
+      "language": "typescript",
+      "sizeLines": 47,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/quiz/shuffle.ts",
+      "language": "typescript",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/storage/r2.ts",
+      "language": "typescript",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "lib/types/database.ts",
+      "language": "typescript",
+      "sizeLines": 394,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "__tests__/lib/quiz/assignment.test.ts": ["lib/quiz/assignment.ts"],
+    "__tests__/lib/quiz/scoring.test.ts": ["lib/quiz/scoring.ts"],
+    "__tests__/lib/quiz/shuffle.test.ts": ["lib/quiz/shuffle.ts"],
+    "app/(admin)/admin/users/page.tsx": [
+      "components/admin/user-filters.tsx",
+      "components/admin/users-table.tsx",
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/export.ts"
+    ],
+    "app/actions/admin.ts": [
+      "lib/auth.ts",
+      "lib/data.ts",
+      "lib/db.ts",
+      "lib/documents/connectors.ts",
+      "lib/documents/process.ts",
+      "lib/email-sendgrid.ts",
+      "lib/env.ts",
+      "lib/llm/index.ts",
+      "lib/llm/runtime-config.ts",
+      "lib/storage/local.ts",
+      "lib/storage/r2.ts",
+      "lib/types/database.ts",
+      "lib/utils.ts"
+    ],
+    "components/admin/documents-list.tsx": [
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/user-detail-drawer.tsx": [
+      "app/actions/admin.ts",
+      "components/ui/badge.tsx",
+      "components/ui/card.tsx",
+      "components/ui/submit-button.tsx",
+      "lib/utils.ts"
+    ],
+    "components/admin/user-filters.tsx": [],
+    "components/admin/users-table.tsx": [
+      "app/actions/admin.ts",
+      "components/admin/user-detail-drawer.tsx",
+      "components/admin/user-filters.tsx",
+      "components/ui/badge.tsx",
+      "components/ui/button.tsx",
+      "components/ui/card.tsx",
+      "components/ui/input.tsx",
+      "components/ui/table.tsx",
+      "lib/utils.ts"
+    ],
+    "lib/export.ts": [],
+    "lib/quiz/assignment.ts": [],
+    "lib/quiz/scoring.ts": ["lib/types/database.ts"],
+    "lib/quiz/shuffle.ts": [],
+    "lib/storage/r2.ts": [],
+    "lib/types/database.ts": []
+  }
+}

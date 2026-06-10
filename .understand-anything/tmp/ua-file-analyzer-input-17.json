@@ -1,0 +1,182 @@
+{
+  "projectRoot": "C:/Projects/FullSteam/Summit/NextElevate",
+  "batchFiles": [
+    {
+      "path": ".claude/settings.json",
+      "language": "json",
+      "sizeLines": 17,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".github/copilot-instructions.md",
+      "language": "markdown",
+      "sizeLines": 22,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "language": "markdown",
+      "sizeLines": 26,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".husky/pre-commit",
+      "language": "shell",
+      "sizeLines": 1,
+      "fileCategory": "script"
+    },
+    {
+      "path": ".prettierignore",
+      "language": "unknown",
+      "sizeLines": 5,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/.understandignore",
+      "language": "unknown",
+      "sizeLines": 44,
+      "fileCategory": "config"
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/chat/loading.tsx",
+      "language": "typescript",
+      "sizeLines": 25,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/projects/[id]/chat/loading.tsx",
+      "language": "typescript",
+      "sizeLines": 25,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/globals.css",
+      "language": "css",
+      "sizeLines": 48,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/loading.tsx",
+      "language": "typescript",
+      "sizeLines": 13,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/page.tsx",
+      "language": "typescript",
+      "sizeLines": 4,
+      "fileCategory": "code"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "language": "javascript",
+      "sizeLines": 27,
+      "fileCategory": "config"
+    },
+    {
+      "path": "keycloak/realm.json",
+      "language": "json",
+      "sizeLines": 38,
+      "fileCategory": "config"
+    },
+    {
+      "path": "load-test/run.sh",
+      "language": "shell",
+      "sizeLines": 148,
+      "fileCategory": "script"
+    },
+    {
+      "path": "load-test/seed-users.mjs",
+      "language": "javascript",
+      "sizeLines": 41,
+      "fileCategory": "script"
+    },
+    {
+      "path": "load-test/summit.js",
+      "language": "javascript",
+      "sizeLines": 303,
+      "fileCategory": "script"
+    },
+    {
+      "path": "next-env.d.ts",
+      "language": "typescript",
+      "sizeLines": 6,
+      "fileCategory": "code"
+    },
+    {
+      "path": "next.config.ts",
+      "language": "typescript",
+      "sizeLines": 20,
+      "fileCategory": "config"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "language": "javascript",
+      "sizeLines": 7,
+      "fileCategory": "config"
+    },
+    {
+      "path": "postgres/legacy/add_learning_feedback_features.sql",
+      "language": "sql",
+      "sizeLines": 34,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/legacy/add_project_announcements.sql",
+      "language": "sql",
+      "sizeLines": 11,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/schema.sql",
+      "language": "sql",
+      "sizeLines": 657,
+      "fileCategory": "data"
+    },
+    {
+      "path": "proxy.ts",
+      "language": "typescript",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/connector-setup-guide.md",
+      "language": "markdown",
+      "sizeLines": 225,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    ".claude/settings.json": [],
+    ".github/copilot-instructions.md": [],
+    ".github/pull_request_template.md": [],
+    ".husky/pre-commit": [],
+    ".prettierignore": [],
+    ".understand-anything/.understandignore": [],
+    "app/(admin)/admin/projects/[id]/chat/loading.tsx": [],
+    "app/(member)/projects/[id]/chat/loading.tsx": [],
+    "app/globals.css": [],
+    "app/layout.tsx": ["app/globals.css"],
+    "app/loading.tsx": [],
+    "app/page.tsx": [],
+    "eslint.config.mjs": [],
+    "keycloak/realm.json": [],
+    "load-test/run.sh": [],
+    "load-test/seed-users.mjs": [],
+    "load-test/summit.js": [],
+    "next-env.d.ts": [],
+    "next.config.ts": [],
+    "postcss.config.mjs": [],
+    "postgres/legacy/add_learning_feedback_features.sql": [],
+    "postgres/legacy/add_project_announcements.sql": [],
+    "postgres/schema.sql": [],
+    "proxy.ts": [],
+    "public/connector-setup-guide.md": []
+  }
+}

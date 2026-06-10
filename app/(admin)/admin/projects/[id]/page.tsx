@@ -341,6 +341,13 @@ export default async function AdminProjectDetailPage(props: {
                 rows={5}
                 maxLength={2000}
               />
+              <div className="space-y-1">
+                <label className="text-sm text-slate-600">Expires at (optional)</label>
+                <Input name="expires_at" type="datetime-local" />
+                <p className="text-xs text-slate-500">
+                  Leave blank to auto-expire this announcement after 72 hours.
+                </p>
+              </div>
               <SubmitButton loadingText="Sending…">Send to all members</SubmitButton>
             </form>
           </CardContent>
@@ -359,6 +366,7 @@ export default async function AdminProjectDetailPage(props: {
                   <p className="mt-2 text-xs text-slate-400">
                     {formatDate(item.created_at, true)}
                     {item.sender_name ? ` · ${item.sender_name}` : ''}
+                    {item.expires_at ? ` · Expires ${formatDate(item.expires_at, true)}` : ''}
                   </p>
                 </div>
               ))

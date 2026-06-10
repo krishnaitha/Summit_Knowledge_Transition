@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireMember, getProjectAdminIds } from '@/lib/auth';
 import { getAssignedProjects, getMemberDashboardStats } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
+import { redirect } from 'next/navigation';
 
 const ACTION_LABELS: Record<string, string> = {
   chatbot_message: 'Asked the AI',
@@ -44,10 +45,15 @@ const linkButtonGhostClass =
 
 export default async function DashboardPage() {
   const { profile } = await requireMember();
+
+  if (!profile) {
+    redirect('/login');
+  }
+
   const [projects, stats, adminProjectIds] = await Promise.all([
-    getAssignedProjects(profile!.id, profile?.last_login_at),
-    getMemberDashboardStats(profile!.id),
-    getProjectAdminIds(profile!.id),
+    getAssignedProjects(profile.id, profile.last_login_at),
+    getMemberDashboardStats(profile.id),
+    getProjectAdminIds(profile.id),
   ]);
 
   const nextActionProject =
@@ -274,6 +280,7 @@ export default async function DashboardPage() {
                       <p className="mt-1 line-clamp-2 text-sm text-slate-700">{item.message}</p>
                       <p className="mt-2 text-xs text-slate-400">
                         {formatDate(item.createdAt, true)}
+                        {item.expiresAt ? ` · Expires ${formatDate(item.expiresAt, true)}` : ''}
                       </p>
                     </CardContent>
                   </Card>

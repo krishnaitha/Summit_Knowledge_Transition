@@ -1,0 +1,156 @@
+[
+  {
+    "order": 1,
+    "title": "Project Overview",
+    "description": "The README introduces NexTElevate: an enterprise knowledge-transfer portal where admin users manage AI-powered knowledge bases and member users learn through RAG-powered chat, readiness quizzes, and flashcards. Reading this first gives you the product's purpose, the technology choices (Next.js 16, PostgreSQL + pgvector, multi-provider LLM), and the quick-start guide before any code is examined. The architecture documentation supplements this with a formal system overview and entity-relationship diagram that will act as a map for the steps ahead.",
+    "nodeIds": ["document:README.md", "document:docs/ARCHITECTURE.md"],
+    "conceptExplained": "Product purpose and high-level architecture: a two-role portal (admin / member) built on Next.js App Router with AI-assisted knowledge transfer as its core value proposition."
+  },
+  {
+    "order": 2,
+    "title": "Application Entry & Route Groups",
+    "description": "The root `app/page.tsx` is just a redirect — its sole job is to send every visitor to the dashboard after authentication. The real structure lives in the two App Router layout files: `app/(admin)/admin/layout.tsx` enforces `requireAnyAdmin()` on every admin route, while `app/(member)/layout.tsx` enforces `requireMember()` on every member route. These layouts are the gatekeepers that ensure the two user experiences stay cleanly separated and secured at the framework level.",
+    "nodeIds": [
+      "file:app/page.tsx",
+      "file:app/layout.tsx",
+      "file:app/(admin)/admin/layout.tsx",
+      "file:app/(member)/layout.tsx"
+    ],
+    "conceptExplained": "Next.js App Router route groups: parenthesised directories like `(admin)` and `(member)` create isolated layout trees without affecting URL paths, letting you apply authentication guards per user type."
+  },
+  {
+    "order": 3,
+    "title": "Authentication System",
+    "description": "Authentication is the most widely imported module in the project — `lib/auth.ts` has 54 inbound imports and exports the four route guard functions (`requireAdmin`, `requireMember`, `requireProjectAdmin`, `requireAnyAdmin`) used by every page and API route. The provider system in `lib/auth/providers/index.ts` makes the portal pluggable: a single `AUTH_PROVIDER` environment variable switches between local credentials, AWS Cognito, and any OIDC-compatible identity provider without changing application code. The login page at `app/(auth)/login/page.tsx` renders the appropriate form based on the active provider.",
+    "nodeIds": [
+      "file:lib/auth.ts",
+      "file:lib/auth/providers/index.ts",
+      "file:app/(auth)/login/page.tsx"
+    ],
+    "conceptExplained": "Two-level role system: a global `role` column on the `users` table (admin/member) combined with optional project-level roles on `project_members`. Route guards use next-auth sessions to enforce these roles server-side on every request."
+  },
+  {
+    "order": 4,
+    "title": "Environment Config & Database Client",
+    "description": "Before any query can run, two foundational modules must be understood. `lib/env.ts` is the single source of truth for every environment variable — it centralises defaults, validates required values at startup, and exports a typed `appEnv` object so the rest of the codebase never reads `process.env` directly. `lib/db.ts` uses that configuration to initialise the `postgres.js` tagged-template client with a connection pool and optional SSL, producing the `` sql`SELECT ...` `` function that every query in `lib/data.ts` uses.",
+    "nodeIds": ["file:lib/env.ts", "file:lib/db.ts"],
+    "conceptExplained": "The postgres.js tagged-template pattern: `` sql`SELECT * FROM users WHERE id = ${id}` `` automatically parameterises values, preventing SQL injection while keeping queries readable and avoiding an ORM dependency."
+  },
+  {
+    "order": 5,
+    "title": "Data Access Layer & Type System",
+    "description": "`lib/data.ts` is the largest single file in the project at 2,188 lines — it is the entire SQL query library. With 51 inbound imports it is the second-most depended-on file after `lib/auth.ts`. Every query function lives here: user lookups, project membership checks, document retrieval, quiz attempt recording, analytics aggregation. The companion file `lib/types/database.ts` defines every TypeScript interface that corresponds to a database row, making the query return types explicit throughout the codebase. Together these two files form a complete, typed data access layer with no ORM.",
+    "nodeIds": ["file:lib/data.ts", "file:lib/types/database.ts"],
+    "conceptExplained": "No-ORM data access: all SQL is hand-written tagged-template queries in a single file, using TypeScript generics like `sql<User[]>` to type the result. This trades ORM magic for full visibility into every query the application runs."
+  },
+  {
+    "order": 6,
+    "title": "Database Schema & Migrations",
+    "description": "The Postgres schema is the backbone of the entire application. `postgres/schema.sql` defines all 30+ tables in their final state — a useful reference for understanding the data model at a glance. The 35 numbered migration files in `postgres/migrations/` tell the evolutionary story: migration 001 established the core tables (users, projects, documents, document_chunks with pgvector, quiz sets, processing_jobs), while subsequent migrations added capabilities like observability traces (011), project-level member roles (012), flashcards and spaced repetition (017), document connectors (019), user memories (031), and error event tracking (035). The `document_chunks` table with its `vector(384)` column is particularly important — it is what makes semantic search possible.",
+    "nodeIds": [
+      "file:postgres/schema.sql",
+      "table:postgres/migrations/001_init.sql:users",
+      "table:postgres/migrations/001_init.sql:document_chunks",
+      "table:postgres/migrations/001_init.sql:processing_jobs",
+      "table:postgres/migrations/034_embedding_model_enforcement.sql"
+    ],
+    "conceptExplained": "pgvector extension: storing ML embedding vectors alongside document chunks in the same Postgres database enables cosine similarity search without a separate vector store. Migration 034 adds `embedding_model_id` to chunks, enforcing that all chunks in a project use the same model before retrieval can succeed."
+  },
+  {
+    "order": 7,
+    "title": "Document Ingestion Pipeline",
+    "description": "When an admin uploads a document, it flows through a structured pipeline. `lib/documents/upload.ts` saves the file to R2 or local storage; `lib/documents/parse.ts` extracts plain text from PDF, DOCX, CSV, XLSX, or PPTX files; `lib/documents/pii.ts` redacts emails, phone numbers, SSNs, and credit cards with regex patterns before any text is stored; `lib/documents/scan.ts` classifies the document's sensitivity level. Then `lib/rag/chunking.ts` splits the cleaned text into overlapping token-based chunks, and `lib/rag/embeddings.ts` encodes each chunk using a local `@xenova/transformers` model into a 384-dimension vector. The full pipeline is orchestrated by `lib/documents/process.ts`.",
+    "nodeIds": [
+      "file:lib/documents/parse.ts",
+      "file:lib/documents/pii.ts",
+      "file:lib/documents/scan.ts",
+      "file:lib/rag/chunking.ts",
+      "file:lib/rag/embeddings.ts",
+      "file:lib/documents/process.ts"
+    ],
+    "conceptExplained": "Overlapping chunk strategy: chunks share a configurable number of tokens with adjacent chunks so that sentence context is not lost at chunk boundaries, improving retrieval recall when a relevant passage spans a boundary."
+  },
+  {
+    "order": 8,
+    "title": "Background Job Worker",
+    "description": "Document processing and quiz generation are too slow to run synchronously inside an HTTP request. Instead, API routes insert a row into the `processing_jobs` table and return immediately. `worker/index.mjs` is a separate Node.js process that polls `POST /api/jobs/worker` every second. That route uses a `claim_next_pending_job()` Postgres function to atomically claim one job — preventing two workers from processing the same job — then dispatches it to the correct handler. The `docs/WORKER_SETUP.md` guide explains how to run this in development and how to use Supabase `pg_cron` in serverless production environments where a persistent process cannot run.",
+    "nodeIds": [
+      "file:worker/index.mjs",
+      "file:app/api/jobs/worker/route.ts",
+      "document:docs/WORKER_SETUP.md"
+    ],
+    "conceptExplained": "Postgres-backed job queue: using a database table as a message queue (rather than Redis or a dedicated queue service) keeps the infrastructure simple and gives job state full ACID guarantees. Atomic claiming via `SELECT ... FOR UPDATE SKIP LOCKED` prevents double-processing without application-level locks."
+  },
+  {
+    "order": 9,
+    "title": "LLM Provider Abstraction",
+    "description": "`lib/llm/index.ts` is the single entry point for all AI text generation in the application — no route or component imports a provider SDK directly. It exports `createChatCompletion` and `createQuizCompletion`, which delegate to seven concrete adapters (Groq, OpenAI, Azure OpenAI, Anthropic, Mistral, Ollama, Copilot). The active provider is resolved at runtime by `lib/llm/runtime-config.ts`, which reads the `app_settings` table first (enabling live switching through the Admin → Model Switcher UI) and falls back to the env vars in `lib/env.ts`. This architecture means swapping from Groq to Anthropic requires zero code changes.",
+    "nodeIds": [
+      "file:lib/llm/index.ts",
+      "file:lib/llm/runtime-config.ts",
+      "file:lib/groq/chat.ts",
+      "file:lib/llm/anthropic.ts",
+      "file:lib/llm/openai.ts"
+    ],
+    "conceptExplained": "Provider abstraction pattern: all providers implement a common interface so the rest of the application is decoupled from any specific API. The DB-first runtime config (with env-var fallback) enables zero-downtime model switching without redeployment."
+  },
+  {
+    "order": 10,
+    "title": "RAG Chat API",
+    "description": "The chat endpoint at `app/api/chat/route.ts` is the most complex API route in the project — it has 22 outbound dependencies. A single request flows through: rate limiting, session creation or resumption, user memory injection (loading prior `remember ...` intents), retrieval of relevant document chunks via `lib/rag/retrieval.ts` (which enforces embedding-model consistency across the project's chunks), context assembly, LLM streaming call, and finally persisting the assistant message with source references and RAG trace metadata. `lib/memory.ts` handles the memory parsing logic — detecting when a user writes 'remember X' and storing it for future sessions.",
+    "nodeIds": ["file:app/api/chat/route.ts", "file:lib/rag/retrieval.ts", "file:lib/memory.ts"],
+    "conceptExplained": "Streaming RAG responses: the chat route uses the Vercel AI SDK streaming pattern to send tokens to the browser as they arrive from the LLM, so users see responses forming in real time rather than waiting for the full completion."
+  },
+  {
+    "order": 11,
+    "title": "Chat UI Component",
+    "description": "The member-facing chat experience is rendered entirely by `components/chat/chat-interface.tsx`. This single client component manages: session state and history sidebar, streaming message submission via the `/api/chat` endpoint, rendering of source citation tags, bookmark toggling, feedback buttons (thumbs up/down), and export. Because it is a client component (`'use client'`), it runs in the browser and maintains local React state for the streaming buffer. The admin version of the same chat at `app/(admin)/admin/projects/[id]/chat/page.tsx` reuses this same component, demonstrating how one well-designed component serves both user roles.",
+    "nodeIds": ["file:components/chat/chat-interface.tsx"],
+    "conceptExplained": "Client component streaming: React Server Components render data server-side, but streaming AI responses require a client component to maintain local state for the incrementally-arriving tokens. The split between server pages (data fetching) and this client component (interactivity) is the key Next.js pattern."
+  },
+  {
+    "order": 12,
+    "title": "Quiz System",
+    "description": "The quiz feature spans three architectural layers. In the business logic layer, `lib/quiz/assignment.ts` handles round-robin set distribution to users, `lib/quiz/scoring.ts` computes per-section and total scores with partial-credit logic, and `lib/quiz/shuffle.ts` provides the Fisher-Yates shuffle for randomising answer options. These pure functions are tested independently. The quiz API routes (`/api/quiz/start`, `/api/quiz/submit`, `/api/quiz/generate`) coordinate with the worker queue for LLM-powered question generation. The member experience is orchestrated by `components/quiz/quiz-experience.tsx`, which manages the full multi-section quiz lifecycle from start screen through per-section timing to result display.",
+    "nodeIds": [
+      "file:lib/quiz/assignment.ts",
+      "file:lib/quiz/scoring.ts",
+      "file:lib/quiz/shuffle.ts",
+      "file:components/quiz/quiz-experience.tsx",
+      "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "file:app/(member)/projects/[id]/quiz/page.tsx"
+    ],
+    "conceptExplained": "Pure-function business logic: the quiz scoring and shuffle utilities contain no database calls, no HTTP calls, and no side effects — they take inputs and return outputs. This makes them trivially unit-testable and composable independently of the React or database layers."
+  },
+  {
+    "order": 13,
+    "title": "Admin Server Actions & Project Management",
+    "description": "`app/actions/admin.ts` is the highest fan-out file in the entire project with 50 outbound dependencies — it is the hub of all admin mutations. It contains Next.js Server Actions for project CRUD, document management, connector configuration, quiz generation triggering, member invitations, user role changes, and settings updates. Server Actions are called directly from client components without a separate fetch — Next.js serialises the call through a POST request automatically. The admin project detail page at `app/(admin)/admin/projects/[id]/page.tsx` is the primary consumer, orchestrating 15 different UI panels that each call into these actions.",
+    "nodeIds": [
+      "file:app/actions/admin.ts",
+      "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "file:app/(admin)/admin/dashboard/page.tsx"
+    ],
+    "conceptExplained": "Next.js Server Actions: functions marked with `'use server'` can be imported by client components and called like regular async functions. Next.js compiles them into POST endpoints automatically, eliminating the need to write fetch boilerplate or separate API routes for every mutation."
+  },
+  {
+    "order": 14,
+    "title": "Member Learning Experience",
+    "description": "The member side of the portal centres on a project-oriented learning flow. The member dashboard (`app/(member)/dashboard/page.tsx`) surfaces assigned projects with their quiz status, a next-action recommendation, and a quick-command panel. Each project page (`app/(member)/projects/[id]/page.tsx`) lists KT documents with search and links to Chat, Quiz, Flashcards, Bookmarks, and Study modes. The persistent memory system (`lib/memory.ts`) accumulates facts the member shares across chat sessions, making the AI a personalised study companion that remembers context between visits.",
+    "nodeIds": ["file:app/(member)/dashboard/page.tsx", "file:app/(member)/projects/[id]/page.tsx"],
+    "conceptExplained": "Progressive learning path: the member UX is intentionally sequenced — read documents, chat to clarify understanding, take the readiness quiz, then use flashcards for spaced repetition. Each feature is a separate route but they share the same project context and database session."
+  },
+  {
+    "order": 15,
+    "title": "Observability, CI/CD & Deployment",
+    "description": "`lib/observability.ts` writes structured error events to `app_error_events` and RAG traces (latency, similarity scores, refusal flags) to `rag_traces`, both surfaced by the admin system-health page and analytics panel. The GitHub Actions pipeline (`.github/workflows/ci.yml`) runs lint, type-check, tests, migration validation, and build in parallel on every push. The `Dockerfile` defines a four-stage multi-target build (builder, runner, worker, migrate), and `docker-compose.yml` wires together six services for local development: the Postgres+pgvector database, the migration runner, Keycloak for OIDC testing, the Next.js app, and the background worker.",
+    "nodeIds": [
+      "file:lib/observability.ts",
+      "file:app/(admin)/admin/system-health/page.tsx",
+      "pipeline:.github/workflows/ci.yml",
+      "service:Dockerfile",
+      "service:docker-compose.yml"
+    ],
+    "conceptExplained": "Multi-stage Docker build: separate `builder` and `runner` stages compile TypeScript in a full Node.js image but copy only the compiled `.next` output into a minimal Alpine image for production. The `worker` and `migrate` targets reuse the builder layer, giving you four deployment targets from one Dockerfile."
+  }
+]

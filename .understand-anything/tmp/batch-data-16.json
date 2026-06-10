@@ -1,0 +1,78 @@
+{
+  "batchIndex": 16,
+  "files": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "language": "markdown",
+      "sizeLines": 1552,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/CONNECTOR_SETUP.md",
+      "language": "markdown",
+      "sizeLines": 195,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/LLM_PROVIDER_SETUP.md",
+      "language": "markdown",
+      "sizeLines": 285,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/LOCAL_STORAGE.md",
+      "language": "markdown",
+      "sizeLines": 216,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/RELEASE_NOTES_2026_05.md",
+      "language": "markdown",
+      "sizeLines": 85,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/SELF_HOSTED_DEPLOYMENT.md",
+      "language": "markdown",
+      "sizeLines": 581,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/USER_GUIDE.md",
+      "language": "markdown",
+      "sizeLines": 607,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/WORKER_SETUP.md",
+      "language": "markdown",
+      "sizeLines": 252,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/database-options-comparison.md",
+      "language": "markdown",
+      "sizeLines": 236,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/load_test_report.html",
+      "language": "html",
+      "sizeLines": 684,
+      "fileCategory": "markup"
+    }
+  ],
+  "batchImportData": {
+    "docs/ARCHITECTURE.md": [],
+    "docs/CONNECTOR_SETUP.md": [],
+    "docs/LLM_PROVIDER_SETUP.md": [],
+    "docs/LOCAL_STORAGE.md": [],
+    "docs/RELEASE_NOTES_2026_05.md": [],
+    "docs/SELF_HOSTED_DEPLOYMENT.md": [],
+    "docs/USER_GUIDE.md": [],
+    "docs/WORKER_SETUP.md": [],
+    "docs/database-options-comparison.md": [],
+    "docs/load_test_report.html": []
+  },
+  "neighborMap": {}
+}

@@ -1,0 +1,109 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Template for all required environment variables covering database, authentication, file storage (Cloudflare R2), LLM providers (Groq, OpenAI, Anthropic), embedding model, and background worker secrets. Copy this file to .env.local and fill in values to bootstrap the application.",
+      "tags": ["configuration", "environment", "security", "infrastructure"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:AGENTS.md",
+      "type": "document",
+      "name": "AGENTS.md",
+      "filePath": "AGENTS.md",
+      "summary": "AI agent coding standards document enforcing strict TypeScript and ESLint rules for this codebase, specifically prohibiting the use of `any`, requiring proper type narrowing, and mandating lint/typecheck compliance in all generated code.",
+      "tags": ["documentation", "development", "configuration", "typescript"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Comprehensive developer guide for Claude Code agents and human contributors, covering available npm commands, the full application architecture (Next.js App Router, auth, RAG pipeline, LLM abstraction, background job queue, file storage, observability), and key environment variables.",
+      "tags": ["documentation", "development", "architecture", "entry-point"],
+      "complexity": "moderate",
+      "languageNotes": "References AGENTS.md via @include directive, making both documents the authoritative AI-agent coding guide for the project."
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary project documentation for NexTElevate, providing feature highlights, technology stack overview, quick-start guide, Docker setup, deployment instructions, project structure breakdown, roles and access control, and security notes across 35 sections.",
+      "tags": ["documentation", "entry-point", "overview", "deployment"],
+      "complexity": "complex",
+      "languageNotes": "Highly detailed at 264 source lines (610 total with blank lines), covering the entire lifecycle from local dev to production deployment."
+    },
+    {
+      "id": "file:app/globals.css",
+      "type": "file",
+      "name": "globals.css",
+      "filePath": "app/globals.css",
+      "summary": "Global stylesheet that imports Inter font and Tailwind CSS v4, sets a light color scheme with a subtle teal/navy radial-gradient background, and defines reusable glass-panel utility classes and slim scrollbar styles.",
+      "tags": ["styling", "global-styles", "tailwind", "design-system"],
+      "complexity": "simple",
+      "languageNotes": "Uses Tailwind CSS v4 @import syntax alongside @config and @plugin directives; applies Tailwind utility classes directly via @apply inside body and global selectors."
+    },
+    {
+      "id": "file:proxy.ts",
+      "type": "file",
+      "name": "proxy.ts",
+      "filePath": "proxy.ts",
+      "summary": "Lightweight Next.js Edge middleware that checks for a NextAuth session cookie and redirects unauthenticated requests to /login, while allowing public paths (login, register, forgot-password, /auth/*, /api/*) to pass through without verification.",
+      "tags": ["middleware", "authentication", "security", "entry-point"],
+      "complexity": "simple",
+      "languageNotes": "Intentionally avoids importing NextAuth directly to remain compatible with the Edge runtime; full JWT verification is deferred to server-side route handlers."
+    },
+    {
+      "id": "function:proxy.ts:proxy",
+      "type": "function",
+      "name": "proxy",
+      "filePath": "proxy.ts",
+      "lineRange": [7, 29],
+      "summary": "Next.js middleware handler that enforces session-cookie-based authentication for all non-public routes, redirecting unauthenticated visitors to /login.",
+      "tags": ["middleware", "authentication", "security"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:proxy.ts",
+      "target": "function:proxy.ts:proxy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:proxy.ts",
+      "target": "function:proxy.ts:proxy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:proxy.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:proxy.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:proxy.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

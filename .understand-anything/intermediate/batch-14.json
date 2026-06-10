@@ -1,0 +1,141 @@
+{
+  "nodes": [
+    {
+      "id": "document:.claude/commands/add-llm-provider.md",
+      "type": "document",
+      "name": "add-llm-provider.md",
+      "filePath": ".claude/commands/add-llm-provider.md",
+      "summary": "Claude Code slash command guide for adding a new LLM provider, covering the 8-step process from creating the provider module in lib/llm/ through wiring it into the dispatcher, env config, runtime config, and Admin UI.",
+      "tags": [
+        "documentation",
+        "llm-provider",
+        "developer-workflow",
+        "ai-integration",
+        "configuration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:.claude/commands/debug-rag.md",
+      "type": "document",
+      "name": "debug-rag.md",
+      "filePath": ".claude/commands/debug-rag.md",
+      "summary": "Claude Code slash command guide for diagnosing RAG pipeline issues, walking through embedding model consistency, chunk coverage, retrieval thresholds, and worker health checks with concrete remediation steps.",
+      "tags": ["documentation", "rag-pipeline", "debugging", "developer-workflow", "observability"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:.claude/commands/new-admin-page.md",
+      "type": "document",
+      "name": "new-admin-page.md",
+      "filePath": ".claude/commands/new-admin-page.md",
+      "summary": "Claude Code slash command guide for scaffolding a new admin page, specifying the App Router directory layout, requireAdmin() auth guard, server-side data fetching pattern, shadcn/ui conventions, and sidebar nav wiring.",
+      "tags": ["documentation", "scaffolding", "admin", "developer-workflow", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.claude/commands/new-api-route.md",
+      "type": "document",
+      "name": "new-api-route.md",
+      "filePath": ".claude/commands/new-api-route.md",
+      "summary": "Claude Code slash command guide for scaffolding a new Next.js App Router API route, covering auth checking, SQL query placement in lib/data.ts, error handling with logApplicationError, and type safety conventions.",
+      "tags": ["documentation", "scaffolding", "api-handler", "developer-workflow", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.claude/commands/new-migration.md",
+      "type": "document",
+      "name": "new-migration.md",
+      "filePath": ".claude/commands/new-migration.md",
+      "summary": "Claude Code slash command guide for creating a new Postgres migration file, covering auto-numbering from existing migrations, idempotent SQL conventions (IF NOT EXISTS), primary key and timestamp patterns, and index guidance.",
+      "tags": ["documentation", "database", "migration", "developer-workflow", "scaffolding"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:.claude/commands/add-llm-provider.md",
+      "target": "file:lib/llm/index.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/add-llm-provider.md",
+      "target": "file:lib/llm/runtime-config.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/add-llm-provider.md",
+      "target": "file:lib/env.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/debug-rag.md",
+      "target": "file:lib/rag/embeddings.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/debug-rag.md",
+      "target": "file:lib/rag/retrieval.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/debug-rag.md",
+      "target": "file:lib/observability.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/new-admin-page.md",
+      "target": "file:lib/auth.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/new-admin-page.md",
+      "target": "file:lib/data.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/new-api-route.md",
+      "target": "file:lib/auth.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/new-api-route.md",
+      "target": "file:lib/data.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/new-api-route.md",
+      "target": "file:lib/observability.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/commands/new-migration.md",
+      "target": "file:lib/db.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

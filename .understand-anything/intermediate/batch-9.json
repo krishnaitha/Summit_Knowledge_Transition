@@ -1,0 +1,535 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/(admin)/admin/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "app/(admin)/admin/layout.tsx",
+      "summary": "Admin route group layout that enforces authentication via requireAnyAdmin(), fetches notification counts, and renders the persistent navbar and role-aware admin sidebar around page content.",
+      "tags": ["entry-point", "middleware", "component", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(admin)/admin/layout.tsx:AdminLayout",
+      "type": "function",
+      "name": "AdminLayout",
+      "filePath": "app/(admin)/admin/layout.tsx",
+      "lineRange": [7, 24],
+      "summary": "Async server component that guards the admin route group, resolves user profile and open-thread counts, and renders the full-page admin shell with navbar and sidebar.",
+      "tags": ["middleware", "component", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(member)/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "app/(member)/layout.tsx",
+      "summary": "Member route group layout that enforces authentication via requireMember(), fetches notification and thread counts in parallel, and renders the persistent navbar and member sidebar around page content.",
+      "tags": ["entry-point", "middleware", "component", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(member)/layout.tsx:MemberLayout",
+      "type": "function",
+      "name": "MemberLayout",
+      "filePath": "app/(member)/layout.tsx",
+      "lineRange": [7, 29],
+      "summary": "Async server component that guards the member route group, concurrently resolves notification counts, and renders the full-page member shell with navbar and sidebar.",
+      "tags": ["middleware", "component", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/admin-mobile-sidebar.tsx",
+      "type": "file",
+      "name": "admin-mobile-sidebar.tsx",
+      "filePath": "components/layout/admin-mobile-sidebar.tsx",
+      "summary": "Client component that builds the admin navigation item list (conditionally including super-admin-only links for Dashboard, System Health, Model Switcher, and Users) and passes it to the generic MobileSidebar drawer.",
+      "tags": ["component", "navigation", "admin-only"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/admin-mobile-sidebar.tsx:AdminMobileSidebar",
+      "type": "function",
+      "name": "AdminMobileSidebar",
+      "filePath": "components/layout/admin-mobile-sidebar.tsx",
+      "lineRange": [16, 41],
+      "summary": "Renders the admin mobile nav drawer by composing a role-conditional items array and delegating to MobileSidebar with an appropriate section label.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/admin-sidebar.tsx",
+      "type": "file",
+      "name": "admin-sidebar.tsx",
+      "filePath": "components/layout/admin-sidebar.tsx",
+      "summary": "Client component that builds the same role-aware admin navigation items as AdminMobileSidebar and renders them via the desktop Sidebar component.",
+      "tags": ["component", "navigation", "admin-only"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/admin-sidebar.tsx:AdminSidebar",
+      "type": "function",
+      "name": "AdminSidebar",
+      "filePath": "components/layout/admin-sidebar.tsx",
+      "lineRange": [16, 41],
+      "summary": "Renders the desktop admin navigation sidebar with conditionally included super-admin links and notification badge on the Threads entry.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/logout-button.tsx",
+      "type": "file",
+      "name": "logout-button.tsx",
+      "filePath": "components/layout/logout-button.tsx",
+      "summary": "Client component providing a logout button that calls next-auth signOut with loading-state feedback and a post-logout redirect to the login page.",
+      "tags": ["component", "authentication", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/logout-button.tsx:LogoutButton",
+      "type": "function",
+      "name": "LogoutButton",
+      "filePath": "components/layout/logout-button.tsx",
+      "lineRange": [7, 27],
+      "summary": "Stateful client button that triggers next-auth signOut, shows a spinner while pending, and prevents double-submission.",
+      "tags": ["component", "authentication", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/member-mobile-sidebar.tsx",
+      "type": "file",
+      "name": "member-mobile-sidebar.tsx",
+      "filePath": "components/layout/member-mobile-sidebar.tsx",
+      "summary": "Client component that builds the five-item member navigation array (Dashboard, My Products, Search Docs, Memory, Threads) with badge counts and renders it via MobileSidebar.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/member-mobile-sidebar.tsx:MemberMobileSidebar",
+      "type": "function",
+      "name": "MemberMobileSidebar",
+      "filePath": "components/layout/member-mobile-sidebar.tsx",
+      "lineRange": [7, 23],
+      "summary": "Renders the member mobile navigation drawer by assembling badge-equipped nav items and delegating to MobileSidebar.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/member-sidebar.tsx",
+      "type": "file",
+      "name": "member-sidebar.tsx",
+      "filePath": "components/layout/member-sidebar.tsx",
+      "summary": "Client component that renders the desktop member navigation sidebar with the same five items and badge counts as the mobile variant, using the Sidebar component.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/member-sidebar.tsx:MemberSidebar",
+      "type": "function",
+      "name": "MemberSidebar",
+      "filePath": "components/layout/member-sidebar.tsx",
+      "lineRange": [7, 23],
+      "summary": "Renders the desktop member navigation sidebar with notification and thread-count badges on the appropriate nav links.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/mobile-menu-button.tsx",
+      "type": "file",
+      "name": "mobile-menu-button.tsx",
+      "filePath": "components/layout/mobile-menu-button.tsx",
+      "summary": "Client component rendering a hamburger icon button that fires the MOBILE_NAV_OPEN_EVENT custom window event to open the mobile sidebar drawer.",
+      "tags": ["component", "navigation", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/mobile-menu-button.tsx:MobileMenuButton",
+      "type": "function",
+      "name": "MobileMenuButton",
+      "filePath": "components/layout/mobile-menu-button.tsx",
+      "lineRange": [6, 16],
+      "summary": "Renders a small hamburger button visible on screens narrower than xl breakpoint; clicking it dispatches the global mobile-nav-open event.",
+      "tags": ["component", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/mobile-sidebar.tsx",
+      "type": "file",
+      "name": "mobile-sidebar.tsx",
+      "filePath": "components/layout/mobile-sidebar.tsx",
+      "summary": "Core mobile navigation drawer component that listens for a custom window event to open, auto-closes on route change, renders a full-screen overlay with active-link highlighting and notification badges.",
+      "tags": ["component", "navigation", "event-handler"],
+      "complexity": "moderate",
+      "languageNotes": "Uses startTransition for route-change close and a custom window event (MOBILE_NAV_OPEN_EVENT) for decoupled open signalling between Navbar and the drawer."
+    },
+    {
+      "id": "function:components/layout/mobile-sidebar.tsx:MobileSidebar",
+      "type": "function",
+      "name": "MobileSidebar",
+      "filePath": "components/layout/mobile-sidebar.tsx",
+      "lineRange": [21, 105],
+      "summary": "Generic mobile drawer that accepts an items array and section label, manages open/close state via usePathname and a global custom event, and renders accessible overlay navigation with active highlighting and badge counts.",
+      "tags": ["component", "navigation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/layout/navbar.tsx",
+      "type": "file",
+      "name": "navbar.tsx",
+      "filePath": "components/layout/navbar.tsx",
+      "summary": "Sticky top navigation bar displaying the app brand name (from env config), current user's initials and role, the logout button, and the mobile menu trigger button.",
+      "tags": ["component", "navigation", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/layout/navbar.tsx:Navbar",
+      "type": "function",
+      "name": "Navbar",
+      "filePath": "components/layout/navbar.tsx",
+      "lineRange": [20, 61],
+      "summary": "Renders the sticky header with brand logo, app name link (role-aware destination), user avatar with initials, role label, and conditional logout button.",
+      "tags": ["component", "navigation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/layout/navbar.tsx:getInitials",
+      "type": "function",
+      "name": "getInitials",
+      "filePath": "components/layout/navbar.tsx",
+      "lineRange": [8, 18],
+      "summary": "Derives one or two uppercase initials from a user's full name (first letters of each word) or falls back to the first character of the email address.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/layout/sidebar.tsx",
+      "type": "file",
+      "name": "sidebar.tsx",
+      "filePath": "components/layout/sidebar.tsx",
+      "summary": "Generic desktop sidebar component that renders a vertical nav list with active-link highlighting via usePathname, optional icon, section label, and numeric badge support.",
+      "tags": ["component", "navigation", "utility"],
+      "complexity": "moderate",
+      "languageNotes": "Uses the SidebarItem interface (exported) for type-safe item configuration; visible only at xl breakpoint and above."
+    },
+    {
+      "id": "function:components/layout/sidebar.tsx:Sidebar",
+      "type": "function",
+      "name": "Sidebar",
+      "filePath": "components/layout/sidebar.tsx",
+      "lineRange": [16, 61],
+      "summary": "Renders a glass-panel desktop aside element with path-based active link styling, optional icons, section heading, and overflow badge counts.",
+      "tags": ["component", "navigation"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/(admin)/admin/layout.tsx",
+      "target": "function:app/(admin)/admin/layout.tsx:AdminLayout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/layout.tsx",
+      "target": "function:app/(admin)/admin/layout.tsx:AdminLayout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/layout.tsx",
+      "target": "file:components/layout/admin-sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/layout.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/layout.tsx",
+      "target": "function:app/(member)/layout.tsx:MemberLayout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/layout.tsx",
+      "target": "function:app/(member)/layout.tsx:MemberLayout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/layout.tsx",
+      "target": "file:components/layout/member-sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/layout.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/admin-mobile-sidebar.tsx",
+      "target": "function:components/layout/admin-mobile-sidebar.tsx:AdminMobileSidebar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/admin-mobile-sidebar.tsx",
+      "target": "function:components/layout/admin-mobile-sidebar.tsx:AdminMobileSidebar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/admin-mobile-sidebar.tsx",
+      "target": "file:components/layout/mobile-sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/admin-sidebar.tsx",
+      "target": "function:components/layout/admin-sidebar.tsx:AdminSidebar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/admin-sidebar.tsx",
+      "target": "function:components/layout/admin-sidebar.tsx:AdminSidebar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/admin-sidebar.tsx",
+      "target": "file:components/layout/admin-mobile-sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/admin-sidebar.tsx",
+      "target": "file:components/layout/logout-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/admin-sidebar.tsx",
+      "target": "file:components/layout/navbar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/admin-sidebar.tsx",
+      "target": "file:components/layout/sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/logout-button.tsx",
+      "target": "function:components/layout/logout-button.tsx:LogoutButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/logout-button.tsx",
+      "target": "function:components/layout/logout-button.tsx:LogoutButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/member-mobile-sidebar.tsx",
+      "target": "function:components/layout/member-mobile-sidebar.tsx:MemberMobileSidebar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/member-mobile-sidebar.tsx",
+      "target": "function:components/layout/member-mobile-sidebar.tsx:MemberMobileSidebar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/member-mobile-sidebar.tsx",
+      "target": "file:components/layout/mobile-sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/member-sidebar.tsx",
+      "target": "function:components/layout/member-sidebar.tsx:MemberSidebar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/member-sidebar.tsx",
+      "target": "function:components/layout/member-sidebar.tsx:MemberSidebar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/member-sidebar.tsx",
+      "target": "file:components/layout/logout-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/member-sidebar.tsx",
+      "target": "file:components/layout/member-mobile-sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/member-sidebar.tsx",
+      "target": "file:components/layout/navbar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/member-sidebar.tsx",
+      "target": "file:components/layout/sidebar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/mobile-menu-button.tsx",
+      "target": "function:components/layout/mobile-menu-button.tsx:MobileMenuButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/mobile-menu-button.tsx",
+      "target": "function:components/layout/mobile-menu-button.tsx:MobileMenuButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/mobile-sidebar.tsx",
+      "target": "function:components/layout/mobile-sidebar.tsx:MobileSidebar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/mobile-sidebar.tsx",
+      "target": "function:components/layout/mobile-sidebar.tsx:MobileSidebar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/mobile-sidebar.tsx",
+      "target": "file:components/layout/mobile-menu-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/navbar.tsx",
+      "target": "function:components/layout/navbar.tsx:Navbar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/navbar.tsx",
+      "target": "function:components/layout/navbar.tsx:Navbar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/layout/navbar.tsx",
+      "target": "function:components/layout/navbar.tsx:getInitials",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/navbar.tsx",
+      "target": "file:lib/env.client.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/layout/sidebar.tsx",
+      "target": "function:components/layout/sidebar.tsx:Sidebar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/layout/sidebar.tsx",
+      "target": "function:components/layout/sidebar.tsx:Sidebar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/layout/navbar.tsx:Navbar",
+      "target": "function:components/layout/navbar.tsx:getInitials",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/layout/admin-mobile-sidebar.tsx:AdminMobileSidebar",
+      "target": "function:components/layout/mobile-sidebar.tsx:MobileSidebar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/layout/admin-sidebar.tsx:AdminSidebar",
+      "target": "function:components/layout/sidebar.tsx:Sidebar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/layout/member-mobile-sidebar.tsx:MemberMobileSidebar",
+      "target": "function:components/layout/mobile-sidebar.tsx:MobileSidebar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/layout/member-sidebar.tsx:MemberSidebar",
+      "target": "function:components/layout/sidebar.tsx:Sidebar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -6,9 +6,26 @@ import sql from '@/lib/db';
 import { extractTextFromFile } from '@/lib/documents/parse';
 import { processDocumentRecord } from '@/lib/documents/process';
 import { uploadFile } from '@/lib/storage/local';
-import type { DocumentConnectorRecord } from '@/lib/types/database';
+import type { DocumentConnectorRecord, Json } from '@/lib/types/database';
 
 type ConnectorConfig = Record<string, unknown>;
+
+export type ConnectorRunMode = 'sync' | 'dry-run' | 'test';
+
+export type ConnectorRunResult = {
+  imported: number;
+  scanned: number;
+  skipped: number;
+  skip_reasons: Array<{ reason: string; count: number }>;
+  provider: DocumentConnectorRecord['provider'];
+  connectorId: string;
+  mode: ConnectorRunMode;
+  demo?: boolean;
+};
+
+export type SyncDocumentConnectorOptions = {
+  mode?: ConnectorRunMode;
+};
 
 const SAMPLE_FIXTURES = {
   confluence: [
@@ -101,6 +118,313 @@ function normalizePath(path: string) {
   return path.replace(/^\/+|\/+$/g, '');
 }
 
+function normalizeConfluenceBaseUrl(value: string) {
+  const input = value.trim();
+  if (!input) {
+    return '';
+  }
+
+  let url = input;
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+
+  try {
+    const parsed = new URL(url);
+    const pathParts = parsed.pathname.split('/').filter(Boolean);
+    let pathname = '';
+
+    if (pathParts[0] === 'wiki') {
+      pathname = '/wiki';
+    } else if (parsed.hostname.endsWith('atlassian.net')) {
+      pathname = '/wiki';
+    }
+
+    return trimTrailingSlash(`${parsed.origin}${pathname}`);
+  } catch {
+    return trimTrailingSlash(input);
+  }
+}
+
+function normalizeSharePointSiteUrl(value: string) {
+  const input = value.trim();
+  if (!input) {
+    return '';
+  }
+
+  let url = input;
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+
+  try {
+    const parsed = new URL(url);
+    const pathParts = parsed.pathname.split('/').filter(Boolean);
+    const managedPath = pathParts[0];
+    let sitePath = '';
+
+    if (
+      (managedPath === 'sites' || managedPath === 'teams' || managedPath === 'personal') &&
+      pathParts[1]
+    ) {
+      sitePath = `/${managedPath}/${pathParts[1]}`;
+    } else if (pathParts.length > 0 && managedPath !== '_layouts') {
+      sitePath = `/${pathParts[0]}`;
+    }
+
+    return trimTrailingSlash(`${parsed.origin}${sitePath}`);
+  } catch {
+    return trimTrailingSlash(input);
+  }
+}
+
+function normalizeSharePointLibraryPath(libraryPath: string, siteUrl: string) {
+  const input = libraryPath.trim();
+  if (!input) {
+    return '';
+  }
+
+  let normalized = input;
+
+  if (/^https?:\/\//i.test(normalized)) {
+    try {
+      normalized = decodeURIComponent(new URL(normalized).pathname);
+    } catch {
+      normalized = input;
+    }
+  }
+
+  normalized = normalized.replace(/\\/g, '/');
+  normalized = normalized.split('?')[0] ?? normalized;
+  normalized = normalized.split('#')[0] ?? normalized;
+  normalized = normalized.replace(/\/Forms\/.*$/i, '');
+
+  const sitePath = (() => {
+    try {
+      return new URL(siteUrl).pathname;
+    } catch {
+      return '';
+    }
+  })();
+
+  const cleanPath = normalizePath(normalized);
+  if (!cleanPath) {
+    return '';
+  }
+
+  const cleanSitePath = normalizePath(sitePath);
+  if (!cleanSitePath) {
+    return `/${cleanPath}`;
+  }
+
+  if (cleanPath.startsWith(`${cleanSitePath}/`) || cleanPath === cleanSitePath) {
+    return `/${cleanPath}`;
+  }
+
+  return `/${cleanSitePath}/${cleanPath}`;
+}
+
+function normalizeOneDriveFolderPath(value: string) {
+  const input = value.trim();
+  if (!input) {
+    return '';
+  }
+
+  let cleaned = input;
+
+  if (/^https?:\/\//i.test(cleaned)) {
+    try {
+      const url = new URL(cleaned);
+      const rootPath = url.pathname.match(/\/root:\/(.*?)(?::\/|$)/i);
+      if (rootPath?.[1]) {
+        cleaned = decodeURIComponent(rootPath[1]);
+      } else {
+        cleaned = decodeURIComponent(url.pathname);
+      }
+    } catch {
+      cleaned = input;
+    }
+  }
+
+  cleaned = cleaned.split('?')[0] ?? cleaned;
+  cleaned = cleaned.split('#')[0] ?? cleaned;
+  cleaned = cleaned.replace(/^root:\//i, '');
+  cleaned = cleaned.replace(/:\/?$/, '');
+
+  return normalizePath(cleaned);
+}
+
+function normalizeOptionalUrl(value: string) {
+  const input = value.trim();
+  if (!input) {
+    return '';
+  }
+
+  let url = input;
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+
+  try {
+    const parsed = new URL(url);
+    return trimTrailingSlash(`${parsed.origin}${parsed.pathname}`);
+  } catch {
+    return trimTrailingSlash(input);
+  }
+}
+
+function normalizeMondayApiUrl(value: string) {
+  const normalized = normalizeOptionalUrl(value);
+  if (!normalized) {
+    return 'https://api.monday.com/v2';
+  }
+
+  return normalized.endsWith('/v2') ? normalized : `${normalized}/v2`;
+}
+
+function normalizeMondayBoardIds(value: string) {
+  return value
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const match = part.match(/\d+/);
+      return match?.[0] ?? '';
+    })
+    .filter((id) => /^\d+$/.test(id));
+}
+
+function incrementReason(reasons: Map<string, number>, reason: string) {
+  reasons.set(reason, (reasons.get(reason) ?? 0) + 1);
+}
+
+function toSkipReasonSummary(reasons: Map<string, number>) {
+  return Array.from(reasons.entries())
+    .map(([reason, count]) => ({ reason, count }))
+    .sort((a, b) => b.count - a.count || a.reason.localeCompare(b.reason));
+}
+
+function createRunResult(params: {
+  connector: DocumentConnectorRecord;
+  mode: ConnectorRunMode;
+  imported: number;
+  scanned: number;
+  reasons?: Map<string, number>;
+  demo?: boolean;
+}): ConnectorRunResult {
+  const reasonSummary = toSkipReasonSummary(params.reasons ?? new Map<string, number>());
+  const skipped = reasonSummary.reduce((sum, reason) => sum + reason.count, 0);
+
+  return {
+    imported: params.imported,
+    scanned: params.scanned,
+    skipped,
+    skip_reasons: reasonSummary,
+    provider: params.connector.provider,
+    connectorId: params.connector.id,
+    mode: params.mode,
+    demo: params.demo,
+  };
+}
+
+async function readErrorSnippet(response: Response) {
+  const text = (await response.text()).replace(/\s+/g, ' ').trim();
+  if (!text) {
+    return '';
+  }
+  return text.slice(0, 220);
+}
+
+function normalizeGitHubRepository(value: string) {
+  let repository = value.trim();
+
+  if (!repository) {
+    return '';
+  }
+
+  repository = repository.replace(/^https?:\/\//i, '');
+  repository = repository.replace(/^github\.com\//i, '');
+  repository = repository.replace(/\.git$/i, '');
+  repository = repository.split('#')[0] ?? repository;
+  repository = repository.split('?')[0] ?? repository;
+  repository = repository.replace(/^\/+|\/+$/g, '');
+
+  const parts = repository.split('/').filter(Boolean);
+  if (parts.length < 2) {
+    return repository;
+  }
+
+  return `${parts[0]}/${parts[1]}`;
+}
+
+function normalizeGitHubBranch(value: string) {
+  const branch = value.trim().replace(/^refs\/heads\//, '');
+  return branch || 'main';
+}
+
+function normalizeGitHubDocsPath(value: string) {
+  const input = value.trim();
+  if (!input) {
+    return '';
+  }
+
+  let cleaned = input.split('#')[0] ?? input;
+  cleaned = cleaned.split('?')[0] ?? cleaned;
+  cleaned = cleaned
+    .replace(/^https?:\/\/(www\.)?github\.com\//i, '')
+    .replace(/^(www\.)?github\.com\//i, '')
+    .replace(/^\/+/, '');
+
+  const parts = cleaned.split('/').filter(Boolean);
+
+  if (parts.length >= 5 && (parts[2] === 'tree' || parts[2] === 'blob')) {
+    return normalizePath(parts.slice(4).join('/'));
+  }
+
+  if (parts.length >= 2) {
+    return normalizePath(parts.slice(2).join('/'));
+  }
+
+  return normalizePath(cleaned);
+}
+
+async function fetchGitHubBranchSha(
+  owner: string,
+  repo: string,
+  branch: string,
+  headers: Record<string, string>,
+) {
+  const response = await fetch(
+    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/ref/heads/${encodeURIComponent(branch)}`,
+    { headers },
+  );
+
+  if (!response.ok) {
+    return { sha: '', status: response.status };
+  }
+
+  const data = (await response.json()) as { object?: { sha?: string } };
+  return { sha: asString(data.object?.sha), status: response.status };
+}
+
+async function fetchGitHubDefaultBranch(
+  owner: string,
+  repo: string,
+  headers: Record<string, string>,
+) {
+  const response = await fetch(
+    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
+    { headers },
+  );
+
+  if (!response.ok) {
+    return { defaultBranch: '', status: response.status };
+  }
+
+  const data = (await response.json()) as { default_branch?: string };
+  return { defaultBranch: asString(data.default_branch), status: response.status };
+}
+
 function encodePathSegments(path: string) {
   const cleaned = normalizePath(path);
   return cleaned
@@ -156,15 +480,28 @@ async function setConnectorSyncState(
   connectorId: string,
   status: DocumentConnectorRecord['last_sync_status'],
   error: string | null = null,
+  summary: Json | null = null,
 ) {
-  await sql`
-    UPDATE document_connectors
-    SET last_sync_status = ${status},
-        last_sync_error = ${error},
-        last_synced_at = ${status === 'success' ? new Date().toISOString() : null},
-        updated_at = NOW()
-    WHERE id = ${connectorId}
-  `;
+  try {
+    await sql`
+      UPDATE document_connectors
+      SET last_sync_status = ${status},
+          last_sync_error = ${error},
+          last_sync_summary = ${summary ? sql.json(summary) : null},
+          last_synced_at = ${status === 'success' ? new Date().toISOString() : null},
+          updated_at = NOW()
+      WHERE id = ${connectorId}
+    `;
+  } catch {
+    await sql`
+      UPDATE document_connectors
+      SET last_sync_status = ${status},
+          last_sync_error = ${error},
+          last_synced_at = ${status === 'success' ? new Date().toISOString() : null},
+          updated_at = NOW()
+      WHERE id = ${connectorId}
+    `;
+  }
 }
 
 export async function enqueueDueDocumentConnectorSyncJobs(syncIntervalHours = 24) {
@@ -261,6 +598,628 @@ async function upsertImportedDocument(params: {
   return rows[0]?.id as string;
 }
 
+async function previewConfluenceConnector(
+  connector: DocumentConnectorRecord,
+  mode: ConnectorRunMode,
+): Promise<ConnectorRunResult> {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    return createRunResult({
+      connector,
+      mode,
+      imported: SAMPLE_FIXTURES.confluence.length,
+      scanned: SAMPLE_FIXTURES.confluence.length,
+      demo: true,
+    });
+  }
+
+  const baseUrl = normalizeConfluenceBaseUrl(asString(config.base_url));
+  const spaceKey = asString(config.space_key);
+  const authEmail = asString(config.auth_email);
+  const accessToken = asString(config.access_token);
+
+  if (!baseUrl || !spaceKey || !authEmail || !accessToken) {
+    throw new Error('Confluence connector is missing base URL, space key, email, or API token');
+  }
+
+  const headers = {
+    Accept: 'application/json',
+    Authorization: `Basic ${Buffer.from(`${authEmail}:${accessToken}`).toString('base64')}`,
+  };
+
+  let start = 0;
+  let scanned = 0;
+  let imported = 0;
+  let pagesSeen = 0;
+  const reasons = new Map<string, number>();
+
+  while (true) {
+    const url = new URL(`${baseUrl}/rest/api/content`);
+    url.searchParams.set('spaceKey', spaceKey);
+    url.searchParams.set('expand', '_links');
+    url.searchParams.set('limit', mode === 'test' ? '10' : '25');
+    url.searchParams.set('start', String(start));
+
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `Confluence request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
+    }
+
+    const data = (await response.json()) as {
+      results?: Array<Record<string, unknown>>;
+      size?: number;
+      total?: number;
+    };
+
+    const items = data.results ?? [];
+    if (!items.length) {
+      break;
+    }
+
+    for (const item of items) {
+      scanned++;
+      const itemId = asString(item.id);
+      if (!itemId) {
+        incrementReason(reasons, 'missing Confluence page id');
+        continue;
+      }
+      imported++;
+
+      if (mode === 'test') {
+        return createRunResult({ connector, mode, imported, scanned, reasons });
+      }
+    }
+
+    pagesSeen += items.length;
+    const total = typeof data.total === 'number' ? data.total : pagesSeen;
+    start += data.size ?? items.length;
+    if (pagesSeen >= total) {
+      break;
+    }
+  }
+
+  if (imported === 0) {
+    throw new Error(`Confluence sync found 0 pages for space key ${spaceKey}`);
+  }
+
+  return createRunResult({ connector, mode, imported, scanned, reasons });
+}
+
+async function previewSharePointConnector(
+  connector: DocumentConnectorRecord,
+  mode: ConnectorRunMode,
+): Promise<ConnectorRunResult> {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    return createRunResult({
+      connector,
+      mode,
+      imported: SAMPLE_FIXTURES.sharepoint.length,
+      scanned: SAMPLE_FIXTURES.sharepoint.length,
+      demo: true,
+    });
+  }
+
+  const siteUrl = normalizeSharePointSiteUrl(asString(config.site_url));
+  const libraryPath = normalizeSharePointLibraryPath(
+    asString(config.library_path) || 'Shared Documents',
+    siteUrl,
+  );
+  const accessToken = asString(config.access_token);
+
+  if (!siteUrl || !libraryPath || !accessToken) {
+    throw new Error('SharePoint connector is missing site URL, library path, or access token');
+  }
+
+  const initialListUrl = new URL(
+    `${siteUrl}/_api/web/GetFolderByServerRelativeUrl('${libraryPath.replace(/'/g, "''")}')/Files`,
+  );
+  initialListUrl.searchParams.set('$select', 'Name,ServerRelativeUrl,UniqueId');
+  initialListUrl.searchParams.set('$top', mode === 'test' ? '20' : '200');
+
+  const headers = {
+    Accept: 'application/json;odata=nometadata',
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const reasons = new Map<string, number>();
+  let scanned = 0;
+  let imported = 0;
+  let nextListUrl = initialListUrl.toString();
+
+  while (nextListUrl) {
+    const response = await fetch(nextListUrl, { headers });
+
+    if (!response.ok) {
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `SharePoint request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
+    }
+
+    const data = (await response.json()) as {
+      value?: Array<Record<string, unknown>>;
+      '@odata.nextLink'?: unknown;
+    };
+
+    const items = data.value ?? [];
+
+    for (const item of items) {
+      scanned++;
+      const itemId = asString(item.UniqueId ?? item.ServerRelativeUrl ?? '');
+      const serverRelativeUrl = asString(item.ServerRelativeUrl ?? '');
+
+      if (!itemId) {
+        incrementReason(reasons, 'missing SharePoint item id');
+        continue;
+      }
+
+      if (!serverRelativeUrl) {
+        incrementReason(reasons, 'missing SharePoint server-relative URL');
+        continue;
+      }
+
+      imported++;
+
+      if (mode === 'test') {
+        return createRunResult({ connector, mode, imported, scanned, reasons });
+      }
+    }
+
+    nextListUrl = mode === 'test' ? '' : asString(data['@odata.nextLink']);
+  }
+
+  if (imported === 0) {
+    throw new Error(
+      `SharePoint sync found 0 files in ${libraryPath}. Check library path format and token permissions.`,
+    );
+  }
+
+  return createRunResult({ connector, mode, imported, scanned, reasons });
+}
+
+async function previewJiraConnector(
+  connector: DocumentConnectorRecord,
+  mode: ConnectorRunMode,
+): Promise<ConnectorRunResult> {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    return createRunResult({
+      connector,
+      mode,
+      imported: SAMPLE_FIXTURES.jira.length,
+      scanned: SAMPLE_FIXTURES.jira.length,
+      demo: true,
+    });
+  }
+
+  const baseUrl = trimTrailingSlash(asString(config.base_url));
+  const projectKey = asString(config.project_key).toUpperCase();
+  const authEmail = asString(config.auth_email);
+  const accessToken = asString(config.access_token);
+  const jql = stripJqlQuotes(asString(config.jql, `project = ${projectKey} ORDER BY updated DESC`));
+
+  if (!baseUrl || !projectKey || !authEmail || !accessToken) {
+    throw new Error('Jira connector is missing base URL, project key, email, or API token');
+  }
+
+  const searchUrl = new URL(`${baseUrl}/rest/api/3/search`);
+  searchUrl.searchParams.set('jql', jql);
+  searchUrl.searchParams.set('startAt', '0');
+  searchUrl.searchParams.set('maxResults', mode === 'test' ? '5' : '50');
+  searchUrl.searchParams.set('fields', 'summary');
+
+  const response = await fetch(searchUrl, {
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Basic ${Buffer.from(`${authEmail}:${accessToken}`).toString('base64')}`,
+    },
+  });
+
+  if (!response.ok) {
+    const details = await readErrorSnippet(response);
+    throw new Error(`Jira request failed with ${response.status}${details ? `: ${details}` : ''}`);
+  }
+
+  const data = (await response.json()) as {
+    issues?: Array<Record<string, unknown>>;
+  };
+
+  const reasons = new Map<string, number>();
+  let scanned = 0;
+  let imported = 0;
+
+  for (const issue of data.issues ?? []) {
+    scanned++;
+    const issueId = asString(issue.id) || asString(issue.key);
+    if (!issueId) {
+      incrementReason(reasons, 'missing Jira issue id');
+      continue;
+    }
+
+    imported++;
+    if (mode === 'test') {
+      return createRunResult({ connector, mode, imported, scanned, reasons });
+    }
+  }
+
+  if (imported === 0) {
+    throw new Error(`Jira sync found 0 issues for project key ${projectKey}`);
+  }
+
+  return createRunResult({ connector, mode, imported, scanned, reasons });
+}
+
+async function previewMondayConnector(
+  connector: DocumentConnectorRecord,
+  mode: ConnectorRunMode,
+): Promise<ConnectorRunResult> {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    return createRunResult({
+      connector,
+      mode,
+      imported: SAMPLE_FIXTURES.monday.length,
+      scanned: SAMPLE_FIXTURES.monday.length,
+      demo: true,
+    });
+  }
+
+  const apiUrl = normalizeMondayApiUrl(asString(config.api_url));
+  const boardIdsRaw = asString(config.board_ids);
+  const accessToken = asString(config.access_token);
+
+  if (!boardIdsRaw || !accessToken) {
+    throw new Error('Monday connector is missing board IDs or API token');
+  }
+
+  const boardIds = normalizeMondayBoardIds(boardIdsRaw);
+  if (!boardIds.length) {
+    throw new Error('Monday board IDs must be a comma-separated list of numeric board IDs');
+  }
+
+  const query = `
+    query FetchBoards($boardIds: [ID!]!) {
+      boards(ids: $boardIds) {
+        id
+        items_page(limit: 100) {
+          items {
+            id
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: accessToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables: { boardIds } }),
+  });
+
+  if (!response.ok) {
+    const details = await readErrorSnippet(response);
+    throw new Error(
+      `Monday request failed with ${response.status}${details ? `: ${details}` : ''}`,
+    );
+  }
+
+  const data = (await response.json()) as {
+    data?: {
+      boards?: Array<{
+        items_page?: {
+          items?: Array<{ id?: string }>;
+        };
+      }>;
+    };
+    errors?: Array<{ message?: string }>;
+  };
+
+  if (data.errors?.length) {
+    throw new Error(asString(data.errors[0]?.message, 'Monday GraphQL request failed'));
+  }
+
+  const boards = data.data?.boards ?? [];
+  if (!boards.length) {
+    throw new Error(`Monday sync found 0 boards for IDs: ${boardIds.join(', ')}`);
+  }
+
+  const reasons = new Map<string, number>();
+  let scanned = 0;
+  let imported = 0;
+
+  for (const board of boards) {
+    const items = board.items_page?.items ?? [];
+
+    for (const item of items) {
+      scanned++;
+      const itemId = asString(item.id);
+      if (!itemId) {
+        incrementReason(reasons, 'missing Monday item id');
+        continue;
+      }
+
+      imported++;
+      if (mode === 'test') {
+        return createRunResult({ connector, mode, imported, scanned, reasons });
+      }
+    }
+  }
+
+  if (imported === 0) {
+    throw new Error('Monday sync found 0 items to import for the configured boards');
+  }
+
+  return createRunResult({ connector, mode, imported, scanned, reasons });
+}
+
+async function previewOneDriveConnector(
+  connector: DocumentConnectorRecord,
+  mode: ConnectorRunMode,
+): Promise<ConnectorRunResult> {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    return createRunResult({
+      connector,
+      mode,
+      imported: SAMPLE_FIXTURES.onedrive.length,
+      scanned: SAMPLE_FIXTURES.onedrive.length,
+      demo: true,
+    });
+  }
+
+  const driveId = asString(config.drive_id);
+  const folderPath = normalizeOneDriveFolderPath(asString(config.folder_path));
+  const accessToken = asString(config.access_token);
+
+  if (!driveId || !accessToken) {
+    throw new Error('OneDrive connector is missing drive ID or access token');
+  }
+
+  const listEndpoint = folderPath
+    ? `https://graph.microsoft.com/v1.0/drives/${encodeURIComponent(driveId)}/root:/${encodePathSegments(folderPath)}:/children?$top=200`
+    : `https://graph.microsoft.com/v1.0/drives/${encodeURIComponent(driveId)}/root/children?$top=200`;
+
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    Accept: 'application/json',
+  };
+
+  const reasons = new Map<string, number>();
+  let scanned = 0;
+  let imported = 0;
+  let nextListUrl = listEndpoint;
+
+  while (nextListUrl) {
+    const response = await fetch(nextListUrl, { headers });
+
+    if (!response.ok) {
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `OneDrive request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
+    }
+
+    const data = (await response.json()) as {
+      value?: Array<{
+        id?: string;
+        file?: Record<string, unknown>;
+        ['@microsoft.graph.downloadUrl']?: string;
+      }>;
+      ['@odata.nextLink']?: unknown;
+    };
+
+    for (const item of data.value ?? []) {
+      if (!item.file) {
+        incrementReason(reasons, 'folder or non-file item');
+        continue;
+      }
+
+      scanned++;
+
+      const itemId = asString(item.id);
+      const downloadUrl = asString(item['@microsoft.graph.downloadUrl']);
+
+      if (!itemId) {
+        incrementReason(reasons, 'missing OneDrive item id');
+        continue;
+      }
+
+      if (!downloadUrl) {
+        incrementReason(reasons, 'missing OneDrive download URL');
+        continue;
+      }
+
+      imported++;
+      if (mode === 'test') {
+        return createRunResult({ connector, mode, imported, scanned, reasons });
+      }
+    }
+
+    nextListUrl = mode === 'test' ? '' : asString(data['@odata.nextLink']);
+  }
+
+  if (imported === 0) {
+    const scope = folderPath ? ` in folder ${folderPath}` : '';
+    throw new Error(
+      `OneDrive sync found 0 files${scope}. Check folder path and token permissions.`,
+    );
+  }
+
+  return createRunResult({ connector, mode, imported, scanned, reasons });
+}
+
+async function previewGitHubConnector(
+  connector: DocumentConnectorRecord,
+  mode: ConnectorRunMode,
+): Promise<ConnectorRunResult> {
+  const config = connector.config as ConnectorConfig;
+
+  if (config.demo) {
+    return createRunResult({
+      connector,
+      mode,
+      imported: SAMPLE_FIXTURES.github.length,
+      scanned: SAMPLE_FIXTURES.github.length,
+      demo: true,
+    });
+  }
+
+  const repository = normalizeGitHubRepository(asString(config.repository));
+  let branch = normalizeGitHubBranch(asString(config.branch));
+  const docsPath = normalizeGitHubDocsPath(asString(config.docs_path));
+  const accessToken = asString(config.access_token);
+
+  if (!/^[^/]+\/[^/]+$/.test(repository)) {
+    throw new Error(
+      'GitHub connector repository must be owner/repo (or a full GitHub URL like https://github.com/owner/repo)',
+    );
+  }
+
+  const [owner, repo] = repository.split('/');
+  const headers: Record<string, string> = {
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  let { sha: branchSha, status: branchLookupStatus } = await fetchGitHubBranchSha(
+    owner,
+    repo,
+    branch,
+    headers,
+  );
+
+  if (!branchSha) {
+    const { defaultBranch } = await fetchGitHubDefaultBranch(owner, repo, headers);
+    if (defaultBranch && defaultBranch !== branch) {
+      const fallbackLookup = await fetchGitHubBranchSha(owner, repo, defaultBranch, headers);
+      if (fallbackLookup.sha) {
+        branch = defaultBranch;
+        branchSha = fallbackLookup.sha;
+        branchLookupStatus = fallbackLookup.status;
+      }
+    }
+  }
+
+  if (!branchSha) {
+    throw new Error(
+      `GitHub branch lookup failed with ${branchLookupStatus} for ${owner}/${repo}@${branch}. Check repository, branch, and PAT permissions.`,
+    );
+  }
+
+  const treeResponse = await fetch(
+    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${encodeURIComponent(branchSha)}?recursive=1`,
+    { headers },
+  );
+
+  if (!treeResponse.ok) {
+    throw new Error(`GitHub tree request failed with ${treeResponse.status}`);
+  }
+
+  const treeData = (await treeResponse.json()) as {
+    tree?: Array<{ path?: string; type?: string; sha?: string }>;
+  };
+
+  const allowedExtensions = new Set([
+    'md',
+    'mdx',
+    'txt',
+    'rst',
+    'adoc',
+    'pdf',
+    'docx',
+    'csv',
+    'xlsx',
+    'ppt',
+    'pptx',
+  ]);
+
+  const reasons = new Map<string, number>();
+  let scanned = 0;
+  let imported = 0;
+
+  for (const node of treeData.tree ?? []) {
+    if (node.type !== 'blob') {
+      continue;
+    }
+
+    scanned++;
+    const path = asString(node.path);
+    const sha = asString(node.sha);
+    if (!path || !sha) {
+      incrementReason(reasons, 'missing path or blob SHA');
+      continue;
+    }
+
+    if (docsPath && !path.startsWith(`${docsPath}/`) && path !== docsPath) {
+      incrementReason(reasons, 'outside selected docs path');
+      continue;
+    }
+
+    const ext = fileExtension(path);
+    if (!allowedExtensions.has(ext)) {
+      incrementReason(reasons, 'unsupported extension');
+      continue;
+    }
+
+    imported++;
+    if (mode === 'test') {
+      return createRunResult({ connector, mode, imported, scanned, reasons });
+    }
+  }
+
+  if (imported === 0) {
+    const scope = docsPath ? ` under path "${docsPath}"` : '';
+    throw new Error(
+      `GitHub sync found 0 supported files${scope}. Supported extensions: ${Array.from(allowedExtensions).join(', ')}`,
+    );
+  }
+
+  return createRunResult({ connector, mode, imported, scanned, reasons });
+}
+
+async function previewConnector(
+  connector: DocumentConnectorRecord,
+  mode: Exclude<ConnectorRunMode, 'sync'>,
+): Promise<ConnectorRunResult> {
+  if (connector.provider === 'confluence') {
+    return previewConfluenceConnector(connector, mode);
+  }
+
+  if (connector.provider === 'sharepoint') {
+    return previewSharePointConnector(connector, mode);
+  }
+
+  if (connector.provider === 'jira') {
+    return previewJiraConnector(connector, mode);
+  }
+
+  if (connector.provider === 'monday') {
+    return previewMondayConnector(connector, mode);
+  }
+
+  if (connector.provider === 'onedrive') {
+    return previewOneDriveConnector(connector, mode);
+  }
+
+  return previewGitHubConnector(connector, mode);
+}
+
 async function syncConfluenceConnector(connector: DocumentConnectorRecord) {
   const config = connector.config as ConnectorConfig;
   if (config.demo) {
@@ -289,7 +1248,7 @@ async function syncConfluenceConnector(connector: DocumentConnectorRecord) {
     return { imported, provider: 'confluence', connectorId: connector.id, demo: true };
   }
 
-  const baseUrl = trimTrailingSlash(asString(config.base_url));
+  const baseUrl = normalizeConfluenceBaseUrl(asString(config.base_url));
   const spaceKey = asString(config.space_key);
   const authEmail = asString(config.auth_email);
   const accessToken = asString(config.access_token);
@@ -316,7 +1275,10 @@ async function syncConfluenceConnector(connector: DocumentConnectorRecord) {
 
     const response = await fetch(url, { headers });
     if (!response.ok) {
-      throw new Error(`Confluence request failed with ${response.status}`);
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `Confluence request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
     }
 
     const data = (await response.json()) as {
@@ -359,6 +1321,10 @@ async function syncConfluenceConnector(connector: DocumentConnectorRecord) {
     if (pagesSeen >= total) break;
   }
 
+  if (imported === 0) {
+    throw new Error(`Confluence sync found 0 pages for space key ${spaceKey}`);
+  }
+
   return { imported, provider: 'confluence', connectorId: connector.id };
 }
 
@@ -390,33 +1356,56 @@ async function syncSharePointConnector(connector: DocumentConnectorRecord) {
     return { imported, provider: 'sharepoint', connectorId: connector.id, demo: true };
   }
 
-  const siteUrl = trimTrailingSlash(asString(config.site_url));
-  const libraryPath = asString(config.library_path, 'Shared Documents');
+  const siteUrl = normalizeSharePointSiteUrl(asString(config.site_url));
+  const libraryPath = normalizeSharePointLibraryPath(
+    asString(config.library_path) || 'Shared Documents',
+    siteUrl,
+  );
   const accessToken = asString(config.access_token);
 
   if (!siteUrl || !libraryPath || !accessToken) {
     throw new Error('SharePoint connector is missing site URL, library path, or access token');
   }
 
-  const listUrl = new URL(
+  const initialListUrl = new URL(
     `${siteUrl}/_api/web/GetFolderByServerRelativeUrl('${libraryPath.replace(/'/g, "''")}')/Files`,
   );
-  listUrl.searchParams.set('$select', 'Name,ServerRelativeUrl,TimeLastModified,UniqueId');
-  listUrl.searchParams.set('$top', '100');
+  initialListUrl.searchParams.set('$select', 'Name,ServerRelativeUrl,TimeLastModified,UniqueId');
+  initialListUrl.searchParams.set('$top', '200');
 
-  const response = await fetch(listUrl, {
-    headers: {
-      Accept: 'application/json;odata=nometadata',
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const headers = {
+    Accept: 'application/json;odata=nometadata',
+    Authorization: `Bearer ${accessToken}`,
+  };
 
-  if (!response.ok) {
-    throw new Error(`SharePoint request failed with ${response.status}`);
+  const items: Array<Record<string, unknown>> = [];
+  let nextListUrl = initialListUrl.toString();
+
+  while (nextListUrl) {
+    const response = await fetch(nextListUrl, { headers });
+
+    if (!response.ok) {
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `SharePoint request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
+    }
+
+    const data = (await response.json()) as {
+      value?: Array<Record<string, unknown>>;
+      '@odata.nextLink'?: unknown;
+    };
+
+    items.push(...(data.value ?? []));
+    nextListUrl = asString(data['@odata.nextLink']);
   }
 
-  const data = (await response.json()) as { value?: Array<Record<string, unknown>> };
-  const items = data.value ?? [];
+  if (items.length === 0) {
+    throw new Error(
+      `SharePoint sync found 0 files in ${libraryPath}. Check library path format and token permissions.`,
+    );
+  }
+
   let imported = 0;
 
   for (const item of items) {
@@ -434,7 +1423,10 @@ async function syncSharePointConnector(connector: DocumentConnectorRecord) {
     });
 
     if (!fileResponse.ok) {
-      throw new Error(`SharePoint file download failed for ${name}`);
+      const details = await readErrorSnippet(fileResponse);
+      throw new Error(
+        `SharePoint file download failed for ${name} with ${fileResponse.status}${details ? `: ${details}` : ''}`,
+      );
     }
 
     const buffer = Buffer.from(await fileResponse.arrayBuffer());
@@ -451,6 +1443,12 @@ async function syncSharePointConnector(connector: DocumentConnectorRecord) {
 
     await processDocumentRecord(documentId, connector.project_id, text);
     imported++;
+  }
+
+  if (imported === 0) {
+    throw new Error(
+      `SharePoint sync found 0 importable files in ${libraryPath}. Verify file formats and access permissions.`,
+    );
   }
 
   return { imported, provider: 'sharepoint', connectorId: connector.id };
@@ -578,8 +1576,8 @@ async function syncMondayConnector(connector: DocumentConnectorRecord) {
     return { imported, provider: 'monday', connectorId: connector.id, demo: true };
   }
 
-  const apiUrl = trimTrailingSlash(asString(config.api_url, 'https://api.monday.com/v2'));
-  const workspaceUrl = trimTrailingSlash(asString(config.workspace_url));
+  const apiUrl = normalizeMondayApiUrl(asString(config.api_url));
+  const workspaceUrl = normalizeOptionalUrl(asString(config.workspace_url));
   const boardIdsRaw = asString(config.board_ids);
   const accessToken = asString(config.access_token);
 
@@ -587,55 +1585,57 @@ async function syncMondayConnector(connector: DocumentConnectorRecord) {
     throw new Error('Monday connector is missing board IDs or API token');
   }
 
-  const boardIds = boardIdsRaw
-    .split(',')
-    .map((id) => id.trim())
-    .filter((id) => /^\d+$/.test(id));
+  const boardIds = normalizeMondayBoardIds(boardIdsRaw);
 
   if (!boardIds.length) {
     throw new Error('Monday board IDs must be a comma-separated list of numeric board IDs');
   }
 
-  const query = `
-    query FetchBoards($boardIds: [ID!]!) {
-      boards(ids: $boardIds) {
-        id
-        name
-        items_page(limit: 100) {
-          items {
-            id
-            name
-            updated_at
-            column_values {
-              id
-              text
-              type
-            }
-          }
-        }
-      }
+  const itemFields = `
+    id
+    name
+    updated_at
+    column_values {
+      id
+      text
+      type
     }
   `;
 
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      Authorization: accessToken,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query, variables: { boardIds } }),
-  });
+  const requestMonday = async (query: string, variables: Record<string, unknown>) => {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables }),
+    });
 
-  if (!response.ok) {
-    throw new Error(`Monday request failed with ${response.status}`);
-  }
+    if (!response.ok) {
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `Monday request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
+    }
 
-  const data = (await response.json()) as {
-    data?: {
-      boards?: Array<{
-        id?: string;
-        name?: string;
-        items_page?: {
+    return (await response.json()) as {
+      data?: {
+        boards?: Array<{
+          id?: string;
+          name?: string;
+          items_page?: {
+            cursor?: string;
+            items?: Array<{
+              id?: string;
+              name?: string;
+              updated_at?: string;
+              column_values?: Array<{ id?: string; text?: string; type?: string }>;
+            }>;
+          };
+        }>;
+        next_items_page?: {
+          cursor?: string;
           items?: Array<{
             id?: string;
             name?: string;
@@ -643,25 +1643,84 @@ async function syncMondayConnector(connector: DocumentConnectorRecord) {
             column_values?: Array<{ id?: string; text?: string; type?: string }>;
           }>;
         };
-      }>;
+      };
+      errors?: Array<{ message?: string }>;
     };
-    errors?: Array<{ message?: string }>;
   };
 
-  if (data.errors?.length) {
-    const message = asString(data.errors[0]?.message, 'Monday GraphQL request failed');
+  const fetchBoardsQuery = `
+    query FetchBoards($boardIds: [ID!]!) {
+      boards(ids: $boardIds) {
+        id
+        name
+        items_page(limit: 100) {
+          cursor
+          items {
+            ${itemFields}
+          }
+        }
+      }
+    }
+  `;
+
+  const boardsResponse = await requestMonday(fetchBoardsQuery, { boardIds });
+  if (boardsResponse.errors?.length) {
+    const message = asString(boardsResponse.errors[0]?.message, 'Monday GraphQL request failed');
     throw new Error(message);
   }
 
-  const boards = data.data?.boards ?? [];
+  const boards = boardsResponse.data?.boards ?? [];
+  if (!boards.length) {
+    throw new Error(`Monday sync found 0 boards for IDs: ${boardIds.join(', ')}`);
+  }
+
+  const fetchNextItemsQuery = `
+    query NextItemsPage($cursor: String!) {
+      next_items_page(cursor: $cursor, limit: 100) {
+        cursor
+        items {
+          ${itemFields}
+        }
+      }
+    }
+  `;
+
   let imported = 0;
 
   for (const board of boards) {
     const boardId = asString(board.id);
     const boardName = asString(board.name, 'Board');
-    const items = board.items_page?.items ?? [];
+    const boardItems: Array<{
+      id?: string;
+      name?: string;
+      updated_at?: string;
+      column_values?: Array<{ id?: string; text?: string; type?: string }>;
+    }> = [...(board.items_page?.items ?? [])];
 
-    for (const item of items) {
+    let cursor = asString(board.items_page?.cursor);
+    let pageSafety = 0;
+
+    while (cursor && pageSafety < 1000) {
+      const nextPageResponse = await requestMonday(fetchNextItemsQuery, { cursor });
+      if (nextPageResponse.errors?.length) {
+        const message = asString(
+          nextPageResponse.errors[0]?.message,
+          'Monday items pagination request failed',
+        );
+        throw new Error(message);
+      }
+
+      const nextPage = nextPageResponse.data?.next_items_page;
+      boardItems.push(...(nextPage?.items ?? []));
+      cursor = asString(nextPage?.cursor);
+      pageSafety++;
+    }
+
+    if (pageSafety >= 1000) {
+      throw new Error(`Monday pagination exceeded safety limit for board ${boardId || boardName}`);
+    }
+
+    for (const item of boardItems) {
       const itemId = asString(item.id);
       const itemName = asString(item.name, 'Untitled item');
       if (!itemId) continue;
@@ -706,6 +1765,10 @@ async function syncMondayConnector(connector: DocumentConnectorRecord) {
     }
   }
 
+  if (imported === 0) {
+    throw new Error('Monday sync found 0 items to import for the configured boards');
+  }
+
   return { imported, provider: 'monday', connectorId: connector.id };
 }
 
@@ -733,7 +1796,7 @@ async function syncOneDriveConnector(connector: DocumentConnectorRecord) {
   }
 
   const driveId = asString(config.drive_id);
-  const folderPath = asString(config.folder_path);
+  const folderPath = normalizeOneDriveFolderPath(asString(config.folder_path));
   const accessToken = asString(config.access_token);
 
   if (!driveId || !accessToken) {
@@ -744,28 +1807,52 @@ async function syncOneDriveConnector(connector: DocumentConnectorRecord) {
     ? `https://graph.microsoft.com/v1.0/drives/${encodeURIComponent(driveId)}/root:/${encodePathSegments(folderPath)}:/children?$top=200`
     : `https://graph.microsoft.com/v1.0/drives/${encodeURIComponent(driveId)}/root/children?$top=200`;
 
-  const response = await fetch(listEndpoint, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`OneDrive request failed with ${response.status}`);
-  }
-
-  const data = (await response.json()) as {
-    value?: Array<{
-      id?: string;
-      name?: string;
-      webUrl?: string;
-      file?: Record<string, unknown>;
-      ['@microsoft.graph.downloadUrl']?: string;
-    }>;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    Accept: 'application/json',
   };
 
-  const items = data.value ?? [];
+  const items: Array<{
+    id?: string;
+    name?: string;
+    webUrl?: string;
+    file?: Record<string, unknown>;
+    ['@microsoft.graph.downloadUrl']?: string;
+  }> = [];
+
+  let nextListUrl = listEndpoint;
+  while (nextListUrl) {
+    const response = await fetch(nextListUrl, { headers });
+
+    if (!response.ok) {
+      const details = await readErrorSnippet(response);
+      throw new Error(
+        `OneDrive request failed with ${response.status}${details ? `: ${details}` : ''}`,
+      );
+    }
+
+    const data = (await response.json()) as {
+      value?: Array<{
+        id?: string;
+        name?: string;
+        webUrl?: string;
+        file?: Record<string, unknown>;
+        ['@microsoft.graph.downloadUrl']?: string;
+      }>;
+      ['@odata.nextLink']?: unknown;
+    };
+
+    items.push(...(data.value ?? []));
+    nextListUrl = asString(data['@odata.nextLink']);
+  }
+
+  if (items.length === 0) {
+    const scope = folderPath ? ` in folder ${folderPath}` : '';
+    throw new Error(
+      `OneDrive sync found 0 files${scope}. Check folder path and token permissions.`,
+    );
+  }
+
   let imported = 0;
 
   for (const item of items) {
@@ -780,7 +1867,10 @@ async function syncOneDriveConnector(connector: DocumentConnectorRecord) {
 
     const fileResponse = await fetch(downloadUrl);
     if (!fileResponse.ok) {
-      throw new Error(`OneDrive file download failed for ${name}`);
+      const details = await readErrorSnippet(fileResponse);
+      throw new Error(
+        `OneDrive file download failed for ${name} with ${fileResponse.status}${details ? `: ${details}` : ''}`,
+      );
     }
 
     const buffer = Buffer.from(await fileResponse.arrayBuffer());
@@ -798,6 +1888,10 @@ async function syncOneDriveConnector(connector: DocumentConnectorRecord) {
 
     await processDocumentRecord(documentId, connector.project_id, text);
     imported++;
+  }
+
+  if (imported === 0) {
+    throw new Error('OneDrive sync found 0 importable files for the configured drive/folder');
   }
 
   return { imported, provider: 'onedrive', connectorId: connector.id };
@@ -826,13 +1920,15 @@ async function syncGitHubConnector(connector: DocumentConnectorRecord) {
     return { imported, provider: 'github', connectorId: connector.id, demo: true };
   }
 
-  const repository = asString(config.repository);
-  const branch = asString(config.branch, 'main');
-  const docsPath = normalizePath(asString(config.docs_path));
+  const repository = normalizeGitHubRepository(asString(config.repository));
+  let branch = normalizeGitHubBranch(asString(config.branch));
+  const docsPath = normalizeGitHubDocsPath(asString(config.docs_path));
   const accessToken = asString(config.access_token);
 
   if (!/^[^/]+\/[^/]+$/.test(repository)) {
-    throw new Error('GitHub connector repository must be in owner/repo format');
+    throw new Error(
+      'GitHub connector repository must be owner/repo (or a full GitHub URL like https://github.com/owner/repo)',
+    );
   }
 
   const [owner, repo] = repository.split('/');
@@ -844,19 +1940,29 @@ async function syncGitHubConnector(connector: DocumentConnectorRecord) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
 
-  const refResponse = await fetch(
-    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/ref/heads/${encodeURIComponent(branch)}`,
-    { headers },
+  let { sha: branchSha, status: branchLookupStatus } = await fetchGitHubBranchSha(
+    owner,
+    repo,
+    branch,
+    headers,
   );
 
-  if (!refResponse.ok) {
-    throw new Error(`GitHub branch lookup failed with ${refResponse.status}`);
+  if (!branchSha) {
+    const { defaultBranch } = await fetchGitHubDefaultBranch(owner, repo, headers);
+    if (defaultBranch && defaultBranch !== branch) {
+      const fallbackLookup = await fetchGitHubBranchSha(owner, repo, defaultBranch, headers);
+      if (fallbackLookup.sha) {
+        branch = defaultBranch;
+        branchSha = fallbackLookup.sha;
+        branchLookupStatus = fallbackLookup.status;
+      }
+    }
   }
 
-  const refData = (await refResponse.json()) as { object?: { sha?: string } };
-  const branchSha = asString(refData.object?.sha);
   if (!branchSha) {
-    throw new Error('GitHub branch SHA not found');
+    throw new Error(
+      `GitHub branch lookup failed with ${branchLookupStatus} for ${owner}/${repo}@${branch}. Check repository, branch, and PAT permissions.`,
+    );
   }
 
   const treeResponse = await fetch(
@@ -872,7 +1978,19 @@ async function syncGitHubConnector(connector: DocumentConnectorRecord) {
     tree?: Array<{ path?: string; mode?: string; type?: string; sha?: string; size?: number }>;
   };
 
-  const allowedExtensions = new Set(['md', 'mdx', 'txt', 'rst', 'adoc']);
+  const allowedExtensions = new Set([
+    'md',
+    'mdx',
+    'txt',
+    'rst',
+    'adoc',
+    'pdf',
+    'docx',
+    'csv',
+    'xlsx',
+    'ppt',
+    'pptx',
+  ]);
   const items = (treeData.tree ?? [])
     .filter((node) => node.type === 'blob' && Boolean(node.path) && Boolean(node.sha))
     .filter((node) => {
@@ -883,6 +2001,13 @@ async function syncGitHubConnector(connector: DocumentConnectorRecord) {
       return allowedExtensions.has(ext);
     })
     .slice(0, 200);
+
+  if (items.length === 0) {
+    const scope = docsPath ? ` under path "${docsPath}"` : '';
+    throw new Error(
+      `GitHub sync found 0 supported files${scope}. Supported extensions: ${Array.from(allowedExtensions).join(', ')}`,
+    );
+  }
 
   let imported = 0;
 
@@ -905,11 +2030,10 @@ async function syncGitHubConnector(connector: DocumentConnectorRecord) {
       continue;
     }
 
-    const content = Buffer.from(asString(blobData.content).replace(/\n/g, ''), 'base64').toString(
-      'utf8',
-    );
+    const fileBuffer = Buffer.from(asString(blobData.content).replace(/\n/g, ''), 'base64');
     const fileName = path.split('/').pop() ?? path;
-    const fileUrl = await uploadFile(fileName, Buffer.from(content, 'utf8'));
+    const content = await extractTextFromFile(fileName, fileBuffer);
+    const fileUrl = await uploadFile(fileName, fileBuffer);
 
     const documentId = await upsertImportedDocument({
       connector,
@@ -927,40 +2051,65 @@ async function syncGitHubConnector(connector: DocumentConnectorRecord) {
   return { imported, provider: 'github', connectorId: connector.id };
 }
 
-export async function syncDocumentConnector(connectorId: string) {
+export async function syncDocumentConnector(
+  connectorId: string,
+  options: SyncDocumentConnectorOptions = {},
+) {
   const rows = await sql<DocumentConnectorRecord[]>`
     SELECT * FROM document_connectors WHERE id = ${connectorId} LIMIT 1
   `;
   const connector = rows[0] ?? null;
+  const mode = options.mode ?? 'sync';
 
   if (!connector) {
     throw new Error('Connector not found');
   }
 
-  await setConnectorSyncState(connector.id, 'running');
+  await setConnectorSyncState(connector.id, 'running', null, {
+    mode,
+    status: 'running',
+  });
 
   try {
-    let result;
+    let result: ConnectorRunResult;
 
-    if (connector.provider === 'confluence') {
-      result = await syncConfluenceConnector(connector);
-    } else if (connector.provider === 'sharepoint') {
-      result = await syncSharePointConnector(connector);
-    } else if (connector.provider === 'jira') {
-      result = await syncJiraConnector(connector);
-    } else if (connector.provider === 'monday') {
-      result = await syncMondayConnector(connector);
-    } else if (connector.provider === 'onedrive') {
-      result = await syncOneDriveConnector(connector);
+    if (mode !== 'sync') {
+      result = await previewConnector(connector, mode);
     } else {
-      result = await syncGitHubConnector(connector);
+      const syncResult =
+        connector.provider === 'confluence'
+          ? await syncConfluenceConnector(connector)
+          : connector.provider === 'sharepoint'
+            ? await syncSharePointConnector(connector)
+            : connector.provider === 'jira'
+              ? await syncJiraConnector(connector)
+              : connector.provider === 'monday'
+                ? await syncMondayConnector(connector)
+                : connector.provider === 'onedrive'
+                  ? await syncOneDriveConnector(connector)
+                  : await syncGitHubConnector(connector);
+
+      result = createRunResult({
+        connector,
+        mode,
+        imported: syncResult.imported,
+        scanned: syncResult.imported,
+      });
     }
 
-    await setConnectorSyncState(connector.id, 'success');
+    await setConnectorSyncState(connector.id, 'success', null, {
+      ...result,
+      completed_at: new Date().toISOString(),
+    });
     return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Connector sync failed';
-    await setConnectorSyncState(connector.id, 'failed', message);
+    await setConnectorSyncState(connector.id, 'failed', message, {
+      mode,
+      status: 'failed',
+      message,
+      completed_at: new Date().toISOString(),
+    });
     throw error;
   }
 }

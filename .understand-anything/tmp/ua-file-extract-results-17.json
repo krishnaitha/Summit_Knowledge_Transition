@@ -1,0 +1,1696 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".claude/settings.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 17,
+      "nonEmptyLines": 17,
+      "sections": [
+        {
+          "heading": "permissions",
+          "level": 1,
+          "line": 2
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    },
+    {
+      "path": ".github/copilot-instructions.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 22,
+      "nonEmptyLines": 19,
+      "sections": [
+        {
+          "heading": "TypeScript & ESLint — Non-Negotiable Rules",
+          "level": 2,
+          "line": 15
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 26,
+      "nonEmptyLines": 16,
+      "sections": [
+        {
+          "heading": "Summary",
+          "level": 2,
+          "line": 1
+        },
+        {
+          "heading": "Changes",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Type of change",
+          "level": 2,
+          "line": 11
+        },
+        {
+          "heading": "Testing",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "Notes for reviewer",
+          "level": 2,
+          "line": 24
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": ".husky/pre-commit",
+      "language": "shell",
+      "fileCategory": "script",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {}
+    },
+    {
+      "path": ".prettierignore",
+      "language": "unknown",
+      "fileCategory": "config",
+      "totalLines": 6,
+      "nonEmptyLines": 6,
+      "metrics": {}
+    },
+    {
+      "path": ".understand-anything/.understandignore",
+      "language": "unknown",
+      "fileCategory": "config",
+      "totalLines": 44,
+      "nonEmptyLines": 39,
+      "metrics": {}
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/chat/loading.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 25,
+      "nonEmptyLines": 25,
+      "functions": [
+        {
+          "name": "AdminProjectChatLoading",
+          "startLine": 1,
+          "endLine": 25,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminProjectChatLoading",
+          "line": 1,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/projects/[id]/chat/loading.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 25,
+      "nonEmptyLines": 25,
+      "functions": [
+        {
+          "name": "MemberProjectChatLoading",
+          "startLine": 1,
+          "endLine": 25,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MemberProjectChatLoading",
+          "line": 1,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/globals.css",
+      "language": "css",
+      "fileCategory": "markup",
+      "totalLines": 48,
+      "nonEmptyLines": 41,
+      "metrics": {}
+    },
+    {
+      "path": "app/layout.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 16,
+      "nonEmptyLines": 13,
+      "functions": [
+        {
+          "name": "RootLayout",
+          "startLine": 10,
+          "endLine": 16,
+          "params": ["{ children }"]
+        }
+      ],
+      "exports": [
+        {
+          "name": "metadata",
+          "line": 5,
+          "isDefault": false
+        },
+        {
+          "name": "RootLayout",
+          "line": 10,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/loading.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 13,
+      "nonEmptyLines": 13,
+      "functions": [
+        {
+          "name": "GlobalLoading",
+          "startLine": 1,
+          "endLine": 13,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "GlobalLoading",
+          "line": 1,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 5,
+      "nonEmptyLines": 4,
+      "functions": [
+        {
+          "name": "HomePage",
+          "startLine": 3,
+          "endLine": 5,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "HomePage",
+          "line": 3,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HomePage",
+          "callee": "redirect",
+          "lineNumber": 4
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "eslint.config.mjs",
+      "language": "javascript",
+      "fileCategory": "config",
+      "totalLines": 27,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "keycloak/realm.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 38,
+      "nonEmptyLines": 38,
+      "sections": [
+        {
+          "heading": "realm",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "enabled",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "sslRequired",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "loginWithEmailAllowed",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "duplicateEmailsAllowed",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "clients",
+          "level": 1,
+          "line": 7
+        },
+        {
+          "heading": "users",
+          "level": 1,
+          "line": 21
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "load-test/run.sh",
+      "language": "shell",
+      "fileCategory": "script",
+      "totalLines": 148,
+      "nonEmptyLines": 131,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "load-test/seed-users.mjs",
+      "language": "javascript",
+      "fileCategory": "script",
+      "totalLines": 41,
+      "nonEmptyLines": 35,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "load-test/summit.js",
+      "language": "javascript",
+      "fileCategory": "script",
+      "totalLines": 303,
+      "nonEmptyLines": 255,
+      "functions": [
+        {
+          "name": "authenticate",
+          "startLine": 147,
+          "endLine": 193,
+          "params": ["email", "password"]
+        },
+        {
+          "name": "chatScenario",
+          "startLine": 202,
+          "endLine": 261,
+          "params": []
+        },
+        {
+          "name": "searchScenario",
+          "startLine": 268,
+          "endLine": 295,
+          "params": []
+        },
+        {
+          "name": "handleSummary",
+          "startLine": 299,
+          "endLine": 303,
+          "params": ["data"]
+        }
+      ],
+      "exports": [
+        {
+          "name": "options",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "chatScenario",
+          "line": 202,
+          "isDefault": false
+        },
+        {
+          "name": "searchScenario",
+          "line": 268,
+          "isDefault": false
+        },
+        {
+          "name": "handleSummary",
+          "line": 299,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "authenticate",
+          "callee": "http.get",
+          "lineNumber": 148
+        },
+        {
+          "caller": "authenticate",
+          "callee": "authErrors.add",
+          "lineNumber": 153
+        },
+        {
+          "caller": "authenticate",
+          "callee": "csrfRes.json",
+          "lineNumber": 157
+        },
+        {
+          "caller": "authenticate",
+          "callee": "authErrors.add",
+          "lineNumber": 160
+        },
+        {
+          "caller": "authenticate",
+          "callee": "http.post",
+          "lineNumber": 164
+        },
+        {
+          "caller": "authenticate",
+          "callee": "[\n      `csrfToken=${encodeURIComponent(csrfToken)}`,\n      `email=${encodeURIComponent(email)}`,\n      `password=${encodeURIComponent(password)}`,\n      'redirect=false',\n      `callbackUrl=${encodeURIComponent('/dashboard')}`,\n      'json=true',\n    ].join",
+          "lineNumber": 166
+        },
+        {
+          "caller": "authenticate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 167
+        },
+        {
+          "caller": "authenticate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 168
+        },
+        {
+          "caller": "authenticate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 169
+        },
+        {
+          "caller": "authenticate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 171
+        },
+        {
+          "caller": "authenticate",
+          "callee": "check",
+          "lineNumber": 184
+        },
+        {
+          "caller": "authenticate",
+          "callee": "authErrors.add",
+          "lineNumber": 189
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "authenticate",
+          "lineNumber": 205
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "sleep",
+          "lineNumber": 207
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "Math.floor",
+          "lineNumber": 215
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "Math.random",
+          "lineNumber": 215
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "group",
+          "lineNumber": 217
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "Date.now",
+          "lineNumber": 218
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "http.post",
+          "lineNumber": 220
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "JSON.stringify",
+          "lineNumber": 222
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "chatLatency.add",
+          "lineNumber": 237
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "Date.now",
+          "lineNumber": 237
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "check",
+          "lineNumber": 239
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "chatErrors.add",
+          "lineNumber": 246
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "sleep",
+          "lineNumber": 255
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "Math.random",
+          "lineNumber": 255
+        },
+        {
+          "caller": "chatScenario",
+          "callee": "sleep",
+          "lineNumber": 260
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "authenticate",
+          "lineNumber": 271
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "Math.floor",
+          "lineNumber": 273
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "Math.random",
+          "lineNumber": 273
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "encodeURIComponent",
+          "lineNumber": 275
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "encodeURIComponent",
+          "lineNumber": 276
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "group",
+          "lineNumber": 278
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "http.get",
+          "lineNumber": 279
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "check",
+          "lineNumber": 286
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "r.body.includes",
+          "lineNumber": 288
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "searchErrors.add",
+          "lineNumber": 291
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "sleep",
+          "lineNumber": 294
+        },
+        {
+          "caller": "searchScenario",
+          "callee": "Math.random",
+          "lineNumber": 294
+        },
+        {
+          "caller": "handleSummary",
+          "callee": "textSummary",
+          "lineNumber": 301
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "next-env.d.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 6,
+      "nonEmptyLines": 5,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "next.config.ts",
+      "language": "typescript",
+      "fileCategory": "config",
+      "totalLines": 20,
+      "nonEmptyLines": 18,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "postcss.config.mjs",
+      "language": "javascript",
+      "fileCategory": "config",
+      "totalLines": 7,
+      "nonEmptyLines": 6,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "postgres/legacy/add_learning_feedback_features.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 34,
+      "nonEmptyLines": 29,
+      "definitions": [
+        {
+          "name": "quiz_coaching_plans",
+          "kind": "table",
+          "fields": [
+            "id",
+            "attempt_id",
+            "user_id",
+            "project_id",
+            "weak_sections",
+            "recommendations",
+            "created_at"
+          ],
+          "startLine": 4,
+          "endLine": 12
+        },
+        {
+          "name": "chat_answer_feedback",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "message_id",
+            "rating",
+            "reason_tag",
+            "comment",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 14,
+          "endLine": 25
+        },
+        {
+          "name": "documents_required_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 27,
+          "endLine": 27
+        },
+        {
+          "name": "coaching_project_user_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 30,
+          "endLine": 30
+        },
+        {
+          "name": "chat_feedback_project_rating_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 33,
+          "endLine": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 5
+      }
+    },
+    {
+      "path": "postgres/legacy/add_project_announcements.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 11,
+      "nonEmptyLines": 10,
+      "definitions": [
+        {
+          "name": "project_announcements",
+          "kind": "table",
+          "fields": ["id", "project_id", "title", "message", "sent_by", "created_at"],
+          "startLine": 1,
+          "endLine": 8
+        },
+        {
+          "name": "project_announcements_project_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 10,
+          "endLine": 10
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 2
+      }
+    },
+    {
+      "path": "postgres/schema.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 657,
+      "nonEmptyLines": 582,
+      "definitions": [
+        {
+          "name": "users",
+          "kind": "table",
+          "fields": [
+            "id",
+            "email",
+            "full_name",
+            "role",
+            "password_hash",
+            "last_login_at",
+            "is_active"
+          ],
+          "startLine": 47,
+          "endLine": 58
+        },
+        {
+          "name": "invite_tokens",
+          "kind": "table",
+          "fields": ["id", "email", "token", "role", "project_id", "created_at"],
+          "startLine": 61,
+          "endLine": 69
+        },
+        {
+          "name": "password_reset_tokens",
+          "kind": "table",
+          "fields": ["id", "email", "token", "expires_at", "created_at"],
+          "startLine": 72,
+          "endLine": 78
+        },
+        {
+          "name": "app_settings",
+          "kind": "table",
+          "fields": ["value", "updated_by", "updated_at"],
+          "startLine": 81,
+          "endLine": 86
+        },
+        {
+          "name": "projects",
+          "kind": "table",
+          "fields": [
+            "id",
+            "name",
+            "description",
+            "created_by",
+            "created_at",
+            "is_active",
+            "pass_threshold",
+            "quiz_close_at"
+          ],
+          "startLine": 89,
+          "endLine": 100
+        },
+        {
+          "name": "project_members",
+          "kind": "table",
+          "fields": ["id", "project_id", "user_id", "role", "assigned_at"],
+          "startLine": 103,
+          "endLine": 110
+        },
+        {
+          "name": "project_announcements",
+          "kind": "table",
+          "fields": ["id", "project_id", "title", "message", "sent_by", "created_at"],
+          "startLine": 113,
+          "endLine": 120
+        },
+        {
+          "name": "document_connectors",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "provider",
+            "name",
+            "config",
+            "created_by",
+            "is_active",
+            "auto_sync_enabled",
+            "last_synced_at",
+            "last_sync_status",
+            "last_sync_error",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 122,
+          "endLine": 136
+        },
+        {
+          "name": "documents",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "file_name",
+            "file_url",
+            "file_type",
+            "uploaded_by",
+            "uploaded_at",
+            "chunk_count",
+            "classification",
+            "is_required",
+            "scan_flags",
+            "source_connector_id",
+            "source_provider",
+            "source_item_id",
+            "source_url",
+            "source_synced_at"
+          ],
+          "startLine": 139,
+          "endLine": 160
+        },
+        {
+          "name": "document_chunks",
+          "kind": "table",
+          "fields": [
+            "id",
+            "document_id",
+            "project_id",
+            "content",
+            "search_vector",
+            "embedding",
+            "embedding_model_id",
+            "embedding_model_revision",
+            "chunk_index",
+            "created_at"
+          ],
+          "startLine": 163,
+          "endLine": 174
+        },
+        {
+          "name": "document_threads",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "document_id",
+            "created_by",
+            "title",
+            "page_number",
+            "status",
+            "resolved_by",
+            "resolved_at",
+            "created_at",
+            "updated_at",
+            "source",
+            "gap_query",
+            "kb_document_id"
+          ],
+          "startLine": 176,
+          "endLine": 193
+        },
+        {
+          "name": "document_thread_comments",
+          "kind": "table",
+          "fields": [
+            "id",
+            "thread_id",
+            "author_id",
+            "body",
+            "is_answer",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 195,
+          "endLine": 203
+        },
+        {
+          "name": "flashcards",
+          "kind": "table",
+          "fields": [
+            "id",
+            "project_id",
+            "source_chunk_id",
+            "question",
+            "answer",
+            "difficulty",
+            "created_by",
+            "created_at"
+          ],
+          "startLine": 205,
+          "endLine": 214
+        },
+        {
+          "name": "flashcard_progress",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "flashcard_id",
+            "interval_days",
+            "ease_factor",
+            "repetitions",
+            "due_at",
+            "last_reviewed_at",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 216,
+          "endLine": 228
+        },
+        {
+          "name": "chat_sessions",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "started_at",
+            "title",
+            "message_count",
+            "last_message_at"
+          ],
+          "startLine": 231,
+          "endLine": 239
+        },
+        {
+          "name": "chat_messages",
+          "kind": "table",
+          "fields": ["id", "session_id", "role", "content", "sources", "created_at"],
+          "startLine": 242,
+          "endLine": 249
+        },
+        {
+          "name": "chat_answer_feedback",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "message_id",
+            "rating",
+            "reason_tag",
+            "comment",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 252,
+          "endLine": 263
+        },
+        {
+          "name": "chat_bookmarks",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "message_id", "created_at"],
+          "startLine": 266,
+          "endLine": 273
+        },
+        {
+          "name": "quiz_sets",
+          "kind": "table",
+          "fields": ["id", "project_id", "set_name", "set_number", "is_active", "created_at"],
+          "startLine": 276,
+          "endLine": 286
+        },
+        {
+          "name": "quiz_questions",
+          "kind": "table",
+          "fields": [
+            "id",
+            "quiz_set_id",
+            "question_text",
+            "option_a",
+            "option_b",
+            "option_c",
+            "option_d",
+            "correct_option",
+            "explanation",
+            "marks"
+          ],
+          "startLine": 289,
+          "endLine": 302
+        },
+        {
+          "name": "quiz_attempts",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "quiz_set_id",
+            "assigned_questions",
+            "answers_given",
+            "score",
+            "total_marks",
+            "percentage",
+            "passed",
+            "started_at",
+            "submitted_at",
+            "status"
+          ],
+          "startLine": 305,
+          "endLine": 321
+        },
+        {
+          "name": "quiz_attempt_history",
+          "kind": "table",
+          "fields": [
+            "id",
+            "original_attempt_id",
+            "user_id",
+            "project_id",
+            "quiz_set_id",
+            "score",
+            "total_marks",
+            "percentage",
+            "passed",
+            "submitted_at",
+            "reset_at",
+            "reset_by",
+            "reset_reason"
+          ],
+          "startLine": 323,
+          "endLine": 337
+        },
+        {
+          "name": "quiz_coaching_plans",
+          "kind": "table",
+          "fields": [
+            "id",
+            "attempt_id",
+            "user_id",
+            "project_id",
+            "weak_sections",
+            "recommendations",
+            "created_at"
+          ],
+          "startLine": 340,
+          "endLine": 348
+        },
+        {
+          "name": "quiz_resets",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "reset_by", "reason", "reset_at"],
+          "startLine": 351,
+          "endLine": 358
+        },
+        {
+          "name": "quiz_retake_requests",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "attempt_id",
+            "reason",
+            "status",
+            "created_at",
+            "resolved_at",
+            "resolved_by"
+          ],
+          "startLine": 361,
+          "endLine": 372
+        },
+        {
+          "name": "activity_log",
+          "kind": "table",
+          "fields": ["id", "user_id", "project_id", "action", "metadata", "created_at"],
+          "startLine": 375,
+          "endLine": 382
+        },
+        {
+          "name": "processing_jobs",
+          "kind": "table",
+          "fields": [
+            "id",
+            "type",
+            "status",
+            "payload",
+            "result",
+            "error",
+            "created_at",
+            "started_at",
+            "completed_at"
+          ],
+          "startLine": 385,
+          "endLine": 396
+        },
+        {
+          "name": "app_error_events",
+          "kind": "table",
+          "fields": ["id", "source", "category", "message", "stack", "metadata", "created_at"],
+          "startLine": 398,
+          "endLine": 406
+        },
+        {
+          "name": "rag_traces",
+          "kind": "table",
+          "fields": [
+            "id",
+            "created_at",
+            "project_id",
+            "user_id",
+            "session_id",
+            "message_id",
+            "query_text",
+            "chunks_retrieved",
+            "max_similarity",
+            "avg_similarity",
+            "retrieval_hit",
+            "retrieval_ms",
+            "model_used",
+            "prompt_tokens",
+            "completion_tokens",
+            "total_tokens",
+            "generation_ms",
+            "total_ms",
+            "answer_cached",
+            "answer_refused",
+            "possible_hallucination",
+            "is_slow"
+          ],
+          "startLine": 409,
+          "endLine": 432
+        },
+        {
+          "name": "user_memories",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "project_id",
+            "memory_key",
+            "memory_value",
+            "tags",
+            "confidence",
+            "source",
+            "created_at",
+            "updated_at",
+            "last_used_at"
+          ],
+          "startLine": 434,
+          "endLine": 448
+        },
+        {
+          "name": "user_memory_pending_confirmations",
+          "kind": "table",
+          "fields": [
+            "id",
+            "user_id",
+            "session_id",
+            "project_id",
+            "memory_key",
+            "memory_value",
+            "tags",
+            "is_sensitive",
+            "allows_sensitive_storage",
+            "expires_at",
+            "created_at"
+          ],
+          "startLine": 450,
+          "endLine": 463
+        },
+        {
+          "name": "quiz_attempts_one_per_user_project_submitted",
+          "kind": "index",
+          "fields": [],
+          "startLine": 470,
+          "endLine": 470
+        },
+        {
+          "name": "quiz_attempt_history_user_project_reset_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 474,
+          "endLine": 474
+        },
+        {
+          "name": "chat_bookmarks_user_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 478,
+          "endLine": 478
+        },
+        {
+          "name": "activity_log_rate_limit_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 482,
+          "endLine": 482
+        },
+        {
+          "name": "idx_project_members_role",
+          "kind": "index",
+          "fields": [],
+          "startLine": 485,
+          "endLine": 485
+        },
+        {
+          "name": "project_announcements_project_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 488,
+          "endLine": 488
+        },
+        {
+          "name": "document_connectors_project_created_at",
+          "kind": "index",
+          "fields": [],
+          "startLine": 491,
+          "endLine": 491
+        },
+        {
+          "name": "documents_source_connector_item_unique",
+          "kind": "index",
+          "fields": [],
+          "startLine": 494,
+          "endLine": 494
+        },
+        {
+          "name": "documents_required_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 498,
+          "endLine": 498
+        },
+        {
+          "name": "document_chunks_search_vector_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 501,
+          "endLine": 501
+        },
+        {
+          "name": "document_threads_document_status_updated_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 504,
+          "endLine": 504
+        },
+        {
+          "name": "document_threads_project_updated_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 507,
+          "endLine": 507
+        },
+        {
+          "name": "document_thread_comments_thread_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 510,
+          "endLine": 510
+        },
+        {
+          "name": "flashcards_project_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 513,
+          "endLine": 513
+        },
+        {
+          "name": "flashcards_project_chunk_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 516,
+          "endLine": 516
+        },
+        {
+          "name": "flashcard_progress_user_due_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 519,
+          "endLine": 519
+        },
+        {
+          "name": "coaching_project_user_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 522,
+          "endLine": 522
+        },
+        {
+          "name": "chat_feedback_project_rating_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 525,
+          "endLine": 525
+        },
+        {
+          "name": "processing_jobs_status_created_at",
+          "kind": "index",
+          "fields": [],
+          "startLine": 529,
+          "endLine": 529
+        },
+        {
+          "name": "app_error_events_created_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 532,
+          "endLine": 532
+        },
+        {
+          "name": "app_error_events_source_category_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 535,
+          "endLine": 535
+        },
+        {
+          "name": "rag_traces_project_created",
+          "kind": "index",
+          "fields": [],
+          "startLine": 539,
+          "endLine": 539
+        },
+        {
+          "name": "rag_traces_refused",
+          "kind": "index",
+          "fields": [],
+          "startLine": 542,
+          "endLine": 542
+        },
+        {
+          "name": "rag_traces_hallucination",
+          "kind": "index",
+          "fields": [],
+          "startLine": 546,
+          "endLine": 546
+        },
+        {
+          "name": "rag_traces_slow",
+          "kind": "index",
+          "fields": [],
+          "startLine": 550,
+          "endLine": 550
+        },
+        {
+          "name": "user_memories_user_project_updated_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 554,
+          "endLine": 554
+        },
+        {
+          "name": "user_memory_pending_lookup_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 557,
+          "endLine": 557
+        },
+        {
+          "name": "quiz_retake_requests_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 560,
+          "endLine": 560
+        },
+        {
+          "name": "quiz_retake_requests_user_project_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 563,
+          "endLine": 563
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 60
+      }
+    },
+    {
+      "path": "proxy.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "proxy",
+          "startLine": 7,
+          "endLine": 29,
+          "params": ["request"]
+        }
+      ],
+      "exports": [
+        {
+          "name": "proxy",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "config",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "proxy",
+          "callee": "pathname.startsWith",
+          "lineNumber": 14
+        },
+        {
+          "caller": "proxy",
+          "callee": "pathname.startsWith",
+          "lineNumber": 15
+        },
+        {
+          "caller": "proxy",
+          "callee": "NextResponse.next",
+          "lineNumber": 17
+        },
+        {
+          "caller": "proxy",
+          "callee": "request.cookies.has",
+          "lineNumber": 21
+        },
+        {
+          "caller": "proxy",
+          "callee": "request.cookies.has",
+          "lineNumber": 22
+        },
+        {
+          "caller": "proxy",
+          "callee": "NextResponse.redirect",
+          "lineNumber": 25
+        },
+        {
+          "caller": "proxy",
+          "callee": "NextResponse.next",
+          "lineNumber": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "public/connector-setup-guide.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 225,
+      "nonEmptyLines": 161,
+      "sections": [
+        {
+          "heading": "Connector Setup Guide",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Where to configure connectors",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Before you start",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "Confluence",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "Connector form fields",
+          "level": 3,
+          "line": 22
+        },
+        {
+          "heading": "How to fetch Confluence auth token",
+          "level": 3,
+          "line": 31
+        },
+        {
+          "heading": "Finish setup",
+          "level": 3,
+          "line": 41
+        },
+        {
+          "heading": "SharePoint",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "Connector form fields",
+          "level": 3,
+          "line": 48
+        },
+        {
+          "heading": "How to fetch SharePoint access token",
+          "level": 3,
+          "line": 56
+        },
+        {
+          "heading": "Finish setup",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "Jira",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "Connector form fields",
+          "level": 3,
+          "line": 74
+        },
+        {
+          "heading": "How to fetch Jira auth token",
+          "level": 3,
+          "line": 84
+        },
+        {
+          "heading": "Finish setup",
+          "level": 3,
+          "line": 94
+        },
+        {
+          "heading": "Monday.com",
+          "level": 2,
+          "line": 99
+        },
+        {
+          "heading": "Connector form fields",
+          "level": 3,
+          "line": 101
+        },
+        {
+          "heading": "How to fetch Monday board IDs",
+          "level": 3,
+          "line": 109
+        },
+        {
+          "heading": "How to fetch Monday API token",
+          "level": 3,
+          "line": 121
+        },
+        {
+          "heading": "Finish setup",
+          "level": 3,
+          "line": 129
+        },
+        {
+          "heading": "OneDrive",
+          "level": 2,
+          "line": 134
+        },
+        {
+          "heading": "Connector form fields",
+          "level": 3,
+          "line": 136
+        },
+        {
+          "heading": "How to fetch OneDrive drive ID",
+          "level": 3,
+          "line": 144
+        },
+        {
+          "heading": "How to fetch OneDrive access token",
+          "level": 3,
+          "line": 150
+        },
+        {
+          "heading": "Finish setup",
+          "level": 3,
+          "line": 159
+        },
+        {
+          "heading": "GitHub",
+          "level": 2,
+          "line": 164
+        },
+        {
+          "heading": "Connector form fields",
+          "level": 3,
+          "line": 166
+        },
+        {
+          "heading": "How to fetch GitHub repository and branch",
+          "level": 3,
+          "line": 175
+        },
+        {
+          "heading": "How to fetch GitHub access token",
+          "level": 3,
+          "line": 181
+        },
+        {
+          "heading": "Finish setup",
+          "level": 3,
+          "line": 190
+        },
+        {
+          "heading": "Verify successful sync",
+          "level": 2,
+          "line": 195
+        },
+        {
+          "heading": "Troubleshooting",
+          "level": 2,
+          "line": 202
+        },
+        {
+          "heading": "Connector stuck in running",
+          "level": 3,
+          "line": 204
+        },
+        {
+          "heading": "Authentication errors",
+          "level": 3,
+          "line": 209
+        },
+        {
+          "heading": "No items imported",
+          "level": 3,
+          "line": 218
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 35
+      }
+    }
+  ]
+}

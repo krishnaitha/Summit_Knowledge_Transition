@@ -33,16 +33,17 @@ Your Server / VM
 
 ## Server Requirements
 
-| Resource | Minimum | Recommended |
-|---|---|---|
-| CPU | 2 vCPUs | 4 vCPUs |
-| RAM | 4 GB | 8 GB |
-| Storage | 40 GB SSD | 100 GB SSD |
-| OS | Ubuntu 22.04 LTS | Ubuntu 22.04 LTS |
-| Docker | 24+ | 24+ |
-| Docker Compose | v2+ | v2+ |
+| Resource       | Minimum          | Recommended      |
+| -------------- | ---------------- | ---------------- |
+| CPU            | 2 vCPUs          | 4 vCPUs          |
+| RAM            | 4 GB             | 8 GB             |
+| Storage        | 40 GB SSD        | 100 GB SSD       |
+| OS             | Ubuntu 22.04 LTS | Ubuntu 22.04 LTS |
+| Docker         | 24+              | 24+              |
+| Docker Compose | v2+              | v2+              |
 
 **Suitable servers:**
+
 - Azure VM (Standard_B2s ~$30/mo, Standard_D2s_v3 ~$70/mo)
 - AWS EC2 (t3.small ~$15/mo, t3.medium ~$30/mo)
 - On-premises Linux server
@@ -78,6 +79,7 @@ sudo apt-get install -y git curl wget openssl nginx certbot python3-certbot-ngin
 ### 1.3 Point your domain to the server
 
 In your DNS provider, create an A record:
+
 ```
 kt.yourcompany.com      →  <server IP address>
 supabase.yourcompany.com →  <server IP address>   # for Supabase dashboard
@@ -121,27 +123,54 @@ const secret = 'YOUR_JWT_SECRET_FROM_ABOVE';
 function base64url(obj) {
   return Buffer.from(JSON.stringify(obj))
     .toString('base64')
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
 }
 
 function sign(header, payload, secret) {
   const data = `${base64url(header)}.${base64url(payload)}`;
-  const sig = crypto.createHmac('sha256', secret).update(data).digest('base64')
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  const sig = crypto
+    .createHmac('sha256', secret)
+    .update(data)
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
   return `${data}.${sig}`;
 }
 
 const header = { alg: 'HS256', typ: 'JWT' };
 
 // Anon key
-console.log('ANON KEY:', sign(header, {
-  role: 'anon', iss: 'supabase', iat: 1700000000, exp: 2000000000
-}, secret));
+console.log(
+  'ANON KEY:',
+  sign(
+    header,
+    {
+      role: 'anon',
+      iss: 'supabase',
+      iat: 1700000000,
+      exp: 2000000000,
+    },
+    secret,
+  ),
+);
 
 // Service role key
-console.log('SERVICE KEY:', sign(header, {
-  role: 'service_role', iss: 'supabase', iat: 1700000000, exp: 2000000000
-}, secret));
+console.log(
+  'SERVICE KEY:',
+  sign(
+    header,
+    {
+      role: 'service_role',
+      iss: 'supabase',
+      iat: 1700000000,
+      exp: 2000000000,
+    },
+    secret,
+  ),
+);
 ```
 
 ### 2.3 Configure .env
@@ -182,6 +211,7 @@ docker compose ps
 ```
 
 You should see these containers running:
+
 - `supabase-db` — PostgreSQL
 - `supabase-auth` — Auth (GoTrue)
 - `supabase-rest` — PostgREST (API)
@@ -194,6 +224,7 @@ You should see these containers running:
 ### 2.5 Access the dashboard
 
 Temporarily, Supabase dashboard is available at:
+
 ```
 http://<server-ip>:8000
 ```
@@ -277,6 +308,7 @@ sudo systemctl reload nginx
 ### 4.1 Copy migration files to server
 
 From your local machine:
+
 ```bash
 scp -r supabase/migrations/ user@<server-ip>:~/summit-migrations/
 ```
@@ -331,11 +363,13 @@ CMD ["node", "server.js"]
 ```
 
 Add to `next.config.mjs`:
+
 ```javascript
 output: 'standalone',
 ```
 
 Build and run:
+
 ```bash
 # On your server
 docker build -t summit-kt .
@@ -411,12 +445,12 @@ BACKUP_DIR=/backups/postgres
 mkdir -p $BACKUP_DIR
 
 docker exec supabase-db pg_dump -U postgres postgres \
-  | gzip > $BACKUP_DIR/summit_kt_$DATE.sql.gz
+  | gzip > $BACKUP_DIR/nextelevate_$DATE.sql.gz
 
 # Keep only last 30 days
 find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 
-echo "Backup completed: summit_kt_$DATE.sql.gz"
+echo "Backup completed: nextelevate_$DATE.sql.gz"
 EOF
 
 chmod +x /home/ubuntu/backup-db.sh
@@ -429,7 +463,7 @@ crontab -e
 ### Restore from backup
 
 ```bash
-gunzip -c /backups/postgres/summit_kt_20260511_020000.sql.gz \
+gunzip -c /backups/postgres/nextelevate_20260511_020000.sql.gz \
   | docker exec -i supabase-db psql -U postgres postgres
 ```
 
@@ -451,6 +485,7 @@ sudo ufw enable
 ### Restrict Supabase dashboard access (optional)
 
 If only internal users need the dashboard, restrict it to your office IP:
+
 ```bash
 sudo ufw allow from <office-ip> to any port 8000
 ```
@@ -536,13 +571,13 @@ PGPASSWORD=<cloud-db-password> pg_dump \
   -t quiz_sets \
   -t quiz_questions \
   -t quiz_attempts \
-  > summit_kt_export.sql
+  > nextelevate_export.sql
 
 # 2. Copy export to your server
-scp summit_kt_export.sql user@<server-ip>:~/
+scp nextelevate_export.sql user@<server-ip>:~/
 
 # 3. Import to self-hosted Supabase
-docker exec -i supabase-db psql -U postgres postgres < ~/summit_kt_export.sql
+docker exec -i supabase-db psql -U postgres postgres < ~/nextelevate_export.sql
 
 # 4. Migrate storage files (documents bucket)
 # Download all files from Supabase cloud storage
@@ -553,29 +588,29 @@ docker exec -i supabase-db psql -U postgres postgres < ~/summit_kt_export.sql
 
 ## Quick Reference
 
-| Task | Command |
-|---|---|
-| Start Supabase | `cd ~/supabase/docker && docker compose up -d` |
-| Stop Supabase | `cd ~/supabase/docker && docker compose down` |
-| Start app | `pm2 start summit-kt` |
-| View app logs | `pm2 logs summit-kt` |
-| Restart app | `pm2 restart summit-kt` |
-| Manual DB backup | `/home/ubuntu/backup-db.sh` |
-| Check disk space | `df -h` |
-| Update Supabase | `docker compose pull && docker compose up -d` |
-| Supabase dashboard | `https://supabase.yourcompany.com` |
-| App | `https://kt.yourcompany.com` |
+| Task               | Command                                        |
+| ------------------ | ---------------------------------------------- |
+| Start Supabase     | `cd ~/supabase/docker && docker compose up -d` |
+| Stop Supabase      | `cd ~/supabase/docker && docker compose down`  |
+| Start app          | `pm2 start summit-kt`                          |
+| View app logs      | `pm2 logs summit-kt`                           |
+| Restart app        | `pm2 restart summit-kt`                        |
+| Manual DB backup   | `/home/ubuntu/backup-db.sh`                    |
+| Check disk space   | `df -h`                                        |
+| Update Supabase    | `docker compose pull && docker compose up -d`  |
+| Supabase dashboard | `https://supabase.yourcompany.com`             |
+| App                | `https://kt.yourcompany.com`                   |
 
 ---
 
 ## Cost Summary (self-hosted vs cloud)
 
-| | Cloud (Supabase Pro) | Self-hosted |
-|---|---|---|
-| Platform | $25/mo | $0 |
-| Server | $0 | $30–80/mo (VM) |
-| SSL | $0 | $0 (Let's Encrypt) |
-| Backups | Included | $0 (local) or ~$2/mo (S3) |
-| **Total** | **$25/mo** | **$30–80/mo** |
-| Data control | Supabase servers | **Your servers** |
-| Maintenance | Managed | **Your team** |
+|              | Cloud (Supabase Pro) | Self-hosted               |
+| ------------ | -------------------- | ------------------------- |
+| Platform     | $25/mo               | $0                        |
+| Server       | $0                   | $30–80/mo (VM)            |
+| SSL          | $0                   | $0 (Let's Encrypt)        |
+| Backups      | Included             | $0 (local) or ~$2/mo (S3) |
+| **Total**    | **$25/mo**           | **$30–80/mo**             |
+| Data control | Supabase servers     | **Your servers**          |
+| Maintenance  | Managed              | **Your team**             |

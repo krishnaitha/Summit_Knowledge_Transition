@@ -1,0 +1,710 @@
+{
+  "nodes": [
+    {
+      "id": "file:__tests__/components/auth/forgot-password-form.test.tsx",
+      "type": "file",
+      "name": "forgot-password-form.test.tsx",
+      "filePath": "__tests__/components/auth/forgot-password-form.test.tsx",
+      "summary": "Vitest test suite for ForgotPasswordForm covering rendering, validation, success and API-error states using @testing-library/react.",
+      "tags": ["test", "component", "auth", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/auth/login-form.test.tsx",
+      "type": "file",
+      "name": "login-form.test.tsx",
+      "filePath": "__tests__/components/auth/login-form.test.tsx",
+      "summary": "Vitest test suite for LoginForm covering credentials and Cognito provider variants, including field rendering, validation messages, optional links, and input interaction.",
+      "tags": ["test", "component", "auth", "multi-provider"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/auth/register-form.test.tsx",
+      "type": "file",
+      "name": "register-form.test.tsx",
+      "filePath": "__tests__/components/auth/register-form.test.tsx",
+      "summary": "Vitest test suite for RegisterForm covering field rendering, client-side validation rules (name, email, password length, password match), and success/error API responses.",
+      "tags": ["test", "component", "auth", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/components/ui/button.test.tsx",
+      "type": "file",
+      "name": "button.test.tsx",
+      "filePath": "__tests__/components/ui/button.test.tsx",
+      "summary": "Vitest test suite for the Button UI component verifying variant classes (primary, secondary, ghost, danger), size classes, disabled state, click handler forwarding, and className merging.",
+      "tags": ["test", "component", "ui", "button"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/components/ui/input.test.tsx",
+      "type": "file",
+      "name": "input.test.tsx",
+      "filePath": "__tests__/components/ui/input.test.tsx",
+      "summary": "Vitest test suite for the Input UI component verifying rendering, prop forwarding (placeholder, type, autoComplete), onChange callback, and className merging.",
+      "tags": ["test", "component", "ui", "input"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "summary": "Admin analytics page for a specific project that fetches analytics and observability metrics in parallel, guards access with requireAdmin, and renders the ProjectAnalyticsTabs and QuizWindowForm components.",
+      "tags": ["api-handler", "admin", "analytics", "server-component"],
+      "complexity": "simple",
+      "languageNotes": "Uses Next.js async Server Component with parallel data fetching via Promise.all."
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/members/page.tsx",
+      "summary": "Admin project members page guarded by requireProjectAdmin that lists current members with role badges and provides inline forms to invite, update role, and remove members.",
+      "tags": ["api-handler", "admin", "members", "server-component"],
+      "complexity": "moderate",
+      "languageNotes": "Uses Next.js Server Actions (updateProjectMemberRoleAction, removeProjectMemberAction) submitted via native HTML form actions."
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "summary": "Admin quiz management page for a project that lists existing quiz sets with category statistics, embeds an AI quiz generator, and provides a manual create-set form.",
+      "tags": ["api-handler", "admin", "quiz", "server-component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(auth)/login/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(auth)/login/page.tsx",
+      "summary": "Public login page that redirects already-authenticated users and renders the LoginForm with provider and feature flags sourced from authFeatures.",
+      "tags": ["entry-point", "auth", "login", "server-component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/auth/accept-invite/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/auth/accept-invite/page.tsx",
+      "summary": "Token-validated invite acceptance page that queries the invite_tokens table directly, shows an error for invalid or expired tokens, and renders AcceptInviteForm with the pre-verified email.",
+      "tags": ["auth", "onboarding", "server-component", "validation"],
+      "complexity": "simple",
+      "languageNotes": "Uses the raw sql tagged-template client directly in a Server Component to validate the invite token before rendering the client form."
+    },
+    {
+      "id": "file:app/auth/reset-password/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/auth/reset-password/page.tsx",
+      "summary": "Token-validated password reset page that queries password_reset_tokens directly, renders an expiry error for invalid tokens, and passes a verified token to ResetPasswordForm.",
+      "tags": ["auth", "password-reset", "server-component", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/admin/member-invite-form.tsx",
+      "type": "file",
+      "name": "member-invite-form.tsx",
+      "filePath": "components/admin/member-invite-form.tsx",
+      "summary": "Client-side form component for inviting or assigning project members via the /api/admin/invite endpoint, displaying the generated magic-link with a clipboard copy button.",
+      "tags": ["component", "admin", "members", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/observability-panel.tsx",
+      "type": "file",
+      "name": "observability-panel.tsx",
+      "filePath": "components/admin/observability-panel.tsx",
+      "summary": "Client-side RAG observability dashboard component displaying KPI stat cards, paginated tables for unanswered queries and possible hallucinations, token usage over time, and slow query listings.",
+      "tags": ["component", "admin", "observability", "analytics"],
+      "complexity": "complex",
+      "languageNotes": "Uses useMemo for pagination slice derivation and local useState for independent page cursors across multiple paginated tables."
+    },
+    {
+      "id": "file:components/admin/project-analytics-tabs.tsx",
+      "type": "file",
+      "name": "project-analytics-tabs.tsx",
+      "filePath": "components/admin/project-analytics-tabs.tsx",
+      "summary": "Client-side tabbed analytics component with five tabs (Overview, Learning, Adoption, AI Feedback, Observability) that surfaces onboarding summary metrics, quiz results, weak topics, chatbot adoption, and the ObservabilityPanel.",
+      "tags": ["component", "admin", "analytics", "tabs"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/auth/accept-invite-form.tsx",
+      "type": "file",
+      "name": "accept-invite-form.tsx",
+      "filePath": "components/auth/accept-invite-form.tsx",
+      "summary": "Client-side form for invited users to set their full name and password, then auto-signs them in via next-auth credentials and redirects to the dashboard.",
+      "tags": ["component", "auth", "onboarding", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/auth/forgot-password-form.tsx",
+      "type": "file",
+      "name": "forgot-password-form.tsx",
+      "filePath": "components/auth/forgot-password-form.tsx",
+      "summary": "Client-side forgot-password form that calls /api/auth/forgot-password and switches to a success state showing a reset link confirmation message.",
+      "tags": ["component", "auth", "password-reset", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/auth/login-form.tsx",
+      "type": "file",
+      "name": "login-form.tsx",
+      "filePath": "components/auth/login-form.tsx",
+      "summary": "Multi-provider login form component that renders a credentials email/password form, a Cognito SSO redirect, or an OIDC redirect variant based on the provider prop.",
+      "tags": ["component", "auth", "login", "multi-provider"],
+      "complexity": "complex",
+      "languageNotes": "Contains three internal sub-components (CredentialsLoginForm, CognitoLoginForm, OidcLoginForm) selected at runtime by the provider prop; both SSO variants use useEffect to auto-redirect on mount."
+    },
+    {
+      "id": "file:components/auth/register-form.tsx",
+      "type": "file",
+      "name": "register-form.tsx",
+      "filePath": "components/auth/register-form.tsx",
+      "summary": "Client-side user registration form with client-side validation (name, email, password length, confirm match) that posts to /api/auth/register and shows a success state with a sign-in link.",
+      "tags": ["component", "auth", "registration", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/auth/reset-password-form.tsx",
+      "type": "file",
+      "name": "reset-password-form.tsx",
+      "filePath": "components/auth/reset-password-form.tsx",
+      "summary": "Client-side password reset form that validates new password length and confirmation match, then posts to /api/auth/reset-password with the token from the page URL.",
+      "tags": ["component", "auth", "password-reset", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/admin/member-invite-form.tsx:MemberInviteForm",
+      "type": "function",
+      "name": "MemberInviteForm",
+      "filePath": "components/admin/member-invite-form.tsx",
+      "lineRange": [10, 112],
+      "summary": "Client component that manages invite state and submits to /api/admin/invite, then renders the generated magic link with clipboard copy functionality.",
+      "tags": ["component", "admin", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/observability-panel.tsx:ObservabilityPanel",
+      "type": "function",
+      "name": "ObservabilityPanel",
+      "filePath": "components/admin/observability-panel.tsx",
+      "lineRange": [25, 306],
+      "summary": "Dashboard panel rendering RAG observability KPIs, paginated unanswered queries, possible hallucinations, token usage, and slow queries from ObservabilityMetrics.",
+      "tags": ["component", "admin", "analytics", "observability"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/project-analytics-tabs.tsx:ProjectAnalyticsTabs",
+      "type": "function",
+      "name": "ProjectAnalyticsTabs",
+      "filePath": "components/admin/project-analytics-tabs.tsx",
+      "lineRange": [57, 190],
+      "summary": "Tabbed analytics component managing activeTab state and conditionally rendering Overview, Learning, Adoption, AI Feedback, and Observability content panels.",
+      "tags": ["component", "admin", "analytics", "tabs"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "function",
+      "name": "AcceptInviteForm",
+      "filePath": "components/auth/accept-invite-form.tsx",
+      "lineRange": [10, 124],
+      "summary": "Invite acceptance form component that validates inputs, calls the accept-invite API, then auto-signs in the user via next-auth and navigates to the dashboard.",
+      "tags": ["component", "auth", "onboarding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/auth/forgot-password-form.tsx:ForgotPasswordForm",
+      "type": "function",
+      "name": "ForgotPasswordForm",
+      "filePath": "components/auth/forgot-password-form.tsx",
+      "lineRange": [9, 101],
+      "summary": "Forgot-password form that validates the email field, calls /api/auth/forgot-password, and transitions to a success confirmation view.",
+      "tags": ["component", "auth", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "function",
+      "name": "LoginForm",
+      "filePath": "components/auth/login-form.tsx",
+      "lineRange": [236, 253],
+      "summary": "Public-facing exported component that selects and renders the appropriate login sub-form (credentials, Cognito, or OIDC) based on the provider prop.",
+      "tags": ["component", "auth", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/auth/register-form.tsx:RegisterForm",
+      "type": "function",
+      "name": "RegisterForm",
+      "filePath": "components/auth/register-form.tsx",
+      "lineRange": [9, 156],
+      "summary": "Self-registration form component with multi-step client-side validation that posts to /api/auth/register and shows a post-registration sign-in link on success.",
+      "tags": ["component", "auth", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "function",
+      "name": "ResetPasswordForm",
+      "filePath": "components/auth/reset-password-form.tsx",
+      "lineRange": [9, 111],
+      "summary": "Password reset form component that validates new password and confirmation, then submits the token and new password to /api/auth/reset-password.",
+      "tags": ["component", "auth", "form"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:__tests__/components/auth/forgot-password-form.test.tsx",
+      "target": "file:components/auth/forgot-password-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/auth/forgot-password-form.test.tsx",
+      "target": "file:components/auth/forgot-password-form.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/auth/login-form.test.tsx",
+      "target": "file:components/auth/login-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/auth/login-form.test.tsx",
+      "target": "file:components/auth/login-form.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/auth/register-form.test.tsx",
+      "target": "file:components/auth/register-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/auth/register-form.test.tsx",
+      "target": "file:components/auth/register-form.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/button.test.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/button.test.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/input.test.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/input.test.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "target": "file:components/admin/project-analytics-tabs.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:components/admin/member-invite-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:components/admin/user-detail-drawer.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:components/admin/quiz-sets-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(auth)/login/page.tsx",
+      "target": "file:components/auth/login-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/accept-invite/page.tsx",
+      "target": "file:components/auth/accept-invite-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/accept-invite/page.tsx",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/reset-password/page.tsx",
+      "target": "file:components/auth/reset-password-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/reset-password/page.tsx",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/member-invite-form.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/member-invite-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/observability-panel.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/observability-panel.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/observability-panel.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "file:components/admin/quiz-results-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "file:components/admin/stats-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/accept-invite-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/forgot-password-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/register-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/reset-password-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/member-invite-form.tsx",
+      "target": "function:components/admin/member-invite-form.tsx:MemberInviteForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/member-invite-form.tsx",
+      "target": "function:components/admin/member-invite-form.tsx:MemberInviteForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/observability-panel.tsx",
+      "target": "function:components/admin/observability-panel.tsx:ObservabilityPanel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/observability-panel.tsx",
+      "target": "function:components/admin/observability-panel.tsx:ObservabilityPanel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "function:components/admin/project-analytics-tabs.tsx:ProjectAnalyticsTabs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "function:components/admin/project-analytics-tabs.tsx:ProjectAnalyticsTabs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/accept-invite-form.tsx",
+      "target": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/accept-invite-form.tsx",
+      "target": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/forgot-password-form.tsx",
+      "target": "function:components/auth/forgot-password-form.tsx:ForgotPasswordForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/forgot-password-form.tsx",
+      "target": "function:components/auth/forgot-password-form.tsx:ForgotPasswordForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/register-form.tsx",
+      "target": "function:components/auth/register-form.tsx:RegisterForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/register-form.tsx",
+      "target": "function:components/auth/register-form.tsx:RegisterForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/reset-password-form.tsx",
+      "target": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/reset-password-form.tsx",
+      "target": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(auth)/login/page.tsx",
+      "target": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/accept-invite/page.tsx",
+      "target": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/reset-password/page.tsx",
+      "target": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "target": "function:components/admin/project-analytics-tabs.tsx:ProjectAnalyticsTabs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "function:components/admin/member-invite-form.tsx:MemberInviteForm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/project-analytics-tabs.tsx",
+      "target": "function:components/admin/observability-panel.tsx:ObservabilityPanel",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

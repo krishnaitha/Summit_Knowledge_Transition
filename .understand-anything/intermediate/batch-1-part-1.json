@@ -1,0 +1,1135 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/(member)/memory/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/memory/page.tsx",
+      "summary": "Member-facing page for managing persistent user memories that the chatbot can recall in future sessions; supports create, update, and delete operations via server actions.",
+      "tags": ["component", "memory", "member", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(member)/memory/page.tsx:MemoryPage",
+      "type": "function",
+      "name": "MemoryPage",
+      "filePath": "app/(member)/memory/page.tsx",
+      "lineRange": [19, 158],
+      "summary": "Async server component that renders the full memory management UI including a creation form and list of existing memory entries with inline edit/delete forms.",
+      "tags": ["component", "server-component", "memory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(member)/projects/[id]/quiz/page.tsx",
+      "summary": "Member-facing quiz page for a specific project that enforces time-window access, shows quiz attempt history, and renders the interactive QuizExperience component.",
+      "tags": ["component", "quiz", "member", "access-control"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(member)/projects/[id]/quiz/page.tsx:ProjectQuizPage",
+      "type": "function",
+      "name": "ProjectQuizPage",
+      "filePath": "app/(member)/projects/[id]/quiz/page.tsx",
+      "lineRange": [24, 124],
+      "summary": "Async server component that checks quiz window dates and access, loads attempt history and coaching plan, then renders either a locked-window message or the live QuizExperience.",
+      "tags": ["component", "server-component", "quiz", "access-control"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/actions/learning.ts",
+      "type": "file",
+      "name": "learning.ts",
+      "filePath": "app/actions/learning.ts",
+      "summary": "Next.js Server Actions for flashcard generation and spaced-repetition review; calls the LLM to produce flashcards from document chunks and implements SM-2 algorithm for scheduling reviews.",
+      "tags": ["service", "flashcards", "spaced-repetition", "llm"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/actions/learning.ts:generateProjectFlashcardsAction",
+      "type": "function",
+      "name": "generateProjectFlashcardsAction",
+      "filePath": "app/actions/learning.ts",
+      "lineRange": [50, 142],
+      "summary": "Server action that queries random document chunks for a project, calls the LLM for flashcard generation, and persists the resulting cards with a fallback to chunk excerpts.",
+      "tags": ["service", "flashcards", "llm", "server-action"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/actions/learning.ts:reviewFlashcardAction",
+      "type": "function",
+      "name": "reviewFlashcardAction",
+      "filePath": "app/actions/learning.ts",
+      "lineRange": [144, 228],
+      "summary": "Server action implementing the SM-2 spaced-repetition algorithm that reads current flashcard progress, computes the next review interval and ease factor, and upserts the updated progress.",
+      "tags": ["service", "spaced-repetition", "flashcards", "server-action"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/actions/memory.ts",
+      "type": "file",
+      "name": "memory.ts",
+      "filePath": "app/actions/memory.ts",
+      "summary": "Next.js Server Actions for user memory CRUD: save/update a memory entry, delete one, and list all memories for the current user, delegating persistence to the memory-store layer.",
+      "tags": ["service", "memory", "server-action", "crud"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/memory.ts:saveUserMemoryAction",
+      "type": "function",
+      "name": "saveUserMemoryAction",
+      "filePath": "app/actions/memory.ts",
+      "lineRange": [24, 51],
+      "summary": "Server action that validates and upserts a user memory entry from form data, including tag parsing and confidence normalization.",
+      "tags": ["server-action", "memory", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/actions/memory.ts:getUserMemoriesForCurrentUser",
+      "type": "function",
+      "name": "getUserMemoriesForCurrentUser",
+      "filePath": "app/actions/memory.ts",
+      "lineRange": [66, 71],
+      "summary": "Server action that returns the list of user memory entries for the currently authenticated user, optionally filtered by project.",
+      "tags": ["server-action", "memory", "query"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/admin/invite/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/admin/invite/route.ts",
+      "summary": "Admin-only API route that handles user invitation: assigns existing users to projects directly or creates an invite token, stores it, and sends an invitation email via SendGrid.",
+      "tags": ["api-handler", "admin", "invitation", "email"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/api/auth/accept-invite/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/auth/accept-invite/route.ts",
+      "summary": "Auth API route that consumes an invite token, creates the new user account with a bcrypt-hashed password, and auto-assigns the user to the project associated with the token.",
+      "tags": ["api-handler", "authentication", "invitation", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/api/auth/forgot-password/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/auth/forgot-password/route.ts",
+      "summary": "Auth API route guarded to credentials provider that generates a one-hour password reset token and sends it via SendGrid while always returning success to avoid email enumeration.",
+      "tags": ["api-handler", "authentication", "security", "email"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/auth/register/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/auth/register/route.ts",
+      "summary": "Auth API route guarded to credentials provider that registers a new member account after validating uniqueness, hashing the password with bcrypt.",
+      "tags": ["api-handler", "authentication", "registration", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/auth/reset-password/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/auth/reset-password/route.ts",
+      "summary": "Auth API route that atomically claims a password reset token and updates the user's bcrypt password hash if the token is valid and unexpired.",
+      "tags": ["api-handler", "authentication", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/bookmarks/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/bookmarks/route.ts",
+      "summary": "API route that handles chat message bookmarking: POST adds a bookmark (idempotent) and DELETE removes one, both scoped to the authenticated user.",
+      "tags": ["api-handler", "bookmarks", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/chat/export/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/chat/export/route.ts",
+      "summary": "API route that exports a chat session as either a Markdown file download or a print-ready HTML page, formatting messages with role labels, timestamps, and source citations.",
+      "tags": ["api-handler", "chat", "export", "formatting"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/chat/export/route.ts:buildMarkdownExport",
+      "type": "function",
+      "name": "buildMarkdownExport",
+      "filePath": "app/api/chat/export/route.ts",
+      "lineRange": [46, 81],
+      "summary": "Builds a Markdown string from a chat session's messages, including role, timestamp, content, and similarity-scored sources.",
+      "tags": ["formatting", "export", "chat"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/api/chat/export/route.ts:buildPrintableHtml",
+      "type": "function",
+      "name": "buildPrintableHtml",
+      "filePath": "app/api/chat/export/route.ts",
+      "lineRange": [83, 142],
+      "summary": "Constructs a print-optimized HTML page for a chat session with CSS styling and an auto-print script, used for the PDF export flow.",
+      "tags": ["formatting", "export", "html", "chat"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/api/chat/feedback/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/chat/feedback/route.ts",
+      "summary": "API route that stores thumbs-up/down feedback on assistant chat messages, verifying project access and upsert-logging to the chat_answer_feedback table.",
+      "tags": ["api-handler", "chat", "feedback"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/chat/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/chat/route.ts",
+      "summary": "Core RAG chat API supporting streaming responses from Groq or other providers; orchestrates rate limiting, memory management, context retrieval, confidence gating, and RAG trace logging.",
+      "tags": ["api-handler", "chat", "rag", "streaming"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/chat/route.ts:ensureSessionForUser",
+      "type": "function",
+      "name": "ensureSessionForUser",
+      "filePath": "app/api/chat/route.ts",
+      "lineRange": [92, 120],
+      "summary": "Validates or creates a chat session for the given user and project, returning the session ID and whether it was freshly created.",
+      "tags": ["service", "chat", "session"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/chat/route.ts:appendChatTurn",
+      "type": "function",
+      "name": "appendChatTurn",
+      "filePath": "app/api/chat/route.ts",
+      "lineRange": [196, 221],
+      "summary": "Persists a user/assistant message pair to the database and updates the session's message count and last_message_at timestamp.",
+      "tags": ["service", "chat", "persistence"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/chat/route.ts:writeRagTrace",
+      "type": "function",
+      "name": "writeRagTrace",
+      "filePath": "app/api/chat/route.ts",
+      "lineRange": [223, 245],
+      "summary": "Silently writes a RAG observability trace record including latency, similarity scores, token counts, and hallucination flags to the rag_traces table.",
+      "tags": ["observability", "rag", "tracing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/api/chat/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "app/api/chat/route.ts",
+      "lineRange": [297, 845],
+      "summary": "Main POST handler for the chat endpoint: applies rate limits, handles memory intent parsing, retrieves RAG chunks, builds context-aware prompts, streams responses, and logs activity.",
+      "tags": ["api-handler", "chat", "rag", "streaming"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/api/chat/sessions/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/chat/sessions/route.ts",
+      "summary": "API route managing chat session lifecycle: GET lists sessions for a project, PATCH renames a session title, and DELETE removes a session.",
+      "tags": ["api-handler", "chat", "session", "crud"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/api/documents/process/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/documents/process/route.ts",
+      "summary": "Admin-only API route that queues a document_process background job and fire-and-forgets a worker trigger to begin RAG ingestion for an uploaded document.",
+      "tags": ["api-handler", "admin", "documents", "background-job"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/documents/upload/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/documents/upload/route.ts",
+      "summary": "Admin-only API route that validates an uploaded file, stores it in R2/local storage, and creates the documents record in the database.",
+      "tags": ["api-handler", "admin", "documents", "file-upload"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/documents/view/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/documents/view/route.ts",
+      "summary": "API route that serves document file contents after verifying project access, falling back from local storage to R2 and setting content-disposition appropriately for inline or download.",
+      "tags": ["api-handler", "documents", "storage", "file-serving"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/api/jobs/[id]/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/jobs/[id]/route.ts",
+      "summary": "API route that returns the status, result, and timing metadata for a single background processing job, used by the frontend to poll job completion.",
+      "tags": ["api-handler", "background-job", "polling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/quiz/generate/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/quiz/generate/route.ts",
+      "summary": "Admin-only API route that validates document chunk availability and enqueues a quiz_generate background job, then fires the worker trigger.",
+      "tags": ["api-handler", "admin", "quiz", "background-job"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/quiz/request-retake/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/quiz/request-retake/route.ts",
+      "summary": "Member-only API route that submits a quiz retake request for a project where the member scored zero, preventing duplicate pending requests.",
+      "tags": ["api-handler", "quiz", "member"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/api/quiz/start/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/quiz/start/route.ts",
+      "summary": "Member API route that starts or resumes a sectioned quiz attempt, enforcing required document views, time windows, rate limits, and building per-category question assignments.",
+      "tags": ["api-handler", "quiz", "member", "access-control"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/quiz/start/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "app/api/quiz/start/route.ts",
+      "lineRange": [33, 362],
+      "summary": "Quiz start handler that validates access, enforces required document views and quiz windows, handles in-progress/partial-retake resumption, builds sectioned question assignments, and creates the attempt record.",
+      "tags": ["api-handler", "quiz", "access-control", "assignment"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/api/quiz/submit/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "app/api/quiz/submit/route.ts",
+      "summary": "Member API route that scores a quiz submission, merges carried section scores for partial retakes, persists a coaching plan, and fires a non-blocking email notification to the project admin.",
+      "tags": ["api-handler", "quiz", "scoring", "email"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/api/quiz/submit/route.ts:buildCoachingPlan",
+      "type": "function",
+      "name": "buildCoachingPlan",
+      "filePath": "app/api/quiz/submit/route.ts",
+      "lineRange": [12, 61],
+      "summary": "Computes a post-quiz coaching plan by identifying weak sections below the pass threshold and matching them to relevant project documents for targeted re-study recommendations.",
+      "tags": ["quiz", "coaching", "scoring"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/(member)/memory/page.tsx",
+      "target": "function:app/(member)/memory/page.tsx:MemoryPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/memory/page.tsx",
+      "target": "function:app/(member)/memory/page.tsx:MemoryPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/memory/page.tsx",
+      "target": "app/actions/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/memory/page.tsx",
+      "target": "components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/memory/page.tsx",
+      "target": "components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/memory/page.tsx",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "function:app/(member)/projects/[id]/quiz/page.tsx:ProjectQuizPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "function:app/(member)/projects/[id]/quiz/page.tsx:ProjectQuizPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "components/quiz/quiz-experience.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(member)/projects/[id]/quiz/page.tsx",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "function:app/actions/learning.ts:generateProjectFlashcardsAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "function:app/actions/learning.ts:generateProjectFlashcardsAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "function:app/actions/learning.ts:reviewFlashcardAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "function:app/actions/learning.ts:reviewFlashcardAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "lib/llm/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/learning.ts",
+      "target": "lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/memory.ts",
+      "target": "function:app/actions/memory.ts:saveUserMemoryAction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/memory.ts",
+      "target": "function:app/actions/memory.ts:saveUserMemoryAction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/memory.ts",
+      "target": "function:app/actions/memory.ts:getUserMemoriesForCurrentUser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/actions/memory.ts",
+      "target": "function:app/actions/memory.ts:getUserMemoriesForCurrentUser",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/actions/memory.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/actions/memory.ts",
+      "target": "lib/memory-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/admin/invite/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/admin/invite/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/admin/invite/route.ts",
+      "target": "lib/email-sendgrid.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/admin/invite/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/accept-invite/route.ts",
+      "target": "lib/auth/guard.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/accept-invite/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/forgot-password/route.ts",
+      "target": "lib/auth/guard.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/forgot-password/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/forgot-password/route.ts",
+      "target": "lib/email-sendgrid.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/register/route.ts",
+      "target": "lib/auth/guard.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/register/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/reset-password/route.ts",
+      "target": "lib/auth/guard.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/auth/reset-password/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/bookmarks/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/bookmarks/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/export/route.ts",
+      "target": "function:app/api/chat/export/route.ts:buildMarkdownExport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/chat/export/route.ts",
+      "target": "function:app/api/chat/export/route.ts:buildPrintableHtml",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/chat/export/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/export/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/export/route.ts",
+      "target": "lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/feedback/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/feedback/route.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/feedback/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/feedback/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "function:app/api/chat/route.ts:ensureSessionForUser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "function:app/api/chat/route.ts:appendChatTurn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "function:app/api/chat/route.ts:writeRagTrace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "function:app/api/chat/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "function:app/api/chat/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/groq/chat.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/groq/streaming.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/llm/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/memory-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/memory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/observability.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/rag/retrieval.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/rate-limit.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/route.ts",
+      "target": "lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/sessions/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/chat/sessions/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/process/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/process/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/process/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/upload/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/upload/route.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/upload/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/upload/route.ts",
+      "target": "lib/documents/upload.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/upload/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/view/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/view/route.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/view/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/view/route.ts",
+      "target": "lib/storage/local.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/documents/view/route.ts",
+      "target": "lib/storage/r2.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/[id]/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/jobs/[id]/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/generate/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/generate/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/request-retake/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/request-retake/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/request-retake/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "function:app/api/quiz/start/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "function:app/api/quiz/start/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/quiz/assignment.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/rate-limit.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/start/route.ts",
+      "target": "lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "function:app/api/quiz/submit/route.ts:buildCoachingPlan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/email.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/quiz/scoring.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/security.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/api/quiz/submit/route.ts",
+      "target": "lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:app/api/chat/route.ts:POST",
+      "target": "function:lib/memory-store.ts:ensureUserMemorySchema",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/api/chat/route.ts:POST",
+      "target": "function:lib/memory-store.ts:upsertUserMemory",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/api/chat/route.ts:POST",
+      "target": "function:lib/memory.ts:parseRememberIntent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/api/chat/route.ts:POST",
+      "target": "function:lib/memory.ts:parseMemoryConfirmation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

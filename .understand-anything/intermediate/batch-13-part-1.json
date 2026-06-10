@@ -1,0 +1,463 @@
+{
+  "nodes": [
+    {
+      "id": "table:postgres/migrations/001_init.sql",
+      "type": "table",
+      "name": "001_init.sql",
+      "filePath": "postgres/migrations/001_init.sql",
+      "summary": "Baseline schema migration establishing the core relational model for NexTElevate: users, projects, documents with pgvector embeddings, chat sessions, quiz engine tables (sets, questions, attempts, coaching plans, resets), and RAG observability traces with multiple performance indexes.",
+      "tags": ["database", "migration", "schema-definition", "infrastructure"],
+      "complexity": "complex",
+      "languageNotes": "Requires pgvector and pgcrypto extensions; uses vector(384) for document chunk embeddings and GIN indexes for full-text search support."
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:users",
+      "type": "table",
+      "name": "users",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [47, 57],
+      "summary": "Core user identity table storing credentials, global role (admin/member), and login metadata.",
+      "tags": ["database", "authentication", "user-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:invite_tokens",
+      "type": "table",
+      "name": "invite_tokens",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [60, 68],
+      "summary": "Tracks email invitation tokens scoped to a project and role for new user onboarding.",
+      "tags": ["database", "authentication", "onboarding"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:projects",
+      "type": "table",
+      "name": "projects",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [71, 82],
+      "summary": "Core project/product entity storing name, description, quiz pass thresholds, and scheduling windows.",
+      "tags": ["database", "core-entity"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:project_members",
+      "type": "table",
+      "name": "project_members",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [85, 92],
+      "summary": "Join table linking users to projects with membership role assignment timestamps.",
+      "tags": ["database", "authorization", "membership"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:project_announcements",
+      "type": "table",
+      "name": "project_announcements",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [95, 102],
+      "summary": "Project-scoped announcement messages sent by admins to member audiences.",
+      "tags": ["database", "notifications"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:documents",
+      "type": "table",
+      "name": "documents",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [105, 121],
+      "summary": "Document registry storing uploaded files per project with classification, PII scan flags, and governance metadata.",
+      "tags": ["database", "document-management", "rag"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:document_chunks",
+      "type": "table",
+      "name": "document_chunks",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [124, 132],
+      "summary": "Stores chunked document text with vector embeddings for RAG similarity search via pgvector.",
+      "tags": ["database", "rag", "embeddings"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:chat_sessions",
+      "type": "table",
+      "name": "chat_sessions",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [135, 142],
+      "summary": "Tracks user chat sessions per project with message counts and timestamps for conversation continuity.",
+      "tags": ["database", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:chat_messages",
+      "type": "table",
+      "name": "chat_messages",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [145, 152],
+      "summary": "Individual chat messages with role (user/assistant), content, and RAG source citations.",
+      "tags": ["database", "chat", "rag"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:chat_answer_feedback",
+      "type": "table",
+      "name": "chat_answer_feedback",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [155, 166],
+      "summary": "User feedback ratings and reason tags on individual chat answers for RAG quality monitoring.",
+      "tags": ["database", "feedback", "observability"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:chat_bookmarks",
+      "type": "table",
+      "name": "chat_bookmarks",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [169, 176],
+      "summary": "User-saved bookmarks on chat messages for later reference within a project context.",
+      "tags": ["database", "chat", "user-interaction"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:quiz_sets",
+      "type": "table",
+      "name": "quiz_sets",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [179, 189],
+      "summary": "Named quiz collections per project with set numbers and active status for readiness assessments.",
+      "tags": ["database", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:quiz_questions",
+      "type": "table",
+      "name": "quiz_questions",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [192, 205],
+      "summary": "Individual quiz questions with MCQ options, correct answer, explanation text, and point marks.",
+      "tags": ["database", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:quiz_attempts",
+      "type": "table",
+      "name": "quiz_attempts",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [208, 224],
+      "summary": "Tracks a user's quiz submission per project including assigned questions, answers given, score, and pass/fail status.",
+      "tags": ["database", "quiz", "assessment"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:quiz_coaching_plans",
+      "type": "table",
+      "name": "quiz_coaching_plans",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [227, 235],
+      "summary": "AI-generated coaching recommendations per quiz attempt identifying weak sections for targeted learning.",
+      "tags": ["database", "quiz", "ai-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:quiz_resets",
+      "type": "table",
+      "name": "quiz_resets",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [238, 245],
+      "summary": "Audit log of quiz window resets performed by admins on behalf of users.",
+      "tags": ["database", "quiz", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:activity_log",
+      "type": "table",
+      "name": "activity_log",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [248, 255],
+      "summary": "General-purpose event audit log recording user actions within projects with arbitrary JSON metadata.",
+      "tags": ["database", "audit", "observability"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:processing_jobs",
+      "type": "table",
+      "name": "processing_jobs",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [258, 269],
+      "summary": "Postgres-backed job queue for background tasks (document processing, quiz generation, connector sync) with status, payload, and timing columns.",
+      "tags": ["database", "job-queue", "background-processing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/001_init.sql:rag_traces",
+      "type": "table",
+      "name": "rag_traces",
+      "filePath": "postgres/migrations/001_init.sql",
+      "lineRange": [272, 295],
+      "summary": "Detailed observability traces for every RAG query capturing retrieval metrics, token counts, latency, and quality signals like hallucination flags.",
+      "tags": ["database", "observability", "rag", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:postgres/migrations/002_quiz_window_resets.sql",
+      "type": "table",
+      "name": "002_quiz_window_resets.sql",
+      "filePath": "postgres/migrations/002_quiz_window_resets.sql",
+      "summary": "Backfills a standalone quiz_resets table with a corrected schema including proper NOT NULL defaults and foreign key constraints for quiz window reset tracking.",
+      "tags": ["database", "migration", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/003_activity_log_index.sql",
+      "type": "table",
+      "name": "003_activity_log_index.sql",
+      "filePath": "postgres/migrations/003_activity_log_index.sql",
+      "summary": "Adds a composite index on activity_log (user_id, project_id, created_at) to optimize rate-limiting and recent activity queries.",
+      "tags": ["database", "migration", "performance"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/004_document_governance.sql",
+      "type": "table",
+      "name": "004_document_governance.sql",
+      "filePath": "postgres/migrations/004_document_governance.sql",
+      "summary": "Adds PII detection count, classification level (public/internal/confidential), and scan_flags columns to the documents table for governance and compliance controls.",
+      "tags": ["database", "migration", "security", "document-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/005_seed_admin.sql",
+      "type": "table",
+      "name": "005_seed_admin.sql",
+      "filePath": "postgres/migrations/005_seed_admin.sql",
+      "summary": "Seeds the initial admin user by promoting a specific email address to the admin role in the users table.",
+      "tags": ["database", "migration", "seed-data"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/006_chat_bookmarks.sql",
+      "type": "table",
+      "name": "006_chat_bookmarks.sql",
+      "filePath": "postgres/migrations/006_chat_bookmarks.sql",
+      "summary": "Creates the chat_bookmarks table with a unique index to allow users to save and retrieve bookmarked chat messages per project.",
+      "tags": ["database", "migration", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/007_quiz_category.sql",
+      "type": "table",
+      "name": "007_quiz_category.sql",
+      "filePath": "postgres/migrations/007_quiz_category.sql",
+      "summary": "Adds a free-form category column to quiz_sets with backfill logic deriving 'functional' or 'technical' categories from existing set names.",
+      "tags": ["database", "migration", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/008_partial_retake.sql",
+      "type": "table",
+      "name": "008_partial_retake.sql",
+      "filePath": "postgres/migrations/008_partial_retake.sql",
+      "summary": "Adds a carried_sections JSONB column to quiz_attempts to support partial quiz retakes by persisting per-section scores from prior submissions.",
+      "tags": ["database", "migration", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/009_question_type.sql",
+      "type": "table",
+      "name": "009_question_type.sql",
+      "filePath": "postgres/migrations/009_question_type.sql",
+      "summary": "Adds question_type column to quiz_questions to support multiple formats (MCQ and true/false), defaulting to 'mcq' for backwards compatibility.",
+      "tags": ["database", "migration", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:postgres/migrations/010_processing_jobs.sql",
+      "type": "table",
+      "name": "010_processing_jobs.sql",
+      "filePath": "postgres/migrations/010_processing_jobs.sql",
+      "summary": "Creates the processing_jobs queue table with type-constrained job types (document_process, quiz_generate, connector_sync), a claim_next_pending_job() PL/pgSQL function for atomic job claiming, and performance indexes.",
+      "tags": ["database", "migration", "job-queue", "background-processing"],
+      "complexity": "moderate",
+      "languageNotes": "Defines a PL/pgSQL function claim_next_pending_job() using SELECT FOR UPDATE SKIP LOCKED for concurrent-safe job claiming."
+    }
+  ],
+  "edges": [
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:users",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:invite_tokens",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:projects",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:project_members",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:project_announcements",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:documents",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:document_chunks",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:chat_sessions",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:chat_messages",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:chat_answer_feedback",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:chat_bookmarks",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_sets",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_questions",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_attempts",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_coaching_plans",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_resets",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:activity_log",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:processing_jobs",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/001_init.sql",
+      "target": "table:postgres/migrations/001_init.sql:rag_traces",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/004_document_governance.sql",
+      "target": "table:postgres/migrations/001_init.sql:documents",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/006_chat_bookmarks.sql",
+      "target": "table:postgres/migrations/001_init.sql:chat_bookmarks",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/007_quiz_category.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_sets",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/008_partial_retake.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_attempts",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/009_question_type.sql",
+      "target": "table:postgres/migrations/001_init.sql:quiz_questions",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:postgres/migrations/010_processing_jobs.sql",
+      "target": "table:postgres/migrations/001_init.sql:processing_jobs",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

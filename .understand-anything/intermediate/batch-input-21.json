@@ -1,0 +1,149 @@
+{
+  "batchIndex": 21,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".understand-anything/tmp/bprompt-4.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/bprompt-5.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/fingerprint-input.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/full-b13.json",
+      "language": "json",
+      "sizeLines": 252,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/full-b17.json",
+      "language": "json",
+      "sizeLines": 184,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-arch-input.json",
+      "language": "json",
+      "sizeLines": 14518,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-arch-results.json",
+      "language": "json",
+      "sizeLines": 1636,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-1.json",
+      "language": "json",
+      "sizeLines": 71,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-10.json",
+      "language": "json",
+      "sizeLines": 23,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-11.json",
+      "language": "json",
+      "sizeLines": 9,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-12.json",
+      "language": "json",
+      "sizeLines": 7,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-13.json",
+      "language": "json",
+      "sizeLines": 77,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-14.json",
+      "language": "json",
+      "sizeLines": 17,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-15.json",
+      "language": "json",
+      "sizeLines": 12,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-16.json",
+      "language": "json",
+      "sizeLines": 27,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-17.json",
+      "language": "json",
+      "sizeLines": 183,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-18.json",
+      "language": "json",
+      "sizeLines": 10,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-2.json",
+      "language": "json",
+      "sizeLines": 61,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-3.json",
+      "language": "json",
+      "sizeLines": 61,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/tmp/ua-file-analyzer-input-4.json",
+      "language": "json",
+      "sizeLines": 45,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    ".understand-anything/tmp/bprompt-4.json": [],
+    ".understand-anything/tmp/bprompt-5.json": [],
+    ".understand-anything/tmp/fingerprint-input.json": [],
+    ".understand-anything/tmp/full-b13.json": [],
+    ".understand-anything/tmp/full-b17.json": [],
+    ".understand-anything/tmp/ua-arch-input.json": [],
+    ".understand-anything/tmp/ua-arch-results.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-1.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-10.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-11.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-12.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-13.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-14.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-15.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-16.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-17.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-18.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-2.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-3.json": [],
+    ".understand-anything/tmp/ua-file-analyzer-input-4.json": []
+  },
+  "neighborMap": {}
+}

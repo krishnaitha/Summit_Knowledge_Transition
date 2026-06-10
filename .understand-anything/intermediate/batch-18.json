@@ -1,0 +1,92 @@
+{
+  "nodes": [
+    {
+      "id": "config:tailwind.config.ts",
+      "type": "config",
+      "name": "tailwind.config.ts",
+      "filePath": "tailwind.config.ts",
+      "summary": "Tailwind CSS configuration defining the project's design system: custom brand (blue-navy) and accent (teal) color palettes, soft box shadow, hero gradient background, and Inter font family applied across all app, component, and lib TypeScript source files.",
+      "tags": ["configuration", "design-system", "build-system", "styling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:vitest.config.mts",
+      "type": "config",
+      "name": "vitest.config.mts",
+      "filePath": "vitest.config.mts",
+      "summary": "Vitest test runner configuration enabling jsdom browser environment, React plugin support, TypeScript path alias resolution, and a 30-second test timeout with the thread pool executor.",
+      "tags": ["configuration", "test", "build-system"],
+      "complexity": "simple",
+      "languageNotes": "Uses .mts extension (TypeScript ESM module) for native ESM import compatibility with Vitest's config loading."
+    },
+    {
+      "id": "file:vitest.setup.ts",
+      "type": "file",
+      "name": "vitest.setup.ts",
+      "filePath": "vitest.setup.ts",
+      "summary": "Global Vitest test setup that registers an afterEach hook to call React Testing Library's cleanup, preventing DOM leakage between tests in environments where RTL does not auto-detect Vitest's lifecycle hooks.",
+      "tags": ["test", "configuration", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:worker/index.mjs",
+      "type": "file",
+      "name": "index.mjs",
+      "filePath": "worker/index.mjs",
+      "summary": "Standalone background worker process that polls the Next.js app's /api/jobs/worker endpoint on a configurable interval, atomically claiming and processing one background job per poll cycle, with graceful SIGINT/SIGTERM shutdown and immediate re-poll queue draining.",
+      "tags": ["service", "background-job", "worker", "entry-point"],
+      "complexity": "moderate",
+      "languageNotes": "Pure ESM (.mjs) Node.js script using top-level await via async IIFE. Uses native fetch (Node 18+). No bundler or transpiler — runs directly with node."
+    },
+    {
+      "id": "function:worker/index.mjs:poll",
+      "type": "function",
+      "name": "poll",
+      "filePath": "worker/index.mjs",
+      "lineRange": [36, 62],
+      "summary": "Sends a single POST request to the worker job endpoint, handles 403 authentication failures with immediate exit, logs non-OK responses as retryable warnings, and returns true when a job was processed (signaling the caller to re-poll immediately) or false when idle.",
+      "tags": ["background-job", "api-handler", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:worker/index.mjs:loop",
+      "type": "function",
+      "name": "loop",
+      "filePath": "worker/index.mjs",
+      "lineRange": [64, 83],
+      "summary": "Main polling loop that runs while the process is alive: calls poll() and either sleeps for POLL_MS on idle or immediately re-polls to drain the queue when a job was processed; exits cleanly when the running flag is cleared by a signal handler.",
+      "tags": ["background-job", "entry-point", "utility"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:worker/index.mjs",
+      "target": "function:worker/index.mjs:poll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:worker/index.mjs",
+      "target": "function:worker/index.mjs:loop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:worker/index.mjs:loop",
+      "target": "function:worker/index.mjs:poll",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:vitest.config.mts",
+      "target": "file:vitest.setup.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

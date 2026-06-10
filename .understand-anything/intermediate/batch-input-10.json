@@ -1,0 +1,110 @@
+{
+  "batchIndex": 10,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": "__tests__/components/quiz/question-view.test.tsx",
+      "language": "typescript",
+      "sizeLines": 88,
+      "fileCategory": "code"
+    },
+    {
+      "path": "__tests__/components/quiz/result-summary.test.tsx",
+      "language": "typescript",
+      "sizeLines": 123,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/question-view.tsx",
+      "language": "typescript",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/quiz-card.tsx",
+      "language": "typescript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/quiz-experience.tsx",
+      "language": "typescript",
+      "sizeLines": 601,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/result-summary.tsx",
+      "language": "typescript",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/quiz/retake-request-button.tsx",
+      "language": "typescript",
+      "sizeLines": 89,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "__tests__/components/quiz/question-view.test.tsx": ["components/quiz/question-view.tsx"],
+    "__tests__/components/quiz/result-summary.test.tsx": ["components/quiz/result-summary.tsx"],
+    "components/quiz/question-view.tsx": ["lib/utils.ts"],
+    "components/quiz/quiz-card.tsx": ["components/ui/card.tsx"],
+    "components/quiz/quiz-experience.tsx": [
+      "components/quiz/question-view.tsx",
+      "components/quiz/quiz-card.tsx",
+      "components/quiz/result-summary.tsx",
+      "components/quiz/retake-request-button.tsx",
+      "components/ui/button.tsx"
+    ],
+    "components/quiz/result-summary.tsx": ["components/ui/card.tsx", "lib/utils.ts"],
+    "components/quiz/retake-request-button.tsx": ["components/ui/button.tsx"]
+  },
+  "neighborMap": {
+    "components/quiz/question-view.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 5,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "components/quiz/quiz-card.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 5,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      }
+    ],
+    "components/quiz/quiz-experience.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      },
+      {
+        "path": "app/(member)/projects/[id]/quiz/page.tsx",
+        "batchIndex": 2,
+        "symbols": ["ProjectQuizPage"]
+      }
+    ],
+    "components/quiz/result-summary.tsx": [
+      {
+        "path": "components/ui/card.tsx",
+        "batchIndex": 5,
+        "symbols": ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent"]
+      },
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 5,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "components/quiz/retake-request-button.tsx": [
+      {
+        "path": "components/ui/button.tsx",
+        "batchIndex": 1,
+        "symbols": ["Button"]
+      }
+    ]
+  }
+}

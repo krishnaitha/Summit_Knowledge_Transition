@@ -1,0 +1,44 @@
+{
+  "batchIndex": 14,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".claude/commands/add-llm-provider.md",
+      "language": "markdown",
+      "sizeLines": 36,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/commands/debug-rag.md",
+      "language": "markdown",
+      "sizeLines": 34,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/commands/new-admin-page.md",
+      "language": "markdown",
+      "sizeLines": 24,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/commands/new-api-route.md",
+      "language": "markdown",
+      "sizeLines": 24,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/commands/new-migration.md",
+      "language": "markdown",
+      "sizeLines": 16,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    ".claude/commands/add-llm-provider.md": [],
+    ".claude/commands/debug-rag.md": [],
+    ".claude/commands/new-admin-page.md": [],
+    ".claude/commands/new-api-route.md": [],
+    ".claude/commands/new-migration.md": []
+  },
+  "neighborMap": {}
+}

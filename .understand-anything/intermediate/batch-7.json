@@ -1,0 +1,823 @@
+{
+  "nodes": [
+    {
+      "id": "file:components/admin/quiz-generator.tsx",
+      "type": "file",
+      "name": "quiz-generator.tsx",
+      "filePath": "components/admin/quiz-generator.tsx",
+      "summary": "Admin component that triggers AI-powered quiz generation for a project by posting to the background job API and polling for completion, displaying progress, success, and error states.",
+      "tags": ["component", "admin", "quiz", "background-job"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/admin/quiz-results-card.tsx",
+      "type": "file",
+      "name": "quiz-results-card.tsx",
+      "filePath": "components/admin/quiz-results-card.tsx",
+      "summary": "Admin component for viewing, filtering, sorting, and paginating quiz submission results, with CSV export and a modal flow for resetting individual member attempts with section-level granularity.",
+      "tags": ["component", "admin", "quiz", "data-table"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/quiz-sets-panel.tsx",
+      "type": "file",
+      "name": "quiz-sets-panel.tsx",
+      "filePath": "components/admin/quiz-sets-panel.tsx",
+      "summary": "Admin panel for managing quiz sets and their questions, supporting expand/collapse, add/edit/delete questions, activate/deactivate sets, and CSV bulk import.",
+      "tags": ["component", "admin", "quiz", "crud"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/admin/quiz-window-form.tsx",
+      "type": "file",
+      "name": "quiz-window-form.tsx",
+      "filePath": "components/admin/quiz-window-form.tsx",
+      "summary": "Admin form component for configuring the quiz open and close window for a project, displaying the current schedule and saving changes via a server action.",
+      "tags": ["component", "admin", "quiz", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/auth/accept-invite-form.tsx",
+      "type": "file",
+      "name": "accept-invite-form.tsx",
+      "filePath": "components/auth/accept-invite-form.tsx",
+      "summary": "Client-side form for invited users to set their full name and password, posting to the accept-invite API and then auto-signing in via NextAuth credentials on success.",
+      "tags": ["component", "auth", "form", "onboarding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/auth/forgot-password-form.tsx",
+      "type": "file",
+      "name": "forgot-password-form.tsx",
+      "filePath": "components/auth/forgot-password-form.tsx",
+      "summary": "Client form that accepts an email address and posts to the forgot-password API to trigger a password reset email, showing success and error feedback states.",
+      "tags": ["component", "auth", "form", "password-reset"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/auth/login-form.tsx",
+      "type": "file",
+      "name": "login-form.tsx",
+      "filePath": "components/auth/login-form.tsx",
+      "summary": "Multi-provider login form that renders a credentials form, a Cognito redirect, or an OIDC redirect based on the active auth provider, handling error states and post-sign-out flows for each.",
+      "tags": ["component", "auth", "form", "multi-provider"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/auth/register-form.tsx",
+      "type": "file",
+      "name": "register-form.tsx",
+      "filePath": "components/auth/register-form.tsx",
+      "summary": "Self-registration form for new users, validating name, email, and password before posting to the register API and showing a success prompt to sign in.",
+      "tags": ["component", "auth", "form", "registration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/auth/reset-password-form.tsx",
+      "type": "file",
+      "name": "reset-password-form.tsx",
+      "filePath": "components/auth/reset-password-form.tsx",
+      "summary": "Client form for setting a new password using a reset token, posting to the reset-password API and showing a confirmation with a sign-in link on success.",
+      "tags": ["component", "auth", "form", "password-reset"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/quiz/question-view.tsx",
+      "type": "file",
+      "name": "question-view.tsx",
+      "filePath": "components/quiz/question-view.tsx",
+      "summary": "Presentational component that renders a single quiz question with its answer options, progress bar, and selected-state highlighting.",
+      "tags": ["component", "quiz", "presentational"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/quiz/quiz-card.tsx",
+      "type": "file",
+      "name": "quiz-card.tsx",
+      "filePath": "components/quiz/quiz-card.tsx",
+      "summary": "Thin wrapper that renders a Card with a title and description header, used as the outer shell for quiz phase screens in the quiz experience.",
+      "tags": ["component", "quiz", "presentational"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/quiz/quiz-experience.tsx",
+      "type": "file",
+      "name": "quiz-experience.tsx",
+      "filePath": "components/quiz/quiz-experience.tsx",
+      "summary": "Core member-facing quiz orchestration component managing the full multi-section quiz lifecycle: start screen, per-section countdown timer, anti-cheating tab-switch and fullscreen enforcement, answer collection, submission, and result display with coaching plan.",
+      "tags": ["component", "quiz", "stateful", "anti-cheat"],
+      "complexity": "complex",
+      "languageNotes": "Uses ref-mirroring pattern (phaseRef, answersRef, etc.) to give timer and event-listener callbacks access to current state without triggering stale-closure bugs — a common React pattern for long-lived side effects."
+    },
+    {
+      "id": "file:components/quiz/retake-request-button.tsx",
+      "type": "file",
+      "name": "retake-request-button.tsx",
+      "filePath": "components/quiz/retake-request-button.tsx",
+      "summary": "Button component that lets a member request quiz re-enablement after a failed or disqualified attempt, posting to the request-retake API with an optional reason.",
+      "tags": ["component", "quiz", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/button.tsx",
+      "type": "file",
+      "name": "button.tsx",
+      "filePath": "components/ui/button.tsx",
+      "summary": "Reusable Button primitive with four variants (primary, secondary, ghost, danger) and three sizes, built on React.forwardRef and merging Tailwind classes via cn.",
+      "tags": ["component", "ui", "primitive"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/input.tsx",
+      "type": "file",
+      "name": "input.tsx",
+      "filePath": "components/ui/input.tsx",
+      "summary": "Reusable Input primitive wrapping a styled HTML input element with consistent focus ring and border styling using React.forwardRef.",
+      "tags": ["component", "ui", "primitive"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/submit-button.tsx",
+      "type": "file",
+      "name": "submit-button.tsx",
+      "filePath": "components/ui/submit-button.tsx",
+      "summary": "Form submit button that reads React DOM useFormStatus to show a spinner and optional loading text while the enclosing form action is in flight.",
+      "tags": ["component", "ui", "form", "primitive"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/table.tsx",
+      "type": "file",
+      "name": "table.tsx",
+      "filePath": "components/ui/table.tsx",
+      "summary": "Collection of semantic table primitive components (Table, THead, TBody, TR, TH, TD) with consistent Tailwind styling and cn class merging.",
+      "tags": ["component", "ui", "primitive"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/auth/features.ts",
+      "type": "file",
+      "name": "features.ts",
+      "filePath": "lib/auth/features.ts",
+      "summary": "Server-only module that reads AUTH_PROVIDER and OIDC_PROVIDER_ID env vars to produce a typed authFeatures object controlling which auth flows (credentials, registration, forgot-password, invite) are enabled at runtime.",
+      "tags": ["auth", "configuration", "feature-flags"],
+      "complexity": "simple",
+      "languageNotes": "Marked `server-only` to prevent accidental client-side import, as it reads process.env at module load time."
+    },
+    {
+      "id": "function:components/admin/quiz-generator.tsx:QuizGenerator",
+      "type": "function",
+      "name": "QuizGenerator",
+      "filePath": "components/admin/quiz-generator.tsx",
+      "lineRange": [16, 205],
+      "summary": "Admin React component that allows selecting quiz category and number of sets, then triggers background AI generation and polls the jobs API for result.",
+      "tags": ["component", "admin", "quiz"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/quiz-results-card.tsx:QuizResultsCard",
+      "type": "function",
+      "name": "QuizResultsCard",
+      "filePath": "components/admin/quiz-results-card.tsx",
+      "lineRange": [118, 540],
+      "summary": "Admin data-table component for quiz attempt results with multi-column sort, text and project filtering, pagination, CSV export, and a reset-attempt modal supporting partial section resets.",
+      "tags": ["component", "admin", "data-table", "quiz"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/quiz-results-card.tsx:exportToCsv",
+      "type": "function",
+      "name": "exportToCsv",
+      "filePath": "components/admin/quiz-results-card.tsx",
+      "lineRange": [50, 107],
+      "summary": "Generates a CSV blob from quiz result rows including dynamic per-section score columns, triggering a browser download with a UTF-8 BOM.",
+      "tags": ["utility", "export", "csv"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/quiz-sets-panel.tsx:QuizSetsPanel",
+      "type": "function",
+      "name": "QuizSetsPanel",
+      "filePath": "components/admin/quiz-sets-panel.tsx",
+      "lineRange": [184, 410],
+      "summary": "Admin panel listing all quiz sets with expandable question details, inline add/edit forms, activate/deactivate toggle, delete actions, and CSV import for bulk question entry.",
+      "tags": ["component", "admin", "quiz", "crud"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/quiz-sets-panel.tsx:AddEditQuestionForm",
+      "type": "function",
+      "name": "AddEditQuestionForm",
+      "filePath": "components/admin/quiz-sets-panel.tsx",
+      "lineRange": [68, 182],
+      "summary": "Internal form component for adding or editing a quiz question supporting MCQ and True/False types with dynamic option fields and server action submission.",
+      "tags": ["component", "form", "quiz"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/quiz-window-form.tsx:QuizWindowForm",
+      "type": "function",
+      "name": "QuizWindowForm",
+      "filePath": "components/admin/quiz-window-form.tsx",
+      "lineRange": [30, 97],
+      "summary": "Admin form for setting the quiz open/close datetime window for a project, with save feedback and a current schedule summary display.",
+      "tags": ["component", "admin", "form", "quiz"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "function",
+      "name": "AcceptInviteForm",
+      "filePath": "components/auth/accept-invite-form.tsx",
+      "lineRange": [10, 124],
+      "summary": "Invite acceptance form that collects full name and password, validates inputs, posts to the accept-invite API, and auto-signs in the new user.",
+      "tags": ["component", "auth", "form", "onboarding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/auth/forgot-password-form.tsx:ForgotPasswordForm",
+      "type": "function",
+      "name": "ForgotPasswordForm",
+      "filePath": "components/auth/forgot-password-form.tsx",
+      "lineRange": [9, 101],
+      "summary": "Forgot-password form that sends the user's email to the forgot-password API and shows a success banner with a back-to-sign-in link.",
+      "tags": ["component", "auth", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "function",
+      "name": "LoginForm",
+      "filePath": "components/auth/login-form.tsx",
+      "lineRange": [236, 253],
+      "summary": "Exported dispatcher component that selects between CognitoLoginForm, OidcLoginForm, and CredentialsLoginForm based on the active auth provider.",
+      "tags": ["component", "auth", "multi-provider"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/auth/login-form.tsx:CredentialsLoginForm",
+      "type": "function",
+      "name": "CredentialsLoginForm",
+      "filePath": "components/auth/login-form.tsx",
+      "lineRange": [126, 234],
+      "summary": "Email/password sign-in form using NextAuth signIn credentials, with optional forgot-password link and registration prompt.",
+      "tags": ["component", "auth", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/auth/register-form.tsx:RegisterForm",
+      "type": "function",
+      "name": "RegisterForm",
+      "filePath": "components/auth/register-form.tsx",
+      "lineRange": [9, 156],
+      "summary": "Self-registration form collecting name, email, and password with client-side validation before posting to the register API.",
+      "tags": ["component", "auth", "form", "registration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "function",
+      "name": "ResetPasswordForm",
+      "filePath": "components/auth/reset-password-form.tsx",
+      "lineRange": [9, 111],
+      "summary": "Password reset form that validates and submits a new password with the reset token, showing success and back-to-sign-in on completion.",
+      "tags": ["component", "auth", "form"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/quiz/question-view.tsx:QuestionView",
+      "type": "function",
+      "name": "QuestionView",
+      "filePath": "components/quiz/question-view.tsx",
+      "lineRange": [9, 59],
+      "summary": "Presentational component rendering a single quiz question with progress bar, question text, and selectable option buttons.",
+      "tags": ["component", "quiz", "presentational"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/quiz/quiz-experience.tsx:QuizExperience",
+      "type": "function",
+      "name": "QuizExperience",
+      "filePath": "components/quiz/quiz-experience.tsx",
+      "lineRange": [53, 601],
+      "summary": "Main quiz orchestration component handling all phases from start through multi-section navigation, countdown timers, anti-cheat detection, submission, and result display.",
+      "tags": ["component", "quiz", "stateful", "anti-cheat"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/quiz/retake-request-button.tsx:RetakeRequestButton",
+      "type": "function",
+      "name": "RetakeRequestButton",
+      "filePath": "components/quiz/retake-request-button.tsx",
+      "lineRange": [8, 89],
+      "summary": "Component that conditionally renders a retake request button and inline reason form, posting to the request-retake API.",
+      "tags": ["component", "quiz", "form"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/ui/button.tsx:Button",
+      "type": "function",
+      "name": "Button",
+      "filePath": "components/ui/button.tsx",
+      "lineRange": [23, 38],
+      "summary": "Polymorphic button primitive with variant and size props, built with React.forwardRef.",
+      "tags": ["component", "ui", "primitive"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/ui/submit-button.tsx:SubmitButton",
+      "type": "function",
+      "name": "SubmitButton",
+      "filePath": "components/ui/submit-button.tsx",
+      "lineRange": [14, 26],
+      "summary": "Form submit button that integrates with React's useFormStatus to show a loading spinner and text while the parent form action is pending.",
+      "tags": ["component", "ui", "form"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:components/admin/quiz-generator.tsx",
+      "target": "function:components/admin/quiz-generator.tsx:QuizGenerator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/quiz-generator.tsx",
+      "target": "function:components/admin/quiz-generator.tsx:QuizGenerator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "function:components/admin/quiz-results-card.tsx:QuizResultsCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "function:components/admin/quiz-results-card.tsx:QuizResultsCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "function:components/admin/quiz-results-card.tsx:exportToCsv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "function:components/admin/quiz-sets-panel.tsx:QuizSetsPanel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "function:components/admin/quiz-sets-panel.tsx:QuizSetsPanel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "function:components/admin/quiz-sets-panel.tsx:AddEditQuestionForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/quiz-window-form.tsx",
+      "target": "function:components/admin/quiz-window-form.tsx:QuizWindowForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/quiz-window-form.tsx",
+      "target": "function:components/admin/quiz-window-form.tsx:QuizWindowForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/accept-invite-form.tsx",
+      "target": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/accept-invite-form.tsx",
+      "target": "function:components/auth/accept-invite-form.tsx:AcceptInviteForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/forgot-password-form.tsx",
+      "target": "function:components/auth/forgot-password-form.tsx:ForgotPasswordForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/forgot-password-form.tsx",
+      "target": "function:components/auth/forgot-password-form.tsx:ForgotPasswordForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "function:components/auth/login-form.tsx:LoginForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "function:components/auth/login-form.tsx:CredentialsLoginForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/register-form.tsx",
+      "target": "function:components/auth/register-form.tsx:RegisterForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/register-form.tsx",
+      "target": "function:components/auth/register-form.tsx:RegisterForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/auth/reset-password-form.tsx",
+      "target": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/auth/reset-password-form.tsx",
+      "target": "function:components/auth/reset-password-form.tsx:ResetPasswordForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/quiz/question-view.tsx",
+      "target": "function:components/quiz/question-view.tsx:QuestionView",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/quiz/question-view.tsx",
+      "target": "function:components/quiz/question-view.tsx:QuestionView",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "function:components/quiz/quiz-experience.tsx:QuizExperience",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "function:components/quiz/quiz-experience.tsx:QuizExperience",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/quiz/retake-request-button.tsx",
+      "target": "function:components/quiz/retake-request-button.tsx:RetakeRequestButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/quiz/retake-request-button.tsx",
+      "target": "function:components/quiz/retake-request-button.tsx:RetakeRequestButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/button.tsx",
+      "target": "function:components/ui/button.tsx:Button",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/ui/button.tsx",
+      "target": "function:components/ui/button.tsx:Button",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/submit-button.tsx",
+      "target": "function:components/ui/submit-button.tsx:SubmitButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/ui/submit-button.tsx",
+      "target": "function:components/ui/submit-button.tsx:SubmitButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/quiz-generator.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-generator.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-generator.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-generator.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "file:components/ui/table.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-results-card.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/admin/quiz-generator.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/admin/quiz-window-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:components/ui/table.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-sets-panel.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-window-form.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/quiz-window-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/accept-invite-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/forgot-password-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/register-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/reset-password-form.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:components/quiz/question-view.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:components/quiz/quiz-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:components/quiz/retake-request-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:components/quiz/result-summary.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/quiz-experience.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/quiz/retake-request-button.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/auth/login-form.tsx",
+      "target": "file:lib/auth/features.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:components/quiz/quiz-experience.tsx:QuizExperience",
+      "target": "function:components/quiz/question-view.tsx:QuestionView",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/quiz/quiz-experience.tsx:QuizExperience",
+      "target": "function:components/quiz/retake-request-button.tsx:RetakeRequestButton",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/admin/quiz-sets-panel.tsx:QuizSetsPanel",
+      "target": "function:components/admin/quiz-sets-panel.tsx:AddEditQuestionForm",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/ui/submit-button.tsx:SubmitButton",
+      "target": "function:components/ui/button.tsx:Button",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 10,
+  "edgesRestored": 54,
+  "crossBatchEdgesAdded": 2,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "The 95 import edges the merge script reportedly dropped were already present in the assembled graph with correct file: prefixes. The batch files had raw path targets (e.g. lib/auth.ts) which the merge script had already normalized to file:lib/auth.ts during assembly. No additional import-edge recovery was needed.",
+    "22 tested_by edges were dropped during deduplication - both source test files and target component files existed in the graph but the edges were absent. These were restored.",
+    "10 function nodes were absent from the assembled graph despite the functions existing in actual source files: 5 from app/actions/admin.ts (deleteDocumentConnectorAction, rejectRetakeRequestAction, syncDocumentConnectorAction, toggleDocumentConnectorAutoSyncAction, toggleDocumentRequiredAction), 4 from lib/data.ts (getAllProjects, getProjectBookmarks, getProjectById, getSystemHealthSnapshot), and 1 from lib/db.ts (sql). These were likely in a batch that was deduplicated away. All 10 nodes were reconstructed from source file inspection.",
+    "20 contains/exports edges were added linking the 10 new function nodes to their parent files.",
+    "10 calls edges were restored: 5 component-to-admin-action calls and 5 page-to-data-function calls that were dangling because their targets did not exist in the graph.",
+    "2 cross-batch structural edges added: worker/index.mjs -> processing_jobs table and app/api/jobs/worker/route.ts -> processing_jobs table (depends_on). The worker file and table both existed but no edge linked them.",
+    "1 edge permanently unrecoverable: service:Dockerfile:runner -> file:app/api [deploys]. The target file:app/api is a synthetic directory reference not a real file node. Skipped as appropriate.",
+    "The import map from scan-result.json was cross-referenced against all 284 source file import relationships. All resolvable import map edges (both source and target file nodes present) already exist in the assembled graph - 0 additional cross-batch import edges needed.",
+    "lib/llm/index.ts is well connected to all 4 provider files (anthropic, copilot, openai/ollama/azure, groq). LLM provider graph is complete.",
+    "Final graph integrity: 552 nodes, 1289 edges, 0 dangling edges."
+  ]
+}

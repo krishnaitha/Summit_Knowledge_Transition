@@ -1,0 +1,522 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 69,
+      "nonEmptyLines": 55,
+      "definitions": [
+        {
+          "name": "DATABASE_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 3,
+          "endLine": 3
+        },
+        {
+          "name": "NEXTAUTH_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 6,
+          "endLine": 6
+        },
+        {
+          "name": "NEXTAUTH_SECRET",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 7,
+          "endLine": 7
+        },
+        {
+          "name": "AUTH_PROVIDER",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 13,
+          "endLine": 13
+        },
+        {
+          "name": "R2_ACCOUNT_ID",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 38,
+          "endLine": 38
+        },
+        {
+          "name": "R2_ACCESS_KEY_ID",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 39,
+          "endLine": 39
+        },
+        {
+          "name": "R2_SECRET_ACCESS_KEY",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 40,
+          "endLine": 40
+        },
+        {
+          "name": "R2_BUCKET_NAME",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 41,
+          "endLine": 41
+        },
+        {
+          "name": "GROQ_API_KEY",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 44,
+          "endLine": 44
+        },
+        {
+          "name": "GROQ_API_KEY_QUIZ",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 47,
+          "endLine": 47
+        },
+        {
+          "name": "NEXT_PUBLIC_APP_NAME",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 54,
+          "endLine": 54
+        },
+        {
+          "name": "NEXT_PUBLIC_APP_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 55,
+          "endLine": 55
+        },
+        {
+          "name": "WORKER_SECRET",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 64,
+          "endLine": 64
+        },
+        {
+          "name": "INTERNAL_APP_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 65,
+          "endLine": 65
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 14
+      }
+    },
+    {
+      "path": "AGENTS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 32,
+      "nonEmptyLines": 21,
+      "sections": [
+        {
+          "heading": "This is NOT the Next.js you know",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "TypeScript & ESLint Rules — Strictly Enforced",
+          "level": 1,
+          "line": 11
+        },
+        {
+          "heading": "No `any`",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "Type Safety",
+          "level": 2,
+          "line": 21
+        },
+        {
+          "heading": "ESLint Compliance",
+          "level": 2,
+          "line": 27
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "CLAUDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 133,
+      "nonEmptyLines": 89,
+      "sections": [
+        {
+          "heading": "CLAUDE.md",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Commands",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Running a single test file",
+          "level": 3,
+          "line": 21
+        },
+        {
+          "heading": "Worker development setup",
+          "level": 3,
+          "line": 27
+        },
+        {
+          "heading": "Database migrations",
+          "level": 3,
+          "line": 39
+        },
+        {
+          "heading": "Architecture",
+          "level": 2,
+          "line": 47
+        },
+        {
+          "heading": "App structure",
+          "level": 3,
+          "line": 49
+        },
+        {
+          "heading": "Authentication",
+          "level": 3,
+          "line": 58
+        },
+        {
+          "heading": "Data access",
+          "level": 3,
+          "line": 69
+        },
+        {
+          "heading": "LLM provider abstraction",
+          "level": 3,
+          "line": 73
+        },
+        {
+          "heading": "RAG pipeline",
+          "level": 3,
+          "line": 82
+        },
+        {
+          "heading": "Background job queue",
+          "level": 3,
+          "line": 100
+        },
+        {
+          "heading": "File storage",
+          "level": 3,
+          "line": 112
+        },
+        {
+          "heading": "Key environment variables",
+          "level": 3,
+          "line": 116
+        },
+        {
+          "heading": "Observability",
+          "level": 3,
+          "line": 131
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 15
+      }
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 610,
+      "nonEmptyLines": 462,
+      "sections": [
+        {
+          "heading": "NexTElevate",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Feature Highlights",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "Recent Updates (May 2026)",
+          "level": 3,
+          "line": 36
+        },
+        {
+          "heading": "Technology Stack",
+          "level": 2,
+          "line": 54
+        },
+        {
+          "heading": "Quick Start",
+          "level": 2,
+          "line": 71
+        },
+        {
+          "heading": "1. Prerequisites",
+          "level": 3,
+          "line": 73
+        },
+        {
+          "heading": "2. Install dependencies",
+          "level": 3,
+          "line": 81
+        },
+        {
+          "heading": "3. Set up PostgreSQL",
+          "level": 3,
+          "line": 87
+        },
+        {
+          "heading": "4. Configure environment variables",
+          "level": 3,
+          "line": 104
+        },
+        {
+          "heading": "5. Create the first admin user",
+          "level": 3,
+          "line": 184
+        },
+        {
+          "heading": "6. Start the dev server",
+          "level": 3,
+          "line": 192
+        },
+        {
+          "heading": "7. Start the background worker",
+          "level": 3,
+          "line": 200
+        },
+        {
+          "heading": "Scripts",
+          "level": 2,
+          "line": 224
+        },
+        {
+          "heading": "Docker Setup",
+          "level": 2,
+          "line": 238
+        },
+        {
+          "heading": "Prerequisites",
+          "level": 3,
+          "line": 242
+        },
+        {
+          "heading": "1. Create `.env.local`",
+          "level": 3,
+          "line": 246
+        },
+        {
+          "heading": "2. Build and start",
+          "level": 3,
+          "line": 275
+        },
+        {
+          "heading": "3. Elevate the demo user to admin",
+          "level": 3,
+          "line": 301
+        },
+        {
+          "heading": "4. Stopping and resetting",
+          "level": 3,
+          "line": 323
+        },
+        {
+          "heading": "Deployment",
+          "level": 2,
+          "line": 335
+        },
+        {
+          "heading": "1. Build and push images",
+          "level": 3,
+          "line": 345
+        },
+        {
+          "heading": "2. Run migrations before each deploy",
+          "level": 3,
+          "line": 361
+        },
+        {
+          "heading": "3. Deploy app and worker",
+          "level": 3,
+          "line": 375
+        },
+        {
+          "heading": "4. Production environment variables",
+          "level": 3,
+          "line": 379
+        },
+        {
+          "heading": "Project Structure",
+          "level": 2,
+          "line": 424
+        },
+        {
+          "heading": "Roles and Access Control",
+          "level": 2,
+          "line": 511
+        },
+        {
+          "heading": "How It Works",
+          "level": 2,
+          "line": 523
+        },
+        {
+          "heading": "Authentication & Sessions",
+          "level": 3,
+          "line": 525
+        },
+        {
+          "heading": "Document Processing Pipeline",
+          "level": 3,
+          "line": 544
+        },
+        {
+          "heading": "RAG AI Chat",
+          "level": 3,
+          "line": 557
+        },
+        {
+          "heading": "Quiz Generation",
+          "level": 3,
+          "line": 567
+        },
+        {
+          "heading": "Quiz Delivery and Anti-Cheat",
+          "level": 3,
+          "line": 576
+        },
+        {
+          "heading": "Background Job Queue",
+          "level": 3,
+          "line": 583
+        },
+        {
+          "heading": "Documentation",
+          "level": 2,
+          "line": 589
+        },
+        {
+          "heading": "Security Notes",
+          "level": 2,
+          "line": 602
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 35
+      }
+    },
+    {
+      "path": "app/globals.css",
+      "language": "css",
+      "fileCategory": "markup",
+      "totalLines": 48,
+      "nonEmptyLines": 41,
+      "metrics": {}
+    },
+    {
+      "path": "proxy.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "proxy",
+          "startLine": 7,
+          "endLine": 29,
+          "params": ["request"]
+        }
+      ],
+      "exports": [
+        {
+          "name": "proxy",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "config",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "proxy",
+          "callee": "pathname.startsWith",
+          "lineNumber": 14
+        },
+        {
+          "caller": "proxy",
+          "callee": "pathname.startsWith",
+          "lineNumber": 15
+        },
+        {
+          "caller": "proxy",
+          "callee": "NextResponse.next",
+          "lineNumber": 17
+        },
+        {
+          "caller": "proxy",
+          "callee": "request.cookies.has",
+          "lineNumber": 21
+        },
+        {
+          "caller": "proxy",
+          "callee": "request.cookies.has",
+          "lineNumber": 22
+        },
+        {
+          "caller": "proxy",
+          "callee": "NextResponse.redirect",
+          "lineNumber": 25
+        },
+        {
+          "caller": "proxy",
+          "callee": "NextResponse.next",
+          "lineNumber": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    }
+  ]
+}

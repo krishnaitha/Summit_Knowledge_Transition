@@ -1,0 +1,223 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".dockerignore",
+      "language": "unknown",
+      "fileCategory": "infra",
+      "totalLines": 39,
+      "nonEmptyLines": 26,
+      "metrics": {}
+    },
+    {
+      "path": "docker-compose.yml",
+      "language": "yaml",
+      "fileCategory": "infra",
+      "totalLines": 116,
+      "nonEmptyLines": 109,
+      "sections": [
+        {
+          "heading": "services",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "volumes",
+          "level": 1,
+          "line": 114
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "Dockerfile",
+      "language": "dockerfile",
+      "fileCategory": "infra",
+      "totalLines": 56,
+      "nonEmptyLines": 41,
+      "services": [
+        {
+          "name": "builder",
+          "image": "node:22-slim",
+          "ports": [],
+          "startLine": 2,
+          "endLine": 13
+        },
+        {
+          "name": "runner",
+          "image": "node:22-slim",
+          "ports": [3000],
+          "startLine": 14,
+          "endLine": 41
+        },
+        {
+          "name": "worker",
+          "image": "runner",
+          "ports": [],
+          "startLine": 42,
+          "endLine": 46
+        },
+        {
+          "name": "migrate",
+          "image": "node:22-slim",
+          "ports": [],
+          "startLine": 47,
+          "endLine": 57
+        }
+      ],
+      "steps": [
+        {
+          "name": "FROM node:22-slim AS builder",
+          "startLine": 2,
+          "endLine": 2
+        },
+        {
+          "name": "WORKDIR /app",
+          "startLine": 3,
+          "endLine": 3
+        },
+        {
+          "name": "COPY package.json package-lock.json ./",
+          "startLine": 5,
+          "endLine": 5
+        },
+        {
+          "name": "RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-",
+          "startLine": 7,
+          "endLine": 7
+        },
+        {
+          "name": "COPY . .",
+          "startLine": 9,
+          "endLine": 9
+        },
+        {
+          "name": "RUN mkdir -p public && npm run build",
+          "startLine": 11,
+          "endLine": 11
+        },
+        {
+          "name": "FROM node:22-slim AS runner",
+          "startLine": 14,
+          "endLine": 14
+        },
+        {
+          "name": "WORKDIR /app",
+          "startLine": 15,
+          "endLine": 15
+        },
+        {
+          "name": "ENV NODE_ENV=production \\",
+          "startLine": 17,
+          "endLine": 17
+        },
+        {
+          "name": "RUN addgroup --system --gid 1001 nodejs \\",
+          "startLine": 23,
+          "endLine": 23
+        },
+        {
+          "name": "COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone .",
+          "startLine": 27,
+          "endLine": 27
+        },
+        {
+          "name": "COPY --from=builder --chown=nextjs:nodejs /app/.next/static    ./",
+          "startLine": 28,
+          "endLine": 28
+        },
+        {
+          "name": "COPY --from=builder --chown=nextjs:nodejs /app/public          ./",
+          "startLine": 29,
+          "endLine": 29
+        },
+        {
+          "name": "COPY --from=builder --chown=nextjs:nodejs /app/worker          ./",
+          "startLine": 30,
+          "endLine": 30
+        },
+        {
+          "name": "RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/pub",
+          "startLine": 34,
+          "endLine": 34
+        },
+        {
+          "name": "USER nextjs",
+          "startLine": 36,
+          "endLine": 36
+        },
+        {
+          "name": "EXPOSE 3000",
+          "startLine": 37,
+          "endLine": 37
+        },
+        {
+          "name": "CMD [\"node\", \"server.js\"]",
+          "startLine": 39,
+          "endLine": 39
+        },
+        {
+          "name": "FROM runner AS worker",
+          "startLine": 42,
+          "endLine": 42
+        },
+        {
+          "name": "CMD [\"node\", \"worker/index.mjs\"]",
+          "startLine": 44,
+          "endLine": 44
+        },
+        {
+          "name": "FROM node:22-slim AS migrate",
+          "startLine": 47,
+          "endLine": 47
+        },
+        {
+          "name": "WORKDIR /app",
+          "startLine": 48,
+          "endLine": 48
+        },
+        {
+          "name": "COPY package.json package-lock.json ./",
+          "startLine": 50,
+          "endLine": 50
+        },
+        {
+          "name": "RUN npm pkg delete scripts.prepare",
+          "startLine": 51,
+          "endLine": 51
+        },
+        {
+          "name": "RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-",
+          "startLine": 52,
+          "endLine": 52
+        },
+        {
+          "name": "COPY postgres/migrations ./postgres/migrations",
+          "startLine": 54,
+          "endLine": 54
+        },
+        {
+          "name": "CMD [\"node_modules/.bin/node-pg-migrate\", \"up\", \"-m\", \"postgres/",
+          "startLine": 56,
+          "endLine": 56
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "serviceCount": 4,
+        "stepCount": 27
+      }
+    }
+  ]
+}

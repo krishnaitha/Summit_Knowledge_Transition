@@ -1,0 +1,253 @@
+{
+  "batchIndex": 13,
+  "files": [
+    {
+      "path": "postgres/migrations/001_init.sql",
+      "language": "sql",
+      "sizeLines": 423,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/002_quiz_window_resets.sql",
+      "language": "sql",
+      "sizeLines": 15,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/003_activity_log_index.sql",
+      "language": "sql",
+      "sizeLines": 4,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/004_document_governance.sql",
+      "language": "sql",
+      "sizeLines": 11,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/005_seed_admin.sql",
+      "language": "sql",
+      "sizeLines": 3,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/006_chat_bookmarks.sql",
+      "language": "sql",
+      "sizeLines": 11,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/007_quiz_category.sql",
+      "language": "sql",
+      "sizeLines": 6,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/008_partial_retake.sql",
+      "language": "sql",
+      "sizeLines": 15,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/009_question_type.sql",
+      "language": "sql",
+      "sizeLines": 5,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/010_processing_jobs.sql",
+      "language": "sql",
+      "sizeLines": 78,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/011_observability.sql",
+      "language": "sql",
+      "sizeLines": 80,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/012_add_project_member_roles.sql",
+      "language": "sql",
+      "sizeLines": 8,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/013_project_announcements.sql",
+      "language": "sql",
+      "sizeLines": 13,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/014_learning_feedback_features.sql",
+      "language": "sql",
+      "sizeLines": 36,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/015_document_chunks_fts.sql",
+      "language": "sql",
+      "sizeLines": 23,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/016_document_threads.sql",
+      "language": "sql",
+      "sizeLines": 34,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/017_flashcards_spaced_repetition.sql",
+      "language": "sql",
+      "sizeLines": 33,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/018_quiz_attempt_history.sql",
+      "language": "sql",
+      "sizeLines": 18,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/019_document_connectors.sql",
+      "language": "sql",
+      "sizeLines": 35,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/020_auth_provider.sql",
+      "language": "sql",
+      "sizeLines": 15,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/021_password_reset_tokens.sql",
+      "language": "sql",
+      "sizeLines": 8,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/022_quiz_retake_requests.sql",
+      "language": "sql",
+      "sizeLines": 19,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/023_multi_provider_email.sql",
+      "language": "sql",
+      "sizeLines": 17,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/024_knowledge_gap_threads.sql",
+      "language": "sql",
+      "sizeLines": 11,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/025_bot_thread_replies.sql",
+      "language": "sql",
+      "sizeLines": 12,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/026_thread_comment_sources.sql",
+      "language": "sql",
+      "sizeLines": 3,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/027_thread_kb_capture.sql",
+      "language": "sql",
+      "sizeLines": 3,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/028_add_jira_monday_connectors.sql",
+      "language": "sql",
+      "sizeLines": 13,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/029_add_onedrive_github_connectors.sql",
+      "language": "sql",
+      "sizeLines": 13,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/030_add_app_settings.sql",
+      "language": "sql",
+      "sizeLines": 6,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/031_user_memory.sql",
+      "language": "sql",
+      "sizeLines": 37,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/032_chat_session_title.sql",
+      "language": "sql",
+      "sizeLines": 5,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/033_connector_auto_sync_toggle.sql",
+      "language": "sql",
+      "sizeLines": 2,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/034_embedding_model_enforcement.sql",
+      "language": "sql",
+      "sizeLines": 10,
+      "fileCategory": "data"
+    },
+    {
+      "path": "postgres/migrations/035_app_error_events.sql",
+      "language": "sql",
+      "sizeLines": 15,
+      "fileCategory": "data"
+    }
+  ],
+  "batchImportData": {
+    "postgres/migrations/001_init.sql": [],
+    "postgres/migrations/002_quiz_window_resets.sql": [],
+    "postgres/migrations/003_activity_log_index.sql": [],
+    "postgres/migrations/004_document_governance.sql": [],
+    "postgres/migrations/005_seed_admin.sql": [],
+    "postgres/migrations/006_chat_bookmarks.sql": [],
+    "postgres/migrations/007_quiz_category.sql": [],
+    "postgres/migrations/008_partial_retake.sql": [],
+    "postgres/migrations/009_question_type.sql": [],
+    "postgres/migrations/010_processing_jobs.sql": [],
+    "postgres/migrations/011_observability.sql": [],
+    "postgres/migrations/012_add_project_member_roles.sql": [],
+    "postgres/migrations/013_project_announcements.sql": [],
+    "postgres/migrations/014_learning_feedback_features.sql": [],
+    "postgres/migrations/015_document_chunks_fts.sql": [],
+    "postgres/migrations/016_document_threads.sql": [],
+    "postgres/migrations/017_flashcards_spaced_repetition.sql": [],
+    "postgres/migrations/018_quiz_attempt_history.sql": [],
+    "postgres/migrations/019_document_connectors.sql": [],
+    "postgres/migrations/020_auth_provider.sql": [],
+    "postgres/migrations/021_password_reset_tokens.sql": [],
+    "postgres/migrations/022_quiz_retake_requests.sql": [],
+    "postgres/migrations/023_multi_provider_email.sql": [],
+    "postgres/migrations/024_knowledge_gap_threads.sql": [],
+    "postgres/migrations/025_bot_thread_replies.sql": [],
+    "postgres/migrations/026_thread_comment_sources.sql": [],
+    "postgres/migrations/027_thread_kb_capture.sql": [],
+    "postgres/migrations/028_add_jira_monday_connectors.sql": [],
+    "postgres/migrations/029_add_onedrive_github_connectors.sql": [],
+    "postgres/migrations/030_add_app_settings.sql": [],
+    "postgres/migrations/031_user_memory.sql": [],
+    "postgres/migrations/032_chat_session_title.sql": [],
+    "postgres/migrations/033_connector_auto_sync_toggle.sql": [],
+    "postgres/migrations/034_embedding_model_enforcement.sql": [],
+    "postgres/migrations/035_app_error_events.sql": []
+  },
+  "neighborMap": {}
+}

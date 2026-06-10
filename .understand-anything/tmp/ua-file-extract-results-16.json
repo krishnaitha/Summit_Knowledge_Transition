@@ -1,0 +1,1509 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 10,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 1552,
+      "nonEmptyLines": 1365,
+      "sections": [
+        {
+          "heading": "Summit KT Portal — Architecture",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Table of Contents",
+          "level": 2,
+          "line": 11
+        },
+        {
+          "heading": "1. System Overview",
+          "level": 2,
+          "line": 30
+        },
+        {
+          "heading": "2. High-Level Architecture",
+          "level": 2,
+          "line": 63
+        },
+        {
+          "heading": "3. Application Layer Structure",
+          "level": 2,
+          "line": 123
+        },
+        {
+          "heading": "4. Data Architecture",
+          "level": 2,
+          "line": 167
+        },
+        {
+          "heading": "4.1 Entity Relationship Diagram",
+          "level": 3,
+          "line": 169
+        },
+        {
+          "heading": "4.2 Key Indexes",
+          "level": 3,
+          "line": 319
+        },
+        {
+          "heading": "5. Authentication & Authorization Flow",
+          "level": 2,
+          "line": 331
+        },
+        {
+          "heading": "Route Guards",
+          "level": 3,
+          "line": 358
+        },
+        {
+          "heading": "6. Document Ingestion Pipeline",
+          "level": 2,
+          "line": 369
+        },
+        {
+          "heading": "7. RAG AI Chat Pipeline",
+          "level": 2,
+          "line": 415
+        },
+        {
+          "heading": "8. Quiz Generation & Delivery Flow",
+          "level": 2,
+          "line": 440
+        },
+        {
+          "heading": "Generation",
+          "level": 3,
+          "line": 442
+        },
+        {
+          "heading": "Delivery",
+          "level": 3,
+          "line": 468
+        },
+        {
+          "heading": "9. Background Job Queue",
+          "level": 2,
+          "line": 503
+        },
+        {
+          "heading": "10. Role-Based Access Control Model",
+          "level": 2,
+          "line": 527
+        },
+        {
+          "heading": "11. API Surface",
+          "level": 2,
+          "line": 549
+        },
+        {
+          "heading": "Authentication",
+          "level": 3,
+          "line": 551
+        },
+        {
+          "heading": "Chat",
+          "level": 3,
+          "line": 560
+        },
+        {
+          "heading": "Documents",
+          "level": 3,
+          "line": 567
+        },
+        {
+          "heading": "Quiz",
+          "level": 3,
+          "line": 575
+        },
+        {
+          "heading": "Bookmarks",
+          "level": 3,
+          "line": 583
+        },
+        {
+          "heading": "Admin",
+          "level": 3,
+          "line": 590
+        },
+        {
+          "heading": "Worker",
+          "level": 3,
+          "line": 599
+        },
+        {
+          "heading": "12. Component Hierarchy",
+          "level": 2,
+          "line": 607
+        },
+        {
+          "heading": "13. Security Model",
+          "level": 2,
+          "line": 650
+        },
+        {
+          "heading": "14. Deployment Topology",
+          "level": 2,
+          "line": 669
+        },
+        {
+          "heading": "Development",
+          "level": 3,
+          "line": 671
+        },
+        {
+          "heading": "Production (single server)",
+          "level": 3,
+          "line": 679
+        },
+        {
+          "heading": "1. System Overview",
+          "level": 2,
+          "line": 706
+        },
+        {
+          "heading": "2. High-Level Architecture",
+          "level": 2,
+          "line": 728
+        },
+        {
+          "heading": "3. Application Layer Structure",
+          "level": 2,
+          "line": 784
+        },
+        {
+          "heading": "4. Data Architecture",
+          "level": 2,
+          "line": 898
+        },
+        {
+          "heading": "Entity-Relationship Diagram",
+          "level": 3,
+          "line": 900
+        },
+        {
+          "heading": "Access Control Summary",
+          "level": 3,
+          "line": 1060
+        },
+        {
+          "heading": "5. Core Feature Flows",
+          "level": 2,
+          "line": 1085
+        },
+        {
+          "heading": "5.1 Authentication & Authorization",
+          "level": 3,
+          "line": 1087
+        },
+        {
+          "heading": "5.2 Document Ingestion Pipeline (RAG)",
+          "level": 3,
+          "line": 1130
+        },
+        {
+          "heading": "5.3 AI-Grounded Chat (RAG)",
+          "level": 3,
+          "line": 1188
+        },
+        {
+          "heading": "5.4 Quiz Generation & Delivery",
+          "level": 3,
+          "line": 1220
+        },
+        {
+          "heading": "5.5 Quiz Re-enable Request Flow",
+          "level": 3,
+          "line": 1281
+        },
+        {
+          "heading": "5.6 Background Job Queue",
+          "level": 3,
+          "line": 1333
+        },
+        {
+          "heading": "6. Component Hierarchy",
+          "level": 2,
+          "line": 1375
+        },
+        {
+          "heading": "7. API Surface",
+          "level": 2,
+          "line": 1428
+        },
+        {
+          "heading": "8. Security Model",
+          "level": 2,
+          "line": 1452
+        },
+        {
+          "heading": "9. Known Gaps",
+          "level": 2,
+          "line": 1497
+        },
+        {
+          "heading": "10. Good-to-Have Features",
+          "level": 2,
+          "line": 1514
+        },
+        {
+          "heading": "10.1 Knowledge & Learning",
+          "level": 3,
+          "line": 1516
+        },
+        {
+          "heading": "10.2 Quiz & Assessment",
+          "level": 3,
+          "line": 1525
+        },
+        {
+          "heading": "10.3 Analytics & Reporting",
+          "level": 3,
+          "line": 1535
+        },
+        {
+          "heading": "10.4 Infrastructure",
+          "level": 3,
+          "line": 1545
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 52
+      }
+    },
+    {
+      "path": "docs/CONNECTOR_SETUP.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 195,
+      "nonEmptyLines": 130,
+      "sections": [
+        {
+          "heading": "Connector Setup Guide",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Prerequisites",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "Connector Behavior",
+          "level": 2,
+          "line": 23
+        },
+        {
+          "heading": "Sync Schedule",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "Confluence Setup",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "Required fields",
+          "level": 3,
+          "line": 48
+        },
+        {
+          "heading": "How to get API token",
+          "level": 3,
+          "line": 56
+        },
+        {
+          "heading": "Notes",
+          "level": 3,
+          "line": 62
+        },
+        {
+          "heading": "SharePoint Setup",
+          "level": 2,
+          "line": 67
+        },
+        {
+          "heading": "Required fields",
+          "level": 3,
+          "line": 69
+        },
+        {
+          "heading": "Notes",
+          "level": 3,
+          "line": 76
+        },
+        {
+          "heading": "Jira Setup",
+          "level": 2,
+          "line": 81
+        },
+        {
+          "heading": "Required fields",
+          "level": 3,
+          "line": 83
+        },
+        {
+          "heading": "Optional fields",
+          "level": 3,
+          "line": 91
+        },
+        {
+          "heading": "Notes",
+          "level": 3,
+          "line": 96
+        },
+        {
+          "heading": "Monday.com Setup",
+          "level": 2,
+          "line": 102
+        },
+        {
+          "heading": "Required fields",
+          "level": 3,
+          "line": 104
+        },
+        {
+          "heading": "Optional fields",
+          "level": 3,
+          "line": 110
+        },
+        {
+          "heading": "Notes",
+          "level": 3,
+          "line": 115
+        },
+        {
+          "heading": "OneDrive Setup",
+          "level": 2,
+          "line": 122
+        },
+        {
+          "heading": "Required fields",
+          "level": 3,
+          "line": 124
+        },
+        {
+          "heading": "Optional fields",
+          "level": 3,
+          "line": 130
+        },
+        {
+          "heading": "Notes",
+          "level": 3,
+          "line": 134
+        },
+        {
+          "heading": "GitHub Setup",
+          "level": 2,
+          "line": 139
+        },
+        {
+          "heading": "Required fields",
+          "level": 3,
+          "line": 141
+        },
+        {
+          "heading": "Optional fields",
+          "level": 3,
+          "line": 146
+        },
+        {
+          "heading": "Notes",
+          "level": 3,
+          "line": 152
+        },
+        {
+          "heading": "Validation Checklist",
+          "level": 2,
+          "line": 157
+        },
+        {
+          "heading": "Troubleshooting",
+          "level": 2,
+          "line": 166
+        },
+        {
+          "heading": "Sync stays in running/idle",
+          "level": 3,
+          "line": 168
+        },
+        {
+          "heading": "Authentication errors",
+          "level": 3,
+          "line": 174
+        },
+        {
+          "heading": "No content imported",
+          "level": 3,
+          "line": 182
+        },
+        {
+          "heading": "Connector shows failed",
+          "level": 3,
+          "line": 192
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 33
+      }
+    },
+    {
+      "path": "docs/LLM_PROVIDER_SETUP.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 285,
+      "nonEmptyLines": 200,
+      "sections": [
+        {
+          "heading": "LLM Provider Setup Guide",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Overview",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Groq Setup (Default)",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "1. Get Groq API Key",
+          "level": 3,
+          "line": 17
+        },
+        {
+          "heading": "2. Configure Environment",
+          "level": 3,
+          "line": 24
+        },
+        {
+          "heading": "3. Test",
+          "level": 3,
+          "line": 36
+        },
+        {
+          "heading": "GitHub Models Setup",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "1. Generate GitHub Models Token",
+          "level": 3,
+          "line": 45
+        },
+        {
+          "heading": "2. Configure Environment",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "3. Test",
+          "level": 3,
+          "line": 86
+        },
+        {
+          "heading": "Provider Switching",
+          "level": 2,
+          "line": 101
+        },
+        {
+          "heading": "At Runtime",
+          "level": 3,
+          "line": 103
+        },
+        {
+          "heading": "Environment Defaults",
+          "level": 3,
+          "line": 122
+        },
+        {
+          "heading": "For Production Deployment",
+          "level": 3,
+          "line": 137
+        },
+        {
+          "heading": "Provider Differences",
+          "level": 2,
+          "line": 158
+        },
+        {
+          "heading": "Troubleshooting",
+          "level": 2,
+          "line": 170
+        },
+        {
+          "heading": "\"Copilot is not configured\" Error",
+          "level": 3,
+          "line": 172
+        },
+        {
+          "heading": "\"Groq is not configured\" Error",
+          "level": 3,
+          "line": 182
+        },
+        {
+          "heading": "Rate Limit (429) Errors",
+          "level": 3,
+          "line": 192
+        },
+        {
+          "heading": "Chat/Quiz Generation Slow",
+          "level": 3,
+          "line": 206
+        },
+        {
+          "heading": "Status Message Framing",
+          "level": 3,
+          "line": 212
+        },
+        {
+          "heading": "Architecture",
+          "level": 2,
+          "line": 222
+        },
+        {
+          "heading": "Request Flow",
+          "level": 3,
+          "line": 224
+        },
+        {
+          "heading": "Unified Response Format",
+          "level": 3,
+          "line": 242
+        },
+        {
+          "heading": "Best Practices",
+          "level": 2,
+          "line": 265
+        },
+        {
+          "heading": "Security Notes",
+          "level": 2,
+          "line": 273
+        },
+        {
+          "heading": "Links",
+          "level": 2,
+          "line": 280
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 27
+      }
+    },
+    {
+      "path": "docs/LOCAL_STORAGE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 216,
+      "nonEmptyLines": 144,
+      "sections": [
+        {
+          "heading": "Local File Storage Configuration",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Overview",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Storage Location",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "File Organization",
+          "level": 2,
+          "line": 28
+        },
+        {
+          "heading": "API Changes",
+          "level": 2,
+          "line": 41
+        },
+        {
+          "heading": "Before (Cloudflare R2)",
+          "level": 3,
+          "line": 43
+        },
+        {
+          "heading": "After (Local Storage)",
+          "level": 3,
+          "line": 50
+        },
+        {
+          "heading": "Security Considerations",
+          "level": 2,
+          "line": 69
+        },
+        {
+          "heading": "✅ What's Protected",
+          "level": 3,
+          "line": 71
+        },
+        {
+          "heading": "⚠️ Your Responsibility",
+          "level": 3,
+          "line": 78
+        },
+        {
+          "heading": "Production Deployment",
+          "level": 2,
+          "line": 88
+        },
+        {
+          "heading": "Option 1: Mounted Volume (Recommended)",
+          "level": 3,
+          "line": 90
+        },
+        {
+          "heading": "Option 2: Network-Attached Storage (NAS)",
+          "level": 3,
+          "line": 110
+        },
+        {
+          "heading": "Option 3: External Storage Backup",
+          "level": 3,
+          "line": 119
+        },
+        {
+          "heading": "Environment Variables",
+          "level": 2,
+          "line": 130
+        },
+        {
+          "heading": "Migration from Cloudflare R2",
+          "level": 2,
+          "line": 150
+        },
+        {
+          "heading": "Monitoring & Maintenance",
+          "level": 2,
+          "line": 162
+        },
+        {
+          "heading": "Check Disk Usage",
+          "level": 3,
+          "line": 164
+        },
+        {
+          "heading": "List Recent Uploads",
+          "level": 3,
+          "line": 170
+        },
+        {
+          "heading": "Remove Files Older Than 90 Days",
+          "level": 3,
+          "line": 176
+        },
+        {
+          "heading": "Troubleshooting",
+          "level": 2,
+          "line": 184
+        },
+        {
+          "heading": "Switching Back to Cloud Storage",
+          "level": 2,
+          "line": 195
+        },
+        {
+          "heading": "Support",
+          "level": 2,
+          "line": 210
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 23
+      }
+    },
+    {
+      "path": "docs/RELEASE_NOTES_2026_05.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 85,
+      "nonEmptyLines": 65,
+      "sections": [
+        {
+          "heading": "NexTElevate Release Notes - May 2026",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Chat Experience",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Chat Performance and Navigation Reliability",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "Memory and Stability Fixes",
+          "level": 2,
+          "line": 42
+        },
+        {
+          "heading": "Document Connectors",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "Auto-sync tuning environment variables",
+          "level": 3,
+          "line": 58
+        },
+        {
+          "heading": "Documents UX",
+          "level": 2,
+          "line": 63
+        },
+        {
+          "heading": "Observability UX",
+          "level": 2,
+          "line": 68
+        },
+        {
+          "heading": "API and Schema Surface Updates",
+          "level": 2,
+          "line": 74
+        },
+        {
+          "heading": "Developer Validation",
+          "level": 2,
+          "line": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 10
+      }
+    },
+    {
+      "path": "docs/SELF_HOSTED_DEPLOYMENT.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 581,
+      "nonEmptyLines": 443,
+      "sections": [
+        {
+          "heading": "Self-Hosted Deployment Guide — Summit KT Portal",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Architecture Overview",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Server Requirements",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "Part 1 — Server Setup",
+          "level": 2,
+          "line": 53
+        },
+        {
+          "heading": "1.1 Install Docker",
+          "level": 3,
+          "line": 55
+        },
+        {
+          "heading": "1.2 Install Git and other tools",
+          "level": 3,
+          "line": 72
+        },
+        {
+          "heading": "1.3 Point your domain to the server",
+          "level": 3,
+          "line": 78
+        },
+        {
+          "heading": "Part 2 — Self-Hosted Supabase",
+          "level": 2,
+          "line": 88
+        },
+        {
+          "heading": "2.1 Clone Supabase",
+          "level": 3,
+          "line": 90
+        },
+        {
+          "heading": "2.2 Generate secrets",
+          "level": 3,
+          "line": 98
+        },
+        {
+          "heading": "2.3 Configure .env",
+          "level": 3,
+          "line": 147
+        },
+        {
+          "heading": "2.4 Start Supabase",
+          "level": 3,
+          "line": 174
+        },
+        {
+          "heading": "2.5 Access the dashboard",
+          "level": 3,
+          "line": 194
+        },
+        {
+          "heading": "Part 3 — SSL & Reverse Proxy (Nginx)",
+          "level": 2,
+          "line": 205
+        },
+        {
+          "heading": "3.1 Get SSL certificate",
+          "level": 3,
+          "line": 207
+        },
+        {
+          "heading": "3.2 Nginx configuration",
+          "level": 3,
+          "line": 213
+        },
+        {
+          "heading": "Part 4 — Run the Database Migrations",
+          "level": 2,
+          "line": 275
+        },
+        {
+          "heading": "4.1 Copy migration files to server",
+          "level": 3,
+          "line": 277
+        },
+        {
+          "heading": "4.2 Run migrations via Supabase dashboard",
+          "level": 3,
+          "line": 284
+        },
+        {
+          "heading": "4.3 Create Storage bucket",
+          "level": 3,
+          "line": 301
+        },
+        {
+          "heading": "Part 5 — Deploy the Summit KT App",
+          "level": 2,
+          "line": 309
+        },
+        {
+          "heading": "Option A: Docker (recommended for production)",
+          "level": 3,
+          "line": 311
+        },
+        {
+          "heading": "Option B: PM2 (simpler)",
+          "level": 3,
+          "line": 350
+        },
+        {
+          "heading": "Worker process",
+          "level": 3,
+          "line": 360
+        },
+        {
+          "heading": "Part 6 — App Environment Variables",
+          "level": 2,
+          "line": 370
+        },
+        {
+          "heading": "Part 7 — Backups",
+          "level": 2,
+          "line": 401
+        },
+        {
+          "heading": "Automated daily database backup",
+          "level": 3,
+          "line": 403
+        },
+        {
+          "heading": "Restore from backup",
+          "level": 3,
+          "line": 429
+        },
+        {
+          "heading": "Part 8 — Security Hardening",
+          "level": 2,
+          "line": 438
+        },
+        {
+          "heading": "Firewall rules (UFW)",
+          "level": 3,
+          "line": 440
+        },
+        {
+          "heading": "Restrict Supabase dashboard access (optional)",
+          "level": 3,
+          "line": 451
+        },
+        {
+          "heading": "SSL auto-renewal",
+          "level": 3,
+          "line": 458
+        },
+        {
+          "heading": "Keep Docker images updated",
+          "level": 3,
+          "line": 468
+        },
+        {
+          "heading": "Part 9 — Monitoring",
+          "level": 2,
+          "line": 479
+        },
+        {
+          "heading": "Check app health",
+          "level": 3,
+          "line": 481
+        },
+        {
+          "heading": "Check Supabase health",
+          "level": 3,
+          "line": 494
+        },
+        {
+          "heading": "Disk usage",
+          "level": 3,
+          "line": 507
+        },
+        {
+          "heading": "Part 10 — Migrating Existing Data from Supabase Cloud",
+          "level": 2,
+          "line": 517
+        },
+        {
+          "heading": "Quick Reference",
+          "level": 2,
+          "line": 554
+        },
+        {
+          "heading": "Cost Summary (self-hosted vs cloud)",
+          "level": 2,
+          "line": 571
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 40
+      }
+    },
+    {
+      "path": "docs/USER_GUIDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 607,
+      "nonEmptyLines": 397,
+      "sections": [
+        {
+          "heading": "Summit KT Portal — User Guide",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Table of Contents",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "1. Logging In",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "2. Super Admin Guide",
+          "level": 2,
+          "line": 58
+        },
+        {
+          "heading": "2.1 Admin Dashboard",
+          "level": 3,
+          "line": 64
+        },
+        {
+          "heading": "2.2 Managing Projects",
+          "level": 3,
+          "line": 83
+        },
+        {
+          "heading": "Create a new project",
+          "level": 4,
+          "line": 87
+        },
+        {
+          "heading": "Configure a quiz window",
+          "level": 4,
+          "line": 94
+        },
+        {
+          "heading": "Archive a project",
+          "level": 4,
+          "line": 104
+        },
+        {
+          "heading": "2.3 Uploading and Processing Documents",
+          "level": 3,
+          "line": 110
+        },
+        {
+          "heading": "Step 1 — Upload a document",
+          "level": 4,
+          "line": 116
+        },
+        {
+          "heading": "Step 2 — Process the document",
+          "level": 4,
+          "line": 130
+        },
+        {
+          "heading": "Document classification",
+          "level": 4,
+          "line": 140
+        },
+        {
+          "heading": "Connect external sources (Confluence / SharePoint / Jira / Monday / OneDrive / GitHub)",
+          "level": 4,
+          "line": 152
+        },
+        {
+          "heading": "Connector sync behavior",
+          "level": 4,
+          "line": 169
+        },
+        {
+          "heading": "2.4 Inviting Members",
+          "level": 3,
+          "line": 180
+        },
+        {
+          "heading": "2.5 Generating Quizzes",
+          "level": 3,
+          "line": 196
+        },
+        {
+          "heading": "2.6 Sending Announcements",
+          "level": 3,
+          "line": 218
+        },
+        {
+          "heading": "2.7 Managing Users",
+          "level": 3,
+          "line": 231
+        },
+        {
+          "heading": "Search and filter",
+          "level": 4,
+          "line": 237
+        },
+        {
+          "heading": "Bulk actions",
+          "level": 4,
+          "line": 246
+        },
+        {
+          "heading": "User detail drawer",
+          "level": 4,
+          "line": 256
+        },
+        {
+          "heading": "Export",
+          "level": 4,
+          "line": 264
+        },
+        {
+          "heading": "2.8 Handling Quiz Retake Requests",
+          "level": 3,
+          "line": 270
+        },
+        {
+          "heading": "2.9 Promoting a Member to Project Admin",
+          "level": 3,
+          "line": 284
+        },
+        {
+          "heading": "2.10 AI Document Generator",
+          "level": 3,
+          "line": 296
+        },
+        {
+          "heading": "3. Project Admin Guide",
+          "level": 2,
+          "line": 311
+        },
+        {
+          "heading": "3.1 What a Project Admin Can Do",
+          "level": 3,
+          "line": 313
+        },
+        {
+          "heading": "3.2 Accessing Your Project",
+          "level": 3,
+          "line": 326
+        },
+        {
+          "heading": "3.3 Managing Documents",
+          "level": 3,
+          "line": 340
+        },
+        {
+          "heading": "3.4 Managing Members",
+          "level": 3,
+          "line": 346
+        },
+        {
+          "heading": "3.5 Managing Quizzes",
+          "level": 3,
+          "line": 358
+        },
+        {
+          "heading": "3.6 Handling Retake Requests",
+          "level": 3,
+          "line": 364
+        },
+        {
+          "heading": "4. Member Guide",
+          "level": 2,
+          "line": 370
+        },
+        {
+          "heading": "4.1 Dashboard Overview",
+          "level": 3,
+          "line": 372
+        },
+        {
+          "heading": "4.2 Navigating Your Projects",
+          "level": 3,
+          "line": 390
+        },
+        {
+          "heading": "4.3 Reading KT Documents",
+          "level": 3,
+          "line": 405
+        },
+        {
+          "heading": "4.4 Using the AI Assistant (Chat)",
+          "level": 3,
+          "line": 418
+        },
+        {
+          "heading": "Chat controls",
+          "level": 4,
+          "line": 422
+        },
+        {
+          "heading": "Memory helper commands",
+          "level": 4,
+          "line": 433
+        },
+        {
+          "heading": "Session and export actions",
+          "level": 4,
+          "line": 441
+        },
+        {
+          "heading": "Pinning answers",
+          "level": 4,
+          "line": 451
+        },
+        {
+          "heading": "4.5 Saving AI Answers (Bookmarks)",
+          "level": 3,
+          "line": 476
+        },
+        {
+          "heading": "4.6 Taking the Readiness Quiz",
+          "level": 3,
+          "line": 494
+        },
+        {
+          "heading": "Before you start",
+          "level": 4,
+          "line": 500
+        },
+        {
+          "heading": "During the quiz",
+          "level": 4,
+          "line": 506
+        },
+        {
+          "heading": "Submitting",
+          "level": 4,
+          "line": 513
+        },
+        {
+          "heading": "4.7 Viewing Your Quiz Results",
+          "level": 3,
+          "line": 519
+        },
+        {
+          "heading": "4.8 Requesting a Quiz Retake",
+          "level": 3,
+          "line": 534
+        },
+        {
+          "heading": "5. Account Management",
+          "level": 2,
+          "line": 547
+        },
+        {
+          "heading": "5.1 Registering an Account",
+          "level": 3,
+          "line": 549
+        },
+        {
+          "heading": "5.2 Accepting an Invite",
+          "level": 3,
+          "line": 561
+        },
+        {
+          "heading": "5.3 Resetting Your Password",
+          "level": 3,
+          "line": 576
+        },
+        {
+          "heading": "6. Glossary",
+          "level": 2,
+          "line": 591
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 54
+      }
+    },
+    {
+      "path": "docs/WORKER_SETUP.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 252,
+      "nonEmptyLines": 186,
+      "sections": [
+        {
+          "heading": "Background Worker Setup",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "How It Works",
+          "level": 2,
+          "line": 12
+        },
+        {
+          "heading": "Environment Variables",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "Development",
+          "level": 2,
+          "line": 49
+        },
+        {
+          "heading": "Tips for Development",
+          "level": 3,
+          "line": 82
+        },
+        {
+          "heading": "Production",
+          "level": 2,
+          "line": 111
+        },
+        {
+          "heading": "Option A — Long-running process (VPS / Docker / Railway / Render)",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "Option B — pg_cron trigger (Vercel / serverless — no persistent process)",
+          "level": 3,
+          "line": 160
+        },
+        {
+          "heading": "Choosing Between Options",
+          "level": 3,
+          "line": 204
+        },
+        {
+          "heading": "Monitoring",
+          "level": 2,
+          "line": 218
+        },
+        {
+          "heading": "Check job status in Supabase",
+          "level": 3,
+          "line": 220
+        },
+        {
+          "heading": "pg_cron job history (Option B)",
+          "level": 3,
+          "line": 238
+        },
+        {
+          "heading": "Groq Rate Limits",
+          "level": 2,
+          "line": 246
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 13
+      }
+    },
+    {
+      "path": "docs/database-options-comparison.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 236,
+      "nonEmptyLines": 192,
+      "sections": [
+        {
+          "heading": "App Requirements",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Full-Platform Alternatives (Supabase-like)",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "Supabase ✅ (Current)",
+          "level": 3,
+          "line": 22
+        },
+        {
+          "heading": "Firebase (Google)",
+          "level": 3,
+          "line": 36
+        },
+        {
+          "heading": "Appwrite",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "PocketBase",
+          "level": 3,
+          "line": 66
+        },
+        {
+          "heading": "Xata",
+          "level": 3,
+          "line": 81
+        },
+        {
+          "heading": "Database-Only Options",
+          "level": 2,
+          "line": 97
+        },
+        {
+          "heading": "Neon (Serverless Postgres)",
+          "level": 3,
+          "line": 99
+        },
+        {
+          "heading": "MySQL / MariaDB",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "MongoDB (Atlas)",
+          "level": 3,
+          "line": 131
+        },
+        {
+          "heading": "SQLite",
+          "level": 3,
+          "line": 146
+        },
+        {
+          "heading": "DynamoDB (AWS)",
+          "level": 3,
+          "line": 159
+        },
+        {
+          "heading": "PostgreSQL (Self-hosted)",
+          "level": 3,
+          "line": 172
+        },
+        {
+          "heading": "Head-to-Head Summary",
+          "level": 2,
+          "line": 186
+        },
+        {
+          "heading": "Security Comparison",
+          "level": 2,
+          "line": 203
+        },
+        {
+          "heading": "If You Had to Migrate Away from Supabase",
+          "level": 2,
+          "line": 218
+        },
+        {
+          "heading": "Recommendation",
+          "level": 2,
+          "line": 232
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 18
+      }
+    },
+    {
+      "path": "docs/load_test_report.html",
+      "language": "html",
+      "fileCategory": "markup",
+      "totalLines": 684,
+      "nonEmptyLines": 631,
+      "metrics": {}
+    }
+  ]
+}

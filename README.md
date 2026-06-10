@@ -44,6 +44,8 @@ NexTElevate lets your organisation manage knowledge-transfer at scale. Admins pu
 
 For a complete change log, see [docs/RELEASE_NOTES_2026_05.md](docs/RELEASE_NOTES_2026_05.md).
 
+Embeddings design and runbook: [docs/EMBEDDINGS.md](docs/EMBEDDINGS.md).
+
 Quiz reset policy:
 
 - Up to 5 admin resets per member per project
@@ -89,7 +91,7 @@ npm install
 Create the database, then run all migrations with a single command:
 
 ```bash
-createdb Summit_KT
+createdb NextElevate
 npm run db:migrate
 ```
 
@@ -113,7 +115,7 @@ Full environment variable reference:
 
 ```env
 # ── Database ──────────────────────────────────────────────────────────────────
-DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/Summit_KT
+DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/NextElevate
 
 # ── NextAuth.js ───────────────────────────────────────────────────────────────
 NEXTAUTH_URL=http://localhost:3000
@@ -152,7 +154,7 @@ GROQ_API_KEY=gsk_...
 
 # Embeddings model (must remain consistent across indexing and retrieval)
 # EMBEDDING_MODEL_ID=Xenova/all-MiniLM-L6-v2
-# EMBEDDING_MODEL_REVISION=
+# EMBEDDING_MODEL_REVISION=3f2d9f6e2e6ddc1f8a6e2c1c5b1e8d3f66a7b124
 
 # ── Storage (choose one) ──────────────────────────────────────────────────────
 # Option A: Local filesystem (default — files saved to public/uploads/)
@@ -403,7 +405,7 @@ COPILOT_MODEL=openai/gpt-5-mini                                  # default model
 
 # Embeddings model enforcement
 EMBEDDING_MODEL_ID=Xenova/all-MiniLM-L6-v2
-# EMBEDDING_MODEL_REVISION=main
+EMBEDDING_MODEL_REVISION=3f2d9f6e2e6ddc1f8a6e2c1c5b1e8d3f66a7b124
 
 # File storage
 STORAGE_PROVIDER=local

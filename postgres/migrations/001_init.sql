@@ -7,7 +7,7 @@
 --   CREATE EXTENSION IF NOT EXISTS pgcrypto;
 --
 -- Run this file:
---   psql -U postgres -d summit_kt -f postgres/schema.sql
+--   psql -U postgres -d nextelevate -f postgres/schema.sql
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------

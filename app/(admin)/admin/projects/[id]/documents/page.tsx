@@ -3,8 +3,10 @@ import { ChevronRight } from 'lucide-react';
 
 import {
   createDocumentConnectorAction,
+  dryRunDocumentConnectorAction,
   deleteDocumentConnectorAction,
   syncDocumentConnectorAction,
+  testDocumentConnectorAction,
   toggleDocumentConnectorAutoSyncAction,
   toggleDocumentRequiredAction,
 } from '@/app/actions/admin';
@@ -39,6 +41,8 @@ export default async function ProjectDocumentsPage(props: { params: Promise<{ id
         connectors={connectors}
         createAction={createDocumentConnectorAction}
         syncAction={syncDocumentConnectorAction}
+        testConnectionAction={testDocumentConnectorAction}
+        dryRunAction={dryRunDocumentConnectorAction}
         deleteAction={deleteDocumentConnectorAction}
         toggleAutoSyncAction={toggleDocumentConnectorAutoSyncAction}
       />

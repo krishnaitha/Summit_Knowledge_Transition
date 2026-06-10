@@ -207,15 +207,31 @@ function parseQuestions(raw: string): RawQuestion[] {
 async function processDocumentJob(payload: Record<string, unknown>) {
   const documentId = String(payload.documentId ?? '');
   const projectId = String(payload.projectId ?? '');
+  const sourceMode = String(payload.sourceMode ?? 'uploaded');
 
   const docs = await sql`SELECT * FROM documents WHERE id = ${documentId} LIMIT 1`;
   const document = docs[0];
   if (!document) throw new Error('Document not found');
 
-  // Download from local storage
-  const buffer = await downloadFile(document.file_url as string);
+  let content = '';
 
-  const content = await extractTextFromFile(document.file_name as string, buffer);
+  if (sourceMode === 'canonical') {
+    const canonicalRows = await sql<{ canonical_content: string }[]>`
+      SELECT canonical_content
+      FROM document_canonical_sources
+      WHERE document_id = ${documentId}
+      LIMIT 1
+    `;
+
+    content = canonicalRows[0]?.canonical_content ?? '';
+  }
+
+  if (!content.trim()) {
+    // Download from local storage
+    const buffer = await downloadFile(document.file_url as string);
+    content = await extractTextFromFile(document.file_name as string, buffer);
+  }
+
   const chunkCount = await processDocumentRecord(documentId, projectId, content);
 
   revalidatePath(`/admin/projects/${projectId}`);

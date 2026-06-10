@@ -1,0 +1,269 @@
+{
+  "batchIndex": 7,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": "app/(admin)/admin/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/(member)/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/admin-mobile-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/admin-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/logout-button.tsx",
+      "language": "typescript",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/member-mobile-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/member-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/mobile-menu-button.tsx",
+      "language": "typescript",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/mobile-sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 105,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/navbar.tsx",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "components/layout/sidebar.tsx",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "app/(admin)/admin/layout.tsx": [
+      "components/layout/admin-mobile-sidebar.tsx",
+      "components/layout/admin-sidebar.tsx",
+      "components/layout/navbar.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "app/(member)/layout.tsx": [
+      "components/layout/member-mobile-sidebar.tsx",
+      "components/layout/member-sidebar.tsx",
+      "components/layout/navbar.tsx",
+      "lib/auth.ts",
+      "lib/data.ts"
+    ],
+    "components/layout/admin-mobile-sidebar.tsx": ["components/layout/mobile-sidebar.tsx"],
+    "components/layout/admin-sidebar.tsx": ["components/layout/sidebar.tsx"],
+    "components/layout/logout-button.tsx": [],
+    "components/layout/member-mobile-sidebar.tsx": ["components/layout/mobile-sidebar.tsx"],
+    "components/layout/member-sidebar.tsx": ["components/layout/sidebar.tsx"],
+    "components/layout/mobile-menu-button.tsx": ["components/layout/mobile-sidebar.tsx"],
+    "components/layout/mobile-sidebar.tsx": ["lib/utils.ts"],
+    "components/layout/navbar.tsx": [
+      "components/layout/logout-button.tsx",
+      "components/layout/mobile-menu-button.tsx",
+      "lib/env.ts",
+      "lib/types/database.ts"
+    ],
+    "components/layout/sidebar.tsx": ["lib/utils.ts"]
+  },
+  "neighborMap": {
+    "app/(admin)/admin/layout.tsx": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 5,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getAdminThreadQueuePage",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      }
+    ],
+    "app/(member)/layout.tsx": [
+      {
+        "path": "lib/auth.ts",
+        "batchIndex": 2,
+        "symbols": [
+          "getCurrentUserContext",
+          "requireAuthenticatedUser",
+          "requireAdmin",
+          "requireMember",
+          "getProjectAdminIds",
+          "requireProjectAdmin",
+          "requireAnyAdmin"
+        ]
+      },
+      {
+        "path": "lib/data.ts",
+        "batchIndex": 5,
+        "symbols": [
+          "getProfileById",
+          "getAssignedProjects",
+          "getProjectById",
+          "getProjectDocuments",
+          "getProjectDocumentConnectors",
+          "getProjectFlashcardsForUser",
+          "getInteractiveStudyGuide",
+          "getDocumentById",
+          "getDocumentThreads",
+          "searchProjectDocumentChunks",
+          "searchAccessibleDocumentChunks",
+          "getLatestCoachingPlan",
+          "getProjectAnnouncements",
+          "getProjectMembers",
+          "getQuizAttemptForProject",
+          "getQuizAttemptHistoryForProject",
+          "getProjectChatSessions",
+          "getChatMessages",
+          "userHasProjectAccess",
+          "getAdminDashboardStats",
+          "getAllProjects",
+          "getPendingRetakeCountsByProject",
+          "getProjectQuizSets",
+          "getRetakeRequestsForProject",
+          "getAllUsers",
+          "getUserActivity",
+          "getUserProjectCount",
+          "getUserQuizStats",
+          "getProjectAnalytics",
+          "getBookmarkedMessageIds",
+          "getProjectBookmarks",
+          "logActivity",
+          "getMemberDashboardStats",
+          "getMemberNotificationCount",
+          "getKnowledgeGapThread",
+          "getOpenThreadNotificationCount",
+          "getOpenThreadsForUser",
+          "getAdminThreadQueuePage",
+          "getObservabilityMetrics",
+          "getSystemHealthSnapshot",
+          "ensureDismissedGapsSchema",
+          "getKnowledgeGaps"
+        ]
+      }
+    ],
+    "components/layout/mobile-sidebar.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 5,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ],
+    "components/layout/navbar.tsx": [
+      {
+        "path": "lib/env.ts",
+        "batchIndex": 3,
+        "symbols": [
+          "appEnv",
+          "isDatabaseConfigured",
+          "isR2Configured",
+          "isGroqConfigured",
+          "isCopilotProxyConfigured",
+          "isOpenAiConfigured",
+          "isAzureOpenAiConfigured",
+          "isAnthropicConfigured",
+          "isMistralConfigured",
+          "isOllamaConfigured",
+          "isLlmConfigured",
+          "assertEnv"
+        ]
+      },
+      {
+        "path": "lib/types/database.ts",
+        "batchIndex": 6,
+        "symbols": []
+      }
+    ],
+    "components/layout/sidebar.tsx": [
+      {
+        "path": "lib/utils.ts",
+        "batchIndex": 5,
+        "symbols": ["cn", "formatDate", "formatPercent", "safeJsonParse", "toCsv", "sleep"]
+      }
+    ]
+  }
+}

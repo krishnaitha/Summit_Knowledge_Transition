@@ -26,7 +26,7 @@ export const appEnv = {
   copilotProxyToken: process.env.COPILOT_PROXY_TOKEN,
   copilotBaseUrl:
     process.env.COPILOT_BASE_URL ?? 'https://models.github.ai/inference/chat/completions',
-  copilotModel: process.env.COPILOT_MODEL ?? 'openai/gpt-4.1-mini',
+  copilotModel: process.env.COPILOT_MODEL ?? 'google/gemini-3.5-flash',
   // OpenAI configuration
   openAiApiKey: process.env.OPENAI_API_KEY,
   openAiBaseUrl: process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1/chat/completions',

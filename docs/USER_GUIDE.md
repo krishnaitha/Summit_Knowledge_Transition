@@ -129,13 +129,15 @@ The document appears in the list with status **Uploaded**.
 
 #### Step 2 — Process the document
 
-Processing extracts text, detects PII, and generates vector embeddings:
+Processing uses a two-stage safety flow: it first stores canonical extracted content, then generates vector embeddings from that canonical source:
 
 1. Click **Process** next to the uploaded document
 2. The status changes to **Processing** — this may take 30–120 seconds depending on document size
 3. Once the background worker completes, status changes to **Processed**
 
 > **Important:** A document must be in **Processed** status for it to appear in AI chat answers and quiz generation. If processing fails, click **Retry**.
+
+> **Embedding safety:** The system validates embedding model ID + revision at query time. If a mismatch is detected, existing vectors are purged and re-indexing jobs are queued automatically from canonical sources.
 
 #### Document classification
 

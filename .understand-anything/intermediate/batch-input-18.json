@@ -1,0 +1,58 @@
+{
+  "batchIndex": 18,
+  "totalBatches": 25,
+  "files": [
+    {
+      "path": ".understand-anything/intermediate/batch-8.json",
+      "language": "json",
+      "sizeLines": 1132,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batch-9.json",
+      "language": "json",
+      "sizeLines": 535,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/batches.json",
+      "language": "json",
+      "sizeLines": 10383,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/layers.json",
+      "language": "json",
+      "sizeLines": 414,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/review-output.json",
+      "language": "json",
+      "sizeLines": 20,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/scan-result.json",
+      "language": "json",
+      "sizeLines": 2755,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".understand-anything/intermediate/tour.json",
+      "language": "json",
+      "sizeLines": 174,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    ".understand-anything/intermediate/batch-8.json": [],
+    ".understand-anything/intermediate/batch-9.json": [],
+    ".understand-anything/intermediate/batches.json": [],
+    ".understand-anything/intermediate/layers.json": [],
+    ".understand-anything/intermediate/review-output.json": [],
+    ".understand-anything/intermediate/scan-result.json": [],
+    ".understand-anything/intermediate/tour.json": []
+  },
+  "neighborMap": {}
+}

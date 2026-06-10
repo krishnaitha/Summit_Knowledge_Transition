@@ -1,0 +1,98 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/ARCHITECTURE.md",
+      "type": "document",
+      "name": "ARCHITECTURE.md",
+      "filePath": "docs/ARCHITECTURE.md",
+      "summary": "Comprehensive architecture reference for the Summit KT Portal covering system overview, data model (ERD), authentication flows, RAG document ingestion pipeline, quiz generation, background job queue, RBAC model, API surface, component hierarchy, security model, deployment topology, and a roadmap of known gaps and future features.",
+      "tags": ["documentation", "architecture", "overview", "infrastructure", "api-schema"],
+      "complexity": "complex",
+      "languageNotes": "Document appears to contain two full versions of the architecture (sections 1–14 then sections 1–10 again), suggesting an evolving document with an updated revision appended rather than replaced."
+    },
+    {
+      "id": "document:docs/CONNECTOR_SETUP.md",
+      "type": "document",
+      "name": "CONNECTOR_SETUP.md",
+      "filePath": "docs/CONNECTOR_SETUP.md",
+      "summary": "Step-by-step setup guide for configuring external data-source connectors (Confluence, SharePoint, Jira, Monday.com, OneDrive, GitHub) including required fields, authentication token instructions, sync schedule behavior, validation checklist, and troubleshooting for common sync and auth errors.",
+      "tags": ["documentation", "configuration", "data-pipeline", "deployment"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/LLM_PROVIDER_SETUP.md",
+      "type": "document",
+      "name": "LLM_PROVIDER_SETUP.md",
+      "filePath": "docs/LLM_PROVIDER_SETUP.md",
+      "summary": "Operational guide for configuring and switching LLM providers (Groq, GitHub Models, OpenAI, Azure, Anthropic, Mistral, Ollama, Copilot), covering API key setup, environment variable configuration, runtime model switching via the admin panel, provider differences, troubleshooting common errors, and security best practices.",
+      "tags": ["documentation", "configuration", "infrastructure", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/LOCAL_STORAGE.md",
+      "type": "document",
+      "name": "LOCAL_STORAGE.md",
+      "filePath": "docs/LOCAL_STORAGE.md",
+      "summary": "Guide for configuring the local filesystem storage backend as an alternative to Cloudflare R2, covering storage location, file organization, API changes, security considerations, production deployment options (mounted volumes, NAS, backup), migration from R2, monitoring, and troubleshooting.",
+      "tags": ["documentation", "infrastructure", "deployment", "configuration", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/RELEASE_NOTES_2026_05.md",
+      "type": "document",
+      "name": "RELEASE_NOTES_2026_05.md",
+      "filePath": "docs/RELEASE_NOTES_2026_05.md",
+      "summary": "May 2026 release notes for the NexTElevate platform detailing improvements to chat UX, performance and navigation reliability, memory and stability fixes, document connector auto-sync tuning, documents UX enhancements, observability UI, and API/schema surface updates.",
+      "tags": ["documentation", "release-notes", "changelog"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/SELF_HOSTED_DEPLOYMENT.md",
+      "type": "document",
+      "name": "SELF_HOSTED_DEPLOYMENT.md",
+      "filePath": "docs/SELF_HOSTED_DEPLOYMENT.md",
+      "summary": "End-to-end self-hosted deployment guide covering server requirements, Docker and Git setup, self-hosted Supabase configuration, SSL and Nginx reverse proxy, database migrations, app deployment (Docker or PM2), environment variables, automated backups, security hardening (UFW, SSL renewal), monitoring, data migration from Supabase Cloud, and cost comparison.",
+      "tags": ["documentation", "deployment", "infrastructure", "containerization", "security"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/USER_GUIDE.md",
+      "type": "document",
+      "name": "USER_GUIDE.md",
+      "filePath": "docs/USER_GUIDE.md",
+      "summary": "Comprehensive end-user guide for the Summit KT Portal covering all three role types: Super Admin (project management, document upload, connector setup, quiz generation, announcements, user management), Project Admin (scoped document and member management), and Member (dashboard, document reading, AI chat, bookmarks, quiz-taking, retake requests).",
+      "tags": ["documentation", "user-guide", "overview"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/WORKER_SETUP.md",
+      "type": "document",
+      "name": "WORKER_SETUP.md",
+      "filePath": "docs/WORKER_SETUP.md",
+      "summary": "Developer guide for the background job worker process explaining how the Postgres-backed job queue works, environment variable requirements, local development setup, and two production deployment options: a long-running process (VPS/Docker/Railway/Render) and a pg_cron-triggered serverless approach (Vercel), with monitoring queries and Groq rate-limit notes.",
+      "tags": ["documentation", "infrastructure", "deployment", "data-pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/database-options-comparison.md",
+      "type": "document",
+      "name": "database-options-comparison.md",
+      "filePath": "docs/database-options-comparison.md",
+      "summary": "Technical decision document comparing database and backend platform options (Supabase, Firebase, Appwrite, PocketBase, Xata, Neon, MySQL, MongoDB, SQLite, DynamoDB, self-hosted Postgres) against the application's requirements (pgvector, pgcrypto, row-level security, full SQL), with head-to-head summary, security comparison, migration guidance, and a recommendation.",
+      "tags": ["documentation", "database", "infrastructure"],
+      "complexity": "moderate",
+      "languageNotes": "Structured as an architectural decision record (ADR) with pros/cons tables per option and an explicit recommendation section — useful onboarding context for contributors evaluating the Supabase dependency."
+    },
+    {
+      "id": "file:docs/load_test_report.html",
+      "type": "file",
+      "name": "load_test_report.html",
+      "filePath": "docs/load_test_report.html",
+      "summary": "Self-contained HTML load test report capturing performance benchmark results for the Summit KT Portal API, presenting request throughput, latency percentiles, error rates, and endpoint-level breakdown in a formatted, human-readable page.",
+      "tags": ["documentation", "monitoring", "infrastructure"],
+      "complexity": "complex",
+      "languageNotes": "Single-file HTML report with inline styles and embedded data — typical output from a load-testing tool such as k6, Artillery, or Apache JMeter."
+    }
+  ],
+  "edges": []
+}

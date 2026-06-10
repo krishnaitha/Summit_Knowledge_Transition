@@ -6,7 +6,7 @@ const PROJECT_ID = '6c250977-f97e-42f4-b1fa-2798f105370d'; // Baymaster
 const COUNT = 10;
 
 const client = new Client({
-  connectionString: 'postgresql://postgres:Test321@localhost:5433/Summit_KT',
+  connectionString: 'postgresql://postgres:Test321@localhost:5433/NextElevate',
 });
 
 await client.connect();

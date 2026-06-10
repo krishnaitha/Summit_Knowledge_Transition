@@ -370,6 +370,8 @@ sequenceDiagram
 
 Document sources now include both direct file uploads and external connectors for Confluence spaces and SharePoint document libraries. Connector sync jobs land in the same processing queue, then reuse the same parsing, chunking, PII scanning, and embedding path as uploaded files.
 
+For full embedding lifecycle details (two-stage canonical source flow, model pinning, mismatch recovery, and operations), see [docs/EMBEDDINGS.md](docs/EMBEDDINGS.md).
+
 ```mermaid
 sequenceDiagram
     participant Admin

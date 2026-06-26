@@ -1,10 +1,12 @@
 # Summit KT Portal — Architecture
 
-> **Version:** 1.1.0  
-> **Stack:** Next.js 16 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS  
+> **Version:** 1.2.0  
+> **Stack:** Next.js 16 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS · MCP (Model Context Protocol)
 > **Purpose:** Enterprise knowledge-transfer portal for structured team transitions
 
 > **May 2026 Addendum:** Document threads, open-thread triage queues, chunk full-text search, interactive study mode, flashcards with spaced repetition, quiz attempt history retention, external document connectors (Confluence/SharePoint), and transcript-to-document AI generation are now part of the production architecture.
+
+> **June 2026 Addendum:** AI Governance & Safety system (content filtering, quota management, audit logging, refusal tracking) and MCP-based processing pipeline (Document Processor MCP + RAG Retrieval MCP) are now part of the production architecture. See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) and [GOVERNANCE_IMPLEMENTATION.md](./GOVERNANCE_IMPLEMENTATION.md).
 
 ---
 
@@ -18,6 +20,8 @@
 6. [Document Ingestion Pipeline](#6-document-ingestion-pipeline)
 7. [RAG AI Chat Pipeline](#7-rag-ai-chat-pipeline)
 8. [Quiz Generation & Delivery Flow](#8-quiz-generation--delivery-flow)
+9. [MCP Processing Pipeline](#9-mcp-processing-pipeline)
+10. [AI Governance & Safety](#10-ai-governance--safety)
 9. [Background Job Queue](#9-background-job-queue)
 10. [Role-Based Access Control Model](#10-role-based-access-control-model)
 11. [API Surface](#11-api-surface)
@@ -702,6 +706,98 @@ graph LR
 ```
 
 See [SELF_HOSTED_DEPLOYMENT.md](SELF_HOSTED_DEPLOYMENT.md) for full server setup, nginx config, PM2 ecosystem, and environment variable management.
+
+---
+
+## 9. MCP Processing Pipeline
+
+NextElevate uses the **Model Context Protocol (MCP)** to modularize AI processing into standalone servers. Two MCP servers handle document processing and RAG retrieval.
+
+### 9.1 Document Processor MCP (Phase 1)
+
+Activated by `MCP_DOCUMENT_PROCESSOR_ENABLED=true`. Runs when a document is uploaded and processed by the background worker.
+
+```
+Upload → Worker → MCP Document Processor
+                    ├── scan_sensitivity  (public/internal/confidential/restricted)
+                    ├── redact_pii        (email, SSN, credit card, phone)
+                    └── chunk_text        (overlapping chunks for RAG)
+```
+
+**Source:** `mcp-servers/document-processor/`  
+**Client:** `lib/mcp/document-processor-client.ts`  
+**Fallback:** `lib/documents/process.ts` if MCP fails
+
+### 9.2 RAG Retrieval MCP (Phase 2)
+
+Activated by `MCP_RAG_RETRIEVAL_ENABLED=true`. Runs on every chat message to retrieve relevant document context.
+
+```
+Chat → API → MCP RAG Retrieval
+               ├── embed_text      (384-dim vector via Xenova/all-MiniLM-L6-v2)
+               ├── search_chunks   (cosine similarity via pgvector)
+               ├── rerank_results  (keyword-boosted reranking)
+               └── → top 5 chunks → LLM context
+```
+
+**Source:** `mcp-servers/rag-retrieval/`  
+**Client:** `lib/mcp/rag-retrieval-client.ts`  
+**Fallback:** `lib/rag/retrieval.ts` if MCP fails
+
+### 9.3 Communication
+
+Both servers use **stdio transport** and are auto-spawned as child processes by the client — no manual startup needed.
+
+See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) for full setup, logs, and extension guide.
+
+---
+
+## 10. AI Governance & Safety
+
+A comprehensive non-blocking governance layer sits across the chat pipeline.
+
+### 10.1 Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| Content Filtering | `lib/safety/content-filters.ts` | PII, jailbreak, keyword detection |
+| Quota Manager | `lib/safety/quota-manager.ts` | Per-user token/cost limits (blocks with 429) |
+| Audit Logger | `lib/safety/audit-logger.ts` | Async log of every LLM interaction |
+| Refusal Detector | `lib/safety/refusal-detector.ts` | Detect and categorize LLM refusals |
+| Governance Config | `lib/safety/governance-config.ts` | Policy CRUD with 5-min in-memory cache |
+
+### 10.2 Chat Integration
+
+```
+User Message
+    ↓
+[1] Quota check         ← only blocking operation (429 if exceeded)
+    ↓
+[2] Content filter      ← async, fire-and-forget
+    ↓
+[3] LLM call
+    ↓
+[4] Refusal detection   ← async
+[5] Output filter       ← sync regex, <10ms
+[6] Audit log           ← async, fire-and-forget
+    ↓
+Response sent
+```
+
+### 10.3 Admin UI
+
+- `Admin → AI Governance` — overview dashboard with 7-day KPIs
+- `Admin → AI Governance → Policies` — create/toggle/delete governance policies
+- `Admin → AI Governance → Quotas` — per-user token/cost limits
+- `Admin → AI Governance → Audit Logs` — paginated LLM interaction log
+- `Admin → AI Governance → Refusals` — refusal breakdown by reason
+- `Admin → AI Governance → Violations` — content filter violation review
+
+### 10.4 Database Tables
+
+`governance_policies` · `user_quotas` · `model_behavior_config` · `llm_interaction_audit_log` · `refusal_log` · `content_filter_violations`
+
+See [GOVERNANCE_IMPLEMENTATION.md](./GOVERNANCE_IMPLEMENTATION.md) for full schema and integration details.
 
 ---
 

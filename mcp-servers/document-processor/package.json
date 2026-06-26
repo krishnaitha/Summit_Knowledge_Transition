@@ -1,0 +1,22 @@
+{
+  "name": "@nextelevate/document-processor-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for document parsing, PII redaction, chunking, and sensitivity scanning",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "node dist/server.js",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "pdf-parse": "^1.1.1",
+    "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/papaparse": "^5.5.2",
+    "typescript": "^5.0.0"
+  }
+}

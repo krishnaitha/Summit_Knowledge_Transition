@@ -43,3 +43,14 @@ next-env.d.ts
 
 # local uploads
 /public/uploads
+
+# playwright
+/playwright-report/
+/test-results/
+/e2e/.auth/
+
+# mcp server node_modules
+/mcp-servers/*/node_modules/
+
+# temp scripts
+cleanup-policies.mjs

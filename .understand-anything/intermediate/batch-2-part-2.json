@@ -1,0 +1,993 @@
+{
+  "nodes": [
+    {
+      "id": "file:components/admin/knowledge-gaps-card.tsx",
+      "type": "file",
+      "name": "knowledge-gaps-card.tsx",
+      "filePath": "components/admin/knowledge-gaps-card.tsx",
+      "summary": "Admin dashboard card component that displays open and resolved knowledge gap queries across projects, with per-row dismiss and thread-creation actions.",
+      "tags": ["component", "admin", "knowledge-gaps"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/admin/knowledge-gaps-card.tsx:KnowledgeGapsCard",
+      "type": "function",
+      "name": "KnowledgeGapsCard",
+      "filePath": "components/admin/knowledge-gaps-card.tsx",
+      "lineRange": [20, 88],
+      "summary": "Top-level card container that splits gaps into open and resolved lists, manages a toggle to show resolved gaps, and renders GapRow and ResolvedGapRow sub-components.",
+      "tags": ["component", "admin", "knowledge-gaps"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/knowledge-gaps-card.tsx:GapRow",
+      "type": "function",
+      "name": "GapRow",
+      "filePath": "components/admin/knowledge-gaps-card.tsx",
+      "lineRange": [90, 186],
+      "summary": "Renders a single open knowledge-gap row with dismiss confirmation UI, project badges, and a KnowledgeGapThreadButton for creating a thread.",
+      "tags": ["component", "admin", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/knowledge-gaps-card.tsx:ResolvedGapRow",
+      "type": "function",
+      "name": "ResolvedGapRow",
+      "filePath": "components/admin/knowledge-gaps-card.tsx",
+      "lineRange": [188, 224],
+      "summary": "Renders a single resolved knowledge-gap row in a condensed read-only view showing project associations.",
+      "tags": ["component", "admin"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "type": "file",
+      "name": "project-knowledge-gaps-table.tsx",
+      "filePath": "components/admin/project-knowledge-gaps-table.tsx",
+      "summary": "Admin table component that displays per-project knowledge gap queries with an inline create-thread button for each row.",
+      "tags": ["component", "admin", "knowledge-gaps"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/admin/project-knowledge-gaps-table.tsx:ProjectKnowledgeGapsTable",
+      "type": "function",
+      "name": "ProjectKnowledgeGapsTable",
+      "filePath": "components/admin/project-knowledge-gaps-table.tsx",
+      "lineRange": [51, 121],
+      "summary": "Renders a dynamic table of knowledge gap rows with per-row create-thread buttons and links to search for related chat sessions.",
+      "tags": ["component", "admin", "knowledge-gaps"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/chat/bookmark-button.tsx",
+      "type": "file",
+      "name": "bookmark-button.tsx",
+      "filePath": "components/chat/bookmark-button.tsx",
+      "summary": "Interactive toggle button that bookmarks or un-bookmarks a chat message via fetch calls to the bookmarks API, with optimistic local state.",
+      "tags": ["component", "chat", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/chat/bookmark-button.tsx:BookmarkButton",
+      "type": "function",
+      "name": "BookmarkButton",
+      "filePath": "components/chat/bookmark-button.tsx",
+      "lineRange": [14, 63],
+      "summary": "Client component managing bookmark toggle state for a message, calling the appropriate add or delete bookmark API endpoint with optimistic updates.",
+      "tags": ["component", "chat", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/chat/chat-interface.tsx",
+      "type": "file",
+      "name": "chat-interface.tsx",
+      "filePath": "components/chat/chat-interface.tsx",
+      "summary": "Full-featured RAG chat client component supporting multi-session management, streaming responses, session export/delete/rename, response style control, and bookmark tracking.",
+      "tags": ["component", "chat", "service"],
+      "complexity": "complex",
+      "languageNotes": "Uses useEffectEvent (React experimental API) for stable async callbacks and useTransition for non-blocking session loads."
+    },
+    {
+      "id": "function:components/chat/chat-interface.tsx:ChatInterface",
+      "type": "function",
+      "name": "ChatInterface",
+      "filePath": "components/chat/chat-interface.tsx",
+      "lineRange": [65, 639],
+      "summary": "Main chat client component managing session state, streaming assistant responses via ReadableStream, session CRUD, bookmark toggling, and response style preferences.",
+      "tags": ["component", "chat", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/chat/feedback-buttons.tsx",
+      "type": "file",
+      "name": "feedback-buttons.tsx",
+      "filePath": "components/chat/feedback-buttons.tsx",
+      "summary": "Thumbs-up/thumbs-down feedback component for chat messages that records user ratings and optional downvote reasons via the chat feedback API.",
+      "tags": ["component", "chat", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/chat/feedback-buttons.tsx:FeedbackButtons",
+      "type": "function",
+      "name": "FeedbackButtons",
+      "filePath": "components/chat/feedback-buttons.tsx",
+      "lineRange": [15, 87],
+      "summary": "Client component that renders thumbs-up and thumbs-down buttons with a detailed reason picker for negative feedback, persisting ratings to the API.",
+      "tags": ["component", "chat", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/chat/message-bubble.tsx",
+      "type": "file",
+      "name": "message-bubble.tsx",
+      "filePath": "components/chat/message-bubble.tsx",
+      "summary": "Chat message bubble component that renders user and assistant messages with markdown content, source citation tags, feedback buttons, and bookmark controls.",
+      "tags": ["component", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "type": "function",
+      "name": "MessageBubble",
+      "filePath": "components/chat/message-bubble.tsx",
+      "lineRange": [17, 73],
+      "summary": "Renders a styled message bubble for a single chat message, conditionally showing source tags, feedback buttons, and bookmark toggle based on message role.",
+      "tags": ["component", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/chat/source-tag.tsx",
+      "type": "file",
+      "name": "source-tag.tsx",
+      "filePath": "components/chat/source-tag.tsx",
+      "summary": "Badge component that displays a RAG source document citation with a human-readable confidence level derived from the cosine similarity score.",
+      "tags": ["component", "chat", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/chat/source-tag.tsx:SourceTag",
+      "type": "function",
+      "name": "SourceTag",
+      "filePath": "components/chat/source-tag.tsx",
+      "lineRange": [13, 27],
+      "summary": "Renders a Badge showing a document name and similarity-derived confidence label for a RAG retrieval source.",
+      "tags": ["component", "chat"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/documents/document-threads-board.tsx",
+      "type": "file",
+      "name": "document-threads-board.tsx",
+      "filePath": "components/documents/document-threads-board.tsx",
+      "summary": "Document discussion board component rendering threaded conversations anchored to a document, supporting new thread creation, replies, status updates, bot-reply polling, and markdown rendering of AI responses.",
+      "tags": ["component", "threads", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "type": "function",
+      "name": "DocumentThreadsBoard",
+      "filePath": "components/documents/document-threads-board.tsx",
+      "lineRange": [22, 213],
+      "summary": "Main board component that renders all document threads with nested comments, new thread/reply forms with server action submission, status controls for moderators, and bot-reply pending indicators.",
+      "tags": ["component", "threads", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/ui/markdown-content.tsx",
+      "type": "file",
+      "name": "markdown-content.tsx",
+      "filePath": "components/ui/markdown-content.tsx",
+      "summary": "Reusable Markdown rendering component built on react-markdown with remark-gfm, providing two size modes and special heading class logic for structured AI output.",
+      "tags": ["component", "ui", "utility"],
+      "complexity": "moderate",
+      "languageNotes": "Uses a custom h1/h2 renderer that maps semantic heading labels like 'Summary' and 'Next Steps' to color-coded Tailwind classes."
+    },
+    {
+      "id": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "function",
+      "name": "MarkdownContent",
+      "filePath": "components/ui/markdown-content.tsx",
+      "lineRange": [51, 151],
+      "summary": "React component wrapping ReactMarkdown with GFM plugins and custom heading renderers; supports 'sm' and 'base' size variants for compact vs. full prose display.",
+      "tags": ["component", "ui", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/ui/modal.tsx",
+      "type": "file",
+      "name": "modal.tsx",
+      "filePath": "components/ui/modal.tsx",
+      "summary": "Simple accessible modal dialog component with a backdrop overlay and close button, accepting open state, title, and children as props.",
+      "tags": ["component", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/ui/modal.tsx:Modal",
+      "type": "function",
+      "name": "Modal",
+      "filePath": "components/ui/modal.tsx",
+      "lineRange": [7, 35],
+      "summary": "Conditional dialog overlay that renders a titled card with a close button when open, using cn for dynamic classname composition.",
+      "tags": ["component", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/data.ts",
+      "type": "file",
+      "name": "data.ts",
+      "filePath": "lib/data.ts",
+      "summary": "Central data access layer providing all SQL queries for the application, including user profiles, projects, documents, chat sessions, quizzes, analytics, threading, knowledge gaps, observability metrics, and system health.",
+      "tags": ["service", "data-model", "utility"],
+      "complexity": "complex",
+      "languageNotes": "All queries use the postgres tagged-template sql client with typed generics; no ORM. Several functions use next/cache unstable_cache for server-side memoization."
+    },
+    {
+      "id": "function:lib/data.ts:getAssignedProjects",
+      "type": "function",
+      "name": "getAssignedProjects",
+      "filePath": "lib/data.ts",
+      "lineRange": [127, 200],
+      "summary": "Fetches all projects assigned to a user with enriched metadata including quiz attempt status, new document count, open thread count, and view history.",
+      "tags": ["service", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getDocumentThreads",
+      "type": "function",
+      "name": "getDocumentThreads",
+      "filePath": "lib/data.ts",
+      "lineRange": [389, 458],
+      "summary": "Queries all threads and their nested comments for a document, assembling a structured thread-with-comments result including author info and source citations.",
+      "tags": ["service", "data-model", "threads"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "function",
+      "name": "searchProjectDocumentChunks",
+      "filePath": "lib/data.ts",
+      "lineRange": [474, 615],
+      "summary": "Hybrid search function that runs vector similarity (pgvector) and full-text (tsvector) searches against document chunks for a project, with result merging and deduplication.",
+      "tags": ["service", "data-model", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "function",
+      "name": "searchAccessibleDocumentChunks",
+      "filePath": "lib/data.ts",
+      "lineRange": [617, 921],
+      "summary": "Role-aware hybrid search across document chunks accessible to a user, dispatching to different SQL queries based on admin/member role and optional project scope.",
+      "tags": ["service", "data-model", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "function",
+      "name": "getAdminDashboardStats",
+      "filePath": "lib/data.ts",
+      "lineRange": [1030, 1089],
+      "summary": "Aggregates key admin dashboard metrics including total users, active projects, document count, quiz completion rates, and recent activity across the platform.",
+      "tags": ["service", "admin", "analytics"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/data.ts:getProjectAnalytics",
+      "type": "function",
+      "name": "getProjectAnalytics",
+      "filePath": "lib/data.ts",
+      "lineRange": [1192, 1499],
+      "summary": "Comprehensive project analytics query returning member engagement, quiz scores by section, document interaction rates, chat usage, and knowledge gap frequencies.",
+      "tags": ["service", "admin", "analytics"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getMemberDashboardStats",
+      "type": "function",
+      "name": "getMemberDashboardStats",
+      "filePath": "lib/data.ts",
+      "lineRange": [1551, 1706],
+      "summary": "Fetches a member's personalized dashboard data including assigned projects, quiz progress, document reading stats, open thread counts, and recent activity.",
+      "tags": ["service", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "function",
+      "name": "getOpenThreadsForUser",
+      "filePath": "lib/data.ts",
+      "lineRange": [1826, 1919],
+      "summary": "Returns threads visible to a user given their role, with optional status filter and knowledge-gap thread inclusion, sorted by most-recent activity.",
+      "tags": ["service", "data-model", "threads"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getAdminThreadQueuePage",
+      "type": "function",
+      "name": "getAdminThreadQueuePage",
+      "filePath": "lib/data.ts",
+      "lineRange": [1921, 2020],
+      "summary": "Paginated admin thread queue query supporting filtering by project, status, and text search across thread titles and comments.",
+      "tags": ["service", "admin", "threads"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getObservabilityMetrics",
+      "type": "function",
+      "name": "getObservabilityMetrics",
+      "filePath": "lib/data.ts",
+      "lineRange": [2022, 2123],
+      "summary": "Queries RAG trace data to surface latency percentiles, similarity score distributions, refusal rates, and possible hallucination counts for the observability panel.",
+      "tags": ["service", "analytics", "admin"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getSystemHealthSnapshot",
+      "type": "function",
+      "name": "getSystemHealthSnapshot",
+      "filePath": "lib/data.ts",
+      "lineRange": [2125, 2295],
+      "summary": "Assembles a comprehensive system health snapshot including job queue status, worker activity, error event counts, embedding model consistency, and connector sync states.",
+      "tags": ["service", "admin", "monitoring"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "function",
+      "name": "getKnowledgeGaps",
+      "filePath": "lib/data.ts",
+      "lineRange": [2329, 2384],
+      "summary": "Identifies recurring unanswered or low-confidence chat queries across projects from the last 30 days, excluding previously dismissed gaps.",
+      "tags": ["service", "knowledge-gaps", "analytics"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/data.ts:userHasProjectAccess",
+      "type": "function",
+      "name": "userHasProjectAccess",
+      "filePath": "lib/data.ts",
+      "lineRange": [1015, 1028],
+      "summary": "Checks whether a user is assigned to a specific project, used as an access guard in server actions and page components.",
+      "tags": ["service", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/data.ts:getProjectById",
+      "type": "function",
+      "name": "getProjectById",
+      "filePath": "lib/data.ts",
+      "lineRange": [202, 205],
+      "summary": "Simple single-row lookup for a project by its UUID, returning the full ProjectRecord.",
+      "tags": ["service", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/env.client.ts",
+      "type": "file",
+      "name": "env.client.ts",
+      "filePath": "lib/env.client.ts",
+      "summary": "Exposes a typed clientEnv object containing public Next.js NEXT_PUBLIC_ environment variables safe for use in browser-side code.",
+      "tags": ["configuration", "utility", "environment"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:components/admin/knowledge-gap-thread-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:components/admin/knowledge-gaps-card.tsx:KnowledgeGapsCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:components/admin/knowledge-gaps-card.tsx:KnowledgeGapsCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:components/admin/knowledge-gaps-card.tsx:GapRow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/knowledge-gaps-card.tsx",
+      "target": "function:components/admin/knowledge-gaps-card.tsx:ResolvedGapRow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:components/admin/knowledge-gaps-card.tsx:GapRow",
+      "target": "function:app/actions/document-threads.ts:dismissKnowledgeGapAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "function:components/admin/project-knowledge-gaps-table.tsx:ProjectKnowledgeGapsTable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/admin/project-knowledge-gaps-table.tsx",
+      "target": "function:components/admin/project-knowledge-gaps-table.tsx:ProjectKnowledgeGapsTable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/bookmark-button.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/bookmark-button.tsx",
+      "target": "function:components/chat/bookmark-button.tsx:BookmarkButton",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/bookmark-button.tsx",
+      "target": "function:components/chat/bookmark-button.tsx:BookmarkButton",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/chat/message-bubble.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "function:components/chat/chat-interface.tsx:ChatInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/chat-interface.tsx",
+      "target": "function:components/chat/chat-interface.tsx:ChatInterface",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/feedback-buttons.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/feedback-buttons.tsx",
+      "target": "function:components/chat/feedback-buttons.tsx:FeedbackButtons",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/feedback-buttons.tsx",
+      "target": "function:components/chat/feedback-buttons.tsx:FeedbackButtons",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "file:components/chat/bookmark-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "file:components/chat/feedback-buttons.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "file:components/chat/source-tag.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/message-bubble.tsx",
+      "target": "function:components/chat/message-bubble.tsx:MessageBubble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/chat/source-tag.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/chat/source-tag.tsx",
+      "target": "function:components/chat/source-tag.tsx:SourceTag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/chat/source-tag.tsx",
+      "target": "function:components/chat/source-tag.tsx:SourceTag",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/documents/bot-reply-poller.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/markdown-content.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/env.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/documents/document-threads-board.tsx",
+      "target": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "target": "function:app/actions/document-threads.ts:createDocumentThreadAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "target": "function:app/actions/document-threads.ts:addDocumentThreadReplyAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/documents/document-threads-board.tsx:DocumentThreadsBoard",
+      "target": "function:app/actions/document-threads.ts:updateDocumentThreadStatusAction",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/markdown-content.tsx",
+      "target": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/ui/markdown-content.tsx",
+      "target": "function:components/ui/markdown-content.tsx:MarkdownContent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/modal.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/ui/modal.tsx",
+      "target": "function:components/ui/modal.tsx:Modal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:components/ui/modal.tsx",
+      "target": "function:components/ui/modal.tsx:Modal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/db.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/quiz/scoring.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/types/database.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAssignedProjects",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getDocumentThreads",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getDocumentThreads",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchProjectDocumentChunks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:searchAccessibleDocumentChunks",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAdminDashboardStats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getProjectAnalytics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getProjectAnalytics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getMemberDashboardStats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getMemberDashboardStats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getOpenThreadsForUser",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAdminThreadQueuePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getAdminThreadQueuePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getObservabilityMetrics",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getObservabilityMetrics",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getSystemHealthSnapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getSystemHealthSnapshot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getKnowledgeGaps",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:userHasProjectAccess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:userHasProjectAccess",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getProjectById",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lib/data.ts",
+      "target": "function:lib/data.ts:getProjectById",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

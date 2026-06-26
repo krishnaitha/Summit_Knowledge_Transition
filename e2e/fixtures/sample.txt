@@ -1,0 +1,41 @@
+NextElevate Knowledge Transfer — Sample Document (E2E Test Fixture)
+
+This document is used exclusively for automated end-to-end tests. It is safe to delete.
+
+## Product Overview
+
+SampleApp is a fictional product used to verify document ingestion, search, and AI chat features.
+
+## Key Features
+
+- Feature A: Handles user authentication and authorization using OAuth 2.0.
+- Feature B: Manages document processing and vector indexing via pgvector.
+- Feature C: Provides AI-powered chat assistance scoped to project documents.
+- Feature D: Generates knowledge assessments (quizzes) from ingested content.
+
+## Architecture
+
+The system follows a microservices pattern:
+- Next.js 16 frontend with App Router
+- PostgreSQL database with pgvector extension
+- Background job queue for document ingestion
+- Cloudflare R2 for file storage
+
+## Common Questions
+
+Q: How does document processing work?
+A: Documents are uploaded, parsed into text, split into overlapping chunks, and embedded using a
+   local transformer model. Chunks and embeddings are stored in the document_chunks table.
+
+Q: What authentication methods are supported?
+A: Credentials (email/password), AWS Cognito, and OIDC providers are all supported.
+
+Q: How is the quiz generated?
+A: An LLM reads the project documents and generates multiple-choice questions covering both
+   functional and technical aspects of the product.
+
+## Known Risks and Dependencies
+
+- Embedding model changes require full re-ingestion of all documents.
+- The background worker must be running for document processing to complete.
+- LLM API rate limits may delay quiz generation for large document sets.

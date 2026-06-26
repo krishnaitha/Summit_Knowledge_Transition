@@ -1,0 +1,6106 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 20,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "__tests__/api/threads/bot-reply-route.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 230,
+      "nonEmptyLines": 181,
+      "functions": [
+        {
+          "name": "makeParams",
+          "startLine": 58,
+          "endLine": 60,
+          "params": [
+            "threadId"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "makeParams",
+          "callee": "Promise.resolve",
+          "lineNumber": 59
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "__tests__/lib/documents/bot-reply.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 304,
+      "nonEmptyLines": 255,
+      "functions": [
+        {
+          "name": "makeChunk",
+          "startLine": 27,
+          "endLine": 33,
+          "params": [
+            "similarity",
+            "document_name",
+            "content"
+          ]
+        },
+        {
+          "name": "asChunks",
+          "startLine": 35,
+          "endLine": 37,
+          "params": [
+            "arr"
+          ]
+        },
+        {
+          "name": "makeLlmResponse",
+          "startLine": 39,
+          "endLine": 46,
+          "params": [
+            "content"
+          ]
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 0,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "__tests__/lib/env.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 162,
+      "nonEmptyLines": 139,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/model-switcher/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 42,
+      "functions": [
+        {
+          "name": "AdminModelSwitcherPage",
+          "startLine": 10,
+          "endLine": 46,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminModelSwitcherPage",
+          "line": 10,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AdminModelSwitcherPage",
+          "callee": "requireAdmin",
+          "lineNumber": 11
+        },
+        {
+          "caller": "AdminModelSwitcherPage",
+          "callee": "Promise.all",
+          "lineNumber": 12
+        },
+        {
+          "caller": "AdminModelSwitcherPage",
+          "callee": "getLlmRuntimeConfig",
+          "lineNumber": 13
+        },
+        {
+          "caller": "AdminModelSwitcherPage",
+          "callee": "getMaskedLlmRuntimeSecrets",
+          "lineNumber": 14
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/analytics/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 44,
+      "functions": [
+        {
+          "name": "ProjectAnalyticsPage",
+          "startLine": 10,
+          "endLine": 47,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectAnalyticsPage",
+          "line": 10,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectAnalyticsPage",
+          "callee": "Promise.all",
+          "lineNumber": 12
+        },
+        {
+          "caller": "ProjectAnalyticsPage",
+          "callee": "requireAdmin",
+          "lineNumber": 13
+        },
+        {
+          "caller": "ProjectAnalyticsPage",
+          "callee": "getProjectById",
+          "lineNumber": 14
+        },
+        {
+          "caller": "ProjectAnalyticsPage",
+          "callee": "getProjectAnalytics",
+          "lineNumber": 15
+        },
+        {
+          "caller": "ProjectAnalyticsPage",
+          "callee": "getObservabilityMetrics",
+          "lineNumber": 16
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/users/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 109,
+      "nonEmptyLines": 104,
+      "functions": [
+        {
+          "name": "AdminUsersPage",
+          "startLine": 10,
+          "endLine": 109,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminUsersPage",
+          "line": 10,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AdminUsersPage",
+          "callee": "requireAdmin",
+          "lineNumber": 11
+        },
+        {
+          "caller": "AdminUsersPage",
+          "callee": "Promise.all",
+          "lineNumber": 12
+        },
+        {
+          "caller": "AdminUsersPage",
+          "callee": "getAllUsers",
+          "lineNumber": 13
+        },
+        {
+          "caller": "AdminUsersPage",
+          "callee": "getAllProjects",
+          "lineNumber": 14
+        },
+        {
+          "caller": "AdminUsersPage",
+          "callee": "getAdminDashboardStats",
+          "lineNumber": 15
+        },
+        {
+          "caller": "AdminUsersPage",
+          "callee": "projects.filter",
+          "lineNumber": 17
+        },
+        {
+          "caller": "AdminUsersPage",
+          "callee": "activeProjects.map",
+          "lineNumber": 74
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/actions/admin.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1096,
+      "nonEmptyLines": 920,
+      "functions": [
+        {
+          "name": "createProjectAction",
+          "startLine": 17,
+          "endLine": 30,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "updateProjectSettingsAction",
+          "startLine": 32,
+          "endLine": 60,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "toggleProjectStatusAction",
+          "startLine": 62,
+          "endLine": 70,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "ensureAppSettingsSchema",
+          "startLine": 72,
+          "endLine": 81,
+          "params": []
+        },
+        {
+          "name": "updateLlmRuntimeConfigAction",
+          "startLine": 83,
+          "endLine": 202,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "deleteDocumentAction",
+          "startLine": 204,
+          "endLine": 226,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "buildConnectorConfig",
+          "startLine": 228,
+          "endLine": 340,
+          "params": [
+            "formData",
+            "provider"
+          ]
+        },
+        {
+          "name": "ensureConnectorSchema",
+          "startLine": 342,
+          "endLine": 409,
+          "params": []
+        },
+        {
+          "name": "createDocumentConnectorAction",
+          "startLine": 411,
+          "endLine": 441,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "syncDocumentConnectorAction",
+          "startLine": 443,
+          "endLine": 462,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "testDocumentConnectorAction",
+          "startLine": 464,
+          "endLine": 483,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "dryRunDocumentConnectorAction",
+          "startLine": 485,
+          "endLine": 504,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "deleteDocumentConnectorAction",
+          "startLine": 506,
+          "endLine": 516,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "toggleDocumentConnectorAutoSyncAction",
+          "startLine": 518,
+          "endLine": 537,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "toggleDocumentRequiredAction",
+          "startLine": 539,
+          "endLine": 555,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "inviteProjectMemberAction",
+          "startLine": 557,
+          "endLine": 621,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "sendProjectAnnouncementAction",
+          "startLine": 623,
+          "endLine": 676,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "removeProjectMemberAction",
+          "startLine": 678,
+          "endLine": 687,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "updateProjectMemberRoleAction",
+          "startLine": 689,
+          "endLine": 701,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "resetQuizAttemptAction",
+          "startLine": 705,
+          "endLine": 808,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "setQuizWindowAction",
+          "startLine": 810,
+          "endLine": 825,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "deleteQuizSetAction",
+          "startLine": 827,
+          "endLine": 835,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "deleteQuizQuestionAction",
+          "startLine": 837,
+          "endLine": 844,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "createQuizSetAction",
+          "startLine": 846,
+          "endLine": 861,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "createQuizQuestionAction",
+          "startLine": 863,
+          "endLine": 887,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "updateQuizQuestionAction",
+          "startLine": 889,
+          "endLine": 910,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "toggleQuizSetActiveAction",
+          "startLine": 912,
+          "endLine": 920,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "importQuizCsvAction",
+          "startLine": 922,
+          "endLine": 949,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "createDemoUserAction",
+          "startLine": 951,
+          "endLine": 983,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "updateUserRoleAction",
+          "startLine": 985,
+          "endLine": 993,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "toggleUserActiveAction",
+          "startLine": 995,
+          "endLine": 1003,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "bulkToggleUserActiveAction",
+          "startLine": 1005,
+          "endLine": 1019,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "bulkUpdateUserRoleAction",
+          "startLine": 1021,
+          "endLine": 1035,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "bulkAssignToProjectAction",
+          "startLine": 1037,
+          "endLine": 1058,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "approveRetakeRequestAction",
+          "startLine": 1060,
+          "endLine": 1080,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "rejectRetakeRequestAction",
+          "startLine": 1082,
+          "endLine": 1096,
+          "params": [
+            "formData"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "createProjectAction",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "updateProjectSettingsAction",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "toggleProjectStatusAction",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "updateLlmRuntimeConfigAction",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "deleteDocumentAction",
+          "line": 204,
+          "isDefault": false
+        },
+        {
+          "name": "createDocumentConnectorAction",
+          "line": 411,
+          "isDefault": false
+        },
+        {
+          "name": "syncDocumentConnectorAction",
+          "line": 443,
+          "isDefault": false
+        },
+        {
+          "name": "testDocumentConnectorAction",
+          "line": 464,
+          "isDefault": false
+        },
+        {
+          "name": "dryRunDocumentConnectorAction",
+          "line": 485,
+          "isDefault": false
+        },
+        {
+          "name": "deleteDocumentConnectorAction",
+          "line": 506,
+          "isDefault": false
+        },
+        {
+          "name": "toggleDocumentConnectorAutoSyncAction",
+          "line": 518,
+          "isDefault": false
+        },
+        {
+          "name": "toggleDocumentRequiredAction",
+          "line": 539,
+          "isDefault": false
+        },
+        {
+          "name": "inviteProjectMemberAction",
+          "line": 557,
+          "isDefault": false
+        },
+        {
+          "name": "sendProjectAnnouncementAction",
+          "line": 623,
+          "isDefault": false
+        },
+        {
+          "name": "removeProjectMemberAction",
+          "line": 678,
+          "isDefault": false
+        },
+        {
+          "name": "updateProjectMemberRoleAction",
+          "line": 689,
+          "isDefault": false
+        },
+        {
+          "name": "resetQuizAttemptAction",
+          "line": 705,
+          "isDefault": false
+        },
+        {
+          "name": "setQuizWindowAction",
+          "line": 810,
+          "isDefault": false
+        },
+        {
+          "name": "deleteQuizSetAction",
+          "line": 827,
+          "isDefault": false
+        },
+        {
+          "name": "deleteQuizQuestionAction",
+          "line": 837,
+          "isDefault": false
+        },
+        {
+          "name": "createQuizSetAction",
+          "line": 846,
+          "isDefault": false
+        },
+        {
+          "name": "createQuizQuestionAction",
+          "line": 863,
+          "isDefault": false
+        },
+        {
+          "name": "updateQuizQuestionAction",
+          "line": 889,
+          "isDefault": false
+        },
+        {
+          "name": "toggleQuizSetActiveAction",
+          "line": 912,
+          "isDefault": false
+        },
+        {
+          "name": "importQuizCsvAction",
+          "line": 922,
+          "isDefault": false
+        },
+        {
+          "name": "createDemoUserAction",
+          "line": 951,
+          "isDefault": false
+        },
+        {
+          "name": "updateUserRoleAction",
+          "line": 985,
+          "isDefault": false
+        },
+        {
+          "name": "toggleUserActiveAction",
+          "line": 995,
+          "isDefault": false
+        },
+        {
+          "name": "bulkToggleUserActiveAction",
+          "line": 1005,
+          "isDefault": false
+        },
+        {
+          "name": "bulkUpdateUserRoleAction",
+          "line": 1021,
+          "isDefault": false
+        },
+        {
+          "name": "bulkAssignToProjectAction",
+          "line": 1037,
+          "isDefault": false
+        },
+        {
+          "name": "approveRetakeRequestAction",
+          "line": 1060,
+          "isDefault": false
+        },
+        {
+          "name": "rejectRetakeRequestAction",
+          "line": 1082,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createProjectAction",
+          "callee": "String",
+          "lineNumber": 19
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "formData.get",
+          "lineNumber": 19
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "String",
+          "lineNumber": 20
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "formData.get",
+          "lineNumber": 20
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "String",
+          "lineNumber": 21
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "formData.get",
+          "lineNumber": 21
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "Number",
+          "lineNumber": 22
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "formData.get",
+          "lineNumber": 22
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "sql",
+          "lineNumber": 25
+        },
+        {
+          "caller": "createProjectAction",
+          "callee": "revalidatePath",
+          "lineNumber": 29
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "requireAdmin",
+          "lineNumber": 33
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 35
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "String",
+          "lineNumber": 35
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "formData.get",
+          "lineNumber": 35
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "String(formData.get('name') ?? '').trim",
+          "lineNumber": 36
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "String",
+          "lineNumber": 36
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "formData.get",
+          "lineNumber": 36
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "String(formData.get('description') ?? '').trim",
+          "lineNumber": 37
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "String",
+          "lineNumber": 37
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "formData.get",
+          "lineNumber": 37
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "Number",
+          "lineNumber": 38
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "formData.get",
+          "lineNumber": 38
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "Math.min",
+          "lineNumber": 42
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "Math.max",
+          "lineNumber": 44
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "Number.isFinite",
+          "lineNumber": 44
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "sql",
+          "lineNumber": 47
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "name.slice",
+          "lineNumber": 50
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "description.slice",
+          "lineNumber": 51
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "revalidatePath",
+          "lineNumber": 56
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "revalidatePath",
+          "lineNumber": 57
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "revalidatePath",
+          "lineNumber": 58
+        },
+        {
+          "caller": "updateProjectSettingsAction",
+          "callee": "revalidatePath",
+          "lineNumber": 59
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "String",
+          "lineNumber": 63
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "formData.get",
+          "lineNumber": 63
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "String",
+          "lineNumber": 64
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "formData.get",
+          "lineNumber": 64
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "sql",
+          "lineNumber": 66
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "revalidatePath",
+          "lineNumber": 67
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "revalidatePath",
+          "lineNumber": 68
+        },
+        {
+          "caller": "toggleProjectStatusAction",
+          "callee": "revalidateTag",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ensureAppSettingsSchema",
+          "callee": "sql",
+          "lineNumber": 73
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "requireAdmin",
+          "lineNumber": 84
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('llm_provider') ?? 'groq').trim",
+          "lineNumber": 86
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 86
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 86
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('copilot_model') ?? '').trim",
+          "lineNumber": 87
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 87
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 87
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('groq_chat_model') ?? '').trim",
+          "lineNumber": 88
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 88
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 88
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('groq_quiz_model') ?? '').trim",
+          "lineNumber": 89
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 89
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 89
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('openai_model') ?? '').trim",
+          "lineNumber": 90
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 90
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 90
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('azure_openai_deployment') ?? '').trim",
+          "lineNumber": 91
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 91
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 91
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('anthropic_model') ?? '').trim",
+          "lineNumber": 92
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 92
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 92
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('mistral_model') ?? '').trim",
+          "lineNumber": 93
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 93
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 93
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('ollama_model') ?? '').trim",
+          "lineNumber": 94
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 94
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 94
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "['groq', 'copilot', 'openai', 'azure-openai', 'anthropic', 'mistral', 'ollama'].includes",
+          "lineNumber": 97
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "ensureAppSettingsSchema",
+          "lineNumber": 104
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "getLlmRuntimeConfig",
+          "lineNumber": 106
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 107
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('groq_api_key') ?? '').trim",
+          "lineNumber": 108
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 108
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 108
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('groq_quiz_api_key') ?? '').trim",
+          "lineNumber": 109
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 109
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 109
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('copilot_proxy_token') ?? '').trim",
+          "lineNumber": 110
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 110
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 110
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('copilot_base_url') ?? '').trim",
+          "lineNumber": 111
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 111
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 111
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('openai_api_key') ?? '').trim",
+          "lineNumber": 112
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 112
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 112
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('openai_base_url') ?? '').trim",
+          "lineNumber": 113
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 113
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 113
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('azure_openai_api_key') ?? '').trim",
+          "lineNumber": 114
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 114
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 114
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('azure_openai_endpoint') ?? '').trim",
+          "lineNumber": 115
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 115
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 115
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('azure_openai_api_version') ?? '').trim",
+          "lineNumber": 116
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 116
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 116
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('anthropic_api_key') ?? '').trim",
+          "lineNumber": 117
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 117
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 117
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('anthropic_base_url') ?? '').trim",
+          "lineNumber": 118
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 118
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 118
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('mistral_api_key') ?? '').trim",
+          "lineNumber": 119
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 119
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 119
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('mistral_base_url') ?? '').trim",
+          "lineNumber": 120
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 120
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 120
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String(formData.get('ollama_base_url') ?? '').trim",
+          "lineNumber": 121
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 121
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 121
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 125
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 125
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 129
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 129
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 133
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 133
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 138
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 138
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 143
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 143
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 149
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 149
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "String",
+          "lineNumber": 154
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "formData.get",
+          "lineNumber": 154
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "sql",
+          "lineNumber": 173
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "sql.json",
+          "lineNumber": 177
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "sql",
+          "lineNumber": 187
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "sql.json",
+          "lineNumber": 191
+        },
+        {
+          "caller": "updateLlmRuntimeConfigAction",
+          "callee": "revalidatePath",
+          "lineNumber": 201
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "String",
+          "lineNumber": 205
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "formData.get",
+          "lineNumber": 205
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "String",
+          "lineNumber": 206
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "formData.get",
+          "lineNumber": 206
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "String",
+          "lineNumber": 207
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "formData.get",
+          "lineNumber": 207
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "isR2Configured",
+          "lineNumber": 211
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "deleteFromR2",
+          "lineNumber": 212
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "deleteFile",
+          "lineNumber": 214
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "sql",
+          "lineNumber": 221
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "sql",
+          "lineNumber": 222
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "revalidatePath",
+          "lineNumber": 224
+        },
+        {
+          "caller": "deleteDocumentAction",
+          "callee": "revalidateTag",
+          "lineNumber": 225
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 229
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 229
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('confluence_base_url') ?? '').trim",
+          "lineNumber": 292
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 292
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 292
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('confluence_space_key') ?? '').trim",
+          "lineNumber": 293
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 293
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 293
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('confluence_auth_email') ?? '').trim",
+          "lineNumber": 294
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 294
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 294
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('confluence_access_token') ?? '').trim",
+          "lineNumber": 295
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 295
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 295
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('jira_base_url') ?? '').trim",
+          "lineNumber": 301
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 301
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 301
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('jira_project_key') ?? '').trim",
+          "lineNumber": 302
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 302
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 302
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('jira_auth_email') ?? '').trim",
+          "lineNumber": 303
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 303
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 303
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('jira_access_token') ?? '').trim",
+          "lineNumber": 304
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 304
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 304
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('jira_jql') ?? '').trim",
+          "lineNumber": 305
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 305
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 305
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('monday_api_url') ?? '').trim",
+          "lineNumber": 311
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 311
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 311
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('monday_workspace_url') ?? '').trim",
+          "lineNumber": 312
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 312
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 312
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('monday_board_ids') ?? '').trim",
+          "lineNumber": 313
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 313
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 313
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('monday_access_token') ?? '').trim",
+          "lineNumber": 314
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 314
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 314
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('onedrive_drive_id') ?? '').trim",
+          "lineNumber": 320
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 320
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 320
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('onedrive_folder_path') ?? '').trim",
+          "lineNumber": 321
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 321
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 321
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('onedrive_access_token') ?? '').trim",
+          "lineNumber": 322
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 322
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 322
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('github_repository') ?? '').trim",
+          "lineNumber": 328
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 328
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 328
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('github_branch') ?? '').trim",
+          "lineNumber": 329
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 329
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 329
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('github_docs_path') ?? '').trim",
+          "lineNumber": 330
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 330
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 330
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('github_access_token') ?? '').trim",
+          "lineNumber": 331
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 331
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 331
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('sharepoint_site_url') ?? '').trim",
+          "lineNumber": 336
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 336
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 336
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('sharepoint_library_path') ?? '').trim",
+          "lineNumber": 337
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 337
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 337
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String(formData.get('sharepoint_access_token') ?? '').trim",
+          "lineNumber": 338
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "String",
+          "lineNumber": 338
+        },
+        {
+          "caller": "buildConnectorConfig",
+          "callee": "formData.get",
+          "lineNumber": 338
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 343
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 361
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 363
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 368
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 373
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 378
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 384
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 393
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 398
+        },
+        {
+          "caller": "ensureConnectorSchema",
+          "callee": "sql",
+          "lineNumber": 404
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 412
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 412
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 412
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String(formData.get('provider') ?? '').trim",
+          "lineNumber": 413
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 413
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 413
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String(formData.get('name') ?? '').trim",
+          "lineNumber": 414
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 414
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 414
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "['confluence', 'sharepoint', 'jira', 'monday', 'onedrive', 'github'].includes",
+          "lineNumber": 419
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "ensureConnectorSchema",
+          "lineNumber": 423
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "buildConnectorConfig",
+          "lineNumber": 424
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "requireAdmin",
+          "lineNumber": 425
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 427
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "name.slice",
+          "lineNumber": 429
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "sql.json",
+          "lineNumber": 429
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 435
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 435
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 436
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "syncDocumentConnector",
+          "lineNumber": 437
+        },
+        {
+          "caller": "createDocumentConnectorAction",
+          "callee": "revalidatePath",
+          "lineNumber": 440
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 444
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "requireAdmin",
+          "lineNumber": 445
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 447
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 447
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 447
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "String(formData.get('connector_id') ?? '').trim",
+          "lineNumber": 448
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 448
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 448
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "ensureConnectorSchema",
+          "lineNumber": 453
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 454
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "syncDocumentConnector",
+          "lineNumber": 455
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "console.error",
+          "lineNumber": 457
+        },
+        {
+          "caller": "syncDocumentConnectorAction",
+          "callee": "revalidatePath",
+          "lineNumber": 461
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 465
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "requireAdmin",
+          "lineNumber": 466
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 468
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 468
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 468
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "String(formData.get('connector_id') ?? '').trim",
+          "lineNumber": 469
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 469
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 469
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "ensureConnectorSchema",
+          "lineNumber": 474
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 475
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "syncDocumentConnector",
+          "lineNumber": 476
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "console.error",
+          "lineNumber": 478
+        },
+        {
+          "caller": "testDocumentConnectorAction",
+          "callee": "revalidatePath",
+          "lineNumber": 482
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 486
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "requireAdmin",
+          "lineNumber": 487
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 489
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 489
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 489
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "String(formData.get('connector_id') ?? '').trim",
+          "lineNumber": 490
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 490
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 490
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "ensureConnectorSchema",
+          "lineNumber": 495
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "import",
+          "lineNumber": 496
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "syncDocumentConnector",
+          "lineNumber": 497
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "console.error",
+          "lineNumber": 499
+        },
+        {
+          "caller": "dryRunDocumentConnectorAction",
+          "callee": "revalidatePath",
+          "lineNumber": 503
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "requireAdmin",
+          "lineNumber": 507
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 509
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 509
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 509
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "String(formData.get('connector_id') ?? '').trim",
+          "lineNumber": 510
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "String",
+          "lineNumber": 510
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "formData.get",
+          "lineNumber": 510
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "sql",
+          "lineNumber": 514
+        },
+        {
+          "caller": "deleteDocumentConnectorAction",
+          "callee": "revalidatePath",
+          "lineNumber": 515
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "requireAdmin",
+          "lineNumber": 519
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 521
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "String",
+          "lineNumber": 521
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "formData.get",
+          "lineNumber": 521
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "String(formData.get('connector_id') ?? '').trim",
+          "lineNumber": 522
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "String",
+          "lineNumber": 522
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "formData.get",
+          "lineNumber": 522
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "String(formData.get('next_auto_sync_enabled') ?? '').trim",
+          "lineNumber": 523
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "String",
+          "lineNumber": 523
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "formData.get",
+          "lineNumber": 523
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "['true', 'false'].includes",
+          "lineNumber": 525
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "ensureConnectorSchema",
+          "lineNumber": 527
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "sql",
+          "lineNumber": 529
+        },
+        {
+          "caller": "toggleDocumentConnectorAutoSyncAction",
+          "callee": "revalidatePath",
+          "lineNumber": 536
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "String",
+          "lineNumber": 540
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "formData.get",
+          "lineNumber": 540
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "String",
+          "lineNumber": 541
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "formData.get",
+          "lineNumber": 541
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "String",
+          "lineNumber": 542
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "formData.get",
+          "lineNumber": 542
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "sql",
+          "lineNumber": 546
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "revalidatePath",
+          "lineNumber": 552
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "revalidatePath",
+          "lineNumber": 553
+        },
+        {
+          "caller": "toggleDocumentRequiredAction",
+          "callee": "revalidatePath",
+          "lineNumber": 554
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "String(formData.get('email') ?? '')\n    .trim()\n    .toLowerCase",
+          "lineNumber": 558
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "String(formData.get('email') ?? '')\n    .trim",
+          "lineNumber": 558
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "String",
+          "lineNumber": 558
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "formData.get",
+          "lineNumber": 558
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "String(formData.get('full_name') ?? '').trim",
+          "lineNumber": 561
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "String",
+          "lineNumber": 561
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "formData.get",
+          "lineNumber": 561
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "String",
+          "lineNumber": 562
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "formData.get",
+          "lineNumber": 562
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "sql",
+          "lineNumber": 568
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "crypto.randomBytes(32).toString",
+          "lineNumber": 573
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "crypto.randomBytes",
+          "lineNumber": 573
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString",
+          "lineNumber": 574
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "Date.now",
+          "lineNumber": 574
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "sql",
+          "lineNumber": 576
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "import",
+          "lineNumber": 587
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "resend.emails.send",
+          "lineNumber": 591
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "revalidatePath",
+          "lineNumber": 608
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "revalidateTag",
+          "lineNumber": 609
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "sql",
+          "lineNumber": 614
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "revalidatePath",
+          "lineNumber": 619
+        },
+        {
+          "caller": "inviteProjectMemberAction",
+          "callee": "revalidateTag",
+          "lineNumber": 620
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "requireAdmin",
+          "lineNumber": 624
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 626
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String",
+          "lineNumber": 626
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "formData.get",
+          "lineNumber": 626
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String(formData.get('title') ?? '').trim",
+          "lineNumber": 627
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String",
+          "lineNumber": 627
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "formData.get",
+          "lineNumber": 627
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String(formData.get('message') ?? '').trim",
+          "lineNumber": 628
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String",
+          "lineNumber": 628
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "formData.get",
+          "lineNumber": 628
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String(formData.get('expires_at') ?? '').trim",
+          "lineNumber": 629
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "String",
+          "lineNumber": 629
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "formData.get",
+          "lineNumber": 629
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "sql",
+          "lineNumber": 633
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "sql",
+          "lineNumber": 638
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "sql",
+          "lineNumber": 644
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "Date.now",
+          "lineNumber": 649
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "Number.isNaN",
+          "lineNumber": 651
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "parsedExpiresAt.getTime",
+          "lineNumber": 651
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "sql",
+          "lineNumber": 653
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "title.slice",
+          "lineNumber": 657
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "message.slice",
+          "lineNumber": 658
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "expiresAt.toISOString",
+          "lineNumber": 660
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "sql",
+          "lineNumber": 664
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "sql.json",
+          "lineNumber": 670
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "title.slice",
+          "lineNumber": 670
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "expiresAt.toISOString",
+          "lineNumber": 670
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "revalidatePath",
+          "lineNumber": 674
+        },
+        {
+          "caller": "sendProjectAnnouncementAction",
+          "callee": "revalidatePath",
+          "lineNumber": 675
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "String",
+          "lineNumber": 679
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "formData.get",
+          "lineNumber": 679
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "String",
+          "lineNumber": 680
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "formData.get",
+          "lineNumber": 680
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "sql",
+          "lineNumber": 682
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "revalidatePath",
+          "lineNumber": 685
+        },
+        {
+          "caller": "removeProjectMemberAction",
+          "callee": "revalidateTag",
+          "lineNumber": 686
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "String",
+          "lineNumber": 690
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 690
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "String",
+          "lineNumber": 691
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 691
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "String",
+          "lineNumber": 692
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 692
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "['admin', 'member'].includes",
+          "lineNumber": 694
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "sql",
+          "lineNumber": 696
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "revalidatePath",
+          "lineNumber": 699
+        },
+        {
+          "caller": "updateProjectMemberRoleAction",
+          "callee": "revalidateTag",
+          "lineNumber": 700
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String",
+          "lineNumber": 706
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "formData.get",
+          "lineNumber": 706
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String",
+          "lineNumber": 707
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "formData.get",
+          "lineNumber": 707
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String",
+          "lineNumber": 708
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "formData.get",
+          "lineNumber": 708
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String(formData.get('reason') ?? '').trim",
+          "lineNumber": 709
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String",
+          "lineNumber": 709
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "formData.get",
+          "lineNumber": 709
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String",
+          "lineNumber": 710
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "formData.get",
+          "lineNumber": 710
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "String",
+          "lineNumber": 711
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "formData.get",
+          "lineNumber": 711
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 713
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "Number",
+          "lineNumber": 716
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "JSON.parse",
+          "lineNumber": 719
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "await sql<\n    {\n      id: string;\n      user_id: string;\n      project_id: string;\n      quiz_set_id: string;\n      assigned_questions: AssignedQuestion[];\n      answers_given: Record<string, QuizOptionKey> | null;\n      score: number | null;\n      total_marks: number | null;\n      percentage: number | null;\n      passed: boolean | null;\n      submitted_at: string | null;\n      status: 'in_progress' | 'submitted';\n    }[]\n  >",
+          "lineNumber": 722
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 747
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "computeSectionScores",
+          "lineNumber": 781
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "Object.entries",
+          "lineNumber": 784
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sectionsToReset.includes",
+          "lineNumber": 785
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 790
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 791
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql.json",
+          "lineNumber": 793
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql.json",
+          "lineNumber": 793
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "Object.keys",
+          "lineNumber": 793
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql.json",
+          "lineNumber": 793
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 796
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 799
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "sql",
+          "lineNumber": 802
+        },
+        {
+          "caller": "resetQuizAttemptAction",
+          "callee": "revalidatePath",
+          "lineNumber": 807
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "String",
+          "lineNumber": 811
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "formData.get",
+          "lineNumber": 811
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "formData.get",
+          "lineNumber": 812
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "formData.get",
+          "lineNumber": 813
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "sql",
+          "lineNumber": 815
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "new Date(openAtRaw).toISOString",
+          "lineNumber": 817
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "new Date(closeAtRaw).toISOString",
+          "lineNumber": 818
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "revalidatePath",
+          "lineNumber": 822
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "revalidatePath",
+          "lineNumber": 823
+        },
+        {
+          "caller": "setQuizWindowAction",
+          "callee": "revalidateTag",
+          "lineNumber": 824
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "String",
+          "lineNumber": 828
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "formData.get",
+          "lineNumber": 828
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "String",
+          "lineNumber": 829
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "formData.get",
+          "lineNumber": 829
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "sql",
+          "lineNumber": 831
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "sql",
+          "lineNumber": 832
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "revalidatePath",
+          "lineNumber": 833
+        },
+        {
+          "caller": "deleteQuizSetAction",
+          "callee": "revalidateTag",
+          "lineNumber": 834
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 838
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 838
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 839
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 839
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "sql",
+          "lineNumber": 841
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "revalidatePath",
+          "lineNumber": 842
+        },
+        {
+          "caller": "deleteQuizQuestionAction",
+          "callee": "revalidateTag",
+          "lineNumber": 843
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "String",
+          "lineNumber": 847
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "formData.get",
+          "lineNumber": 847
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "String",
+          "lineNumber": 848
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "formData.get",
+          "lineNumber": 848
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "Number",
+          "lineNumber": 849
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "formData.get",
+          "lineNumber": 849
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "String(formData.get('category') ?? 'general')\n      .trim()\n      .toLowerCase",
+          "lineNumber": 851
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "String(formData.get('category') ?? 'general')\n      .trim",
+          "lineNumber": 851
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "String",
+          "lineNumber": 851
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "formData.get",
+          "lineNumber": 851
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "sql",
+          "lineNumber": 855
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "revalidatePath",
+          "lineNumber": 859
+        },
+        {
+          "caller": "createQuizSetAction",
+          "callee": "revalidateTag",
+          "lineNumber": 860
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 864
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 864
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 865
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 865
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 866
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 866
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "sql",
+          "lineNumber": 869
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 874
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 874
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 875
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 875
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 876
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 876
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 877
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 877
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 878
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 878
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 879
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 879
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 880
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 880
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "Number",
+          "lineNumber": 881
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 881
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "revalidatePath",
+          "lineNumber": 885
+        },
+        {
+          "caller": "createQuizQuestionAction",
+          "callee": "revalidateTag",
+          "lineNumber": 886
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 890
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 890
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 891
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 891
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 892
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 892
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "sql",
+          "lineNumber": 895
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 897
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 897
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 898
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 898
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 899
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 899
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 900
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 900
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 901
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 901
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 902
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 902
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "String",
+          "lineNumber": 903
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 903
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "Number",
+          "lineNumber": 904
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "formData.get",
+          "lineNumber": 904
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "revalidatePath",
+          "lineNumber": 908
+        },
+        {
+          "caller": "updateQuizQuestionAction",
+          "callee": "revalidateTag",
+          "lineNumber": 909
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "String",
+          "lineNumber": 913
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 913
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "String",
+          "lineNumber": 914
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 914
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 915
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "sql",
+          "lineNumber": 917
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "revalidatePath",
+          "lineNumber": 918
+        },
+        {
+          "caller": "toggleQuizSetActiveAction",
+          "callee": "revalidateTag",
+          "lineNumber": 919
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "String",
+          "lineNumber": 923
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "formData.get",
+          "lineNumber": 923
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "String",
+          "lineNumber": 924
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "formData.get",
+          "lineNumber": 924
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "String",
+          "lineNumber": 925
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "formData.get",
+          "lineNumber": 925
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "csvText.trim",
+          "lineNumber": 927
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "parse",
+          "lineNumber": 929
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "sql",
+          "lineNumber": 937
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "Number",
+          "lineNumber": 942
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "revalidatePath",
+          "lineNumber": 947
+        },
+        {
+          "caller": "importQuizCsvAction",
+          "callee": "revalidateTag",
+          "lineNumber": 948
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "requireAdmin",
+          "lineNumber": 952
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "String(formData.get('project_id') ?? '').trim",
+          "lineNumber": 954
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "String",
+          "lineNumber": 954
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "formData.get",
+          "lineNumber": 954
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "sql",
+          "lineNumber": 961
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "bcrypt.hash",
+          "lineNumber": 965
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "sql",
+          "lineNumber": 966
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "sql",
+          "lineNumber": 975
+        },
+        {
+          "caller": "createDemoUserAction",
+          "callee": "revalidatePath",
+          "lineNumber": 982
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "requireAdmin",
+          "lineNumber": 986
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "String",
+          "lineNumber": 988
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 988
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "String",
+          "lineNumber": 989
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 989
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "sql",
+          "lineNumber": 991
+        },
+        {
+          "caller": "updateUserRoleAction",
+          "callee": "revalidatePath",
+          "lineNumber": 992
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "requireAdmin",
+          "lineNumber": 996
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "String",
+          "lineNumber": 998
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 998
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "String",
+          "lineNumber": 999
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 999
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "sql",
+          "lineNumber": 1001
+        },
+        {
+          "caller": "toggleUserActiveAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1002
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "requireAdmin",
+          "lineNumber": 1006
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "String(formData.get('user_ids') ?? '')\n    .split(',')\n    .filter",
+          "lineNumber": 1008
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "String(formData.get('user_ids') ?? '')\n    .split",
+          "lineNumber": 1008
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "String",
+          "lineNumber": 1008
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 1008
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "String",
+          "lineNumber": 1011
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "formData.get",
+          "lineNumber": 1011
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "sql",
+          "lineNumber": 1016
+        },
+        {
+          "caller": "bulkToggleUserActiveAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1018
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "requireAdmin",
+          "lineNumber": 1022
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "String(formData.get('user_ids') ?? '')\n    .split(',')\n    .filter",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "String(formData.get('user_ids') ?? '')\n    .split",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "String",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "String",
+          "lineNumber": 1027
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "formData.get",
+          "lineNumber": 1027
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "sql",
+          "lineNumber": 1032
+        },
+        {
+          "caller": "bulkUpdateUserRoleAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1034
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "requireAdmin",
+          "lineNumber": 1038
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "String(formData.get('user_ids') ?? '')\n    .split(',')\n    .filter",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "String(formData.get('user_ids') ?? '')\n    .split",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "String",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "formData.get",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "String",
+          "lineNumber": 1043
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "formData.get",
+          "lineNumber": 1043
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "sql",
+          "lineNumber": 1049
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1056
+        },
+        {
+          "caller": "bulkAssignToProjectAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1057
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "requireAdmin",
+          "lineNumber": 1061
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1063
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1063
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1064
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1064
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1065
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1065
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1066
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1066
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "sql",
+          "lineNumber": 1069
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "sql",
+          "lineNumber": 1072
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1078
+        },
+        {
+          "caller": "approveRetakeRequestAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1079
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "requireAdmin",
+          "lineNumber": 1083
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1085
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1085
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1086
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1086
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "String",
+          "lineNumber": 1087
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "formData.get",
+          "lineNumber": 1087
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "sql",
+          "lineNumber": 1089
+        },
+        {
+          "caller": "rejectRetakeRequestAction",
+          "callee": "revalidatePath",
+          "lineNumber": 1095
+        }
+      ],
+      "metrics": {
+        "importCount": 8,
+        "exportCount": 33,
+        "functionCount": 36,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/threads/[threadId]/bot-reply/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 168,
+      "functions": [
+        {
+          "name": "GET",
+          "startLine": 13,
+          "endLine": 196,
+          "params": [
+            "_request",
+            "{ params }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GET",
+          "line": 13,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GET",
+          "callee": "getCurrentUserContext",
+          "lineNumber": 19
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 21
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<\n    {\n      project_id: string;\n      document_id: string | null;\n      title: string;\n      status: string;\n    }[]\n  >",
+          "lineNumber": 25
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 39
+        },
+        {
+          "caller": "GET",
+          "callee": "userHasProjectAccess",
+          "lineNumber": 42
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 44
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<{ body: string; created_at: string }[]>",
+          "lineNumber": 48
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 57
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 61
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<\n    {\n      id: string;\n      created_at: string;\n      job_query: string;\n      status: string;\n      error: string | null;\n    }[]\n  >",
+          "lineNumber": 65
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<{ body: string }[]>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "GET",
+          "callee": "`${thread.title} ${firstCommentRows[0]?.body ?? ''}`.slice",
+          "lineNumber": 90
+        },
+        {
+          "caller": "GET",
+          "callee": "sql",
+          "lineNumber": 99
+        },
+        {
+          "caller": "GET",
+          "callee": "sql.json",
+          "lineNumber": 101
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 104
+        },
+        {
+          "caller": "GET",
+          "callee": "ensureBotFailureReply",
+          "lineNumber": 108
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<{ body: string; created_at: string }[]>",
+          "lineNumber": 109
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 117
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 121
+        },
+        {
+          "caller": "GET",
+          "callee": "Date.now",
+          "lineNumber": 126
+        },
+        {
+          "caller": "GET",
+          "callee": "new Date(job.created_at).getTime",
+          "lineNumber": 126
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 128
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 133
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 142
+        },
+        {
+          "caller": "GET",
+          "callee": "processBotThreadReply",
+          "lineNumber": 146
+        },
+        {
+          "caller": "GET",
+          "callee": "sql",
+          "lineNumber": 153
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<{ body: string; created_at: string }[]>",
+          "lineNumber": 159
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 166
+        },
+        {
+          "caller": "GET",
+          "callee": "sql",
+          "lineNumber": 168
+        },
+        {
+          "caller": "GET",
+          "callee": "logApplicationError",
+          "lineNumber": 174
+        },
+        {
+          "caller": "GET",
+          "callee": "ensureBotFailureReply",
+          "lineNumber": 185
+        },
+        {
+          "caller": "GET",
+          "callee": "await sql<{ body: string; created_at: string }[]>",
+          "lineNumber": 186
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 194
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "components/admin/model-switcher-form.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 489,
+      "nonEmptyLines": 468,
+      "functions": [
+        {
+          "name": "providerLabel",
+          "startLine": 20,
+          "endLine": 28,
+          "params": [
+            "provider"
+          ]
+        },
+        {
+          "name": "providerModelSummary",
+          "startLine": 30,
+          "endLine": 38,
+          "params": [
+            "provider",
+            "config"
+          ]
+        },
+        {
+          "name": "ModelSwitcherForm",
+          "startLine": 40,
+          "endLine": 489,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ModelSwitcherForm",
+          "line": 40,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "useState",
+          "lineNumber": 41
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "useRef",
+          "lineNumber": 42
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "useMemo",
+          "lineNumber": 44
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "useEffect",
+          "lineNumber": 49
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "document.getElementById",
+          "lineNumber": 55
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "section.scrollIntoView",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "setSelectedProvider",
+          "lineNumber": 71
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "providers.map",
+          "lineNumber": 74
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "providerLabel",
+          "lineNumber": 76
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "providers.map",
+          "lineNumber": 87
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "providerLabel",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ModelSwitcherForm",
+          "callee": "providerModelSummary",
+          "lineNumber": 97
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/bot-reply.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 120,
+      "nonEmptyLines": 97,
+      "functions": [
+        {
+          "name": "buildBotReplyPrompt",
+          "startLine": 16,
+          "endLine": 33,
+          "params": [
+            "projectName",
+            "context"
+          ]
+        },
+        {
+          "name": "processBotThreadReply",
+          "startLine": 42,
+          "endLine": 99,
+          "params": [
+            "params"
+          ]
+        },
+        {
+          "name": "ensureBotFailureReply",
+          "startLine": 101,
+          "endLine": 120,
+          "params": [
+            "threadId",
+            "message"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "BOT_NO_MATCH_MSG",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "BOT_FAILURE_MSG",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "processBotThreadReply",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "ensureBotFailureReply",
+          "line": 101,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "buildBotReplyPrompt",
+          "callee": "[\n    `You are ${appEnv.botName}, a knowledge assistant for the ${projectName} knowledge transfer.`,\n    'Answer the question using ONLY the context provided below.',\n    '',\n    'Formatting rules — follow strictly:',\n    '- Use **bold** for key terms and step names',\n    '- Use numbered lists (1. 2. 3.) for sequential steps',\n    '- Use bullet points (-) for non-ordered items',\n    '- Be concise and direct',\n    '- Do NOT mention document filenames or source names in your answer — they are shown separately',\n    '',\n    'If the context does not contain enough information, say so clearly.',\n    '',\n    'Context:',\n    context,\n  ].join",
+          "lineNumber": 17
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "await sql<{ name: string }[]>",
+          "lineNumber": 51
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "retrieveRelevantChunks",
+          "lineNumber": 56
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "chunks.map",
+          "lineNumber": 64
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "uniqueDocNames.map",
+          "lineNumber": 65
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "chunks.map((c) => c.content).join",
+          "lineNumber": 67
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "chunks.map",
+          "lineNumber": 67
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "buildBotReplyPrompt",
+          "lineNumber": 68
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "createChatCompletion",
+          "lineNumber": 70
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "completion.choices[0]?.message.content?.trim",
+          "lineNumber": 79
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "sql",
+          "lineNumber": 84
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "sql.json",
+          "lineNumber": 86
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "sql",
+          "lineNumber": 89
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "revalidatePath",
+          "lineNumber": 94
+        },
+        {
+          "caller": "processBotThreadReply",
+          "callee": "revalidatePath",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ensureBotFailureReply",
+          "callee": "sql",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ensureBotFailureReply",
+          "callee": "sql.json",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ensureBotFailureReply",
+          "callee": "sql",
+          "lineNumber": 117
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/env.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 116,
+      "nonEmptyLines": 101,
+      "functions": [
+        {
+          "name": "isDatabaseConfigured",
+          "startLine": 55,
+          "endLine": 57,
+          "params": []
+        },
+        {
+          "name": "isR2Configured",
+          "startLine": 59,
+          "endLine": 61,
+          "params": []
+        },
+        {
+          "name": "isGroqConfigured",
+          "startLine": 63,
+          "endLine": 65,
+          "params": []
+        },
+        {
+          "name": "isCopilotProxyConfigured",
+          "startLine": 67,
+          "endLine": 69,
+          "params": []
+        },
+        {
+          "name": "isOpenAiConfigured",
+          "startLine": 71,
+          "endLine": 73,
+          "params": []
+        },
+        {
+          "name": "isAzureOpenAiConfigured",
+          "startLine": 75,
+          "endLine": 79,
+          "params": []
+        },
+        {
+          "name": "isAnthropicConfigured",
+          "startLine": 81,
+          "endLine": 83,
+          "params": []
+        },
+        {
+          "name": "isMistralConfigured",
+          "startLine": 85,
+          "endLine": 87,
+          "params": []
+        },
+        {
+          "name": "isOllamaConfigured",
+          "startLine": 89,
+          "endLine": 91,
+          "params": []
+        },
+        {
+          "name": "isLlmConfigured",
+          "startLine": 93,
+          "endLine": 106,
+          "params": []
+        },
+        {
+          "name": "assertEnv",
+          "startLine": 108,
+          "endLine": 116,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "appEnv",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "isDatabaseConfigured",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "isR2Configured",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "isGroqConfigured",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "isCopilotProxyConfigured",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "isOpenAiConfigured",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "isAzureOpenAiConfigured",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "isAnthropicConfigured",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "isMistralConfigured",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "isOllamaConfigured",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "isLlmConfigured",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "assertEnv",
+          "line": 108,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "isDatabaseConfigured",
+          "callee": "Boolean",
+          "lineNumber": 56
+        },
+        {
+          "caller": "isR2Configured",
+          "callee": "Boolean",
+          "lineNumber": 60
+        },
+        {
+          "caller": "isGroqConfigured",
+          "callee": "Boolean",
+          "lineNumber": 64
+        },
+        {
+          "caller": "isCopilotProxyConfigured",
+          "callee": "Boolean",
+          "lineNumber": 68
+        },
+        {
+          "caller": "isOpenAiConfigured",
+          "callee": "Boolean",
+          "lineNumber": 72
+        },
+        {
+          "caller": "isAzureOpenAiConfigured",
+          "callee": "Boolean",
+          "lineNumber": 76
+        },
+        {
+          "caller": "isAnthropicConfigured",
+          "callee": "Boolean",
+          "lineNumber": 82
+        },
+        {
+          "caller": "isMistralConfigured",
+          "callee": "Boolean",
+          "lineNumber": 86
+        },
+        {
+          "caller": "isOllamaConfigured",
+          "callee": "Boolean",
+          "lineNumber": 90
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isCopilotProxyConfigured",
+          "lineNumber": 94
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isOpenAiConfigured",
+          "lineNumber": 95
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isAzureOpenAiConfigured",
+          "lineNumber": 96
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isAnthropicConfigured",
+          "lineNumber": 97
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isMistralConfigured",
+          "lineNumber": 98
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isOllamaConfigured",
+          "lineNumber": 99
+        },
+        {
+          "caller": "isLlmConfigured",
+          "callee": "isGroqConfigured",
+          "lineNumber": 102
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 12,
+        "functionCount": 11,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/groq/chat.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 131,
+      "nonEmptyLines": 108,
+      "functions": [
+        {
+          "name": "buildModelSequence",
+          "startLine": 9,
+          "endLine": 21,
+          "params": [
+            "primary",
+            "secondary"
+          ]
+        },
+        {
+          "name": "getGroqClient",
+          "startLine": 23,
+          "endLine": 25,
+          "params": [
+            "apiKey"
+          ]
+        },
+        {
+          "name": "isRateLimitError",
+          "startLine": 27,
+          "endLine": 35,
+          "params": [
+            "error"
+          ]
+        },
+        {
+          "name": "buildKtPrompt",
+          "startLine": 37,
+          "endLine": 47,
+          "params": [
+            "projectName",
+            "context"
+          ]
+        },
+        {
+          "name": "createGroqChatCompletion",
+          "startLine": 49,
+          "endLine": 89,
+          "params": [
+            "args",
+            "onStatus",
+            "primaryModel"
+          ]
+        },
+        {
+          "name": "createGroqQuizCompletion",
+          "startLine": 96,
+          "endLine": 131,
+          "params": [
+            "args",
+            "primaryModel"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "buildKtPrompt",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "createGroqChatCompletion",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "createGroqQuizCompletion",
+          "line": 96,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "buildModelSequence",
+          "callee": "model.trim",
+          "lineNumber": 14
+        },
+        {
+          "caller": "buildModelSequence",
+          "callee": "seen.has",
+          "lineNumber": 15
+        },
+        {
+          "caller": "buildModelSequence",
+          "callee": "seen.add",
+          "lineNumber": 16
+        },
+        {
+          "caller": "buildModelSequence",
+          "callee": "ordered.push",
+          "lineNumber": 17
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.includes",
+          "lineNumber": 32
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.toLowerCase().includes",
+          "lineNumber": 33
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.toLowerCase",
+          "lineNumber": 33
+        },
+        {
+          "caller": "buildKtPrompt",
+          "callee": "[\n    `You are a helpful KT (Knowledge Transfer) assistant for the ${projectName} transition.`,\n    'Answer questions ONLY based on the provided context from the KT documents below.',\n    'Be clear and practical. If the answer is not in the context, say so clearly.',\n    'Always mention which document the answer comes from.',\n    '',\n    'Context:',\n    context,\n  ].join",
+          "lineNumber": 38
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 54
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "getGroqClient",
+          "lineNumber": 55
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "buildModelSequence",
+          "lineNumber": 61
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "client.chat.completions.create",
+          "lineNumber": 66
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "isRateLimitError",
+          "lineNumber": 72
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "onStatus",
+          "lineNumber": 73
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "sleep",
+          "lineNumber": 74
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "sleep",
+          "lineNumber": 76
+        },
+        {
+          "caller": "createGroqChatCompletion",
+          "callee": "onStatus",
+          "lineNumber": 82
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 100
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "getGroqClient",
+          "lineNumber": 102
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "buildModelSequence",
+          "lineNumber": 108
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "client.chat.completions.create",
+          "lineNumber": 113
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "isRateLimitError",
+          "lineNumber": 119
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "sleep",
+          "lineNumber": 120
+        },
+        {
+          "caller": "createGroqQuizCompletion",
+          "callee": "sleep",
+          "lineNumber": 122
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 3,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/llm/anthropic.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 158,
+      "nonEmptyLines": 134,
+      "functions": [
+        {
+          "name": "isRateLimitError",
+          "startLine": 26,
+          "endLine": 30,
+          "params": [
+            "error"
+          ]
+        },
+        {
+          "name": "splitSystemAndMessages",
+          "startLine": 32,
+          "endLine": 52,
+          "params": [
+            "messages"
+          ]
+        },
+        {
+          "name": "withRetry",
+          "startLine": 54,
+          "endLine": 77,
+          "params": [
+            "task",
+            "onStatus"
+          ]
+        },
+        {
+          "name": "createAnthropicChatCompletion",
+          "startLine": 79,
+          "endLine": 158,
+          "params": [
+            "args",
+            "onStatus"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "createAnthropicChatCompletion",
+          "line": 79,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.toLowerCase",
+          "lineNumber": 28
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "message.includes",
+          "lineNumber": 29
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "message.includes",
+          "lineNumber": 29
+        },
+        {
+          "caller": "splitSystemAndMessages",
+          "callee": "systemParts.push",
+          "lineNumber": 38
+        },
+        {
+          "caller": "splitSystemAndMessages",
+          "callee": "converted.push",
+          "lineNumber": 42
+        },
+        {
+          "caller": "splitSystemAndMessages",
+          "callee": "systemParts.join('\\n\\n').trim",
+          "lineNumber": 49
+        },
+        {
+          "caller": "splitSystemAndMessages",
+          "callee": "systemParts.join",
+          "lineNumber": 49
+        },
+        {
+          "caller": "withRetry",
+          "callee": "task",
+          "lineNumber": 62
+        },
+        {
+          "caller": "withRetry",
+          "callee": "isRateLimitError",
+          "lineNumber": 67
+        },
+        {
+          "caller": "withRetry",
+          "callee": "onStatus",
+          "lineNumber": 68
+        },
+        {
+          "caller": "withRetry",
+          "callee": "sleep",
+          "lineNumber": 69
+        },
+        {
+          "caller": "withRetry",
+          "callee": "sleep",
+          "lineNumber": 71
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "args.baseUrl.trim",
+          "lineNumber": 95
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "splitSystemAndMessages",
+          "lineNumber": 96
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "withRetry",
+          "lineNumber": 98
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "setTimeout",
+          "lineNumber": 100
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "controller.abort",
+          "lineNumber": 100
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "fetch",
+          "lineNumber": 103
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "JSON.stringify",
+          "lineNumber": 111
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "response.text",
+          "lineNumber": 121
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "clearTimeout",
+          "lineNumber": 129
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "JSON.parse",
+          "lineNumber": 133
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "(data.content ?? [])\n    .filter((block) => block.type === 'text' && typeof block.text === 'string')\n    .map((block) => block.text as string)\n    .join",
+          "lineNumber": 134
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "(data.content ?? [])\n    .filter((block) => block.type === 'text' && typeof block.text === 'string')\n    .map",
+          "lineNumber": 134
+        },
+        {
+          "caller": "createAnthropicChatCompletion",
+          "callee": "(data.content ?? [])\n    .filter",
+          "lineNumber": 134
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/llm/copilot.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 203,
+      "nonEmptyLines": 175,
+      "functions": [
+        {
+          "name": "normalizeCopilotContent",
+          "startLine": 42,
+          "endLine": 68,
+          "params": [
+            "content"
+          ]
+        },
+        {
+          "name": "isRateLimitError",
+          "startLine": 70,
+          "endLine": 73,
+          "params": [
+            "error"
+          ]
+        },
+        {
+          "name": "createCopilotChatCompletion",
+          "startLine": 78,
+          "endLine": 182,
+          "params": [
+            "args",
+            "onStatus"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "createCopilotChatCompletion",
+          "line": 78,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "normalizeCopilotContent",
+          "callee": "Array.isArray",
+          "lineNumber": 47
+        },
+        {
+          "caller": "normalizeCopilotContent",
+          "callee": "content\n      .map((part) => {\n        if (typeof part === 'string') return part;\n        if (part && typeof part === 'object') {\n          const record = part as Record<string, unknown>;\n          if (typeof record.text === 'string') return record.text;\n          if (record.type === 'text' && typeof record.content === 'string') return record.content;\n        }\n        return '';\n      })\n      .join",
+          "lineNumber": 48
+        },
+        {
+          "caller": "normalizeCopilotContent",
+          "callee": "content\n      .map",
+          "lineNumber": 48
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.includes",
+          "lineNumber": 72
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.toLowerCase().includes",
+          "lineNumber": 72
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.toLowerCase",
+          "lineNumber": 72
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 88
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "setTimeout",
+          "lineNumber": 102
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "controller.abort",
+          "lineNumber": 102
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "fetch",
+          "lineNumber": 104
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "JSON.stringify",
+          "lineNumber": 113
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "clearTimeout",
+          "lineNumber": 121
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "response.text().catch",
+          "lineNumber": 124
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "response.text",
+          "lineNumber": 124
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "onStatus",
+          "lineNumber": 130
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "sleep",
+          "lineNumber": 131
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "response.json",
+          "lineNumber": 148
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "data.choices.map",
+          "lineNumber": 155
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "normalizeCopilotContent",
+          "lineNumber": 158
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "isRateLimitError",
+          "lineNumber": 171
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "onStatus",
+          "lineNumber": 172
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "sleep",
+          "lineNumber": 173
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "sleep",
+          "lineNumber": 176
+        },
+        {
+          "caller": "createCopilotChatCompletion",
+          "callee": "Math.pow",
+          "lineNumber": 176
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/llm/index.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 352,
+      "nonEmptyLines": 324,
+      "functions": [
+        {
+          "name": "createChatCompletion",
+          "startLine": 44,
+          "endLine": 176,
+          "params": [
+            "args",
+            "onStatus"
+          ]
+        },
+        {
+          "name": "createQuizCompletion",
+          "startLine": 182,
+          "endLine": 319,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "getCurrentLlmProvider",
+          "startLine": 324,
+          "endLine": 333,
+          "params": []
+        },
+        {
+          "name": "isLlmReady",
+          "startLine": 338,
+          "endLine": 352,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "createChatCompletion",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "createQuizCompletion",
+          "line": 182,
+          "isDefault": false
+        },
+        {
+          "name": "getCurrentLlmProvider",
+          "line": 324,
+          "isDefault": false
+        },
+        {
+          "name": "isLlmReady",
+          "line": 338,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createChatCompletion",
+          "callee": "getLlmRuntimeConfig",
+          "lineNumber": 53
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 55
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 59
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 61
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 63
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 69
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 71
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 73
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "Boolean",
+          "lineNumber": 74
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "createCopilotChatCompletion",
+          "lineNumber": 81
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "createOpenAiChatCompletion",
+          "lineNumber": 91
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "createAzureOpenAiChatCompletion",
+          "lineNumber": 103
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "createAnthropicChatCompletion",
+          "lineNumber": 116
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "createOpenAiChatCompletion",
+          "lineNumber": 128
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "createOllamaChatCompletion",
+          "lineNumber": 140
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "groqCreate",
+          "lineNumber": 159
+        },
+        {
+          "caller": "createChatCompletion",
+          "callee": "groqResponse.choices.map",
+          "lineNumber": 167
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "getLlmRuntimeConfig",
+          "lineNumber": 193
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 195
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 198
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 200
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 202
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 208
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 210
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 212
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "Boolean",
+          "lineNumber": 213
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "createCopilotChatCompletion",
+          "lineNumber": 221
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "createOpenAiChatCompletion",
+          "lineNumber": 231
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "createAzureOpenAiChatCompletion",
+          "lineNumber": 246
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "createAnthropicChatCompletion",
+          "lineNumber": 262
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "createOpenAiChatCompletion",
+          "lineNumber": 277
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "createOllamaChatCompletion",
+          "lineNumber": 292
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "groqQuizCreate",
+          "lineNumber": 306
+        },
+        {
+          "caller": "createQuizCompletion",
+          "callee": "groqResponse.choices.map",
+          "lineNumber": 310
+        },
+        {
+          "caller": "getCurrentLlmProvider",
+          "callee": "getLlmRuntimeConfig",
+          "lineNumber": 325
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "getLlmRuntimeConfig",
+          "lineNumber": 339
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 340
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 341
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 342
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 344
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 348
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 349
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 350
+        },
+        {
+          "caller": "isLlmReady",
+          "callee": "Boolean",
+          "lineNumber": 351
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/llm/openai.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 296,
+      "nonEmptyLines": 264,
+      "functions": [
+        {
+          "name": "normalizeContent",
+          "startLine": 27,
+          "endLine": 50,
+          "params": [
+            "content"
+          ]
+        },
+        {
+          "name": "isRateLimitError",
+          "startLine": 52,
+          "endLine": 56,
+          "params": [
+            "error"
+          ]
+        },
+        {
+          "name": "postJson",
+          "startLine": 58,
+          "endLine": 84,
+          "params": [
+            "url",
+            "headers",
+            "body"
+          ]
+        },
+        {
+          "name": "withRetry",
+          "startLine": 86,
+          "endLine": 109,
+          "params": [
+            "task",
+            "onStatus"
+          ]
+        },
+        {
+          "name": "createOpenAiChatCompletion",
+          "startLine": 111,
+          "endLine": 165,
+          "params": [
+            "args",
+            "onStatus"
+          ]
+        },
+        {
+          "name": "createOllamaChatCompletion",
+          "startLine": 181,
+          "endLine": 235,
+          "params": [
+            "args",
+            "onStatus"
+          ]
+        },
+        {
+          "name": "createAzureOpenAiChatCompletion",
+          "startLine": 237,
+          "endLine": 296,
+          "params": [
+            "args",
+            "onStatus"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "createOpenAiChatCompletion",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "createOllamaChatCompletion",
+          "line": 181,
+          "isDefault": false
+        },
+        {
+          "name": "createAzureOpenAiChatCompletion",
+          "line": 237,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "normalizeContent",
+          "callee": "Array.isArray",
+          "lineNumber": 30
+        },
+        {
+          "caller": "normalizeContent",
+          "callee": "content\n      .map((part) => {\n        if (typeof part === 'string') return part;\n        if (part && typeof part === 'object') {\n          const record = part as Record<string, unknown>;\n          if (typeof record.text === 'string') return record.text;\n        }\n        return '';\n      })\n      .join",
+          "lineNumber": 31
+        },
+        {
+          "caller": "normalizeContent",
+          "callee": "content\n      .map",
+          "lineNumber": 31
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "error.message.toLowerCase",
+          "lineNumber": 54
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "msg.includes",
+          "lineNumber": 55
+        },
+        {
+          "caller": "isRateLimitError",
+          "callee": "msg.includes",
+          "lineNumber": 55
+        },
+        {
+          "caller": "postJson",
+          "callee": "setTimeout",
+          "lineNumber": 64
+        },
+        {
+          "caller": "postJson",
+          "callee": "controller.abort",
+          "lineNumber": 64
+        },
+        {
+          "caller": "postJson",
+          "callee": "fetch",
+          "lineNumber": 67
+        },
+        {
+          "caller": "postJson",
+          "callee": "JSON.stringify",
+          "lineNumber": 71
+        },
+        {
+          "caller": "postJson",
+          "callee": "response.text",
+          "lineNumber": 74
+        },
+        {
+          "caller": "postJson",
+          "callee": "clearTimeout",
+          "lineNumber": 82
+        },
+        {
+          "caller": "withRetry",
+          "callee": "task",
+          "lineNumber": 94
+        },
+        {
+          "caller": "withRetry",
+          "callee": "isRateLimitError",
+          "lineNumber": 99
+        },
+        {
+          "caller": "withRetry",
+          "callee": "onStatus",
+          "lineNumber": 100
+        },
+        {
+          "caller": "withRetry",
+          "callee": "sleep",
+          "lineNumber": 101
+        },
+        {
+          "caller": "withRetry",
+          "callee": "sleep",
+          "lineNumber": 103
+        },
+        {
+          "caller": "createOpenAiChatCompletion",
+          "callee": "withRetry",
+          "lineNumber": 123
+        },
+        {
+          "caller": "createOpenAiChatCompletion",
+          "callee": "postJson",
+          "lineNumber": 125
+        },
+        {
+          "caller": "createOpenAiChatCompletion",
+          "callee": "JSON.parse",
+          "lineNumber": 146
+        },
+        {
+          "caller": "createOpenAiChatCompletion",
+          "callee": "normalizeContent",
+          "lineNumber": 154
+        },
+        {
+          "caller": "createOllamaChatCompletion",
+          "callee": "(args.baseUrl.trim() || 'http://localhost:11434/api/chat').replace",
+          "lineNumber": 192
+        },
+        {
+          "caller": "createOllamaChatCompletion",
+          "callee": "args.baseUrl.trim",
+          "lineNumber": 192
+        },
+        {
+          "caller": "createOllamaChatCompletion",
+          "callee": "withRetry",
+          "lineNumber": 194
+        },
+        {
+          "caller": "createOllamaChatCompletion",
+          "callee": "postJson",
+          "lineNumber": 196
+        },
+        {
+          "caller": "createOllamaChatCompletion",
+          "callee": "JSON.parse",
+          "lineNumber": 215
+        },
+        {
+          "caller": "createOllamaChatCompletion",
+          "callee": "normalizeContent",
+          "lineNumber": 224
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "args.endpoint.replace",
+          "lineNumber": 256
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "encodeURIComponent",
+          "lineNumber": 257
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "encodeURIComponent",
+          "lineNumber": 257
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "withRetry",
+          "lineNumber": 259
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "postJson",
+          "lineNumber": 261
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "JSON.parse",
+          "lineNumber": 277
+        },
+        {
+          "caller": "createAzureOpenAiChatCompletion",
+          "callee": "normalizeContent",
+          "lineNumber": 285
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/llm/runtime-config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 222,
+      "nonEmptyLines": 201,
+      "functions": [
+        {
+          "name": "normalizeProvider",
+          "startLine": 90,
+          "endLine": 98,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeModel",
+          "startLine": 100,
+          "endLine": 104,
+          "params": [
+            "value",
+            "fallback"
+          ]
+        },
+        {
+          "name": "normalizeSecret",
+          "startLine": 106,
+          "endLine": 110,
+          "params": [
+            "value",
+            "fallback"
+          ]
+        },
+        {
+          "name": "maskSecret",
+          "startLine": 112,
+          "endLine": 116,
+          "params": [
+            "secret"
+          ]
+        },
+        {
+          "name": "getLlmRuntimeConfig",
+          "startLine": 118,
+          "endLine": 152,
+          "params": []
+        },
+        {
+          "name": "getLlmRuntimeSecrets",
+          "startLine": 154,
+          "endLine": 201,
+          "params": []
+        },
+        {
+          "name": "getMaskedLlmRuntimeSecrets",
+          "startLine": 203,
+          "endLine": 222,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "getLlmRuntimeConfig",
+          "line": 118,
+          "isDefault": false
+        },
+        {
+          "name": "getLlmRuntimeSecrets",
+          "line": 154,
+          "isDefault": false
+        },
+        {
+          "name": "getMaskedLlmRuntimeSecrets",
+          "line": 203,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "normalizeModel",
+          "callee": "value.trim",
+          "lineNumber": 102
+        },
+        {
+          "caller": "normalizeSecret",
+          "callee": "value.trim",
+          "lineNumber": 108
+        },
+        {
+          "caller": "maskSecret",
+          "callee": "'*'.repeat",
+          "lineNumber": 114
+        },
+        {
+          "caller": "maskSecret",
+          "callee": "secret.slice",
+          "lineNumber": 115
+        },
+        {
+          "caller": "maskSecret",
+          "callee": "'*'.repeat",
+          "lineNumber": 115
+        },
+        {
+          "caller": "maskSecret",
+          "callee": "Math.max",
+          "lineNumber": 115
+        },
+        {
+          "caller": "maskSecret",
+          "callee": "secret.slice",
+          "lineNumber": 115
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "await sql<{ value: unknown }[]>",
+          "lineNumber": 120
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeProvider",
+          "lineNumber": 135
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 136
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 137
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 138
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 139
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 140
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 144
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 145
+        },
+        {
+          "caller": "getLlmRuntimeConfig",
+          "callee": "normalizeModel",
+          "lineNumber": 146
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "await sql<{ value: unknown }[]>",
+          "lineNumber": 156
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 171
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 172
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 173
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 177
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 178
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 179
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 180
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 184
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 188
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 192
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 193
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 194
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 195
+        },
+        {
+          "caller": "getLlmRuntimeSecrets",
+          "callee": "normalizeSecret",
+          "lineNumber": 196
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "getLlmRuntimeSecrets",
+          "lineNumber": 204
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 207
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 208
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 209
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 211
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 213
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 216
+        },
+        {
+          "caller": "getMaskedLlmRuntimeSecrets",
+          "callee": "maskSecret",
+          "lineNumber": 218
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 3,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/rag/embeddings.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 52,
+      "functions": [
+        {
+          "name": "getCurrentEmbeddingModelSpec",
+          "startLine": 15,
+          "endLine": 34,
+          "params": []
+        },
+        {
+          "name": "loadFeatureExtractor",
+          "startLine": 36,
+          "endLine": 59,
+          "params": []
+        },
+        {
+          "name": "embedText",
+          "startLine": 61,
+          "endLine": 68,
+          "params": [
+            "input"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "getCurrentEmbeddingModelSpec",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "embedText",
+          "line": 61,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getCurrentEmbeddingModelSpec",
+          "callee": "appEnv.embeddingModelId.trim",
+          "lineNumber": 16
+        },
+        {
+          "caller": "getCurrentEmbeddingModelSpec",
+          "callee": "appEnv.embeddingModelRevision.trim",
+          "lineNumber": 17
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "Promise.all",
+          "lineNumber": 37
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "import",
+          "lineNumber": 38
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "import",
+          "lineNumber": 39
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "getCurrentEmbeddingModelSpec",
+          "lineNumber": 46
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "pipeline",
+          "lineNumber": 53
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "extractor",
+          "lineNumber": 56
+        },
+        {
+          "caller": "loadFeatureExtractor",
+          "callee": "Array.from",
+          "lineNumber": 57
+        },
+        {
+          "caller": "embedText",
+          "callee": "loadFeatureExtractor",
+          "lineNumber": 63
+        },
+        {
+          "caller": "embedText",
+          "callee": "extractor",
+          "lineNumber": 67
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/rag/retrieval.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 147,
+      "nonEmptyLines": 127,
+      "functions": [
+        {
+          "name": "purgeAndScheduleProjectReindex",
+          "startLine": 25,
+          "endLine": 68,
+          "params": [
+            "projectId",
+            "reason"
+          ]
+        },
+        {
+          "name": "assertEmbeddingConsistency",
+          "startLine": 70,
+          "endLine": 130,
+          "params": [
+            "projectId"
+          ]
+        },
+        {
+          "name": "retrieveRelevantChunks",
+          "startLine": 132,
+          "endLine": 147,
+          "params": [
+            "projectId",
+            "query",
+            "limit"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "retrieveRelevantChunks",
+          "line": 132,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "purgeAndScheduleProjectReindex",
+          "callee": "await sql<ProjectDocumentRow[]>",
+          "lineNumber": 30
+        },
+        {
+          "caller": "purgeAndScheduleProjectReindex",
+          "callee": "sql",
+          "lineNumber": 36
+        },
+        {
+          "caller": "purgeAndScheduleProjectReindex",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 45
+        },
+        {
+          "caller": "assertEmbeddingConsistency",
+          "callee": "getCurrentEmbeddingModelSpec",
+          "lineNumber": 71
+        },
+        {
+          "caller": "assertEmbeddingConsistency",
+          "callee": "await sql<EmbeddingConsistencyRow[]>",
+          "lineNumber": 74
+        },
+        {
+          "caller": "assertEmbeddingConsistency",
+          "callee": "purgeAndScheduleProjectReindex",
+          "lineNumber": 122
+        },
+        {
+          "caller": "retrieveRelevantChunks",
+          "callee": "assertEmbeddingConsistency",
+          "lineNumber": 133
+        },
+        {
+          "caller": "retrieveRelevantChunks",
+          "callee": "embedText",
+          "lineNumber": 135
+        },
+        {
+          "caller": "retrieveRelevantChunks",
+          "callee": "await sql<RetrievedChunk[]>",
+          "lineNumber": 138
+        },
+        {
+          "caller": "retrieveRelevantChunks",
+          "callee": "JSON.stringify",
+          "lineNumber": 140
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/storage/r2.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 32,
+      "functions": [
+        {
+          "name": "getR2",
+          "startLine": 9,
+          "endLine": 24,
+          "params": []
+        },
+        {
+          "name": "downloadFromR2",
+          "startLine": 26,
+          "endLine": 35,
+          "params": [
+            "key"
+          ]
+        },
+        {
+          "name": "deleteFromR2",
+          "startLine": 37,
+          "endLine": 39,
+          "params": [
+            "key"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "R2_BUCKET",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "downloadFromR2",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "deleteFromR2",
+          "line": 37,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "downloadFromR2",
+          "callee": "getR2",
+          "lineNumber": 27
+        },
+        {
+          "caller": "downloadFromR2",
+          "callee": "r2.send",
+          "lineNumber": 28
+        },
+        {
+          "caller": "deleteFromR2",
+          "callee": "getR2().send",
+          "lineNumber": 38
+        },
+        {
+          "caller": "deleteFromR2",
+          "callee": "getR2",
+          "lineNumber": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    }
+  ]
+}

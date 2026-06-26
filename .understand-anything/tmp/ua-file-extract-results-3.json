@@ -1,0 +1,2500 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 24,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "__tests__/components/ui/badge.test.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 46,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "__tests__/components/ui/button.test.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 78,
+      "nonEmptyLines": 64,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "__tests__/components/ui/card.test.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 52,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "__tests__/components/ui/input.test.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "__tests__/lib/utils.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 156,
+      "nonEmptyLines": 126,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 165,
+      "nonEmptyLines": 154,
+      "functions": [
+        {
+          "name": "displayName",
+          "startLine": 16,
+          "endLine": 18,
+          "params": [
+            "name",
+            "email"
+          ]
+        },
+        {
+          "name": "KnowledgeGapThreadPage",
+          "startLine": 20,
+          "endLine": 165,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "KnowledgeGapThreadPage",
+          "line": 20,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "displayName",
+          "callee": "name.trim",
+          "lineNumber": 17
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "requireAnyAdmin",
+          "lineNumber": 24
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "getKnowledgeGapThread",
+          "lineNumber": 26
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "getProjectAdminIds",
+          "lineNumber": 38
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "adminProjectIds.includes",
+          "lineNumber": 39
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "displayName",
+          "lineNumber": 66
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "formatDate",
+          "lineNumber": 67
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "encodeURIComponent",
+          "lineNumber": 86
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "thread.comments.map",
+          "lineNumber": 97
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "displayName",
+          "lineNumber": 101
+        },
+        {
+          "caller": "KnowledgeGapThreadPage",
+          "callee": "formatDate",
+          "lineNumber": 111
+        }
+      ],
+      "metrics": {
+        "importCount": 8,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 57,
+      "nonEmptyLines": 54,
+      "functions": [
+        {
+          "name": "ProjectDocumentsPage",
+          "startLine": 18,
+          "endLine": 57,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectDocumentsPage",
+          "line": 18,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectDocumentsPage",
+          "callee": "Promise.all",
+          "lineNumber": 20
+        },
+        {
+          "caller": "ProjectDocumentsPage",
+          "callee": "getProjectById",
+          "lineNumber": 21
+        },
+        {
+          "caller": "ProjectDocumentsPage",
+          "callee": "getProjectDocuments",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ProjectDocumentsPage",
+          "callee": "getProjectDocumentConnectors",
+          "lineNumber": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/members/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 97,
+      "functions": [
+        {
+          "name": "ProjectMembersPage",
+          "startLine": 13,
+          "endLine": 101,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectMembersPage",
+          "line": 13,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectMembersPage",
+          "callee": "requireProjectAdmin",
+          "lineNumber": 15
+        },
+        {
+          "caller": "ProjectMembersPage",
+          "callee": "Promise.all",
+          "lineNumber": 16
+        },
+        {
+          "caller": "ProjectMembersPage",
+          "callee": "getProjectById",
+          "lineNumber": 17
+        },
+        {
+          "caller": "ProjectMembersPage",
+          "callee": "getProjectMembers",
+          "lineNumber": 18
+        },
+        {
+          "caller": "ProjectMembersPage",
+          "callee": "members.map",
+          "lineNumber": 53
+        },
+        {
+          "caller": "ProjectMembersPage",
+          "callee": "formatDate",
+          "lineNumber": 68
+        }
+      ],
+      "metrics": {
+        "importCount": 8,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 392,
+      "nonEmptyLines": 372,
+      "functions": [
+        {
+          "name": "HighlightedSnippet",
+          "startLine": 41,
+          "endLine": 74,
+          "params": [
+            "props"
+          ]
+        },
+        {
+          "name": "AdminProjectDetailPage",
+          "startLine": 76,
+          "endLine": 392,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminProjectDetailPage",
+          "line": 76,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap((chunk, index) => {\n      if (index === 0) {\n        return [{ text: chunk, highlighted: false }];\n      }\n\n      const [highlightedText = '', ...rest] = chunk.split('<</H>>');\n\n      return [\n        { text: highlightedText, highlighted: true },\n        { text: rest.join('<</H>>'), highlighted: false },\n      ];\n    })\n    .filter",
+          "lineNumber": 42
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap",
+          "lineNumber": 42
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split",
+          "lineNumber": 42
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "chunk.split",
+          "lineNumber": 49
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "rest.join",
+          "lineNumber": 53
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segments.map",
+          "lineNumber": 60
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 63
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 69
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "(searchParams.q ?? '').trim",
+          "lineNumber": 82
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "requireProjectAdmin",
+          "lineNumber": 83
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "Promise.all",
+          "lineNumber": 87
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "getProjectById",
+          "lineNumber": 88
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "getProjectDocuments",
+          "lineNumber": 89
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "getProjectMembers",
+          "lineNumber": 90
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "getProjectQuizSets",
+          "lineNumber": 91
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "getRetakeRequestsForProject",
+          "lineNumber": 92
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "getProjectAnnouncements",
+          "lineNumber": 93
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "searchProjectDocumentChunks",
+          "lineNumber": 95
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "Promise.resolve",
+          "lineNumber": 96
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "documents.slice",
+          "lineNumber": 99
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "[\n          { label: 'Documents', value: documents.length },\n          { label: 'Members', value: members.length },\n          { label: 'Quest sets', value: sets.length },\n          { label: 'Pass threshold', value: `${project?.pass_threshold ?? 60}%` },\n        ].map",
+          "lineNumber": 155
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "String",
+          "lineNumber": 201
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "recentDocs.map",
+          "lineNumber": 243
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "formatDate",
+          "lineNumber": 254
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "doc.file_type.toUpperCase",
+          "lineNumber": 257
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "searchResults.map",
+          "lineNumber": 291
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "announcements.map",
+          "lineNumber": 362
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "formatDate",
+          "lineNumber": 367
+        },
+        {
+          "caller": "AdminProjectDetailPage",
+          "callee": "formatDate",
+          "lineNumber": 369
+        }
+      ],
+      "metrics": {
+        "importCount": 12,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 124,
+      "nonEmptyLines": 116,
+      "functions": [
+        {
+          "name": "ProjectQuizAdminPage",
+          "startLine": 20,
+          "endLine": 124,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectQuizAdminPage",
+          "line": 20,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "Promise.all",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "getProjectById",
+          "lineNumber": 23
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "getProjectQuizSets",
+          "lineNumber": 24
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "sets.reduce",
+          "lineNumber": 27
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "(() => {\n              const categoryCounts: Record<string, number> = {};\n              for (const s of sets) {\n                const cat = s.category ?? 'general';\n                categoryCounts[cat] = (categoryCounts[cat] ?? 0) + 1;\n              }\n              const activeSets = sets.filter((s) => s.is_active).length;\n              return (\n                <div className=\"flex flex-col items-end gap-2\">\n                  <div className=\"bg-brand-50 text-brand-700 flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium\">\n                    <BookOpen className=\"h-4 w-4\" />\n                    {Object.entries(categoryCounts)\n                      .map(([cat, n]) => `${n} ${cat}`)\n                      .join(' · ')}\n                  </div>\n                  {activeSets === 0 && (\n                    <p className=\"text-xs font-medium text-amber-600\">\n                      ⚠ No active sets — activate at least one set so members can take the quiz.\n                    </p>\n                  )}\n                </div>\n              );\n            })",
+          "lineNumber": 55
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "sets.filter",
+          "lineNumber": 61
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "Object.entries(categoryCounts)\n                      .map(([cat, n]) => `${n} ${cat}`)\n                      .join",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "Object.entries(categoryCounts)\n                      .map",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ProjectQuizAdminPage",
+          "callee": "Object.entries",
+          "lineNumber": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/projects/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 112,
+      "nonEmptyLines": 107,
+      "functions": [
+        {
+          "name": "AdminProjectsPage",
+          "startLine": 14,
+          "endLine": 112,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminProjectsPage",
+          "line": 14,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "requireAdmin",
+          "lineNumber": 15
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "Promise.all",
+          "lineNumber": 16
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "getAllProjects",
+          "lineNumber": 17
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "getPendingRetakeCountsByProject",
+          "lineNumber": 18
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "projects.map",
+          "lineNumber": 57
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "pendingRetakeCounts.get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "cn",
+          "lineNumber": 85
+        },
+        {
+          "caller": "AdminProjectsPage",
+          "callee": "String",
+          "lineNumber": 96
+        }
+      ],
+      "metrics": {
+        "importCount": 9,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/search/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 152,
+      "nonEmptyLines": 143,
+      "functions": [
+        {
+          "name": "HighlightedSnippet",
+          "startLine": 9,
+          "endLine": 42,
+          "params": [
+            "props"
+          ]
+        },
+        {
+          "name": "AdminSearchPage",
+          "startLine": 44,
+          "endLine": 152,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminSearchPage",
+          "line": 44,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap((chunk, index) => {\n      if (index === 0) {\n        return [{ text: chunk, highlighted: false }];\n      }\n\n      const [highlightedText = '', ...rest] = chunk.split('<</H>>');\n\n      return [\n        { text: highlightedText, highlighted: true },\n        { text: rest.join('<</H>>'), highlighted: false },\n      ];\n    })\n    .filter",
+          "lineNumber": 10
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap",
+          "lineNumber": 10
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split",
+          "lineNumber": 10
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "chunk.split",
+          "lineNumber": 17
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "rest.join",
+          "lineNumber": 21
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segments.map",
+          "lineNumber": 28
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 31
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 37
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "(searchParams.q ?? '').trim",
+          "lineNumber": 48
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "(searchParams.projectId ?? '').trim",
+          "lineNumber": 49
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "requireAnyAdmin",
+          "lineNumber": 50
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "getAllProjects",
+          "lineNumber": 53
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "getAssignedProjects",
+          "lineNumber": 54
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "accessibleProjects.map",
+          "lineNumber": 55
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "projectOptions.some",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "searchAccessibleDocumentChunks",
+          "lineNumber": 64
+        },
+        {
+          "caller": "AdminSearchPage",
+          "callee": "results.map",
+          "lineNumber": 106
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/system-health/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 117,
+      "functions": [
+        {
+          "name": "HealthBadge",
+          "startLine": 11,
+          "endLine": 13,
+          "params": [
+            "{ ok }"
+          ]
+        },
+        {
+          "name": "AdminSystemHealthPage",
+          "startLine": 15,
+          "endLine": 128,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminSystemHealthPage",
+          "line": 15,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AdminSystemHealthPage",
+          "callee": "requireAdmin",
+          "lineNumber": 16
+        },
+        {
+          "caller": "AdminSystemHealthPage",
+          "callee": "getSystemHealthSnapshot",
+          "lineNumber": 17
+        },
+        {
+          "caller": "AdminSystemHealthPage",
+          "callee": "formatDate",
+          "lineNumber": 38
+        },
+        {
+          "caller": "AdminSystemHealthPage",
+          "callee": "formatDate",
+          "lineNumber": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/threads/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 244,
+      "nonEmptyLines": 232,
+      "functions": [
+        {
+          "name": "buildThreadsHref",
+          "startLine": 13,
+          "endLine": 30,
+          "params": [
+            "params"
+          ]
+        },
+        {
+          "name": "AdminOpenThreadsPage",
+          "startLine": 32,
+          "endLine": 244,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminOpenThreadsPage",
+          "line": 32,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "buildThreadsHref",
+          "callee": "searchParams.set",
+          "lineNumber": 22
+        },
+        {
+          "caller": "buildThreadsHref",
+          "callee": "searchParams.set",
+          "lineNumber": 23
+        },
+        {
+          "caller": "buildThreadsHref",
+          "callee": "searchParams.set",
+          "lineNumber": 24
+        },
+        {
+          "caller": "buildThreadsHref",
+          "callee": "searchParams.set",
+          "lineNumber": 25
+        },
+        {
+          "caller": "buildThreadsHref",
+          "callee": "searchParams.set",
+          "lineNumber": 26
+        },
+        {
+          "caller": "buildThreadsHref",
+          "callee": "String",
+          "lineNumber": 26
+        },
+        {
+          "caller": "buildThreadsHref",
+          "callee": "searchParams.toString",
+          "lineNumber": 28
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "(searchParams.project ?? '').trim",
+          "lineNumber": 42
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "(searchParams.document ?? '').trim",
+          "lineNumber": 43
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Math.max",
+          "lineNumber": 45
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Number.parseInt",
+          "lineNumber": 45
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "(searchParams.page ?? '1').trim",
+          "lineNumber": 45
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "(searchParams.status ?? 'open').trim().toLowerCase",
+          "lineNumber": 46
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "(searchParams.status ?? 'open').trim",
+          "lineNumber": 46
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "requireAnyAdmin",
+          "lineNumber": 50
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "getAdminThreadQueuePage",
+          "lineNumber": 51
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Math.max",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Math.ceil",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Math.min",
+          "lineNumber": 60
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "projectOptions.map",
+          "lineNumber": 105
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "documentOptions.map",
+          "lineNumber": 120
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "rows.map",
+          "lineNumber": 163
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Number",
+          "lineNumber": 188
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "formatDate",
+          "lineNumber": 188
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "buildThreadsHref",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Math.max",
+          "lineNumber": 208
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "buildThreadsHref",
+          "lineNumber": 222
+        },
+        {
+          "caller": "AdminOpenThreadsPage",
+          "callee": "Math.min",
+          "lineNumber": 227
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/dashboard/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 367,
+      "nonEmptyLines": 348,
+      "functions": [
+        {
+          "name": "activityLabel",
+          "startLine": 33,
+          "endLine": 35,
+          "params": [
+            "action"
+          ]
+        },
+        {
+          "name": "DashboardPage",
+          "startLine": 46,
+          "endLine": 367,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DashboardPage",
+          "line": 46,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "activityLabel",
+          "callee": "action.replaceAll",
+          "lineNumber": 34
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "requireMember",
+          "lineNumber": 47
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "redirect",
+          "lineNumber": 50
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "Promise.all",
+          "lineNumber": 53
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "getAssignedProjects",
+          "lineNumber": 54
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "getMemberDashboardStats",
+          "lineNumber": 55
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "getProjectAdminIds",
+          "lineNumber": 56
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "projects.find",
+          "lineNumber": 60
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "projects.find",
+          "lineNumber": 61
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "[\n                {\n                  label: 'Products',\n                  value: stats.totalProjects,\n                  icon: FolderOpen,\n                  color: 'text-sky-700 bg-sky-100',\n                },\n                {\n                  label: 'Completed',\n                  value: stats.completedQuizzes,\n                  icon: CheckCircle2,\n                  color: 'text-emerald-700 bg-emerald-100',\n                },\n                {\n                  label: 'In Progress',\n                  value: stats.inProgressQuizzes,\n                  icon: Clock,\n                  color: 'text-amber-700 bg-amber-100',\n                },\n                {\n                  label: 'Documents',\n                  value: stats.totalDocs,\n                  icon: FileText,\n                  color: 'text-indigo-700 bg-indigo-100',\n                },\n              ].map",
+          "lineNumber": 102
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "projects.map",
+          "lineNumber": 225
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "projects\n                  .filter((p) => adminProjectIds.includes(p.id))\n                  .map",
+          "lineNumber": 244
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "projects\n                  .filter",
+          "lineNumber": 244
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "adminProjectIds.includes",
+          "lineNumber": 245
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "stats.recentAnnouncements.map",
+          "lineNumber": 273
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "formatDate",
+          "lineNumber": 282
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "formatDate",
+          "lineNumber": 283
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "stats.recentBookmarks.map",
+          "lineNumber": 301
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "formatDate",
+          "lineNumber": 309
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "stats.recentActivity.slice(0, 6).map",
+          "lineNumber": 338
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "stats.recentActivity.slice",
+          "lineNumber": 338
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "activityLabel",
+          "lineNumber": 345
+        },
+        {
+          "caller": "DashboardPage",
+          "callee": "formatDate",
+          "lineNumber": 350
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/projects/[id]/bookmarks/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 61,
+      "functions": [
+        {
+          "name": "ProjectBookmarksPage",
+          "startLine": 11,
+          "endLine": 67,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectBookmarksPage",
+          "line": 11,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "requireMember",
+          "lineNumber": 13
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "userHasProjectAccess",
+          "lineNumber": 14
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "redirect",
+          "lineNumber": 17
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "Promise.all",
+          "lineNumber": 20
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "getProjectById",
+          "lineNumber": 21
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "getProjectBookmarks",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "bookmarks.map",
+          "lineNumber": 44
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "Array.isArray",
+          "lineNumber": 47
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "bookmark.message.sources.map",
+          "lineNumber": 49
+        },
+        {
+          "caller": "ProjectBookmarksPage",
+          "callee": "formatDate",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/projects/[id]/flashcards/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 153,
+      "nonEmptyLines": 144,
+      "functions": [
+        {
+          "name": "ProjectFlashcardsPage",
+          "startLine": 15,
+          "endLine": 153,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectFlashcardsPage",
+          "line": 15,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "requireMember",
+          "lineNumber": 17
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "userHasProjectAccess",
+          "lineNumber": 18
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "redirect",
+          "lineNumber": 21
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "Promise.all",
+          "lineNumber": 24
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "getProjectById",
+          "lineNumber": 25
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "getProjectFlashcardsForUser",
+          "lineNumber": 26
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "cards.filter",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "cards.map",
+          "lineNumber": 84
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "formatDate",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ProjectFlashcardsPage",
+          "callee": "formatDate",
+          "lineNumber": 121
+        }
+      ],
+      "metrics": {
+        "importCount": 9,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/projects/[id]/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 240,
+      "nonEmptyLines": 224,
+      "functions": [
+        {
+          "name": "HighlightedSnippet",
+          "startLine": 18,
+          "endLine": 51,
+          "params": [
+            "props"
+          ]
+        },
+        {
+          "name": "ProjectOverviewPage",
+          "startLine": 62,
+          "endLine": 240,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectOverviewPage",
+          "line": 62,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap((chunk, index) => {\n      if (index === 0) {\n        return [{ text: chunk, highlighted: false }];\n      }\n\n      const [highlightedText = '', ...rest] = chunk.split('<</H>>');\n\n      return [\n        { text: highlightedText, highlighted: true },\n        { text: rest.join('<</H>>'), highlighted: false },\n      ];\n    })\n    .filter",
+          "lineNumber": 19
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap",
+          "lineNumber": 19
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split",
+          "lineNumber": 19
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "chunk.split",
+          "lineNumber": 26
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "rest.join",
+          "lineNumber": 30
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segments.map",
+          "lineNumber": 37
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 40
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 46
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "(searchParams.q ?? '').trim",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "requireMember",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "userHasProjectAccess",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "redirect",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "Promise.all",
+          "lineNumber": 76
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "getProjectById",
+          "lineNumber": 77
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "getProjectDocuments",
+          "lineNumber": 78
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "getQuizAttemptForProject",
+          "lineNumber": 79
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "searchProjectDocumentChunks",
+          "lineNumber": 81
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "Promise.resolve",
+          "lineNumber": 82
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "documents.filter",
+          "lineNumber": 84
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "searchResults.map",
+          "lineNumber": 165
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "documents.map",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "formatDate",
+          "lineNumber": 208
+        },
+        {
+          "caller": "ProjectOverviewPage",
+          "callee": "document.file_type.toUpperCase",
+          "lineNumber": 219
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/projects/[id]/study/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 136,
+      "nonEmptyLines": 125,
+      "functions": [
+        {
+          "name": "ProjectStudyModePage",
+          "startLine": 13,
+          "endLine": 136,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectStudyModePage",
+          "line": 13,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "requireMember",
+          "lineNumber": 15
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "userHasProjectAccess",
+          "lineNumber": 16
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "redirect",
+          "lineNumber": 19
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "Promise.all",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "getProjectById",
+          "lineNumber": 23
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "getInteractiveStudyGuide",
+          "lineNumber": 24
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "guide.weakSections.map",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "section.section.charAt(0).toUpperCase",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "section.section.charAt",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "section.section.slice",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "Math.round",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "guide.recommendations.map",
+          "lineNumber": 75
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "item.section.charAt(0).toUpperCase",
+          "lineNumber": 79
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "item.section.charAt",
+          "lineNumber": 79
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "item.section.slice",
+          "lineNumber": 79
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "item.documents.map",
+          "lineNumber": 87
+        },
+        {
+          "caller": "ProjectStudyModePage",
+          "callee": "item.chunkReferences.map",
+          "lineNumber": 102
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/search/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 149,
+      "nonEmptyLines": 140,
+      "functions": [
+        {
+          "name": "HighlightedSnippet",
+          "startLine": 9,
+          "endLine": 42,
+          "params": [
+            "props"
+          ]
+        },
+        {
+          "name": "MemberSearchPage",
+          "startLine": 44,
+          "endLine": 149,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MemberSearchPage",
+          "line": 44,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap((chunk, index) => {\n      if (index === 0) {\n        return [{ text: chunk, highlighted: false }];\n      }\n\n      const [highlightedText = '', ...rest] = chunk.split('<</H>>');\n\n      return [\n        { text: highlightedText, highlighted: true },\n        { text: rest.join('<</H>>'), highlighted: false },\n      ];\n    })\n    .filter",
+          "lineNumber": 10
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split('<<H>>')\n    .flatMap",
+          "lineNumber": 10
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "props.snippet\n    .split",
+          "lineNumber": 10
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "chunk.split",
+          "lineNumber": 17
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "rest.join",
+          "lineNumber": 21
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segments.map",
+          "lineNumber": 28
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 31
+        },
+        {
+          "caller": "HighlightedSnippet",
+          "callee": "segment.text.slice",
+          "lineNumber": 37
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "(searchParams.q ?? '').trim",
+          "lineNumber": 48
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "(searchParams.projectId ?? '').trim",
+          "lineNumber": 49
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "requireMember",
+          "lineNumber": 50
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "getAssignedProjects",
+          "lineNumber": 51
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "accessibleProjects.map",
+          "lineNumber": 52
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "projectOptions.some",
+          "lineNumber": 56
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "searchAccessibleDocumentChunks",
+          "lineNumber": 61
+        },
+        {
+          "caller": "MemberSearchPage",
+          "callee": "results.map",
+          "lineNumber": 103
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(member)/threads/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 174,
+      "nonEmptyLines": 164,
+      "functions": [
+        {
+          "name": "MemberOpenThreadsPage",
+          "startLine": 11,
+          "endLine": 174,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MemberOpenThreadsPage",
+          "line": 11,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "(searchParams.project ?? '').trim",
+          "lineNumber": 15
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "(searchParams.document ?? '').trim",
+          "lineNumber": 16
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "(searchParams.status ?? 'open').trim().toLowerCase",
+          "lineNumber": 18
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "(searchParams.status ?? 'open').trim",
+          "lineNumber": 18
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "requireMember",
+          "lineNumber": 22
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "getOpenThreadsForUser",
+          "lineNumber": 23
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "todayStart.setHours",
+          "lineNumber": 25
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "Array.from(\n    new Map(rows.map((row) => [row.project_id, row.project_name])).entries(),\n  ).map",
+          "lineNumber": 27
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "Array.from",
+          "lineNumber": 27
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "new Map(rows.map((row) => [row.project_id, row.project_name])).entries",
+          "lineNumber": 28
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "rows.map",
+          "lineNumber": 28
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "Array.from(\n    new Map(\n      rows\n        .filter((row) => row.document_id && row.document_name)\n        .map((row) => [row.document_id as string, row.document_name as string]),\n    ).entries(),\n  ).map",
+          "lineNumber": 31
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "Array.from",
+          "lineNumber": 31
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "new Map(\n      rows\n        .filter((row) => row.document_id && row.document_name)\n        .map((row) => [row.document_id as string, row.document_name as string]),\n    ).entries",
+          "lineNumber": 32
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "rows\n        .filter((row) => row.document_id && row.document_name)\n        .map",
+          "lineNumber": 33
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "rows\n        .filter",
+          "lineNumber": 33
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "rows.filter",
+          "lineNumber": 39
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "projectOptions.map",
+          "lineNumber": 87
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "documentOptions.map",
+          "lineNumber": 102
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "filteredRows.map",
+          "lineNumber": 145
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "Number",
+          "lineNumber": 163
+        },
+        {
+          "caller": "MemberOpenThreadsPage",
+          "callee": "formatDate",
+          "lineNumber": 163
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "components/admin/activity-feed.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 264,
+      "nonEmptyLines": 245,
+      "functions": [
+        {
+          "name": "titleFromAction",
+          "startLine": 72,
+          "endLine": 74,
+          "params": [
+            "action"
+          ]
+        },
+        {
+          "name": "ActivityFeed",
+          "startLine": 76,
+          "endLine": 264,
+          "params": [
+            "{\n  items,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ActivityFeed",
+          "line": 76,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "titleFromAction",
+          "callee": "action.replaceAll('_', ' ').replace",
+          "lineNumber": 73
+        },
+        {
+          "caller": "titleFromAction",
+          "callee": "action.replaceAll",
+          "lineNumber": 73
+        },
+        {
+          "caller": "titleFromAction",
+          "callee": "m.toUpperCase",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useState",
+          "lineNumber": 81
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useState",
+          "lineNumber": 82
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useState",
+          "lineNumber": 83
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useMemo",
+          "lineNumber": 85
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "items.map",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "titleFromAction",
+          "lineNumber": 88
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useMemo",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "enriched.filter",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "search.trim().toLowerCase",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "search.trim",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "base.filter",
+          "lineNumber": 109
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "(item.userName ?? '').toLowerCase().includes",
+          "lineNumber": 111
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "(item.userName ?? '').toLowerCase",
+          "lineNumber": 111
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "item.config.label.toLowerCase().includes",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "item.config.label.toLowerCase",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "item.action.toLowerCase().includes",
+          "lineNumber": 113
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "item.action.toLowerCase",
+          "lineNumber": 113
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "Math.max",
+          "lineNumber": 117
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "Math.ceil",
+          "lineNumber": 117
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "filteredItems.slice",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useMemo",
+          "lineNumber": 120
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "pageItems.forEach",
+          "lineNumber": 123
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "new Date(item.created_at).toLocaleDateString",
+          "lineNumber": 124
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "map.get",
+          "lineNumber": 129
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "existing.push",
+          "lineNumber": 130
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "map.set",
+          "lineNumber": 131
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "map.entries",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "useMemo",
+          "lineNumber": 137
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "items.map((item) => item.userName).filter",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "items.map",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "FILTERS.map",
+          "lineNumber": 156
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "setActiveFilter",
+          "lineNumber": 163
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "setPage",
+          "lineNumber": 164
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "setSearch",
+          "lineNumber": 183
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "setPage",
+          "lineNumber": 184
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "groupedItems.map",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "groupItems.map",
+          "lineNumber": 198
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "formatDate",
+          "lineNumber": 216
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "Math.min",
+          "lineNumber": 227
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "setPage",
+          "lineNumber": 236
+        },
+        {
+          "caller": "ActivityFeed",
+          "callee": "setPage",
+          "lineNumber": 248
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "components/admin/analytics-table.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 118,
+      "functions": [
+        {
+          "name": "AnalyticsTable",
+          "startLine": 13,
+          "endLine": 128,
+          "params": [
+            "{\n  title,\n  rows,\n  rowActions,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AnalyticsTable",
+          "line": 13,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AnalyticsTable",
+          "callee": "useState",
+          "lineNumber": 22
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "useState",
+          "lineNumber": 23
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "useMemo",
+          "lineNumber": 24
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Object.keys",
+          "lineNumber": 24
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "useMemo",
+          "lineNumber": 26
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "rows.filter",
+          "lineNumber": 28
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Object.values(row).some",
+          "lineNumber": 29
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Object.values",
+          "lineNumber": 29
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "String(value).toLowerCase().includes",
+          "lineNumber": 30
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "String(value).toLowerCase",
+          "lineNumber": 30
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "String",
+          "lineNumber": 30
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "filter.toLowerCase",
+          "lineNumber": 30
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Math.max",
+          "lineNumber": 35
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Math.ceil",
+          "lineNumber": 35
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Math.min",
+          "lineNumber": 36
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "filteredRows.slice",
+          "lineNumber": 37
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "toCsv",
+          "lineNumber": 40
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "document.createElement",
+          "lineNumber": 41
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "URL.createObjectURL",
+          "lineNumber": 42
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "title.toLowerCase().replaceAll",
+          "lineNumber": 43
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "title.toLowerCase",
+          "lineNumber": 43
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "link.click",
+          "lineNumber": 44
+        },
+        {
+          "caller": "exportCsv",
+          "callee": "URL.revokeObjectURL",
+          "lineNumber": 45
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "setFilter",
+          "lineNumber": 58
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "columns.map",
+          "lineNumber": 77
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "pageRows.map",
+          "lineNumber": 84
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "columns.map",
+          "lineNumber": 86
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "String",
+          "lineNumber": 87
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "rowActions",
+          "lineNumber": 89
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "Math.min",
+          "lineNumber": 100
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "setPage",
+          "lineNumber": 107
+        },
+        {
+          "caller": "AnalyticsTable",
+          "callee": "setPage",
+          "lineNumber": 118
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "components/admin/document-connectors-panel.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 576,
+      "nonEmptyLines": 556,
+      "functions": [
+        {
+          "name": "parseConnectorRunSummary",
+          "startLine": 34,
+          "endLine": 68,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "DocumentConnectorsPanel",
+          "startLine": 70,
+          "endLine": 576,
+          "params": [
+            "{\n  projectId,\n  connectors,\n  createAction,\n  syncAction,\n  testConnectionAction,\n  dryRunAction,\n  deleteAction,\n  toggleAutoSyncAction,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DocumentConnectorsPanel",
+          "line": 70,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "String(record.mode ?? '').trim",
+          "lineNumber": 38
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "String",
+          "lineNumber": 38
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number",
+          "lineNumber": 44
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number",
+          "lineNumber": 45
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number",
+          "lineNumber": 46
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Array.isArray",
+          "lineNumber": 48
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "skipReasonsRaw\n    .map((entry) => {\n      if (!entry || typeof entry !== 'object') return null;\n      const item = entry as Record<string, unknown>;\n      const reason = String(item.reason ?? '').trim();\n      const count = Number(item.count ?? 0);\n      if (!reason || !Number.isFinite(count) || count <= 0) return null;\n      return { reason, count };\n    })\n    .filter",
+          "lineNumber": 49
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "skipReasonsRaw\n    .map",
+          "lineNumber": 49
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "String(item.reason ?? '').trim",
+          "lineNumber": 53
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "String",
+          "lineNumber": 53
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number",
+          "lineNumber": 54
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number.isFinite",
+          "lineNumber": 55
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Boolean",
+          "lineNumber": 58
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number.isFinite",
+          "lineNumber": 62
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number.isFinite",
+          "lineNumber": 63
+        },
+        {
+          "caller": "parseConnectorRunSummary",
+          "callee": "Number.isFinite",
+          "lineNumber": 64
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "useState",
+          "lineNumber": 80
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "setProvider",
+          "lineNumber": 202
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "connectors.map",
+          "lineNumber": 446
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "parseConnectorRunSummary",
+          "lineNumber": 448
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 455
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 455
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 457
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 457
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 459
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 459
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 461
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 461
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 463
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 463
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 464
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "String",
+          "lineNumber": 464
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "cn",
+          "lineNumber": 469
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "summary.skip_reasons\n                              .slice(0, 3)\n                              .map((reason) => `${reason.reason} (${reason.count})`)\n                              .join",
+          "lineNumber": 498
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "summary.skip_reasons\n                              .slice(0, 3)\n                              .map",
+          "lineNumber": 498
+        },
+        {
+          "caller": "DocumentConnectorsPanel",
+          "callee": "summary.skip_reasons\n                              .slice",
+          "lineNumber": 498
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    }
+  ]
+}

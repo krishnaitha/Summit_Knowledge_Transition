@@ -1,0 +1,723 @@
+{
+  "nodes": [
+    {
+      "id": "file:__tests__/components/ui/badge.test.tsx",
+      "type": "file",
+      "name": "badge.test.tsx",
+      "filePath": "__tests__/components/ui/badge.test.tsx",
+      "summary": "Unit tests for the Badge UI component, verifying rendering, variant styles, and accessibility attributes.",
+      "tags": ["test", "component", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/components/ui/button.test.tsx",
+      "type": "file",
+      "name": "button.test.tsx",
+      "filePath": "__tests__/components/ui/button.test.tsx",
+      "summary": "Unit tests for the Button UI component covering variant rendering, size props, disabled state, and click handlers.",
+      "tags": ["test", "component", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/components/ui/card.test.tsx",
+      "type": "file",
+      "name": "card.test.tsx",
+      "filePath": "__tests__/components/ui/card.test.tsx",
+      "summary": "Unit tests for the Card family of UI components (Card, CardHeader, CardTitle, CardDescription, CardContent) ensuring correct rendering and composition.",
+      "tags": ["test", "component", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/components/ui/input.test.tsx",
+      "type": "file",
+      "name": "input.test.tsx",
+      "filePath": "__tests__/components/ui/input.test.tsx",
+      "summary": "Unit tests for the Input UI component verifying value binding, placeholder, disabled state, and event handling.",
+      "tags": ["test", "component", "ui"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/lib/utils.test.ts",
+      "type": "file",
+      "name": "utils.test.ts",
+      "filePath": "__tests__/lib/utils.test.ts",
+      "summary": "Comprehensive unit tests for utility functions including cn, formatDate, formatPercent, safeJsonParse, toCsv, and sleep from lib/utils.ts.",
+      "tags": ["test", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "summary": "Admin page for viewing and responding to individual knowledge-gap threads, allowing admins to add replies and update thread status.",
+      "tags": ["api-handler", "admin", "knowledge-gap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx:KnowledgeGapThreadPage",
+      "type": "function",
+      "name": "KnowledgeGapThreadPage",
+      "filePath": "app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "lineRange": [20, 165],
+      "summary": "Next.js server component that fetches a knowledge-gap thread by ID and renders the thread detail view with reply and status-update forms for admins.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "summary": "Admin page for managing project documents, including document upload, connector management, and document listing for a specific project.",
+      "tags": ["api-handler", "admin", "document-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/documents/page.tsx:ProjectDocumentsPage",
+      "type": "function",
+      "name": "ProjectDocumentsPage",
+      "filePath": "app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "lineRange": [18, 57],
+      "summary": "Server component that fetches project metadata, documents, and connector configurations in parallel, then renders upload, connector, and listing panels.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/members/page.tsx",
+      "summary": "Admin page for managing project membership, showing current members with roles and providing invite, remove, and role-change actions.",
+      "tags": ["api-handler", "admin", "member-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/members/page.tsx:ProjectMembersPage",
+      "type": "function",
+      "name": "ProjectMembersPage",
+      "filePath": "app/(admin)/admin/projects/[id]/members/page.tsx",
+      "lineRange": [13, 101],
+      "summary": "Server component guarded by requireProjectAdmin that fetches project and member data then renders the membership management interface.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/page.tsx",
+      "summary": "Comprehensive admin project overview page showing stats, recent documents, RAG search results, quiz sets, retake requests, and announcement management.",
+      "tags": ["api-handler", "admin", "project-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "type": "function",
+      "name": "AdminProjectDetailPage",
+      "filePath": "app/(admin)/admin/projects/[id]/page.tsx",
+      "lineRange": [76, 392],
+      "summary": "Server component that orchestrates parallel data fetching for project details, documents, members, quiz sets, retake requests, and search, then renders a rich admin dashboard view.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "summary": "Admin page for managing quiz sets and questions within a project, showing category counts and active set status warnings.",
+      "tags": ["api-handler", "admin", "quiz-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/[id]/quiz/page.tsx:ProjectQuizAdminPage",
+      "type": "function",
+      "name": "ProjectQuizAdminPage",
+      "filePath": "app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "lineRange": [20, 124],
+      "summary": "Server component that loads project quiz sets, computes category distribution, and renders quiz management UI with generator and sets panel components.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/projects/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/projects/page.tsx",
+      "summary": "Admin projects listing page showing all projects with status indicators, pending retake counts, and a form to create new projects.",
+      "tags": ["api-handler", "admin", "project-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "type": "function",
+      "name": "AdminProjectsPage",
+      "filePath": "app/(admin)/admin/projects/page.tsx",
+      "lineRange": [14, 112],
+      "summary": "Server component guarded by requireAdmin that fetches all projects with pending retake counts and renders the projects list with creation form.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/(admin)/admin/search/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/(admin)/admin/search/page.tsx",
+      "summary": "Admin RAG document search page allowing admins to search across all accessible projects with highlighted snippet display.",
+      "tags": ["api-handler", "admin", "search"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/(admin)/admin/search/page.tsx:AdminSearchPage",
+      "type": "function",
+      "name": "AdminSearchPage",
+      "filePath": "app/(admin)/admin/search/page.tsx",
+      "lineRange": [44, 152],
+      "summary": "Server component that performs a cross-project RAG search for admins using searchAccessibleDocumentChunks and renders results with highlighted text snippets.",
+      "tags": ["api-handler", "admin", "component"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:__tests__/components/ui/badge.test.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/badge.test.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/button.test.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/button.test.tsx",
+      "target": "file:components/ui/button.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/card.test.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/card.test.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/components/ui/input.test.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/components/ui/input.test.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:__tests__/lib/utils.test.ts",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/lib/utils.test.ts",
+      "target": "file:lib/utils.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:app/actions/document-threads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "function:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx:KnowledgeGapThreadPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx",
+      "target": "function:app/(admin)/admin/knowledge-gap-threads/[threadId]/page.tsx:KnowledgeGapThreadPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:components/admin/document-connectors-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:components/admin/document-upload-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:components/admin/documents-list.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/documents/page.tsx:ProjectDocumentsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/documents/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/documents/page.tsx:ProjectDocumentsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:components/admin/member-invite-form.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/members/page.tsx:ProjectMembersPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/members/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/members/page.tsx:ProjectMembersPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/admin/document-upload-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/admin/retake-requests-card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/search/debounced-document-search.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/page.tsx:AdminProjectDetailPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:components/admin/quiz-generator.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:components/admin/quiz-sets-panel.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/quiz/page.tsx:ProjectQuizAdminPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/[id]/quiz/page.tsx",
+      "target": "function:app/(admin)/admin/projects/[id]/quiz/page.tsx:ProjectQuizAdminPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:app/actions/admin.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/badge.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/submit-button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "file:lib/utils.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/projects/page.tsx",
+      "target": "function:app/(admin)/admin/projects/page.tsx:AdminProjectsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:components/search/debounced-document-search.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:components/ui/card.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:lib/auth.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "file:lib/data.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "function:app/(admin)/admin/search/page.tsx:AdminSearchPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:app/(admin)/admin/search/page.tsx",
+      "target": "function:app/(admin)/admin/search/page.tsx:AdminSearchPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

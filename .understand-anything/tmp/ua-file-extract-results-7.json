@@ -1,0 +1,5204 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 13,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "__tests__/components/admin/generate-document-form.test.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 158,
+      "nonEmptyLines": 135,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/(admin)/admin/generate-document/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 107,
+      "nonEmptyLines": 97,
+      "functions": [
+        {
+          "name": "GenerateDocumentPage",
+          "startLine": 6,
+          "endLine": 107,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GenerateDocumentPage",
+          "line": 6,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "requireAnyAdmin",
+          "lineNumber": 9
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "Promise.all",
+          "lineNumber": 12
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "getAllProjects",
+          "lineNumber": 12
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "searchParams.context?.trim",
+          "lineNumber": 13
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "searchParams.projectId?.trim",
+          "lineNumber": 19
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "getKnowledgeGapThread",
+          "lineNumber": 22
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "comment.author_name?.trim",
+          "lineNumber": 37
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "lines.push",
+          "lineNumber": 40
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "lines.push",
+          "lineNumber": 41
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "lines.push",
+          "lineNumber": 42
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "lines.join('\\n').trim",
+          "lineNumber": 45
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "lines.join",
+          "lineNumber": 45
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "(thread.gap_query ?? thread.title).slice",
+          "lineNumber": 46
+        },
+        {
+          "caller": "GenerateDocumentPage",
+          "callee": "projects.map",
+          "lineNumber": 63
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/actions/transcript.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 353,
+      "nonEmptyLines": 303,
+      "functions": [
+        {
+          "name": "parseInline",
+          "startLine": 65,
+          "endLine": 77,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "buildDocxBuffer",
+          "startLine": 79,
+          "endLine": 180,
+          "params": [
+            "markdownContent",
+            "title"
+          ]
+        },
+        {
+          "name": "generateDocumentFromTranscriptAction",
+          "startLine": 184,
+          "endLine": 296,
+          "params": [
+            "formData"
+          ]
+        },
+        {
+          "name": "pushToKnowledgeBaseAction",
+          "startLine": 298,
+          "endLine": 353,
+          "params": [
+            "params"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "generateDocumentFromTranscriptAction",
+          "line": 184,
+          "isDefault": false
+        },
+        {
+          "name": "pushToKnowledgeBaseAction",
+          "line": 298,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parseInline",
+          "callee": "regex.exec",
+          "lineNumber": 70
+        },
+        {
+          "caller": "parseInline",
+          "callee": "runs.push",
+          "lineNumber": 71
+        },
+        {
+          "caller": "parseInline",
+          "callee": "text.slice",
+          "lineNumber": 71
+        },
+        {
+          "caller": "parseInline",
+          "callee": "runs.push",
+          "lineNumber": 72
+        },
+        {
+          "caller": "parseInline",
+          "callee": "runs.push",
+          "lineNumber": 75
+        },
+        {
+          "caller": "parseInline",
+          "callee": "text.slice",
+          "lineNumber": 75
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "markdownContent.split",
+          "lineNumber": 88
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "raw.trimEnd",
+          "lineNumber": 89
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "line.trim",
+          "lineNumber": 90
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 93
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.startsWith",
+          "lineNumber": 97
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 98
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.slice",
+          "lineNumber": 100
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.startsWith",
+          "lineNumber": 105
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 106
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.slice",
+          "lineNumber": 108
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.startsWith",
+          "lineNumber": 113
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 114
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.slice",
+          "lineNumber": 116
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "/^[-*] /.test",
+          "lineNumber": 121
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 122
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "parseInline",
+          "lineNumber": 125
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.slice",
+          "lineNumber": 125
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "/^\\d+\\. /.test",
+          "lineNumber": 129
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 130
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "parseInline",
+          "lineNumber": 133
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "trimmed.replace",
+          "lineNumber": 133
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "children.push",
+          "lineNumber": 138
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "parseInline",
+          "lineNumber": 140
+        },
+        {
+          "caller": "buildDocxBuffer",
+          "callee": "Packer.toBuffer",
+          "lineNumber": 179
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "requireAnyAdmin",
+          "lineNumber": 185
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "String(formData.get('transcript') ?? '').trim",
+          "lineNumber": 187
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "String",
+          "lineNumber": 187
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "formData.get",
+          "lineNumber": 187
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "formData\n    .getAll('transcriptFiles')\n    .filter",
+          "lineNumber": 188
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "formData\n    .getAll",
+          "lineNumber": 188
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "String(formData.get('title') ?? '').trim",
+          "lineNumber": 191
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "String",
+          "lineNumber": 191
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "formData.get",
+          "lineNumber": 191
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "String",
+          "lineNumber": 192
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "formData.get",
+          "lineNumber": 192
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "transcriptSections.push",
+          "lineNumber": 206
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "file.name.split('.').pop()?.toLowerCase",
+          "lineNumber": 210
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "file.name.split('.').pop",
+          "lineNumber": 210
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "file.name.split",
+          "lineNumber": 210
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "supportedTranscriptExtensions.has",
+          "lineNumber": 211
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "Buffer.from",
+          "lineNumber": 217
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "file.arrayBuffer",
+          "lineNumber": 217
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "(await extractTextFromFile(file.name, fileBuffer)).trim",
+          "lineNumber": 218
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "extractTextFromFile",
+          "lineNumber": 218
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "transcriptSections.push",
+          "lineNumber": 220
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "transcriptSections.join('\\n\\n').trim",
+          "lineNumber": 224
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "transcriptSections.join",
+          "lineNumber": 224
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "createGroqChatCompletion",
+          "lineNumber": 239
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "TRANSCRIPT_PROMPT.replace",
+          "lineNumber": 241
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "raw.startsWith",
+          "lineNumber": 251
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "raw\n        .replace(/^### /gm, '--- ')\n        .replace(/^## /gm, '--- ')\n        .replace(/^# /gm, '--- ')\n        .replace(/\\*\\*/g, '')\n        .replace",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "raw\n        .replace(/^### /gm, '--- ')\n        .replace(/^## /gm, '--- ')\n        .replace(/^# /gm, '--- ')\n        .replace",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "raw\n        .replace(/^### /gm, '--- ')\n        .replace(/^## /gm, '--- ')\n        .replace",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "raw\n        .replace(/^### /gm, '--- ')\n        .replace",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "raw\n        .replace",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "title.toUpperCase",
+          "lineNumber": 264
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "'='.repeat",
+          "lineNumber": 264
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "buildDocxBuffer",
+          "lineNumber": 267
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "buf.toString",
+          "lineNumber": 268
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "title\n      .toLowerCase()\n      .replace(/\\s+/g, '-')\n      .replace",
+          "lineNumber": 275
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "title\n      .toLowerCase()\n      .replace",
+          "lineNumber": 275
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "title\n      .toLowerCase",
+          "lineNumber": 275
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "new Date().toISOString",
+          "lineNumber": 288
+        },
+        {
+          "caller": "generateDocumentFromTranscriptAction",
+          "callee": "console.error",
+          "lineNumber": 291
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "requireAnyAdmin",
+          "lineNumber": 304
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "userHasProjectAccess",
+          "lineNumber": 311
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "filename.endsWith",
+          "lineNumber": 314
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "randomUUID",
+          "lineNumber": 315
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "uploadFile",
+          "lineNumber": 316
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "Buffer.from",
+          "lineNumber": 316
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "randomUUID",
+          "lineNumber": 318
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "sql",
+          "lineNumber": 319
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "sql",
+          "lineNumber": 328
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "revalidatePath",
+          "lineNumber": 331
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "sql",
+          "lineNumber": 334
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "sql.json",
+          "lineNumber": 336
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "fetch(workerUrl, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'x-worker-secret': process.env.WORKER_SECRET ?? '',\n    },\n  }).catch",
+          "lineNumber": 342
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "fetch",
+          "lineNumber": 342
+        },
+        {
+          "caller": "pushToKnowledgeBaseAction",
+          "callee": "revalidateTag",
+          "lineNumber": 350
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 2,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "app/api/jobs/worker/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 437,
+      "nonEmptyLines": 369,
+      "functions": [
+        {
+          "name": "shuffle",
+          "startLine": 45,
+          "endLine": 52,
+          "params": [
+            "arr"
+          ]
+        },
+        {
+          "name": "splitIntoGroups",
+          "startLine": 54,
+          "endLine": 58,
+          "params": [
+            "arr",
+            "n"
+          ]
+        },
+        {
+          "name": "buildSystemPrompt",
+          "startLine": 60,
+          "endLine": 119,
+          "params": [
+            "category"
+          ]
+        },
+        {
+          "name": "buildUserPrompt",
+          "startLine": 121,
+          "endLine": 175,
+          "params": [
+            "context",
+            "category",
+            "setIndex",
+            "totalSets"
+          ]
+        },
+        {
+          "name": "parseQuestions",
+          "startLine": 177,
+          "endLine": 203,
+          "params": [
+            "raw"
+          ]
+        },
+        {
+          "name": "processDocumentJob",
+          "startLine": 207,
+          "endLine": 239,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "processQuizGenerateJob",
+          "startLine": 241,
+          "endLine": 333,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "processBotThreadReplyJob",
+          "startLine": 335,
+          "endLine": 342,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "processConnectorSyncJob",
+          "startLine": 344,
+          "endLine": 351,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "POST",
+          "startLine": 355,
+          "endLine": 437,
+          "params": [
+            "request"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "POST",
+          "line": 355,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "shuffle",
+          "callee": "Math.floor",
+          "lineNumber": 48
+        },
+        {
+          "caller": "shuffle",
+          "callee": "Math.random",
+          "lineNumber": 48
+        },
+        {
+          "caller": "splitIntoGroups",
+          "callee": "Array.from",
+          "lineNumber": 55
+        },
+        {
+          "caller": "splitIntoGroups",
+          "callee": "arr.forEach",
+          "lineNumber": 56
+        },
+        {
+          "caller": "splitIntoGroups",
+          "callee": "groups[i % n].push",
+          "lineNumber": 56
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "raw\n      .replace(/^```json\\s*/i, '')\n      .replace(/^```\\s*/i, '')\n      .replace(/```\\s*$/i, '')\n      .trim",
+          "lineNumber": 179
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "raw\n      .replace(/^```json\\s*/i, '')\n      .replace(/^```\\s*/i, '')\n      .replace",
+          "lineNumber": 179
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "raw\n      .replace(/^```json\\s*/i, '')\n      .replace",
+          "lineNumber": 179
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "raw\n      .replace",
+          "lineNumber": 179
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "JSON.parse",
+          "lineNumber": 184
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "Array.isArray",
+          "lineNumber": 185
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "list\n      .filter((q) => {\n        if (!q.question_text || !q.option_a || !q.option_b) return false;\n        const isTrueFalse = String(q.question_type ?? '').toLowerCase() === 'true_false';\n        const correctUpper = String(q.correct_option ?? '').toUpperCase();\n        if (isTrueFalse) return ['A', 'B'].includes(correctUpper);\n        return q.option_c && q.option_d && ['A', 'B', 'C', 'D'].includes(correctUpper);\n      })\n      .map",
+          "lineNumber": 186
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "list\n      .filter",
+          "lineNumber": 186
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String(q.question_type ?? '').toLowerCase",
+          "lineNumber": 189
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String",
+          "lineNumber": 189
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String(q.correct_option ?? '').toUpperCase",
+          "lineNumber": 190
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String",
+          "lineNumber": 190
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "['A', 'B'].includes",
+          "lineNumber": 191
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "['A', 'B', 'C', 'D'].includes",
+          "lineNumber": 192
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String(q.question_type ?? '').toLowerCase",
+          "lineNumber": 197
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String",
+          "lineNumber": 197
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String(q.correct_option).toUpperCase",
+          "lineNumber": 198
+        },
+        {
+          "caller": "parseQuestions",
+          "callee": "String",
+          "lineNumber": 198
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "String",
+          "lineNumber": 208
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "String",
+          "lineNumber": 209
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "String",
+          "lineNumber": 210
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "sql",
+          "lineNumber": 212
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "await sql<{ canonical_content: string }[]>",
+          "lineNumber": 219
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "content.trim",
+          "lineNumber": 229
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "downloadFile",
+          "lineNumber": 231
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "extractTextFromFile",
+          "lineNumber": 232
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "processDocumentRecord",
+          "lineNumber": 235
+        },
+        {
+          "caller": "processDocumentJob",
+          "callee": "revalidatePath",
+          "lineNumber": 237
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "String",
+          "lineNumber": 242
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "Math.min",
+          "lineNumber": 244
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "Math.max",
+          "lineNumber": 244
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "Number",
+          "lineNumber": 244
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "await sql<{ content: string }[]>",
+          "lineNumber": 246
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "shuffle",
+          "lineNumber": 254
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "splitIntoGroups",
+          "lineNumber": 255
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "sql",
+          "lineNumber": 257
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "Number",
+          "lineNumber": 260
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "buildSystemPrompt",
+          "lineNumber": 262
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "sleep",
+          "lineNumber": 268
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "(chunkGroups[i] ?? chunkGroups[0])\n      .map((c) => c.content.slice(0, 300).trim())\n      .join",
+          "lineNumber": 270
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "(chunkGroups[i] ?? chunkGroups[0])\n      .map",
+          "lineNumber": 270
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "c.content.slice(0, 300).trim",
+          "lineNumber": 271
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "c.content.slice",
+          "lineNumber": 271
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "buildUserPrompt",
+          "lineNumber": 274
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "createQuizCompletion",
+          "lineNumber": 278
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "parseQuestions",
+          "lineNumber": 289
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "String",
+          "lineNumber": 291
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "console.error",
+          "lineNumber": 292
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "sql",
+          "lineNumber": 300
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "sql",
+          "lineNumber": 309
+        },
+        {
+          "caller": "processQuizGenerateJob",
+          "callee": "revalidatePath",
+          "lineNumber": 331
+        },
+        {
+          "caller": "processBotThreadReplyJob",
+          "callee": "processBotThreadReply",
+          "lineNumber": 336
+        },
+        {
+          "caller": "processBotThreadReplyJob",
+          "callee": "String",
+          "lineNumber": 337
+        },
+        {
+          "caller": "processBotThreadReplyJob",
+          "callee": "String",
+          "lineNumber": 338
+        },
+        {
+          "caller": "processBotThreadReplyJob",
+          "callee": "String",
+          "lineNumber": 339
+        },
+        {
+          "caller": "processBotThreadReplyJob",
+          "callee": "String",
+          "lineNumber": 340
+        },
+        {
+          "caller": "processConnectorSyncJob",
+          "callee": "String",
+          "lineNumber": 345
+        },
+        {
+          "caller": "processConnectorSyncJob",
+          "callee": "syncDocumentConnector",
+          "lineNumber": 350
+        },
+        {
+          "caller": "POST",
+          "callee": "request.headers.get",
+          "lineNumber": 357
+        },
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 359
+        },
+        {
+          "caller": "POST",
+          "callee": "sql",
+          "lineNumber": 363
+        },
+        {
+          "caller": "POST",
+          "callee": "Date.now",
+          "lineNumber": 369
+        },
+        {
+          "caller": "POST",
+          "callee": "enqueueDueDocumentConnectorSyncJobs",
+          "lineNumber": 371
+        },
+        {
+          "caller": "POST",
+          "callee": "console.error",
+          "lineNumber": 373
+        },
+        {
+          "caller": "POST",
+          "callee": "Date.now",
+          "lineNumber": 375
+        },
+        {
+          "caller": "POST",
+          "callee": "await sql<ProcessingJobRecord[]>",
+          "lineNumber": 380
+        },
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 384
+        },
+        {
+          "caller": "POST",
+          "callee": "processDocumentJob",
+          "lineNumber": 392
+        },
+        {
+          "caller": "POST",
+          "callee": "processQuizGenerateJob",
+          "lineNumber": 394
+        },
+        {
+          "caller": "POST",
+          "callee": "processConnectorSyncJob",
+          "lineNumber": 396
+        },
+        {
+          "caller": "POST",
+          "callee": "processBotThreadReplyJob",
+          "lineNumber": 398
+        },
+        {
+          "caller": "POST",
+          "callee": "logApplicationError",
+          "lineNumber": 408
+        },
+        {
+          "caller": "POST",
+          "callee": "String",
+          "lineNumber": 416
+        },
+        {
+          "caller": "POST",
+          "callee": "String",
+          "lineNumber": 417
+        },
+        {
+          "caller": "POST",
+          "callee": "String",
+          "lineNumber": 422
+        },
+        {
+          "caller": "POST",
+          "callee": "ensureBotFailureReply",
+          "lineNumber": 423
+        },
+        {
+          "caller": "POST",
+          "callee": "sql",
+          "lineNumber": 427
+        },
+        {
+          "caller": "POST",
+          "callee": "sql.json",
+          "lineNumber": 430
+        },
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 436
+        }
+      ],
+      "metrics": {
+        "importCount": 10,
+        "exportCount": 1,
+        "functionCount": 10,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "components/admin/generate-document-form.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 381,
+      "nonEmptyLines": 350,
+      "functions": [
+        {
+          "name": "GenerateDocumentForm",
+          "startLine": 28,
+          "endLine": 381,
+          "params": [
+            "{\n  projects,\n  suggestedContext,\n  suggestedTranscript,\n  suggestedTitle,\n  preselectedProjectId,\n  sourceThreadId,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GenerateDocumentForm",
+          "line": 28,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 36
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 38
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 39
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 48
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 49
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "useState",
+          "lineNumber": 50
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "e.preventDefault",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setIsLoading",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setError",
+          "lineNumber": 55
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setPushStatus",
+          "lineNumber": 56
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setPushError",
+          "lineNumber": 57
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "generateDocumentFromTranscriptAction",
+          "lineNumber": 61
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setGenerated",
+          "lineNumber": 64
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setError",
+          "lineNumber": 72
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setError",
+          "lineNumber": 75
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setIsLoading",
+          "lineNumber": 77
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "Uint8Array.from",
+          "lineNumber": 86
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "atob",
+          "lineNumber": 86
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "c.charCodeAt",
+          "lineNumber": 86
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "window.URL.createObjectURL",
+          "lineNumber": 94
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "document.createElement",
+          "lineNumber": 95
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "document.body.appendChild",
+          "lineNumber": 98
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "a.click",
+          "lineNumber": 99
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "window.URL.revokeObjectURL",
+          "lineNumber": 100
+        },
+        {
+          "caller": "downloadDocument",
+          "callee": "document.body.removeChild",
+          "lineNumber": 101
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "setPushStatus",
+          "lineNumber": 107
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "setPushError",
+          "lineNumber": 108
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "generated.filename.replace",
+          "lineNumber": 114
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "pushToKnowledgeBaseAction",
+          "lineNumber": 117
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "setPushStatus",
+          "lineNumber": 123
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "setPushStatus",
+          "lineNumber": 125
+        },
+        {
+          "caller": "handlePushToKnowledgeBase",
+          "callee": "setPushError",
+          "lineNumber": 126
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "projects.find",
+          "lineNumber": 131
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "setGenerated",
+          "lineNumber": 140
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "setPushStatus",
+          "lineNumber": 141
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "setPushError",
+          "lineNumber": 142
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "setPushProjectId",
+          "lineNumber": 143
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "setPushProjectId",
+          "lineNumber": 199
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "projects.map",
+          "lineNumber": 204
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "setSelectedTranscriptFiles",
+          "lineNumber": 297
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "Array.from(e.currentTarget.files ?? []).map",
+          "lineNumber": 298
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "Array.from",
+          "lineNumber": 298
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "selectedTranscriptFiles.join",
+          "lineNumber": 309
+        },
+        {
+          "caller": "GenerateDocumentForm",
+          "callee": "suggestedContext.slice",
+          "lineNumber": 323
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/connectors.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 2115,
+      "nonEmptyLines": 1793,
+      "functions": [
+        {
+          "name": "trimTrailingSlash",
+          "startLine": 105,
+          "endLine": 107,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "asString",
+          "startLine": 109,
+          "endLine": 111,
+          "params": [
+            "value",
+            "fallback"
+          ]
+        },
+        {
+          "name": "stripJqlQuotes",
+          "startLine": 113,
+          "endLine": 115,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizePath",
+          "startLine": 117,
+          "endLine": 119,
+          "params": [
+            "path"
+          ]
+        },
+        {
+          "name": "normalizeConfluenceBaseUrl",
+          "startLine": 121,
+          "endLine": 147,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeSharePointSiteUrl",
+          "startLine": 149,
+          "endLine": 179,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeSharePointLibraryPath",
+          "startLine": 181,
+          "endLine": 225,
+          "params": [
+            "libraryPath",
+            "siteUrl"
+          ]
+        },
+        {
+          "name": "normalizeOneDriveFolderPath",
+          "startLine": 227,
+          "endLine": 255,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeOptionalUrl",
+          "startLine": 257,
+          "endLine": 274,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeMondayApiUrl",
+          "startLine": 276,
+          "endLine": 283,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeMondayBoardIds",
+          "startLine": 285,
+          "endLine": 295,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "incrementReason",
+          "startLine": 297,
+          "endLine": 299,
+          "params": [
+            "reasons",
+            "reason"
+          ]
+        },
+        {
+          "name": "toSkipReasonSummary",
+          "startLine": 301,
+          "endLine": 305,
+          "params": [
+            "reasons"
+          ]
+        },
+        {
+          "name": "createRunResult",
+          "startLine": 307,
+          "endLine": 328,
+          "params": [
+            "params"
+          ]
+        },
+        {
+          "name": "readErrorSnippet",
+          "startLine": 330,
+          "endLine": 336,
+          "params": [
+            "response"
+          ]
+        },
+        {
+          "name": "normalizeGitHubRepository",
+          "startLine": 338,
+          "endLine": 358,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeGitHubBranch",
+          "startLine": 360,
+          "endLine": 363,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeGitHubDocsPath",
+          "startLine": 365,
+          "endLine": 389,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "fetchGitHubBranchSha",
+          "startLine": 391,
+          "endLine": 408,
+          "params": [
+            "owner",
+            "repo",
+            "branch",
+            "headers"
+          ]
+        },
+        {
+          "name": "fetchGitHubDefaultBranch",
+          "startLine": 410,
+          "endLine": 426,
+          "params": [
+            "owner",
+            "repo",
+            "headers"
+          ]
+        },
+        {
+          "name": "encodePathSegments",
+          "startLine": 428,
+          "endLine": 435,
+          "params": [
+            "path"
+          ]
+        },
+        {
+          "name": "fileExtension",
+          "startLine": 437,
+          "endLine": 441,
+          "params": [
+            "fileName"
+          ]
+        },
+        {
+          "name": "htmlToText",
+          "startLine": 443,
+          "endLine": 456,
+          "params": [
+            "html"
+          ]
+        },
+        {
+          "name": "jiraAdfToText",
+          "startLine": 458,
+          "endLine": 477,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "setConnectorSyncState",
+          "startLine": 479,
+          "endLine": 505,
+          "params": [
+            "connectorId",
+            "status",
+            "error",
+            "summary"
+          ]
+        },
+        {
+          "name": "enqueueDueDocumentConnectorSyncJobs",
+          "startLine": 507,
+          "endLine": 534,
+          "params": [
+            "syncIntervalHours"
+          ]
+        },
+        {
+          "name": "upsertImportedDocument",
+          "startLine": 536,
+          "endLine": 599,
+          "params": [
+            "params"
+          ]
+        },
+        {
+          "name": "previewConfluenceConnector",
+          "startLine": 601,
+          "endLine": 690,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "previewSharePointConnector",
+          "startLine": 692,
+          "endLine": 784,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "previewJiraConnector",
+          "startLine": 786,
+          "endLine": 857,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "previewMondayConnector",
+          "startLine": 859,
+          "endLine": 964,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "previewOneDriveConnector",
+          "startLine": 966,
+          "endLine": 1061,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "previewGitHubConnector",
+          "startLine": 1063,
+          "endLine": 1194,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "previewConnector",
+          "startLine": 1196,
+          "endLine": 1221,
+          "params": [
+            "connector",
+            "mode"
+          ]
+        },
+        {
+          "name": "syncConfluenceConnector",
+          "startLine": 1223,
+          "endLine": 1329,
+          "params": [
+            "connector"
+          ]
+        },
+        {
+          "name": "syncSharePointConnector",
+          "startLine": 1331,
+          "endLine": 1455,
+          "params": [
+            "connector"
+          ]
+        },
+        {
+          "name": "syncJiraConnector",
+          "startLine": 1457,
+          "endLine": 1554,
+          "params": [
+            "connector"
+          ]
+        },
+        {
+          "name": "syncMondayConnector",
+          "startLine": 1556,
+          "endLine": 1773,
+          "params": [
+            "connector"
+          ]
+        },
+        {
+          "name": "syncOneDriveConnector",
+          "startLine": 1775,
+          "endLine": 1898,
+          "params": [
+            "connector"
+          ]
+        },
+        {
+          "name": "syncGitHubConnector",
+          "startLine": 1900,
+          "endLine": 2052,
+          "params": [
+            "connector"
+          ]
+        },
+        {
+          "name": "syncDocumentConnector",
+          "startLine": 2054,
+          "endLine": 2115,
+          "params": [
+            "connectorId",
+            "options"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "enqueueDueDocumentConnectorSyncJobs",
+          "line": 507,
+          "isDefault": false
+        },
+        {
+          "name": "syncDocumentConnector",
+          "line": 2054,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "trimTrailingSlash",
+          "callee": "value.replace",
+          "lineNumber": 106
+        },
+        {
+          "caller": "asString",
+          "callee": "value.trim",
+          "lineNumber": 110
+        },
+        {
+          "caller": "stripJqlQuotes",
+          "callee": "value.replace(/^\"+|\"+$/g, '').trim",
+          "lineNumber": 114
+        },
+        {
+          "caller": "stripJqlQuotes",
+          "callee": "value.replace",
+          "lineNumber": 114
+        },
+        {
+          "caller": "normalizePath",
+          "callee": "path.replace",
+          "lineNumber": 118
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "value.trim",
+          "lineNumber": 122
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "/^https?:\\/\\//i.test",
+          "lineNumber": 128
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "parsed.pathname.split('/').filter",
+          "lineNumber": 134
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "parsed.pathname.split",
+          "lineNumber": 134
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "parsed.hostname.endsWith",
+          "lineNumber": 139
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 143
+        },
+        {
+          "caller": "normalizeConfluenceBaseUrl",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 145
+        },
+        {
+          "caller": "normalizeSharePointSiteUrl",
+          "callee": "value.trim",
+          "lineNumber": 150
+        },
+        {
+          "caller": "normalizeSharePointSiteUrl",
+          "callee": "/^https?:\\/\\//i.test",
+          "lineNumber": 156
+        },
+        {
+          "caller": "normalizeSharePointSiteUrl",
+          "callee": "parsed.pathname.split('/').filter",
+          "lineNumber": 162
+        },
+        {
+          "caller": "normalizeSharePointSiteUrl",
+          "callee": "parsed.pathname.split",
+          "lineNumber": 162
+        },
+        {
+          "caller": "normalizeSharePointSiteUrl",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 175
+        },
+        {
+          "caller": "normalizeSharePointSiteUrl",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 177
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "libraryPath.trim",
+          "lineNumber": 182
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "/^https?:\\/\\//i.test",
+          "lineNumber": 189
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "decodeURIComponent",
+          "lineNumber": 191
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "normalized.replace",
+          "lineNumber": 197
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "normalized.split",
+          "lineNumber": 198
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "normalized.split",
+          "lineNumber": 199
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "normalized.replace",
+          "lineNumber": 200
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "(() => {\n    try {\n      return new URL(siteUrl).pathname;\n    } catch {\n      return '';\n    }\n  })",
+          "lineNumber": 202
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "normalizePath",
+          "lineNumber": 210
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "normalizePath",
+          "lineNumber": 215
+        },
+        {
+          "caller": "normalizeSharePointLibraryPath",
+          "callee": "cleanPath.startsWith",
+          "lineNumber": 220
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "value.trim",
+          "lineNumber": 228
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "/^https?:\\/\\//i.test",
+          "lineNumber": 235
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "url.pathname.match",
+          "lineNumber": 238
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "decodeURIComponent",
+          "lineNumber": 240
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "decodeURIComponent",
+          "lineNumber": 242
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "cleaned.split",
+          "lineNumber": 249
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "cleaned.split",
+          "lineNumber": 250
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "cleaned.replace",
+          "lineNumber": 251
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "cleaned.replace",
+          "lineNumber": 252
+        },
+        {
+          "caller": "normalizeOneDriveFolderPath",
+          "callee": "normalizePath",
+          "lineNumber": 254
+        },
+        {
+          "caller": "normalizeOptionalUrl",
+          "callee": "value.trim",
+          "lineNumber": 258
+        },
+        {
+          "caller": "normalizeOptionalUrl",
+          "callee": "/^https?:\\/\\//i.test",
+          "lineNumber": 264
+        },
+        {
+          "caller": "normalizeOptionalUrl",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 270
+        },
+        {
+          "caller": "normalizeOptionalUrl",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 272
+        },
+        {
+          "caller": "normalizeMondayApiUrl",
+          "callee": "normalizeOptionalUrl",
+          "lineNumber": 277
+        },
+        {
+          "caller": "normalizeMondayApiUrl",
+          "callee": "normalized.endsWith",
+          "lineNumber": 282
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "value\n    .split(',')\n    .map((part) => part.trim())\n    .filter(Boolean)\n    .map((part) => {\n      const match = part.match(/\\d+/);\n      return match?.[0] ?? '';\n    })\n    .filter",
+          "lineNumber": 286
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "value\n    .split(',')\n    .map((part) => part.trim())\n    .filter(Boolean)\n    .map",
+          "lineNumber": 286
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "value\n    .split(',')\n    .map((part) => part.trim())\n    .filter",
+          "lineNumber": 286
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "value\n    .split(',')\n    .map",
+          "lineNumber": 286
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "value\n    .split",
+          "lineNumber": 286
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "part.trim",
+          "lineNumber": 288
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "part.match",
+          "lineNumber": 291
+        },
+        {
+          "caller": "normalizeMondayBoardIds",
+          "callee": "/^\\d+$/.test",
+          "lineNumber": 294
+        },
+        {
+          "caller": "incrementReason",
+          "callee": "reasons.set",
+          "lineNumber": 298
+        },
+        {
+          "caller": "incrementReason",
+          "callee": "reasons.get",
+          "lineNumber": 298
+        },
+        {
+          "caller": "toSkipReasonSummary",
+          "callee": "Array.from(reasons.entries())\n    .map(([reason, count]) => ({ reason, count }))\n    .sort",
+          "lineNumber": 302
+        },
+        {
+          "caller": "toSkipReasonSummary",
+          "callee": "Array.from(reasons.entries())\n    .map",
+          "lineNumber": 302
+        },
+        {
+          "caller": "toSkipReasonSummary",
+          "callee": "Array.from",
+          "lineNumber": 302
+        },
+        {
+          "caller": "toSkipReasonSummary",
+          "callee": "reasons.entries",
+          "lineNumber": 302
+        },
+        {
+          "caller": "toSkipReasonSummary",
+          "callee": "a.reason.localeCompare",
+          "lineNumber": 304
+        },
+        {
+          "caller": "createRunResult",
+          "callee": "toSkipReasonSummary",
+          "lineNumber": 315
+        },
+        {
+          "caller": "createRunResult",
+          "callee": "reasonSummary.reduce",
+          "lineNumber": 316
+        },
+        {
+          "caller": "readErrorSnippet",
+          "callee": "(await response.text()).replace(/\\s+/g, ' ').trim",
+          "lineNumber": 331
+        },
+        {
+          "caller": "readErrorSnippet",
+          "callee": "(await response.text()).replace",
+          "lineNumber": 331
+        },
+        {
+          "caller": "readErrorSnippet",
+          "callee": "response.text",
+          "lineNumber": 331
+        },
+        {
+          "caller": "readErrorSnippet",
+          "callee": "text.slice",
+          "lineNumber": 335
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "value.trim",
+          "lineNumber": 339
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.replace",
+          "lineNumber": 345
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.replace",
+          "lineNumber": 346
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.replace",
+          "lineNumber": 347
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.split",
+          "lineNumber": 348
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.split",
+          "lineNumber": 349
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.replace",
+          "lineNumber": 350
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.split('/').filter",
+          "lineNumber": 352
+        },
+        {
+          "caller": "normalizeGitHubRepository",
+          "callee": "repository.split",
+          "lineNumber": 352
+        },
+        {
+          "caller": "normalizeGitHubBranch",
+          "callee": "value.trim().replace",
+          "lineNumber": 361
+        },
+        {
+          "caller": "normalizeGitHubBranch",
+          "callee": "value.trim",
+          "lineNumber": 361
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "value.trim",
+          "lineNumber": 366
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "input.split",
+          "lineNumber": 371
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "cleaned.split",
+          "lineNumber": 372
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "cleaned\n    .replace(/^https?:\\/\\/(www\\.)?github\\.com\\//i, '')\n    .replace(/^(www\\.)?github\\.com\\//i, '')\n    .replace",
+          "lineNumber": 373
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "cleaned\n    .replace(/^https?:\\/\\/(www\\.)?github\\.com\\//i, '')\n    .replace",
+          "lineNumber": 373
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "cleaned\n    .replace",
+          "lineNumber": 373
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "cleaned.split('/').filter",
+          "lineNumber": 378
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "cleaned.split",
+          "lineNumber": 378
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "normalizePath",
+          "lineNumber": 381
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "parts.slice(4).join",
+          "lineNumber": 381
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "parts.slice",
+          "lineNumber": 381
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "normalizePath",
+          "lineNumber": 385
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "parts.slice(2).join",
+          "lineNumber": 385
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "parts.slice",
+          "lineNumber": 385
+        },
+        {
+          "caller": "normalizeGitHubDocsPath",
+          "callee": "normalizePath",
+          "lineNumber": 388
+        },
+        {
+          "caller": "fetchGitHubBranchSha",
+          "callee": "fetch",
+          "lineNumber": 397
+        },
+        {
+          "caller": "fetchGitHubBranchSha",
+          "callee": "encodeURIComponent",
+          "lineNumber": 398
+        },
+        {
+          "caller": "fetchGitHubBranchSha",
+          "callee": "encodeURIComponent",
+          "lineNumber": 398
+        },
+        {
+          "caller": "fetchGitHubBranchSha",
+          "callee": "encodeURIComponent",
+          "lineNumber": 398
+        },
+        {
+          "caller": "fetchGitHubBranchSha",
+          "callee": "response.json",
+          "lineNumber": 406
+        },
+        {
+          "caller": "fetchGitHubBranchSha",
+          "callee": "asString",
+          "lineNumber": 407
+        },
+        {
+          "caller": "fetchGitHubDefaultBranch",
+          "callee": "fetch",
+          "lineNumber": 415
+        },
+        {
+          "caller": "fetchGitHubDefaultBranch",
+          "callee": "encodeURIComponent",
+          "lineNumber": 416
+        },
+        {
+          "caller": "fetchGitHubDefaultBranch",
+          "callee": "encodeURIComponent",
+          "lineNumber": 416
+        },
+        {
+          "caller": "fetchGitHubDefaultBranch",
+          "callee": "response.json",
+          "lineNumber": 424
+        },
+        {
+          "caller": "fetchGitHubDefaultBranch",
+          "callee": "asString",
+          "lineNumber": 425
+        },
+        {
+          "caller": "encodePathSegments",
+          "callee": "normalizePath",
+          "lineNumber": 429
+        },
+        {
+          "caller": "encodePathSegments",
+          "callee": "cleaned\n    .split('/')\n    .filter(Boolean)\n    .map((segment) => encodeURIComponent(segment))\n    .join",
+          "lineNumber": 430
+        },
+        {
+          "caller": "encodePathSegments",
+          "callee": "cleaned\n    .split('/')\n    .filter(Boolean)\n    .map",
+          "lineNumber": 430
+        },
+        {
+          "caller": "encodePathSegments",
+          "callee": "cleaned\n    .split('/')\n    .filter",
+          "lineNumber": 430
+        },
+        {
+          "caller": "encodePathSegments",
+          "callee": "cleaned\n    .split",
+          "lineNumber": 430
+        },
+        {
+          "caller": "encodePathSegments",
+          "callee": "encodeURIComponent",
+          "lineNumber": 433
+        },
+        {
+          "caller": "fileExtension",
+          "callee": "fileName.lastIndexOf",
+          "lineNumber": 438
+        },
+        {
+          "caller": "fileExtension",
+          "callee": "fileName.slice(idx + 1).toLowerCase",
+          "lineNumber": 440
+        },
+        {
+          "caller": "fileExtension",
+          "callee": "fileName.slice",
+          "lineNumber": 440
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace(/&lt;/gi, '<')\n    .replace(/&gt;/gi, '>')\n    .replace(/&quot;/gi, '\"')\n    .replace(/&#39;/gi, \"'\")\n    .replace(/\\s+/g, ' ')\n    .trim",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace(/&lt;/gi, '<')\n    .replace(/&gt;/gi, '>')\n    .replace(/&quot;/gi, '\"')\n    .replace(/&#39;/gi, \"'\")\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace(/&lt;/gi, '<')\n    .replace(/&gt;/gi, '>')\n    .replace(/&quot;/gi, '\"')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace(/&lt;/gi, '<')\n    .replace(/&gt;/gi, '>')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace(/&lt;/gi, '<')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "htmlToText",
+          "callee": "html\n    .replace",
+          "lineNumber": 444
+        },
+        {
+          "caller": "jiraAdfToText",
+          "callee": "Array.isArray",
+          "lineNumber": 461
+        },
+        {
+          "caller": "walk",
+          "callee": "Array.isArray",
+          "lineNumber": 466
+        },
+        {
+          "caller": "walk",
+          "callee": "node.flatMap",
+          "lineNumber": 466
+        },
+        {
+          "caller": "walk",
+          "callee": "walk",
+          "lineNumber": 466
+        },
+        {
+          "caller": "walk",
+          "callee": "asString",
+          "lineNumber": 470
+        },
+        {
+          "caller": "walk",
+          "callee": "walk",
+          "lineNumber": 471
+        },
+        {
+          "caller": "jiraAdfToText",
+          "callee": "walk(value).join(' ').replace(/\\s+/g, ' ').trim",
+          "lineNumber": 476
+        },
+        {
+          "caller": "jiraAdfToText",
+          "callee": "walk(value).join(' ').replace",
+          "lineNumber": 476
+        },
+        {
+          "caller": "jiraAdfToText",
+          "callee": "walk(value).join",
+          "lineNumber": 476
+        },
+        {
+          "caller": "jiraAdfToText",
+          "callee": "walk",
+          "lineNumber": 476
+        },
+        {
+          "caller": "setConnectorSyncState",
+          "callee": "sql",
+          "lineNumber": 486
+        },
+        {
+          "caller": "setConnectorSyncState",
+          "callee": "sql.json",
+          "lineNumber": 490
+        },
+        {
+          "caller": "setConnectorSyncState",
+          "callee": "new Date().toISOString",
+          "lineNumber": 491
+        },
+        {
+          "caller": "setConnectorSyncState",
+          "callee": "sql",
+          "lineNumber": 496
+        },
+        {
+          "caller": "setConnectorSyncState",
+          "callee": "new Date().toISOString",
+          "lineNumber": 500
+        },
+        {
+          "caller": "enqueueDueDocumentConnectorSyncJobs",
+          "callee": "Math.max",
+          "lineNumber": 508
+        },
+        {
+          "caller": "enqueueDueDocumentConnectorSyncJobs",
+          "callee": "Math.floor",
+          "lineNumber": 508
+        },
+        {
+          "caller": "enqueueDueDocumentConnectorSyncJobs",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 511
+        },
+        {
+          "caller": "upsertImportedDocument",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 544
+        },
+        {
+          "caller": "upsertImportedDocument",
+          "callee": "sql",
+          "lineNumber": 553
+        },
+        {
+          "caller": "upsertImportedDocument",
+          "callee": "sql",
+          "lineNumber": 554
+        },
+        {
+          "caller": "upsertImportedDocument",
+          "callee": "await sql<{ id: string }[]>",
+          "lineNumber": 568
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "createRunResult",
+          "lineNumber": 608
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "normalizeConfluenceBaseUrl",
+          "lineNumber": 617
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 617
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 618
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 619
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 620
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "Buffer.from(`${authEmail}:${accessToken}`).toString",
+          "lineNumber": 628
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 628
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 639
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 640
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 641
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 642
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "String",
+          "lineNumber": 642
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "fetch",
+          "lineNumber": 644
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 646
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "response.json",
+          "lineNumber": 652
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 665
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "incrementReason",
+          "lineNumber": 667
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "createRunResult",
+          "lineNumber": 673
+        },
+        {
+          "caller": "previewConfluenceConnector",
+          "callee": "createRunResult",
+          "lineNumber": 689
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "createRunResult",
+          "lineNumber": 699
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "normalizeSharePointSiteUrl",
+          "lineNumber": 708
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 708
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "normalizeSharePointLibraryPath",
+          "lineNumber": 709
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 710
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 713
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "libraryPath.replace",
+          "lineNumber": 720
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "initialListUrl.searchParams.set",
+          "lineNumber": 722
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "initialListUrl.searchParams.set",
+          "lineNumber": 723
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "initialListUrl.toString",
+          "lineNumber": 733
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "fetch",
+          "lineNumber": 736
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 739
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "response.json",
+          "lineNumber": 745
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 754
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 755
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "incrementReason",
+          "lineNumber": 758
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "incrementReason",
+          "lineNumber": 763
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "createRunResult",
+          "lineNumber": 770
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 774
+        },
+        {
+          "caller": "previewSharePointConnector",
+          "callee": "createRunResult",
+          "lineNumber": 783
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "createRunResult",
+          "lineNumber": 793
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 802
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 802
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString(config.project_key).toUpperCase",
+          "lineNumber": 803
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 803
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 804
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 805
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "stripJqlQuotes",
+          "lineNumber": 806
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 806
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 813
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 814
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 815
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 816
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "fetch",
+          "lineNumber": 818
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "Buffer.from(`${authEmail}:${accessToken}`).toString",
+          "lineNumber": 821
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 821
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 826
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "response.json",
+          "lineNumber": 830
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 840
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "asString",
+          "lineNumber": 840
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "incrementReason",
+          "lineNumber": 842
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "createRunResult",
+          "lineNumber": 848
+        },
+        {
+          "caller": "previewJiraConnector",
+          "callee": "createRunResult",
+          "lineNumber": 856
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "createRunResult",
+          "lineNumber": 866
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "normalizeMondayApiUrl",
+          "lineNumber": 875
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "asString",
+          "lineNumber": 875
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "asString",
+          "lineNumber": 876
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "asString",
+          "lineNumber": 877
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "normalizeMondayBoardIds",
+          "lineNumber": 883
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "fetch",
+          "lineNumber": 901
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "JSON.stringify",
+          "lineNumber": 907
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 911
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "response.json",
+          "lineNumber": 917
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "asString",
+          "lineNumber": 929
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "boardIds.join",
+          "lineNumber": 934
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "asString",
+          "lineNumber": 946
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "incrementReason",
+          "lineNumber": 948
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "createRunResult",
+          "lineNumber": 954
+        },
+        {
+          "caller": "previewMondayConnector",
+          "callee": "createRunResult",
+          "lineNumber": 963
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "createRunResult",
+          "lineNumber": 973
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 982
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "normalizeOneDriveFolderPath",
+          "lineNumber": 983
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 983
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 984
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 991
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "encodePathSegments",
+          "lineNumber": 991
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 992
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "fetch",
+          "lineNumber": 1005
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1008
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "response.json",
+          "lineNumber": 1014
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "incrementReason",
+          "lineNumber": 1025
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1031
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1032
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "incrementReason",
+          "lineNumber": 1035
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "incrementReason",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "createRunResult",
+          "lineNumber": 1046
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1050
+        },
+        {
+          "caller": "previewOneDriveConnector",
+          "callee": "createRunResult",
+          "lineNumber": 1060
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "createRunResult",
+          "lineNumber": 1070
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "normalizeGitHubRepository",
+          "lineNumber": 1079
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1079
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "normalizeGitHubBranch",
+          "lineNumber": 1080
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1080
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "normalizeGitHubDocsPath",
+          "lineNumber": 1081
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1081
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1082
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "/^[^/]+\\/[^/]+$/.test",
+          "lineNumber": 1084
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "repository.split",
+          "lineNumber": 1090
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "fetchGitHubBranchSha",
+          "lineNumber": 1100
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "fetchGitHubDefaultBranch",
+          "lineNumber": 1108
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "fetchGitHubBranchSha",
+          "lineNumber": 1110
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "fetch",
+          "lineNumber": 1125
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1126
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1126
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1126
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "treeResponse.json",
+          "lineNumber": 1134
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1162
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1163
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "incrementReason",
+          "lineNumber": 1165
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "path.startsWith",
+          "lineNumber": 1169
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "incrementReason",
+          "lineNumber": 1170
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "fileExtension",
+          "lineNumber": 1174
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "allowedExtensions.has",
+          "lineNumber": 1175
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "incrementReason",
+          "lineNumber": 1176
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "createRunResult",
+          "lineNumber": 1182
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "Array.from(allowedExtensions).join",
+          "lineNumber": 1189
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "Array.from",
+          "lineNumber": 1189
+        },
+        {
+          "caller": "previewGitHubConnector",
+          "callee": "createRunResult",
+          "lineNumber": 1193
+        },
+        {
+          "caller": "previewConnector",
+          "callee": "previewConfluenceConnector",
+          "lineNumber": 1201
+        },
+        {
+          "caller": "previewConnector",
+          "callee": "previewSharePointConnector",
+          "lineNumber": 1205
+        },
+        {
+          "caller": "previewConnector",
+          "callee": "previewJiraConnector",
+          "lineNumber": 1209
+        },
+        {
+          "caller": "previewConnector",
+          "callee": "previewMondayConnector",
+          "lineNumber": 1213
+        },
+        {
+          "caller": "previewConnector",
+          "callee": "previewOneDriveConnector",
+          "lineNumber": 1217
+        },
+        {
+          "caller": "previewConnector",
+          "callee": "previewGitHubConnector",
+          "lineNumber": 1220
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "htmlToText",
+          "lineNumber": 1229
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1230
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1230
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1231
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "String",
+          "lineNumber": 1237
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1239
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "console.error",
+          "lineNumber": 1242
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "String",
+          "lineNumber": 1244
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "normalizeConfluenceBaseUrl",
+          "lineNumber": 1251
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1251
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1252
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1253
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1254
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "Buffer.from(`${authEmail}:${accessToken}`).toString",
+          "lineNumber": 1262
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1262
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 1271
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 1272
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 1273
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "url.searchParams.set",
+          "lineNumber": 1274
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "String",
+          "lineNumber": 1274
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "fetch",
+          "lineNumber": 1276
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1278
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "response.json",
+          "lineNumber": 1284
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "String",
+          "lineNumber": 1293
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1294
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1295
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "htmlToText",
+          "lineNumber": 1298
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "asString",
+          "lineNumber": 1299
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1304
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1304
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1305
+        },
+        {
+          "caller": "syncConfluenceConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1314
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1338
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1338
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1339
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "item.title.split('.').pop()?.toLowerCase",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "item.title.split('.').pop",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "item.title.split",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "String",
+          "lineNumber": 1345
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1347
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "console.error",
+          "lineNumber": 1350
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "String",
+          "lineNumber": 1352
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "normalizeSharePointSiteUrl",
+          "lineNumber": 1359
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1359
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "normalizeSharePointLibraryPath",
+          "lineNumber": 1360
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1361
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1364
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "libraryPath.replace",
+          "lineNumber": 1371
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "initialListUrl.searchParams.set",
+          "lineNumber": 1373
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "initialListUrl.searchParams.set",
+          "lineNumber": 1374
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "initialListUrl.toString",
+          "lineNumber": 1382
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "fetch",
+          "lineNumber": 1385
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1388
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "response.json",
+          "lineNumber": 1394
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "items.push",
+          "lineNumber": 1399
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1400
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1412
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1413
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "asString",
+          "lineNumber": 1414
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "new URL(serverRelativeUrl, siteUrl).toString",
+          "lineNumber": 1418
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "fetch",
+          "lineNumber": 1419
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1426
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1432
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "fileResponse.arrayBuffer",
+          "lineNumber": 1432
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "extractTextFromFile",
+          "lineNumber": 1433
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1434
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1435
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "name.split('.').pop()?.toLowerCase",
+          "lineNumber": 1439
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "name.split('.').pop",
+          "lineNumber": 1439
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "name.split",
+          "lineNumber": 1439
+        },
+        {
+          "caller": "syncSharePointConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1444
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1464
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1464
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1465
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "String",
+          "lineNumber": 1471
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1473
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "trimTrailingSlash",
+          "lineNumber": 1480
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1480
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString(config.project_key).toUpperCase",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1482
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1483
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "stripJqlQuotes",
+          "lineNumber": 1484
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1484
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 1495
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 1496
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "String",
+          "lineNumber": 1496
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 1497
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "searchUrl.searchParams.set",
+          "lineNumber": 1498
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "fetch",
+          "lineNumber": 1500
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "Buffer.from(`${authEmail}:${accessToken}`).toString",
+          "lineNumber": 1503
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1503
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "response.json",
+          "lineNumber": 1511
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1522
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1523
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "asString",
+          "lineNumber": 1525
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "jiraAdfToText",
+          "lineNumber": 1526
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1532
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1532
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1533
+        },
+        {
+          "caller": "syncJiraConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1542
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1563
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1563
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1564
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "String",
+          "lineNumber": 1570
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1572
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "normalizeMondayApiUrl",
+          "lineNumber": 1579
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1579
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "normalizeOptionalUrl",
+          "lineNumber": 1580
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1580
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1581
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1582
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "normalizeMondayBoardIds",
+          "lineNumber": 1588
+        },
+        {
+          "caller": "requestMonday",
+          "callee": "fetch",
+          "lineNumber": 1606
+        },
+        {
+          "caller": "requestMonday",
+          "callee": "JSON.stringify",
+          "lineNumber": 1612
+        },
+        {
+          "caller": "requestMonday",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1616
+        },
+        {
+          "caller": "requestMonday",
+          "callee": "response.json",
+          "lineNumber": 1622
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "requestMonday",
+          "lineNumber": 1666
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1668
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "boardIds.join",
+          "lineNumber": 1674
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1691
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1692
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1700
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "requestMonday",
+          "lineNumber": 1704
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1706
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "boardItems.push",
+          "lineNumber": 1714
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1715
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1724
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1725
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "(item.column_values ?? [])\n        .map((col) => {\n          const columnText = asString(col.text);\n          if (!columnText) return '';\n          return `${asString(col.id, 'column')}: ${columnText}`;\n        })\n        .filter(Boolean)\n        .join",
+          "lineNumber": 1728
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "(item.column_values ?? [])\n        .map((col) => {\n          const columnText = asString(col.text);\n          if (!columnText) return '';\n          return `${asString(col.id, 'column')}: ${columnText}`;\n        })\n        .filter",
+          "lineNumber": 1728
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "(item.column_values ?? [])\n        .map",
+          "lineNumber": 1728
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1730
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "asString",
+          "lineNumber": 1732
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "[\n        `Board: ${boardName}`,\n        `Item: ${itemName}`,\n        item.updated_at ? `Updated: ${item.updated_at}` : '',\n        '',\n        columnLines,\n      ]\n        .filter(Boolean)\n        .join",
+          "lineNumber": 1737
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "[\n        `Board: ${boardName}`,\n        `Item: ${itemName}`,\n        item.updated_at ? `Updated: ${item.updated_at}` : '',\n        '',\n        columnLines,\n      ]\n        .filter",
+          "lineNumber": 1737
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1748
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1748
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1754
+        },
+        {
+          "caller": "syncMondayConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1763
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1781
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1782
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1783
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "fileExtension",
+          "lineNumber": 1787
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1791
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1798
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "normalizeOneDriveFolderPath",
+          "lineNumber": 1799
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1799
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1800
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1807
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "encodePathSegments",
+          "lineNumber": 1807
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1808
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "fetch",
+          "lineNumber": 1825
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1828
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "response.json",
+          "lineNumber": 1834
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "items.push",
+          "lineNumber": 1845
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1846
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1861
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1862
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1863
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "asString",
+          "lineNumber": 1864
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "fetch",
+          "lineNumber": 1868
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "readErrorSnippet",
+          "lineNumber": 1870
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1876
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "fileResponse.arrayBuffer",
+          "lineNumber": 1876
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "extractTextFromFile",
+          "lineNumber": 1877
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1878
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1880
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "fileExtension",
+          "lineNumber": 1884
+        },
+        {
+          "caller": "syncOneDriveConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1889
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "item.id.split('/').pop",
+          "lineNumber": 1906
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "item.id.split",
+          "lineNumber": 1906
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "uploadFile",
+          "lineNumber": 1907
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 1907
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 1908
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fileExtension",
+          "lineNumber": 1912
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "String",
+          "lineNumber": 1914
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "String",
+          "lineNumber": 1914
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 1916
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "normalizeGitHubRepository",
+          "lineNumber": 1923
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1923
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "normalizeGitHubBranch",
+          "lineNumber": 1924
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1924
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "normalizeGitHubDocsPath",
+          "lineNumber": 1925
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1925
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1926
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "/^[^/]+\\/[^/]+$/.test",
+          "lineNumber": 1928
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "repository.split",
+          "lineNumber": 1934
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fetchGitHubBranchSha",
+          "lineNumber": 1943
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fetchGitHubDefaultBranch",
+          "lineNumber": 1951
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fetchGitHubBranchSha",
+          "lineNumber": 1953
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fetch",
+          "lineNumber": 1968
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1969
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1969
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 1969
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "treeResponse.json",
+          "lineNumber": 1977
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "(treeData.tree ?? [])\n    .filter((node) => node.type === 'blob' && Boolean(node.path) && Boolean(node.sha))\n    .filter((node) => {\n      const path = asString(node.path);\n      if (!path) return false;\n      if (docsPath && !path.startsWith(`${docsPath}/`) && path !== docsPath) return false;\n      const ext = fileExtension(path);\n      return allowedExtensions.has(ext);\n    })\n    .slice",
+          "lineNumber": 1994
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "(treeData.tree ?? [])\n    .filter((node) => node.type === 'blob' && Boolean(node.path) && Boolean(node.sha))\n    .filter",
+          "lineNumber": 1994
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "(treeData.tree ?? [])\n    .filter",
+          "lineNumber": 1994
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "Boolean",
+          "lineNumber": 1995
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "Boolean",
+          "lineNumber": 1995
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 1997
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "path.startsWith",
+          "lineNumber": 1999
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fileExtension",
+          "lineNumber": 2000
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "allowedExtensions.has",
+          "lineNumber": 2001
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "Array.from(allowedExtensions).join",
+          "lineNumber": 2008
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "Array.from",
+          "lineNumber": 2008
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 2015
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 2016
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fetch",
+          "lineNumber": 2019
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 2020
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 2020
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "encodeURIComponent",
+          "lineNumber": 2020
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "blobResponse.json",
+          "lineNumber": 2028
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "Buffer.from",
+          "lineNumber": 2033
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString(blobData.content).replace",
+          "lineNumber": 2033
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "asString",
+          "lineNumber": 2033
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "path.split('/').pop",
+          "lineNumber": 2034
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "path.split",
+          "lineNumber": 2034
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "extractTextFromFile",
+          "lineNumber": 2035
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "uploadFile",
+          "lineNumber": 2036
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "upsertImportedDocument",
+          "lineNumber": 2038
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "fileExtension",
+          "lineNumber": 2042
+        },
+        {
+          "caller": "syncGitHubConnector",
+          "callee": "processDocumentRecord",
+          "lineNumber": 2047
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "await sql<DocumentConnectorRecord[]>",
+          "lineNumber": 2058
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "setConnectorSyncState",
+          "lineNumber": 2068
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "previewConnector",
+          "lineNumber": 2077
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "syncConfluenceConnector",
+          "lineNumber": 2081
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "syncSharePointConnector",
+          "lineNumber": 2083
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "syncJiraConnector",
+          "lineNumber": 2085
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "syncMondayConnector",
+          "lineNumber": 2087
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "syncOneDriveConnector",
+          "lineNumber": 2089
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "syncGitHubConnector",
+          "lineNumber": 2090
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "createRunResult",
+          "lineNumber": 2092
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "setConnectorSyncState",
+          "lineNumber": 2100
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "new Date().toISOString",
+          "lineNumber": 2102
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "setConnectorSyncState",
+          "lineNumber": 2107
+        },
+        {
+          "caller": "syncDocumentConnector",
+          "callee": "new Date().toISOString",
+          "lineNumber": 2111
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 2,
+        "functionCount": 41,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/parse.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 72,
+      "nonEmptyLines": 62,
+      "functions": [
+        {
+          "name": "extractTextFromFile",
+          "startLine": 8,
+          "endLine": 72,
+          "params": [
+            "fileName",
+            "buffer"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "extractTextFromFile",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "extractTextFromFile",
+          "callee": "fileName.split('.').pop()?.toLowerCase",
+          "lineNumber": 9
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "fileName.split('.').pop",
+          "lineNumber": 9
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "fileName.split",
+          "lineNumber": 9
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "pdfParse",
+          "lineNumber": 12
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "mammoth.extractRawText",
+          "lineNumber": 17
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "parse",
+          "lineNumber": 22
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "buffer.toString",
+          "lineNumber": 22
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "rows\r\n      .map((row, i) =>\r\n        `Row ${i + 1}: ` +\r\n        Object.entries(row)\r\n          .map(([col, val]) => `${col}: ${val}`)\r\n          .join(' | '),\r\n      )\r\n      .join",
+          "lineNumber": 28
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "rows\r\n      .map",
+          "lineNumber": 28
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "Object.entries(row)\r\n          .map(([col, val]) => `${col}: ${val}`)\r\n          .join",
+          "lineNumber": 31
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "Object.entries(row)\r\n          .map",
+          "lineNumber": 31
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "Object.entries",
+          "lineNumber": 31
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "XLSX.read",
+          "lineNumber": 39
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "workbook.SheetNames.map((name) => {\r\n      const rows = XLSX.utils.sheet_to_json<Record<string, string>>(\r\n        workbook.Sheets[name],\r\n        { defval: '' },\r\n      );\r\n      const rowText = rows\r\n        .map((row, i) =>\r\n          `Row ${i + 1}: ` +\r\n          Object.entries(row)\r\n            .map(([col, val]) => `${col}: ${val}`)\r\n            .join(' | '),\r\n        )\r\n        .join('\\n');\r\n      return `Sheet: ${name}\\n${rowText}`;\r\n    }).join",
+          "lineNumber": 40
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "workbook.SheetNames.map",
+          "lineNumber": 40
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "XLSX.utils.sheet_to_json",
+          "lineNumber": 41
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "rows\r\n        .map((row, i) =>\r\n          `Row ${i + 1}: ` +\r\n          Object.entries(row)\r\n            .map(([col, val]) => `${col}: ${val}`)\r\n            .join(' | '),\r\n        )\r\n        .join",
+          "lineNumber": 45
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "rows\r\n        .map",
+          "lineNumber": 45
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "Object.entries(row)\r\n            .map(([col, val]) => `${col}: ${val}`)\r\n            .join",
+          "lineNumber": 48
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "Object.entries(row)\r\n            .map",
+          "lineNumber": 48
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "Object.entries",
+          "lineNumber": 48
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "XLSX.read",
+          "lineNumber": 59
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "workbook.SheetNames.map((name, i) => {\r\n      const sheet = workbook.Sheets[name];\r\n      const text = XLSX.utils.sheet_to_txt(sheet).trim();\r\n      return `Slide ${i + 1} (${name}):\\n${text}`;\r\n    }).filter",
+          "lineNumber": 60
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "workbook.SheetNames.map",
+          "lineNumber": 60
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "XLSX.utils.sheet_to_txt(sheet).trim",
+          "lineNumber": 62
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "XLSX.utils.sheet_to_txt",
+          "lineNumber": 62
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "s.includes",
+          "lineNumber": 64
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "slides.join",
+          "lineNumber": 67
+        },
+        {
+          "caller": "extractTextFromFile",
+          "callee": "buffer.toString",
+          "lineNumber": 71
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/pii.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "redactPii",
+          "startLine": 16,
+          "endLine": 31,
+          "params": [
+            "text"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "redactPii",
+          "line": 16,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "redactPii",
+          "callee": "redactedText.match",
+          "lineNumber": 22
+        },
+        {
+          "caller": "redactPii",
+          "callee": "types.push",
+          "lineNumber": 25
+        },
+        {
+          "caller": "redactPii",
+          "callee": "redactedText.replace",
+          "lineNumber": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/process.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 143,
+      "nonEmptyLines": 125,
+      "functions": [
+        {
+          "name": "sha256",
+          "startLine": 16,
+          "endLine": 18,
+          "params": [
+            "input"
+          ]
+        },
+        {
+          "name": "upsertCanonicalSource",
+          "startLine": 20,
+          "endLine": 47,
+          "params": [
+            "documentId",
+            "projectId",
+            "canonicalContent"
+          ]
+        },
+        {
+          "name": "getCanonicalSource",
+          "startLine": 49,
+          "endLine": 58,
+          "params": [
+            "documentId"
+          ]
+        },
+        {
+          "name": "replaceDocumentChunksFromContent",
+          "startLine": 60,
+          "endLine": 103,
+          "params": [
+            "documentId",
+            "projectId",
+            "canonicalContent"
+          ]
+        },
+        {
+          "name": "processDocumentRecord",
+          "startLine": 105,
+          "endLine": 143,
+          "params": [
+            "documentId",
+            "projectId",
+            "content"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "processDocumentRecord",
+          "line": 105,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "sha256",
+          "callee": "createHash('sha256').update(input, 'utf8').digest",
+          "lineNumber": 17
+        },
+        {
+          "caller": "sha256",
+          "callee": "createHash('sha256').update",
+          "lineNumber": 17
+        },
+        {
+          "caller": "sha256",
+          "callee": "createHash",
+          "lineNumber": 17
+        },
+        {
+          "caller": "upsertCanonicalSource",
+          "callee": "sha256",
+          "lineNumber": 25
+        },
+        {
+          "caller": "upsertCanonicalSource",
+          "callee": "sql",
+          "lineNumber": 27
+        },
+        {
+          "caller": "getCanonicalSource",
+          "callee": "await sql<CanonicalSourceRow[]>",
+          "lineNumber": 50
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "chunkDocumentText",
+          "lineNumber": 65
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "Promise.all",
+          "lineNumber": 66
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "chunks.map",
+          "lineNumber": 66
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "embedText",
+          "lineNumber": 66
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "getCurrentEmbeddingModelSpec",
+          "lineNumber": 67
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "sql",
+          "lineNumber": 69
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "sql",
+          "lineNumber": 74
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "JSON.stringify",
+          "lineNumber": 89
+        },
+        {
+          "caller": "replaceDocumentChunksFromContent",
+          "callee": "sql",
+          "lineNumber": 96
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "redactPii",
+          "lineNumber": 111
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "scanDocument",
+          "lineNumber": 112
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "upsertCanonicalSource",
+          "lineNumber": 114
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "sql",
+          "lineNumber": 116
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "logActivity",
+          "lineNumber": 126
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "getCanonicalSource",
+          "lineNumber": 135
+        },
+        {
+          "caller": "processDocumentRecord",
+          "callee": "replaceDocumentChunksFromContent",
+          "lineNumber": 142
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/scan.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 34,
+      "functions": [
+        {
+          "name": "scanDocument",
+          "startLine": 25,
+          "endLine": 43,
+          "params": [
+            "text",
+            "piiDetected"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "scanDocument",
+          "line": 25,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "scanDocument",
+          "callee": "regex.test",
+          "lineNumber": 31
+        },
+        {
+          "caller": "scanDocument",
+          "callee": "scanFlags.push",
+          "lineNumber": 31
+        },
+        {
+          "caller": "scanDocument",
+          "callee": "INTERNAL_PATTERNS.some",
+          "lineNumber": 38
+        },
+        {
+          "caller": "scanDocument",
+          "callee": "p.test",
+          "lineNumber": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/documents/upload.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 14,
+      "nonEmptyLines": 10,
+      "functions": [
+        {
+          "name": "uploadDocumentToStorage",
+          "startLine": 6,
+          "endLine": 14,
+          "params": [
+            "projectId",
+            "file"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "uploadDocumentToStorage",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "uploadDocumentToStorage",
+          "callee": "file.name.split('.').pop",
+          "lineNumber": 7
+        },
+        {
+          "caller": "uploadDocumentToStorage",
+          "callee": "file.name.split",
+          "lineNumber": 7
+        },
+        {
+          "caller": "uploadDocumentToStorage",
+          "callee": "randomUUID",
+          "lineNumber": 8
+        },
+        {
+          "caller": "uploadDocumentToStorage",
+          "callee": "Buffer.from",
+          "lineNumber": 9
+        },
+        {
+          "caller": "uploadDocumentToStorage",
+          "callee": "file.arrayBuffer",
+          "lineNumber": 9
+        },
+        {
+          "caller": "uploadDocumentToStorage",
+          "callee": "uploadFile",
+          "lineNumber": 11
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/rag/chunking.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "chunkDocumentText",
+          "startLine": 9,
+          "endLine": 35,
+          "params": [
+            "text",
+            "chunkSize",
+            "overlap"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "chunkDocumentText",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "chunkDocumentText",
+          "callee": "text.replace(/\\s+/g, ' ').trim().split",
+          "lineNumber": 10
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "text.replace(/\\s+/g, ' ').trim",
+          "lineNumber": 10
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "text.replace",
+          "lineNumber": 10
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "tokens.filter",
+          "lineNumber": 12
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "tokens.slice(cursor, cursor + chunkSize).join(' ').trim",
+          "lineNumber": 20
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "tokens.slice(cursor, cursor + chunkSize).join",
+          "lineNumber": 20
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "tokens.slice",
+          "lineNumber": 20
+        },
+        {
+          "caller": "chunkDocumentText",
+          "callee": "chunks.push",
+          "lineNumber": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "lib/storage/local.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 134,
+      "nonEmptyLines": 110,
+      "functions": [
+        {
+          "name": "resolveSafeUploadPath",
+          "startLine": 10,
+          "endLine": 57,
+          "params": [
+            "storedPath"
+          ]
+        },
+        {
+          "name": "ensureUploadDir",
+          "startLine": 62,
+          "endLine": 64,
+          "params": []
+        },
+        {
+          "name": "uploadFile",
+          "startLine": 72,
+          "endLine": 84,
+          "params": [
+            "fileName",
+            "buffer"
+          ]
+        },
+        {
+          "name": "downloadFile",
+          "startLine": 91,
+          "endLine": 94,
+          "params": [
+            "filePath"
+          ]
+        },
+        {
+          "name": "getFileStream",
+          "startLine": 101,
+          "endLine": 104,
+          "params": [
+            "filePath"
+          ]
+        },
+        {
+          "name": "deleteFile",
+          "startLine": 110,
+          "endLine": 119,
+          "params": [
+            "filePath"
+          ]
+        },
+        {
+          "name": "getFileInfo",
+          "startLine": 125,
+          "endLine": 134,
+          "params": [
+            "filePath"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ensureUploadDir",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "uploadFile",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "downloadFile",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "getFileStream",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "deleteFile",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "getFileInfo",
+          "line": 125,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "storedPath.trim",
+          "lineNumber": 15
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.startsWith",
+          "lineNumber": 18
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.startsWith",
+          "lineNumber": 18
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.replace",
+          "lineNumber": 26
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.startsWith",
+          "lineNumber": 28
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.slice",
+          "lineNumber": 29
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.startsWith",
+          "lineNumber": 32
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.slice",
+          "lineNumber": 33
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.startsWith",
+          "lineNumber": 36
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.slice",
+          "lineNumber": 37
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.startsWith",
+          "lineNumber": 40
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "normalized.slice",
+          "lineNumber": 41
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "path.resolve",
+          "lineNumber": 48
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "path.resolve",
+          "lineNumber": 49
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "path.join",
+          "lineNumber": 49
+        },
+        {
+          "caller": "resolveSafeUploadPath",
+          "callee": "resolvedPath.startsWith",
+          "lineNumber": 52
+        },
+        {
+          "caller": "ensureUploadDir",
+          "callee": "fs.mkdir",
+          "lineNumber": 63
+        },
+        {
+          "caller": "uploadFile",
+          "callee": "ensureUploadDir",
+          "lineNumber": 73
+        },
+        {
+          "caller": "uploadFile",
+          "callee": "Date.now",
+          "lineNumber": 76
+        },
+        {
+          "caller": "uploadFile",
+          "callee": "fileName.replace",
+          "lineNumber": 77
+        },
+        {
+          "caller": "uploadFile",
+          "callee": "path.join",
+          "lineNumber": 78
+        },
+        {
+          "caller": "uploadFile",
+          "callee": "fs.writeFile",
+          "lineNumber": 80
+        },
+        {
+          "caller": "downloadFile",
+          "callee": "resolveSafeUploadPath",
+          "lineNumber": 92
+        },
+        {
+          "caller": "downloadFile",
+          "callee": "fs.readFile",
+          "lineNumber": 93
+        },
+        {
+          "caller": "getFileStream",
+          "callee": "resolveSafeUploadPath",
+          "lineNumber": 102
+        },
+        {
+          "caller": "getFileStream",
+          "callee": "createReadStream",
+          "lineNumber": 103
+        },
+        {
+          "caller": "deleteFile",
+          "callee": "resolveSafeUploadPath",
+          "lineNumber": 111
+        },
+        {
+          "caller": "deleteFile",
+          "callee": "fs.unlink",
+          "lineNumber": 114
+        },
+        {
+          "caller": "getFileInfo",
+          "callee": "resolveSafeUploadPath",
+          "lineNumber": 126
+        },
+        {
+          "caller": "getFileInfo",
+          "callee": "fs.stat",
+          "lineNumber": 129
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
-# Local File Storage Configuration
+﻿# Local File Storage Configuration
 
 ## Overview
 
-Summit KT Portal now uses **local file storage** instead of Cloudflare R2 to ensure sensitive KT documents remain on your infrastructure and are never uploaded to external cloud services.
+NextElevate now uses **local file storage** instead of Cloudflare R2 to ensure sensitive KT documents remain on your infrastructure and are never uploaded to external cloud services.
 
 ---
 
@@ -214,3 +214,4 @@ For questions or issues with local file storage, refer to:
 - [Node.js fs API](https://nodejs.org/api/fs.html)
 - [Next.js Server-Side Code](https://nextjs.org/docs/getting-started/project-structure)
 - Project issue tracker
+

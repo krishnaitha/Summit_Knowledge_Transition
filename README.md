@@ -1,4 +1,4 @@
-# NexTElevate
+﻿# NexTElevate
 
 > **Enterprise Knowledge-Transfer Portal** — structured, AI-assisted onboarding and readiness assessments for engineering teams.
 
@@ -415,7 +415,7 @@ WORKER_SECRET=<random secret>
 INTERNAL_APP_URL=http://<app-internal-hostname>:3000
 
 # App
-NEXT_PUBLIC_APP_NAME=Summit KT Portal
+NEXT_PUBLIC_APP_NAME=NextElevate
 NEXT_PUBLIC_APP_URL=https://your-app-domain.com
 ```
 
@@ -610,3 +610,4 @@ The worker polls `POST /api/jobs/worker` every second. Jobs are claimed with `FO
 - Rate limiting is applied to auth endpoints
 - SSRF prevention on external URL inputs
 - PII detection runs on every uploaded document before embedding
+

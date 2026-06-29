@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { clientEnv } from '@/lib/env.client';
 
@@ -18,8 +18,8 @@ describe('clientEnv defaults', () => {
     expect(clientEnv.botName.length).toBeGreaterThan(0);
   });
 
-  it('appName falls back to "Summit KT Portal"', () => {
-    expect(clientEnv.appName).toBe('Summit KT Portal');
+  it('appName falls back to "NextElevate"', () => {
+    expect(clientEnv.appName).toBe('NextElevate');
   });
 
   it('appUrl falls back to "http://localhost:3000"', () => {
@@ -27,7 +27,7 @@ describe('clientEnv defaults', () => {
   });
 
   it('botName is derived from the default appName when NEXT_PUBLIC_BOT_NAME is absent', () => {
-    expect(clientEnv.botName).toBe('Summit KT Portal AI');
+    expect(clientEnv.botName).toBe('NextElevate AI');
   });
 });
 
@@ -59,3 +59,4 @@ describe('clientEnv env-var overrides', () => {
     expect(env.botName).toBe('Acme Portal AI');
   });
 });
+

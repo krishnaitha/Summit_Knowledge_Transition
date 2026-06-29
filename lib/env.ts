@@ -1,10 +1,10 @@
-export const appEnv = {
-  appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'Summit KT Portal',
+﻿export const appEnv = {
+  appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'NextElevate',
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
   /** Display name for the AI bot. Set NEXT_PUBLIC_BOT_NAME to override; defaults to "<appName> AI". */
   botName:
     process.env.NEXT_PUBLIC_BOT_NAME ??
-    `${process.env.NEXT_PUBLIC_APP_NAME ?? 'Summit KT Portal'} AI`,
+    `${process.env.NEXT_PUBLIC_APP_NAME ?? 'NextElevate'} AI`,
   databaseUrl: process.env.DATABASE_URL,
   nextauthSecret: process.env.NEXTAUTH_SECRET,
   authProvider: process.env.AUTH_PROVIDER ?? 'credentials',
@@ -114,3 +114,4 @@ export function assertEnv(name: keyof typeof appEnv) {
 
   return value;
 }
+

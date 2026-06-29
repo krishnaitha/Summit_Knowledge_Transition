@@ -1,4 +1,4 @@
-# Summit KT Portal — User Guide
+﻿# NextElevate — User Guide
 
 > This guide covers all three roles: **Super Admin**, **Project Admin**, and **Member**.  
 > Use the table of contents to jump directly to your role's section.
@@ -45,7 +45,7 @@
 
 ## 1. Logging In
 
-1. Navigate to your organisation's Summit KT Portal URL (e.g. `http://localhost:3000` during development or your production domain)
+1. Navigate to your organisation's NextElevate URL (e.g. `http://localhost:3000` during development or your production domain)
 2. Enter your **email address** and **password**
 3. Click **Sign in**
 
@@ -564,7 +564,7 @@ After registering, your account will have **Member** role. A super admin must as
 
 When a super admin invites you by email:
 
-1. Open the invite email from Summit KT Portal
+1. Open the invite email from NextElevate
 2. Click **Accept invitation**
 3. You are taken to `/auth/accept-invite?token=…`
 4. Set your **password** and click **Set password & join**
@@ -580,7 +580,7 @@ You will be logged in immediately and your project assignment is applied automat
 1. Go to the login page and click **Forgot password?**
 2. Enter your registered **email address**
 3. Click **Send reset link**
-4. Open the email from Summit KT Portal and click **Reset password**
+4. Open the email from NextElevate and click **Reset password**
 5. Enter and confirm your **new password**
 6. Click **Set new password**
 
@@ -607,3 +607,4 @@ You are redirected to the login page. Sign in with your new password.
 | **Processing**        | The background task of extracting text from a document, detecting PII, and generating embeddings for AI search               |
 | **Embedding**         | A 384-dimension numerical vector representation of text used for semantic similarity search                                  |
 | **Bookmark**          | A saved AI assistant answer that appears on the member dashboard for quick reference                                         |
+

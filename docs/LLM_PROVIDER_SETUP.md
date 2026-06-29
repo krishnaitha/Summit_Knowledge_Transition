@@ -1,6 +1,6 @@
-# LLM Provider Setup Guide
+﻿# LLM Provider Setup Guide
 
-Summit KT Portal supports switchable LLM providers: **Groq** (default), **GitHub Models (Copilot Proxy)**, **OpenAI**, **Azure OpenAI**, **Anthropic**, **Mistral**, and **Ollama**.
+NextElevate supports switchable LLM providers: **Groq** (default), **GitHub Models (Copilot Proxy)**, **OpenAI**, **Azure OpenAI**, **Anthropic**, **Mistral**, and **Ollama**.
 
 ## Overview
 
@@ -283,3 +283,4 @@ This ensures UI and logic code doesn't need provider-specific handling.
 - GitHub Copilot: https://github.com/features/copilot
 - GitHub Settings: https://github.com/settings/tokens
 - API Documentation: See `docs/ARCHITECTURE.md` for endpoint details
+

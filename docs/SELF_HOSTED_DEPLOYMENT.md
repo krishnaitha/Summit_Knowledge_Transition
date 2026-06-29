@@ -1,4 +1,4 @@
-# Self-Hosted Deployment Guide — Summit KT Portal
+﻿# Self-Hosted Deployment Guide — NextElevate
 
 > **Why self-host?** Client data stays entirely within your infrastructure. No third-party vendor (Supabase, Vercel, etc.) has access to your database, files, or auth tokens.
 
@@ -197,7 +197,7 @@ SMTP_HOST=smtp.yourcompany.com
 SMTP_PORT=587
 SMTP_USER=noreply@yourcompany.com
 SMTP_PASS=<smtp-password>
-SMTP_SENDER_NAME=Summit KT Portal
+SMTP_SENDER_NAME=NextElevate
 ```
 
 ### 2.4 Start Supabase
@@ -412,7 +412,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key-from-part-2>
 SUPABASE_SERVICE_ROLE_KEY=<service-role-key-from-part-2>
 
 # App
-NEXT_PUBLIC_APP_NAME=Summit KT Portal
+NEXT_PUBLIC_APP_NAME=NextElevate
 NEXT_PUBLIC_APP_URL=https://kt.yourcompany.com
 
 # Worker
@@ -614,3 +614,4 @@ docker exec -i supabase-db psql -U postgres postgres < ~/nextelevate_export.sql
 | **Total**    | **$25/mo**           | **$30–80/mo**             |
 | Data control | Supabase servers     | **Your servers**          |
 | Maintenance  | Managed              | **Your team**             |
+

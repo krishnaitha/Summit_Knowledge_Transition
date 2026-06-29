@@ -1,4 +1,4 @@
-# NextElevate — Complete System Build Prompt
+﻿# NextElevate — Complete System Build Prompt
 
 > Use this document as a comprehensive prompt to recreate the entire NextElevate platform from scratch. Each section is self-contained and can be handed to an AI coding assistant or development team as-is.
 
@@ -33,7 +33,7 @@
 
 ## 1. Product Vision & Purpose
 
-Build **NextElevate** (also called Summit KT Portal) — a multi-role, multi-project **Knowledge Transfer (KT) platform** for enterprise teams undergoing structured transitions.
+Build **NextElevate** () — a multi-role, multi-project **Knowledge Transfer (KT) platform** for enterprise teams undergoing structured transitions.
 
 ### Core Value Proposition
 
@@ -1373,3 +1373,4 @@ UPDATE users SET role = 'admin' WHERE email = 'your-admin@company.com';
 | Canonical content storage | Original text preserved before PII redaction for audit purposes |
 | Server Actions for mutations | CSRF protection built-in, no API route needed for form submissions |
 | JWT sessions | Stateless, scales horizontally, no session store needed |
+

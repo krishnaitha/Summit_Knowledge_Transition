@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+﻿import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { requireCredentialsProvider } from '@/lib/auth/guard';
@@ -40,10 +40,10 @@ export async function POST(request: Request) {
 
       await sendEmail(
         email,
-        'Reset your Summit KT Portal password',
+        'Reset your NextElevate password',
         `
           <p>Hi,</p>
-          <p>We received a request to reset your password for Summit KT Portal.</p>
+          <p>We received a request to reset your password for NextElevate.</p>
           <p>Click the link below to set a new password. This link expires in 1 hour.</p>
           <p><a href="${resetLink}">${resetLink}</a></p>
           <p>If you didn't request this, you can safely ignore this email.</p>
@@ -59,3 +59,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

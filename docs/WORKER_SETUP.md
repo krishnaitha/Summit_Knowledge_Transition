@@ -1,6 +1,6 @@
-# Background Worker Setup
+﻿# Background Worker Setup
 
-Summit KT Portal uses a background job queue for two long-running operations:
+NextElevate uses a background job queue for two long-running operations:
 
 - **Document processing** — text extraction, chunking, and embedding (can take 30–120 s for large files)
 - **Quiz generation** — multiple Groq API calls with inter-set delays (can take 30–90 s for 3–5 sets)
@@ -250,3 +250,4 @@ Quiz generation uses `llama-3.1-8b-instant` (131,000 tokens/minute on the free t
 The chat interface uses `llama-3.3-70b-versatile` (6,000 tokens/minute on the free tier). If you hit rate limits during chat, the client automatically retries with the fallback model (`llama-3.1-8b-instant`) after a 60-second wait.
 
 If you need higher throughput, upgrade to a Groq paid plan.
+

@@ -1,5 +1,5 @@
--- =============================================================================
--- Summit KT Portal — PostgreSQL Schema (standalone, no Supabase)
+﻿-- =============================================================================
+-- NextElevate — PostgreSQL Schema (standalone, no Supabase)
 -- Generated from migrations 001–031
 --
 -- Prerequisites (run once in psql as superuser):
@@ -672,3 +672,4 @@ $$;
 --
 --   UPDATE users SET role = 'admin' WHERE email = 'your-admin@company.com';
 -- ---------------------------------------------------------------------------
+

@@ -1,12 +1,12 @@
-t# Database & Backend Platform Options — Comparison
+﻿t# Database & Backend Platform Options — Comparison
 
-> Created: May 2026 | Context: Summit KT Portal (Next.js 14 + Supabase)
+> Created: May 2026 | Context: NextElevate (Next.js 14 + Supabase)
 
 ---
 
 ## App Requirements
 
-The Summit KT Portal needs all four of these from its data layer:
+The NextElevate needs all four of these from its data layer:
 
 | # | Requirement | Why |
 |---|---|---|
@@ -231,6 +231,7 @@ Total effort: ~3–4 days. Cost: similar or slightly higher (~$30–40/mo vs $25
 
 ## Recommendation
 
-**Stay on Supabase** for this app. The combination of Postgres + pgvector + Auth + Storage in one platform is unique. Every alternative either drops SQL, vector search, auth, or storage — all four of which the Summit KT Portal actively uses.
+**Stay on Supabase** for this app. The combination of Postgres + pgvector + Auth + Storage in one platform is unique. Every alternative either drops SQL, vector search, auth, or storage — all four of which the NextElevate actively uses.
 
 The only scenario to reconsider: if the team needs **DB branching** for safe migrations (→ move to Neon + Clerk + R2), or needs to self-host everything for compliance (→ self-hosted Postgres + NextAuth + MinIO).
+

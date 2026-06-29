@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+﻿import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUserContext } from '@/lib/auth';
@@ -61,10 +61,10 @@ export async function POST(request: Request) {
     const inviteLink = `${appUrl}/auth/accept-invite?token=${token}`;
     const emailResult = await sendEmail(
       email,
-      'You have been invited to Summit KT Portal',
+      'You have been invited to NextElevate',
       `
         <p>Hi${body.fullName ? ` ${body.fullName}` : ''},</p>
-        <p>You have been invited to join <strong>Summit KT Portal</strong>.</p>
+        <p>You have been invited to join <strong>NextElevate</strong>.</p>
         <p>Click the link below to set your password and access your account:</p>
         <p><a href="${inviteLink}">${inviteLink}</a></p>
         <p>This link expires in 7 days.</p>
@@ -84,3 +84,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-# Summit KT Portal — Architecture
+﻿# NextElevate — Architecture
 
 > **Version:** 1.2.0  
 > **Stack:** Next.js 16 · PostgreSQL 13+ · NextAuth.js v4 · Local Storage / Cloudflare R2 · Groq · @xenova/transformers · SendGrid · Tailwind CSS · MCP (Model Context Protocol)
@@ -33,7 +33,7 @@
 
 ## 1. System Overview
 
-Summit KT Portal is a **multi-role, multi-project knowledge-transfer platform**. It enables organisations to manage the entire KT lifecycle:
+NextElevate is a **multi-role, multi-project knowledge-transfer platform**. It enables organisations to manage the entire KT lifecycle:
 
 - Admins **publish** KT documents and configure readiness quizzes
 - Members **read** documents, **converse** with an AI assistant grounded in those documents, and **complete** structured readiness assessments
@@ -41,7 +41,7 @@ Summit KT Portal is a **multi-role, multi-project knowledge-transfer platform**.
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                        SUMMIT KT PORTAL                          │
+│                        NextElevate                          │
 │                                                                  │
 │  SUPER ADMIN           PROJECT ADMIN          MEMBER             │
 │  ───────────           ─────────────          ──────             │
@@ -803,11 +803,11 @@ See [GOVERNANCE_IMPLEMENTATION.md](./GOVERNANCE_IMPLEMENTATION.md) for full sche
 
 ## 1. System Overview
 
-Summit KT Portal is a **multi-role, project-scoped knowledge-transfer platform**. It enables admins to upload KT documents, generate AI quizzes, and monitor member readiness. Members interact with a RAG-powered chatbot and complete a one-time readiness assessment.
+NextElevate is a **multi-role, project-scoped knowledge-transfer platform**. It enables admins to upload KT documents, generate AI quizzes, and monitor member readiness. Members interact with a RAG-powered chatbot and complete a one-time readiness assessment.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        SUMMIT KT PORTAL                         │
+│                        NextElevate                         │
 │                                                                 │
 │   ADMIN                          MEMBER                         │
 │   ─────                          ──────                         │
@@ -1648,3 +1648,4 @@ app/layout.tsx
 | **Test suite**                     | Unit tests for scoring, chunking, shuffling; integration tests for routes |
 | **Real-time retake notifications** | Email admin when a re-enable request is submitted                         |
 | **SSO / SAML integration**         | Enterprise SSO via OAuth providers (Okta, Azure AD)                       |
+

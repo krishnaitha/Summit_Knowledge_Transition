@@ -1,4 +1,4 @@
-'use server';
+﻿'use server';
 
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
@@ -591,10 +591,10 @@ export async function inviteProjectMemberAction(formData: FormData) {
         await resend.emails.send({
           from,
           to: email,
-          subject: 'You have been invited to Summit KT Portal',
+          subject: 'You have been invited to NextElevate',
           html: `
             <p>Hi${fullName ? ` ${fullName}` : ''},</p>
-            <p>You have been invited to join <strong>Summit KT Portal</strong>.</p>
+            <p>You have been invited to join <strong>NextElevate</strong>.</p>
             <p>Click the link below to set your password and access your account:</p>
             <p><a href="${inviteLink}">${inviteLink}</a></p>
             <p>This link expires in 7 days.</p>
@@ -1094,3 +1094,4 @@ export async function rejectRetakeRequestAction(formData: FormData) {
 
   revalidatePath(`/admin/projects/${projectId}`);
 }
+

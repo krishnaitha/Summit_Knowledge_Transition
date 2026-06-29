@@ -1,5 +1,5 @@
-/**
- * Summit KT Portal — k6 Load Test
+﻿/**
+ * NextElevate — k6 Load Test
  *
  * Scenarios
  *   chat_load   — POST /api/chat (RAG + LLM streaming), always active
@@ -301,3 +301,4 @@ export function handleSummary(data) {
     stdout: textSummary(data, { indent: '  ', enableColors: true }),
   };
 }
+

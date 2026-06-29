@@ -33,7 +33,7 @@ NexTElevate lets your organisation manage knowledge-transfer at scale. Admins pu
 | **Email flows**                  | Invite links, password reset, quiz window notifications via SendGrid                       |
 | **CSV export**                   | Export user data from the admin Users table                                                |
 
-### Recent Updates (May 2026)
+### Recent Updates (June 2026)
 
 - Expanded chat UX with starter prompts, response-style controls, clarify-first mode, and improved structured-answer rendering
 - Added chat session management (auto title, rename, delete) and exports (Markdown/PDF)
